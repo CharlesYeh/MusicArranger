@@ -1,6 +1,8 @@
 package gui;
 
-public class MainPanel{
+import javax.swing.JPanel;
+
+public class MainPanel extends JPanel{
 	public MainPanel(){
 		
 	}
