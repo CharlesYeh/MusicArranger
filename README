@@ -1,0 +1,21 @@
+----CODING STYLE----
+package pckg;
+
+public class {
+	
+	/* This method is totally useless!
+	 * 
+	 * Params:	arg - some useless int
+	 * 			arg2 - some other useless double
+	 * Returns: nothing at all
+	 */
+	public void doOtherStuff(int arg, double arg2) {
+		// note all the spaces
+		
+		if (object.method() + number == 1 ||
+			 object.getVar() < 20) {
+			 
+			doStuff();
+		}
+	}
+}
