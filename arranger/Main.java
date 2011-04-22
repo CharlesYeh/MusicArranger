@@ -1,13 +1,14 @@
 package arranger;
 
-   import javax.swing.JFrame;
-   import javax.swing.JMenu;
-   import javax.swing.JMenuBar;
-   import javax.swing.JMenuItem;
-   import java.awt.event.KeyEvent;
-   import java.awt.event.ActionEvent;
-   import java.awt.event.ActionListener;
-   import gui.MainPanel;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import gui.MainPanel;
+import logic.*;
 
 /* 
  * Main handles delegations of tasks between 
@@ -29,7 +30,7 @@ package arranger;
    
       public void addMenuBar(){
          JMenuBar menubar = new JMenuBar();
-      
+      	
          JMenu file = new JMenu("File");
          file.setMnemonic(KeyEvent.VK_F);
       
@@ -46,7 +47,12 @@ package arranger;
       
          file.add(eMenuItem);
       }
-   
+	   
+	   public void receiveInstruction(Instruction instr) {
+	   	// delegate instruction
+	   	
+	   }
+	   
       public static void main(String[] args){
          new Main();
       }

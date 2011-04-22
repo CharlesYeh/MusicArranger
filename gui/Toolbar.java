@@ -9,6 +9,8 @@ public abstract class Toolbar implements Drawable{
 	DockController _dockControl;
 	Orientation _orientation;
 	
+	ToolbarButton[] _buttons;
+	
 	int _x, _y, _width, _height;
 	
 	boolean _drag;
@@ -30,6 +32,10 @@ public abstract class Toolbar implements Drawable{
 		
 		// JUST FOR TESTING
 		myColor = new Color((int)(Math.random() * 0xFFFFFF));
+	}
+	
+	protected void createButtons(){
+		_buttons = new ToolbarButton[]{};
 	}
 	
 	public int getX() {
@@ -66,6 +72,7 @@ public abstract class Toolbar implements Drawable{
 			_width = 30;
 			_height = 300;
 		}
+		
 	}
 	
 	public void drawSelf(Graphics g) {
