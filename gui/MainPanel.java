@@ -11,6 +11,8 @@ import java.awt.event.MouseEvent;
 
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener{
 	
+	Toolbar _activeToolbar;
+	
 	LinkedList<Toolbar> _toolbars;
 	Toolbar _modeToolbar, _noteToolbar, _playToolbar;
 	ScoreWindow _scoreWindow;
@@ -62,14 +64,14 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	 */
 	public void mousePressed(MouseEvent e) {
 		// clicked on which toolbar?
-    	Toolbar tbar = mouseEventToolbar(e);
-		if (tbar == null) {
+    	_activeToolbar = mouseEventToolbar(e);
+		if (_activeToolbar == null) {
 			// clicked on score window
 			_scoreWindow.mousePressed(e);
 		}
 		else {
 			// clicked on a toolbar
-			tbar.mousePressed(e);
+			_activeToolbar.mousePressed(e);
 		}
 	}
 
@@ -78,6 +80,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	 */
 	public void mouseReleased(MouseEvent e) {
     	// clicked on which toolbar?
+    	_activeToolbar = null;
     	Toolbar tbar = mouseEventToolbar(e);
 		if (tbar == null) {
 			// clicked on score window
@@ -140,14 +143,13 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	public void mouseDragged(MouseEvent e) {
 		// clicked on which toolbar?
-    	Toolbar tbar = mouseEventToolbar(e);
-		if (tbar == null) {
+		if (_activeToolbar == null) {
 			// clicked on score window
 			_scoreWindow.mouseDragged(e);
 		}
 		else {
 			// clicked on a toolbar
-			tbar.mouseDragged(e);
+			_activeToolbar.mouseDragged(e);
 		}
 		
 		repaint();

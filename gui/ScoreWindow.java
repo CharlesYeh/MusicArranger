@@ -49,6 +49,8 @@ public class ScoreWindow implements Drawable{
 		
 		// connect consecutive 8th notes
 		
+		// draw chord symbols?
+		
 	}
 	
 	private void drawNote(Graphics g, int xc, int yc) {
