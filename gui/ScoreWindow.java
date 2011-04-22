@@ -20,6 +20,8 @@ public class ScoreWindow implements Drawable{
 	}
 	
 	public void drawSelf(Graphics g) {
+		// buffer self-image
+		
 		// draw systems while there are space for more
 		int nextY = TOP_MARGIN;
 		while (nextY < 500) {
