@@ -11,12 +11,13 @@ import java.awt.event.MouseEvent;
 
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener{
 	
+	boolean _disabled;
+	
 	Toolbar _activeToolbar;
 	
 	LinkedList<Toolbar> _toolbars;
 	Toolbar _modeToolbar, _noteToolbar, _playToolbar;
 	ScoreWindow _scoreWindow;
-	
 	
 	public MainPanel() {
 		_toolbars = new LinkedList<Toolbar>();
@@ -63,6 +64,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	 * 
 	 */
 	public void mousePressed(MouseEvent e) {
+		if (_disabled)
+			return;
+		
 		// clicked on which toolbar?
     	_activeToolbar = mouseEventToolbar(e);
 		if (_activeToolbar == null) {
@@ -79,6 +83,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	 * 
 	 */
 	public void mouseReleased(MouseEvent e) {
+		if (_disabled)
+			return;
+		
     	// clicked on which toolbar?
     	_activeToolbar = null;
     	Toolbar tbar = mouseEventToolbar(e);
@@ -106,6 +113,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	 * 
 	 */
 	public void mouseClicked(MouseEvent e) {
+		if (_disabled)
+			return;
+		
     	// clicked on which toolbar?
     	Toolbar tbar = mouseEventToolbar(e);
 		if (tbar == null) {
@@ -116,6 +126,27 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			// clicked on a toolbar
 			tbar.mouseClicked(e);
 		}
+	}
+	
+	public void mouseDragged(MouseEvent e) {
+		if (_disabled)
+			return;
+		
+		// clicked on which toolbar?
+		if (_activeToolbar == null) {
+			// clicked on score window
+			_scoreWindow.mouseDragged(e);
+		}
+		else {
+			// dragging a toolbar
+			_activeToolbar.mouseDragged(e);
+		}
+		
+		repaint();
+	}
+	
+	public void mouseMoved(MouseEvent e) {
+		
 	}
 	
 	/*
@@ -139,23 +170,5 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		// mouse event was not on a toolbar
 		return null;
-	}
-	
-	public void mouseDragged(MouseEvent e) {
-		// clicked on which toolbar?
-		if (_activeToolbar == null) {
-			// clicked on score window
-			_scoreWindow.mouseDragged(e);
-		}
-		else {
-			// clicked on a toolbar
-			_activeToolbar.mouseDragged(e);
-		}
-		
-		repaint();
-	}
-	
-	public void mouseMoved(MouseEvent e) {
-		
 	}
 }

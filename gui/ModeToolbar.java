@@ -5,22 +5,28 @@ import java.awt.Graphics;
 public class ModeToolbar extends Toolbar implements Drawable{
 	final static int BUTTONS = 3;
 	
-	ToolbarButton[] _buttons
+	ToolbarButton _activeButton;
 	
 	public ModeToolbar(DockController dockControl) {
 		super(dockControl, Orientation.VERTICAL);
 		
-		
+		createButtons();
+	}
+	
+	protected void createButtons(){
 		// add mode buttons (note, selection, zoom)
 		ToolbarButton modeNote = new ToolbarButton("images/mode_note.png");
 		ToolbarButton modeChord = new ToolbarButton("images/mode_chord.png");
 		ToolbarButton modeZoom = new ToolbarButton("images/mode_zoom.png");
 		
-		buttons = {modeNote, modeChord, modeZoom};
+		_buttons = new ToolbarButton[]{modeNote, modeChord, modeZoom};
 	}
+	
 	public void drawSelf(Graphics g) {
 		super.drawSelf(g);
 		
-		
+		for (ToolbarButton btn : _buttons) {
+			btn.drawSelf(g);
+		}
 	}
 }
