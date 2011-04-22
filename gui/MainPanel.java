@@ -2,31 +2,33 @@ package gui;
 
 import javax.swing.JPanel;
 import java.awt.Graphics;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
 
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener{
 	
-	ArrayList<Toolbar> _toolbars;
+	LinkedList<Toolbar> _toolbars;
 	Toolbar _modeToolbar, _noteToolbar, _playToolbar;
 	ScoreWindow _scoreWindow;
 	
 	
 	public MainPanel() {
-		_toolbars = new ArrayList<Toolbar>();
+		_toolbars = new LinkedList<Toolbar>();
+		
+		DockController dockControl = new DockController();
 		
 		// add left hand side toolbar with buttons for input modes
-		_modeToolbar = new ModeToolbar();
+		_modeToolbar = new ModeToolbar(dockControl);
 		
 		
-		_noteToolbar = new NoteToolbar();
+		_noteToolbar = new NoteToolbar(dockControl);
 		
 		
-		
-		_playToolbar = new PlaybackToolbar();
+		_playToolbar = new PlaybackToolbar(dockControl);
 		
 		
 		_scoreWindow = new ScoreWindow();
@@ -48,9 +50,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		_scoreWindow.drawSelf(g);
 		
-		Iterator<Toolbar> iter = _toolbars.iterator();
-		while (iter.hasNext()) {
-			Drawable drawer = iter.next();
+		ListIterator<Toolbar> iter = _toolbars.listIterator(_toolbars.size());
+		while (iter.hasPrevious()) {
+			Drawable drawer = iter.previous();
 			drawer.drawSelf(g);
 		}
 	}
@@ -85,6 +87,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			// clicked on a toolbar
 			tbar.mouseReleased(e);
 		}
+		
+		repaint();
 	}
 
 	public void mouseEntered(MouseEvent e) {
@@ -120,7 +124,12 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			Toolbar drawer = iter.next();
 			
 			if (drawer.hitTestPoint(e.getX(), e.getY())) {
-				// mouse clicked on this object
+				// mouse clicked on this toolbar
+				
+				// move this toolbar to the front (higher priority for future events)
+				iter.remove();
+				_toolbars.addFirst(drawer);
+				
 				return drawer;
 			}
 		}
