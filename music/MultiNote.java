@@ -2,7 +2,7 @@ package music;
 
 import java.util.LinkedList;
 
-public class MultiNote {
+public class MultiNote extends Duration {
 	int _durationNumer, _durationDenom;
 	
 	LinkedList<Pitch> _notes;
