@@ -8,5 +8,6 @@ public class ScoreWindow implements Drawable{
 	}
 	public void drawSelf(Graphics g){
 		
+		System.out.println("SDF");
 	}
 }

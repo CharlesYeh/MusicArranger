@@ -14,9 +14,13 @@ public abstract class Toolbar implements Drawable{
 		_height = 200;
 	}
 	
-	public void drawSelf(Graphics g){
-		System.out.println("HI");
+	public void drawSelf(Graphics g) {
 		g.setColor(Color.RED);
 		g.fillRect(_x, _y, _width, _height);
+	}
+	
+	public boolean hitTestPoint(int cx, int cy) {
+		return _x < cx && cx < _x + _width &&
+				 _y < cy && cy < _y + _height;
 	}
 }

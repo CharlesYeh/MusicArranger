@@ -7,6 +7,6 @@ public class NoteToolbar extends Toolbar implements Drawable{
 		
 	}
 	public void drawSelf(Graphics g){
-		
+		super.drawSelf(g);
 	}
 }

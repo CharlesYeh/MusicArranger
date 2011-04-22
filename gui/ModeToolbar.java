@@ -7,6 +7,6 @@ public class ModeToolbar extends Toolbar implements Drawable{
 		
 	}
 	public void drawSelf(Graphics g){
-		
+		super.drawSelf(g);
 	}
 }
