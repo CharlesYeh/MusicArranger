@@ -9,8 +9,9 @@ public class Staff{
 	ArrayList<Voice> _voices;		// Voices contained within the staff.
 	ArrayList<Clef> _clefs;			// List of Clefs and their durations.
 
-	public Staff(){
-		
+	public Staff(ArrayList<Voice> voices, ArrayList<Clef> clefs){
+		_voices = voices;
+		_clefs = clefs;
 	}
 	
 	public ArrayList<Voice> getVoices() {

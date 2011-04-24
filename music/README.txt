@@ -1,8 +1,6 @@
-Piece
-Staff
+Piece - Contains Staffs, KeySignatures, TimeSignatures, ChordSymbols
+Staff - Contains Voices, Clefs
 Voices - Multis - Pitches (top pitch first)
-Structure - KeySig, TimeSig, Clefs
-Chords - ChordSymbols
 
-Duration, extended by Multi, KeySig, TimeSig, Clef, ChordSymbol
+Duration, extended by Multi, KeySignature, TimeSignature, Clef, ChordSymbol
 A rest is a Multi with an empty Pitch list
