@@ -28,4 +28,5 @@ public class Piece {
 	public LinkedList<ChordSymbol> getChordSymbols() {
 		return _chordSymbols;
 	}
+	
 }

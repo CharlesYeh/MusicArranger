@@ -28,10 +28,11 @@ public class Duration {
 		return _denom;
 	}
 	
-	
 	// return { -1, 0, +1 } if a < b, a = b, or a > b
-    public int compareTo(Duration b) {
+    public int compareTo(Object o) {
+        Duration b = (Duration) o;
         Duration a = this;
+        
         int lhs = a.getNumerator() * b.getDenominator();
         int rhs = a.getDenominator() * b.getNumerator();
         if (lhs < rhs) return -1;

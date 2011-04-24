@@ -7,6 +7,7 @@ import java.util.ListIterator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 import arranger.ArrangerConstants;
 import music.*;
@@ -41,16 +42,16 @@ public class ScoreWindow extends Drawable {
 		
 		// load images
 		try {
-			_imgQuarter		= ImageIO.read(new File("images/score/score_quarter.png"));
-			_imgHalf			= ImageIO.read(new File("images/score/score_half.png"));
-			_imgWhole	 	= ImageIO.read(new File("images/score/score_whole.png"));
-			_imgRest			= ImageIO.read(new File("images/score/score_rest.png"));
+			_imgQuarter		= ImageIO.read(new File("images/score/score_quarter.gif"));
+			_imgHalf			= ImageIO.read(new File("images/score/score_half.gif"));
+			_imgWhole	 	= ImageIO.read(new File("images/score/score_whole.gif"));
+			_imgRest			= ImageIO.read(new File("images/score/score_rest.gif"));
 			
-			_imgDoubleFlat	= ImageIO.read(new File("images/score/score_dflat.png"));
-			_imgFlat			= ImageIO.read(new File("images/score/score_flat.png"));
-			_imgNatural	 	= ImageIO.read(new File("images/score/score_natural.png"));
-			_imgSharp		= ImageIO.read(new File("images/score/score_sharp.png"));
-			_imgDoubleSharp= ImageIO.read(new File("images/score/score_dsharp.png"));
+			_imgDoubleFlat	= ImageIO.read(new File("images/score/score_dflat.gif"));
+			_imgFlat			= ImageIO.read(new File("images/score/score_flat.gif"));
+			_imgNatural	 	= ImageIO.read(new File("images/score/score_natural.gif"));
+			_imgSharp		= ImageIO.read(new File("images/score/score_sharp.gif"));
+			_imgDoubleSharp= ImageIO.read(new File("images/score/score_dsharp.gif"));
 		}
 		catch (IOException e) {
 			System.out.println("Error while loading musical images: " + e);
@@ -61,22 +62,27 @@ public class ScoreWindow extends Drawable {
 		// buffer self-image
 		
 		drawPiece(g);
-		// draw measures, shifting to the next system when horizontal space runs out
-		
-		// draw slurs and ties
 	}
 	
 	private void drawPiece(Graphics g) {
+		// list manuevering
+		PriorityQueue<TimestampAssociator> pQueue = new PriorityQueue<TimestampAssociator>();
+		
 		// load structure
-		List keySigs 	= _piece.getKeySignatures();
-		List timeSigs 	= _piece.getTimeSignatures();
-		List chords		= _piece.getChordSymbols();
+		List<KeySignature> keySigs 	= _piece.getKeySignatures();
+		List<TimeSignature> timeSigs 	= _piece.getTimeSignatures();
+		List<ChordSymbol> chords		= _piece.getChordSymbols();
+		/*pQueue.add(new TimestampAssociator(keySigs.listIterator()));
+		pQueue.add(new TimestampAssociator(timeSigs.listIterator()));
+		pQueue.add(new TimestampAssociator(chords.listIterator()));*/
 		
 		// load notes
-		// mapping of notes to staffs
-		Map<List<MultiNote>, Staff> notes = new HashMap<List<MultiNote>, Staff>();
-		//Map<Staff, Clef> clefs = new HashMap<ArrayList<MultiNote>, Clef>();
+		// mapping of notes (voice) to staffs
+		Map<ListIterator<MultiNote>, Staff> notes = new HashMap<ListIterator<MultiNote>, Staff>();
+		// mapping of staffs to clefs
+		//Map<Staff, Clef> clefs = new HashMap<Staff, Clef>();
 		
+		// add multinote lists from each staff>voice to pQueue
 		List<Staff> staffs = _piece.getStaffs();
 		for (Staff st : staffs) {
 			List<Voice> voices = st.getVoices();
@@ -84,27 +90,35 @@ public class ScoreWindow extends Drawable {
 			
 			for (Voice v : voices) {
 				List<MultiNote> multis = v.getMultiNotes();
-				notes.put(multis, st);
+				ListIterator<MultiNote> multisList = multis.listIterator();
+				
+				// so we can get the staff a voice is on easily
+				notes.put(multisList, st);
+				pQueue.add(new TimestampAssociator(multisList));
 			}
 		}
 		
-		// list manuevering
 		Map<MultiNote, Clef> currClefs;
 		KeySignature currKeySig;
 		TimeSignature currTimeSig;
-		
-		Map<MultiNote, ListIterator<Clef>> iterClef;
-		ListIterator<KeySignature> iterKeySig;
-		ListIterator<TimeSignature> iterTimeSig;
-		ListIterator<ChordSymbol> iterChord;
+		ChordSymbol currChord;
 		
 		// start drawing
 		boolean startDrawing = true;
 		int systemY 	= TOP_MARGIN - SYSTEM_SPACING;
 		int staffX		= LEFT_MARGIN;
-		int completed = 0;
 		int noteX;
-		while (completed < notes.size()) {
+		while (pQueue.size() > 0) {
+			TimestampAssociator timeAssoc = pQueue.poll();
+			ListIterator<? extends Duration> listDur = timeAssoc.getAssociated();
+			Duration nextDur = listDur.next();
+			if (listDur.hasNext()) {
+				timeAssoc.plus(nextDur);
+				pQueue.add(timeAssoc);
+			}
+			else {
+				// don't add back to priority queue
+			}
 			
 			int measureWidth = 100;
 			if (staffX + measureWidth > ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN || startDrawing) {
@@ -118,17 +132,16 @@ public class ScoreWindow extends Drawable {
 			
 			// start of system
 			noteX = staffX;
-			completed = 0;
 			
-			for (List<MultiNote> mnotes : notes.keySet()) {
-				MultiNote mnote = mnotes.get(0);
+			
+			/*for (ListIterator<MultiNote> mnotes : notes.keySet()) {
+				
 				List<Pitch> pitches = mnote.getPitches();
 				
 				// print all pitches in the mnote if they're not tied
 				for (Pitch p : pitches) {
 					int noteY = systemY + 20;
 					drawNote(g, noteX, noteY);
-					
 					
 					// draw accidental (check key signature
 					drawAccidental(g, p.getAccidental(), noteX - 5, noteY);
@@ -137,7 +150,7 @@ public class ScoreWindow extends Drawable {
 				
 				// position next multi note
 				noteX += mnote.getNumerator() / mnote.getDenominator() * measureWidth;
-			}
+			}*/
 			
 			// check key signatures
 			
@@ -156,18 +169,6 @@ public class ScoreWindow extends Drawable {
 			int yp = yc + i * SYSTEM_LINE_SPACING;
 			g.drawLine(LEFT_MARGIN, yp, ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN, yp);
 		}
-	}
-	
-	private void drawMeasure(Graphics g){
-		// draw the notes
-		
-		// draw extra system lines for notes below D and above G
-		
-		
-		// connect consecutive 8th notes
-		
-		// draw chord symbols?
-		
 	}
 	
 	private void drawNote(Graphics g, int xc, int yc) {

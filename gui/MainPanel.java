@@ -11,7 +11,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 
+import arranger.ArrangerConstants;
 import music.Piece;
+import java.awt.Component;
 
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
 	
@@ -171,7 +173,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	public void componentResized(ComponentEvent e) {
 		// redraw score sheet
-		
+		Component comp = e.getComponent();
+		ArrangerConstants.WINDOW_WIDTH = comp.getWidth();
+		ArrangerConstants.WINDOW_HEIGHT = comp.getHeight();
 	}
 	public void componentHidden(ComponentEvent e) {
 		
