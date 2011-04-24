@@ -13,47 +13,50 @@ import logic.*;
 /* 
  * Main handles delegations of tasks between 
  */
- 
-   public class Main extends JFrame{
-      public Main(){
-         super("Music Arranger");
-         
-         MainPanel mainPanel = new MainPanel();
-         this.add(mainPanel);
-      	
-         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-			this.setSize(800, 600);
-         this.setVisible(true);
-      
-         addMenuBar();
-      }
-   
-      public void addMenuBar(){
-         JMenuBar menubar = new JMenuBar();
-      	
-         JMenu file = new JMenu("File");
-         file.setMnemonic(KeyEvent.VK_F);
-      
-         JMenuItem eMenuItem = new JMenuItem("Exit");
-         eMenuItem.setMnemonic(KeyEvent.VK_C);
-         eMenuItem.setToolTipText("Exit application");
-         eMenuItem.addActionListener(
-               new ActionListener() {
-                  public void actionPerformed(ActionEvent event) {
-                     System.exit(0);
-                  }
-               
-               });
-      
-         file.add(eMenuItem);
-      }
-	   
-	   public void receiveInstruction(Instruction instr) {
-	   	// delegate instruction
-	   	
-	   }
-	   
-      public static void main(String[] args){
-         new Main();
-      }
-   }
+public class Main extends JFrame{
+	
+	Piece _piece;
+	
+	public Main(){
+		super("Music Arranger");
+		
+		_piece = new Piece();
+		
+		MainPanel mainPanel = new MainPanel(_piece);
+		this.add(mainPanel);
+		
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setSize(800, 600);
+		this.setVisible(true);
+		
+		addMenuBar();
+	}
+	
+	public void addMenuBar(){
+		JMenuBar menubar = new JMenuBar();
+		
+		JMenu file = new JMenu("File");
+		file.setMnemonic(KeyEvent.VK_F);
+		
+		JMenuItem eMenuItem = new JMenuItem("Exit");
+		eMenuItem.setMnemonic(KeyEvent.VK_C);
+		eMenuItem.setToolTipText("Exit application");
+		eMenuItem.addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					System.exit(0);
+				}
+			});
+		
+		file.add(eMenuItem);
+	}
+	
+	public void receiveInstruction(Instruction instr) {
+		// delegate instruction
+		
+	}
+	
+	public static void main(String[] args){
+		new Main();
+	}
+}
