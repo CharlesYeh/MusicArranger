@@ -8,8 +8,10 @@ import java.util.ListIterator;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.ComponentEvent;
 
-public class MainPanel extends JPanel implements MouseListener, MouseMotionListener{
+public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
 	
 	boolean _disabled;
 	
@@ -19,23 +21,16 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	Toolbar _modeToolbar, _noteToolbar, _playToolbar;
 	ScoreWindow _scoreWindow;
 	
-	public MainPanel() {
+	public MainPanel(Piece piece) {
 		_toolbars = new LinkedList<Toolbar>();
 		
 		DockController dockControl = new DockController();
 		
 		// add left hand side toolbar with buttons for input modes
 		_modeToolbar = new ModeToolbar(dockControl);
-		
-		
 		_noteToolbar = new NoteToolbar(dockControl);
-		
-		
 		_playToolbar = new PlaybackToolbar(dockControl);
-		
-		
-		_scoreWindow = new ScoreWindow();
-		
+		_scoreWindow = new ScoreWindow(piece);
 		
 		// add toolbars to list of toolbars
 		_toolbars.add(_modeToolbar);
@@ -170,5 +165,19 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		// mouse event was not on a toolbar
 		return null;
+	}
+	
+	public void componentResized(ComponentEvent e) {
+		// redraw score sheet
+		
+	}
+	public void componentHidden(ComponentEvent e) {
+		
+	}
+	public void componentMoved(ComponentEvent e) {
+		
+	}
+	public void componentShown(ComponentEvent e) {
+		
 	}
 }
