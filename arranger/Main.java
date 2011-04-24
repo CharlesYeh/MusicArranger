@@ -16,12 +16,19 @@ import music.*;
  */
 public class Main extends JFrame{
 	
+	XMLParser _parser;
+	XMLWriter _writer;
+	
 	Piece _piece;
 	
 	public Main(){
 		super("Music Arranger");
 		
+		_parser = new XMLParser();
+		_writer = new XMLWriter();
+		
 		_piece = new Piece();
+		
 		
 		MainPanel mainPanel = new MainPanel(_piece);
 		this.add(mainPanel);
