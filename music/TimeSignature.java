@@ -4,14 +4,24 @@ package music;
  * a beat, and how many beats are contained within a measure.
  */
 public class TimeSignature extends Duration {
-	Duration _measureDuration;			// Specifies the duration of a measure under the time signature.  NOTE: This is different from the time signature's duration within the piece!
-
-	public TimeSignature(Rational duration, Duration measureDuration){
+	int _numerator;
+	int _denominator;
+	
+	public TimeSignature(Rational duration, int numerator, int denominator){
 		super(duration);
-		_measureDuration = measureDuration;
+		_numerator = numerator;
+		_denominator = denominator;
 	}
 	
 	public Duration getMeasureDuration() {
 		return _measureDuration;
+	}
+	
+	public int getNumerator() {
+		return _numerator;
+	}
+	
+	public int getDenominator() {
+		return _denominator;
 	}
 }
