@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import gui.MainPanel;
 import logic.*;
+import music.*;
 
 /* 
  * Main handles delegations of tasks between 

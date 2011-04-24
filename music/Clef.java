@@ -6,7 +6,7 @@ package music;
 public class Clef {
 	Duration _duration;		// Specifies the number of beats the clef lasts for
 	ClefName _clefName;		// Specifies what type of clef to draw
-	int centerLine;			// Specifies line of the staff the clef centers upon
+	int _centerLine;			// Specifies line of the staff the clef centers upon
 	
 	public Clef(){
 	}

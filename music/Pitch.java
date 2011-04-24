@@ -9,4 +9,8 @@ public class Pitch {
 	public Pitch(){
 		
 	}
+	
+	public Accidental getAccidental() {
+		return _accidental;
+	}
 }

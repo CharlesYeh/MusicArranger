@@ -7,6 +7,10 @@ public class Duration {
 	int _numer;			// Duration numerator
 	int _denom;			// Duration denominator
 	
+	public Duration() {
+		_numer = _denom = 1;
+	}
+	
 	public Duration(int numerator, int denominator) {
         if (denominator == 0) {
             throw new RuntimeException("Denominator is zero");

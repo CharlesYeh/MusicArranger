@@ -3,5 +3,9 @@ package music;
  * pitch.
  */
 public enum Accidental {
-	DOUBLEFLAT, FLAT, NATURAL, SHARP, DOUBLESHARP
+	DOUBLEFLAT,
+	FLAT,
+	NATURAL,
+	SHARP,
+	DOUBLESHARP;
 }

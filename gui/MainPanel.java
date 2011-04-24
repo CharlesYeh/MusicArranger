@@ -11,6 +11,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 
+import music.Piece;
+
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
 	
 	boolean _disabled;
