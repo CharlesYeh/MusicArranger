@@ -7,7 +7,7 @@ public enum NoteLetter {
 	
 	private int _intValue;
 	
-	public NoteLetter(int intValue) {
+	NoteLetter(int intValue) {
 		this._intValue = intValue;
 	}
 	

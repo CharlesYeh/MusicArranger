@@ -28,15 +28,19 @@ public class Clef extends Duration {
 			throw new RuntimeException("Clef _centerLine out of bounds (");
 		}
 		
+		int clefCenterValue;
 		int lineNumber;
 		
 		switch (_clefName){
 			case GCLEF:
-					int clefCenterValue = G.intValue() + 4 * 7;		// G clef centers on G4
+					clefCenterValue = NoteLetter.G.intValue() + 4 * 7;		// G clef centers on G4
+					break;
 			case FCLEF:
-					int clefCenterValue = F.intValue() + 3 * 7;		// F clef centers on F3
+					clefCenterValue = NoteLetter.F.intValue() + 3 * 7;		// F clef centers on F3
+					break;
 			case CCLEF:
-					int clefCenterValue = C.intValue() + 4 * 7;		// C clef centers on C4
+					clefCenterValue = NoteLetter.C.intValue() + 4 * 7;		// C clef centers on C4
+					break;
 			default:
 				throw new RuntimeException("Clef not recognized.");				
 			}
@@ -47,3 +51,4 @@ public class Clef extends Duration {
 		return lineNumber;
 	}
 }
+
