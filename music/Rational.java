@@ -70,3 +70,4 @@ public class Rational {
         if (n < 0) n = -n;
         return m * (n / gcd(m, n));
     }
+}

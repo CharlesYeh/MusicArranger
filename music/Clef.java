@@ -24,8 +24,9 @@ public class Clef extends Duration {
 	
 	// getLineNumber takes in a pitch and returns an int representing the pitch's line number.
 	public int getLineNumber(Pitch pitch) {
-		switch (_clefName)
+		switch (_clefName){
 			default:
 				throw new RuntimeException("Clef not recognized.");
+		}
 	}
 }

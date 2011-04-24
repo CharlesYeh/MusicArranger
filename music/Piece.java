@@ -9,11 +9,20 @@ public class Piece {
 	LinkedList<TimeSignature> _timeSigs;		// time signatures
 	LinkedList<ChordSymbol> _chordSymbols;		// chord symbols
 	
-	public Piece (ArrayList<Staff> staffs, LinkedList<KeySignature> keySigs, 
-		LinkedList<TimeSignature> timeSigs, LinkedList<ChordSymbol> chordSymbols) {
-		_staffs = staffs;
-		_keySigs = keysigs;
-		_timeSigs = timesigs;
+	public Piece () {
+		this(new ArrayList<Staff>(),
+				new LinkedList<KeySignature>(),
+				new LinkedList<TimeSignature>(),
+				new LinkedList<ChordSymbol>());
+	}
+	
+	public Piece (ArrayList<Staff> staffs,
+						LinkedList<KeySignature> keySigs, 
+						LinkedList<TimeSignature> timeSigs,
+						LinkedList<ChordSymbol> chordSymbols) {
+		_staffs 		= staffs;
+		_keySigs 	= keySigs;
+		_timeSigs 	= timeSigs;
 		_chordSymbols = chordSymbols;
 	}
 	

@@ -113,7 +113,7 @@ public class ScoreWindow extends Drawable {
 			ListIterator<? extends Duration> listDur = timeAssoc.getAssociated();
 			Duration nextDur = listDur.next();
 			if (listDur.hasNext()) {
-				timeAssoc.plus(nextDur);
+				timeAssoc.addDuration(nextDur);
 				pQueue.add(timeAssoc);
 			}
 			else {

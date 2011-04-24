@@ -6,7 +6,7 @@ package music;
 public class TimeSignature extends Duration {
 	Duration _measureDuration;			// Specifies the duration of a measure under the time signature.  NOTE: This is different from the time signature's duration within the piece!
 
-	public TimeSignature(Duration duration, Duration measureDuration){
+	public TimeSignature(Rational duration, Duration measureDuration){
 		super(duration);
 		_measureDuration = measureDuration;
 	}
