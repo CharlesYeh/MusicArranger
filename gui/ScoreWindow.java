@@ -3,7 +3,7 @@ package gui;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
-public class ScoreWindow implements Drawable{
+public class ScoreWindow extends Drawable {
 	
 	final static int TOP_MARGIN	= 100;
 	final static int LEFT_MARGIN	= 50;

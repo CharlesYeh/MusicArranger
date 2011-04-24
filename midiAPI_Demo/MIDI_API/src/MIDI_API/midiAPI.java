@@ -19,6 +19,7 @@ public class midiAPI {
             LinkedList<multiNote> mns = v.getMultiNotes();
             Synthesizer synth = MidiSystem.getSynthesizer();
             synth.open();
+            
             Receiver receiver = synth.getReceiver();
             //navigate to a single multinote
             for (int i = 0; i < v.size(); i++) {

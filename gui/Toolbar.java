@@ -3,15 +3,14 @@ package gui;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import logic.Instruction;
 
-public abstract class Toolbar implements Drawable{
+public abstract class Toolbar extends Drawable {
 	
 	DockController _dockControl;
 	Orientation _orientation;
 	
 	ToolbarButton[] _buttons;
-	
-	int _x, _y, _width, _height;
 	
 	boolean _drag;
 	int _dragX, _dragY;
@@ -20,7 +19,6 @@ public abstract class Toolbar implements Drawable{
 	
 	public Toolbar(DockController dockControl, Orientation orient) {
 		_dockControl = dockControl;
-		_orientation = orient;
 		
 		_x = (int) (Math.random() * 300);
 		_y = 20;
@@ -32,45 +30,34 @@ public abstract class Toolbar implements Drawable{
 		
 		// JUST FOR TESTING
 		myColor = new Color((int)(Math.random() * 0xFFFFFF));
+		
+		createButtons();
+		setOrientation(orient);
 	}
 	
+	/* Creates the buttons on this toolbar - subclasses will extend this
+	 * 
+	 */
 	protected void createButtons(){
 		_buttons = new ToolbarButton[]{};
 	}
 	
-	public int getX() {
-		return _x;
-	}
-	
-	public int getY() {
-		return _y;
-	}
-	
-	public int getWidth() {
-		return _width;
-	}
-	
-	public int getHeight() {
-		return _height;
-	}
-	
-	public void setX(int ox) {
-		_x = ox;
-	}
-	
-	public void setY(int oy) {
-		_y = oy;
-	}
-	
 	public void setOrientation(Orientation or) {
+		
+		// calculate length
+		int length = 0;
+		for (ToolbarButton btn : _buttons) {
+			length += (or == Orientation.HORIZONTAL) ? btn.getWidth() : btn.getHeight();
+		}
+		
 		_orientation = or;
 		if (_orientation == Orientation.HORIZONTAL) {
-			_width = 300;
+			_width = length;
 			_height = 30;
 		}
-		else{
+		else {
 			_width = 30;
-			_height = 300;
+			_height = length;
 		}
 		
 	}
@@ -78,18 +65,33 @@ public abstract class Toolbar implements Drawable{
 	public void drawSelf(Graphics g) {
 		g.setColor(myColor);
 		g.fillRect(_x, _y, _width, _height);
-	}
-	
-	/*
-	 * Returns whether a given point is within the toolbar
-	 */
-	public boolean hitTestPoint(int cx, int cy) {
-		return _x < cx && cx < _x + _width &&
-				 _y < cy && cy < _y + _height;
+		
+		// draw buttons
+		int buttonX = _x, buttonY = _y;
+		
+		for (ToolbarButton btn : _buttons) {
+			btn.setX(buttonX);
+			btn.setY(buttonY);
+			
+			if(_orientation == Orientation.HORIZONTAL)
+				buttonX += btn.getWidth();
+			else
+				buttonY += btn.getHeight();
+			
+			btn.drawSelf(g);
+		}
 	}
 	
 	public void mouseClicked(MouseEvent e) {
+		int ex = e.getX();
+		int ey = e.getY();
 		
+		// test button clicks
+		for (ToolbarButton btn : _buttons) {
+			if (btn.hitTestPoint(ex, ey)) {
+				btn.getInstruction();
+			}
+		}
 	}
 	
 	/* Begin dragging and undock

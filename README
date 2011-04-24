@@ -1,3 +1,11 @@
+------COMPILE------
+javac */*.java
+
+
+--------RUN--------
+java arranger.Main
+
+
 ----CODING STYLE----
 package pckg;
 

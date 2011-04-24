@@ -9,7 +9,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
 
-public class MainPanel extends JPanel implements MouseListener, MouseMotionListener{
+public class MainPanel extends JPanel implements MouseListener, MouseMotionListener {
 	
 	boolean _disabled;
 	
@@ -59,6 +59,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			drawer.drawSelf(g);
 		}
 	}
+	
+	
 	
 	/* Handle a mouse press on a toolbar or the score window
 	 * 

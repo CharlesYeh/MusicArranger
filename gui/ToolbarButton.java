@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import logic.Instruction;
 
-public class ToolbarButton implements Drawable {
-	int _x, _y, _width, _height;
-	
+public class ToolbarButton extends Drawable {
+	final static int PADDING = 1;
 	BufferedImage _icon;
 	
 	public ToolbarButton(String iconFile) {
@@ -24,13 +24,12 @@ public class ToolbarButton implements Drawable {
 		
 		_x = cx;
 		_y = cy;
+		_width = _icon.getWidth();
+		_height = _icon.getHeight();
 	}  
 	
-	public void setX(int cx) {
-		_x = cx;
-	}
-	public void setY(int cy) {
-		_y = cy;
+	public Instruction getInstruction() {
+		return new Instruction(this);
 	}
 	
 	public void drawSelf(Graphics g) {
