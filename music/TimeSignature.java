@@ -13,8 +13,8 @@ public class TimeSignature extends Timestep {
 		_denominator = denominator;
 	}
 	
-	public Timestep getMeasureDuration() {
-		return new Timestep(new Rational(1, 1));
+	public Rational getMeasureDuration() {
+		return new Rational(_numerator, _denominator);
 	}
 	
 	public int getNumerator() {
