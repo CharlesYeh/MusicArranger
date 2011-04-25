@@ -64,10 +64,10 @@ public class XMLParser {
 		return keySigs;
 	}
 	public KeySignature parseKeySignature(Element keySig) {
-		Timestep dur = parseTimestep(timeSig.element("duration"));
+		Timestep dur = parseTimestep(keySig.element("duration"));
 		
-		int accidentals = parseIntAttribute(sig, "accidentals");
-		boolean isMajor = parseBooleanAttribute(sig, "isMajor");
+		int accidentals = parseIntAttribute(keySig, "accidentals");
+		boolean isMajor = parseBooleanAttribute(keySig, "isMajor");
 		return new KeySignature(dur.getDuration(), accidentals, isMajor);
 	}
 	
@@ -76,7 +76,7 @@ public class XMLParser {
 		
 		List<Element> elemKeySigs = elemSig.elements("timeSignature");
 		for (Element sig : elemKeySigs) {
-			TimeSignature keySig = parseTimeSignature(sig);
+			TimeSignature timeSig = parseTimeSignature(sig);
 			timeSigs.add(timeSig);
 		}
 		
@@ -86,18 +86,18 @@ public class XMLParser {
 	public TimeSignature parseTimeSignature(Element timeSig) {
 		Timestep dur = parseTimestep(timeSig.element("duration"));
 		
-		int numer = parseIntAttribute(sig, "numerator");
-		int denom = parseIntAttribute(sig, "denominator");
+		int numer = parseIntAttribute(timeSig, "numerator");
+		int denom = parseIntAttribute(timeSig, "denominator");
 		return new TimeSignature(dur.getDuration(), numer, denom);
 	}
 	
 	public List<Clef> parseClefs(Element e) {
-		List<TimeSignature> clefs = new ArrayList<TimeSignature>();
+		List<Clef> clefs = new ArrayList<Clef>();
 		
 		List<Element> elemClefs = e.elements("clef");
 		for (Element clef : elemClefs) {
-			Clef clef = parseClef(clef);
-			clefs.add(clef);
+			Clef c = parseClef(clef);
+			clefs.add(c);
 		}
 		
 		return clefs;
@@ -112,13 +112,14 @@ public class XMLParser {
 	}
 	
 	public ClefName getClefName(String type){
-		return Enum.Parse(typeof(ClefName), type, true);
+		return ClefName.valueOf(type);
 	}
 	
 	//--------------------MUSIC PARSING--------------------
 	
 	public Voice parseVoice(Element elemVoice) {
-		List<MultiNote> multinotes = new ArrayList<MultiNote>();
+		Voice v = new Voice();
+		List<MultiNote> multinotes = v.getMultiNotes();
 		
 		List<Element> elemMNs = elemVoice.elements("multinote");
 		for (Element elemMN : elemMNs) {
@@ -126,16 +127,16 @@ public class XMLParser {
 			multinotes.add(mn);
 		}
 		
-		return multinotes;
+		return v;
 	}
 	
-	public MultiNote parseMultiNote(Element mn) {
-		Timestep dur = parseTimestep(elemClef.element("duration"));
+	public MultiNote parseMultiNote(Element elemmn) {
+		Timestep dur = parseTimestep(elemmn.element("duration"));
 		MultiNote mn = new MultiNote(dur.getDuration());
 		List<Pitch> pitches = mn.getPitches();
 		
-		Element elemPitchGroup = mn.elements("pitches");
-		Element elemPitches = elemPitchGroup.elements("pitch");
+		Element elemPitchGroup = elemmn.element("pitches");
+		List<Element> elemPitches = elemPitchGroup.elements("pitch");
 		for (Element elemPitch : elemPitches) {
 			Pitch p = parsePitch(elemPitch);
 			pitches.add(p);
@@ -149,15 +150,15 @@ public class XMLParser {
 		NoteLetter letter = getNoteLetter(parseStringAttribute(elemPitch, "key"));
 		Accidental accid = getAccidental(parseStringAttribute(elemPitch, "accidental"));
 		
-		Pitch p = new Pitch(letter, octave, accid, false);
+		return new Pitch(letter, octave, accid, false);
 	}
 	
 	public NoteLetter getNoteLetter(String letter) {
-		return Enum.Parse(typeof(NoteLetter), letter, true);
+		return NoteLetter.valueOf(letter);
 	}
 	
-	public NoteLetter getAccidental(String letter) {
-		return Enum.Parse(typeof(Accidental), letter, true);
+	public Accidental getAccidental(String letter) {
+		return Accidental.valueOf(letter);
 	}
 	
 	public Timestep parseTimestep(Element dur) {
@@ -170,7 +171,7 @@ public class XMLParser {
 		return Integer.parseInt(e.attribute(attr).getValue());
 	}
 	
-	public boolean parseIntAttribute(Element e, String attr) {
+	public boolean parseBooleanAttribute(Element e, String attr) {
 		return e.attribute(attr).getValue().equals("true");
 	}
 	

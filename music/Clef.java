@@ -3,7 +3,7 @@ package music;
 /* Clef represents a musical clef within the piece, used for specifying the locations of specific
  * pitches within the staff.
  */
-public class Clef extends Duration {
+public class Clef extends Timestep {
 	ClefName _clefName;			// Specifies what type of clef to draw
 	int _centerLine;			// Specifies line of the staff the clef centers upon; center line is 0, negative transposes down, positive transposes up
 	

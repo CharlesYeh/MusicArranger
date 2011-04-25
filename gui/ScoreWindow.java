@@ -110,8 +110,8 @@ public class ScoreWindow extends Drawable {
 		int noteX;
 		while (pQueue.size() > 0) {
 			TimestampAssociator timeAssoc = pQueue.poll();
-			ListIterator<? extends Duration> listDur = timeAssoc.getAssociated();
-			Duration nextDur = listDur.next();
+			ListIterator<? extends Timestep> listDur = timeAssoc.getAssociated();
+			Timestep nextDur = listDur.next();
 			if (listDur.hasNext()) {
 				timeAssoc.addDuration(nextDur);
 				pQueue.add(timeAssoc);

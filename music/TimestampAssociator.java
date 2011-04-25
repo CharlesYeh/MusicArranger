@@ -2,9 +2,9 @@ package music;
 
 import java.util.ListIterator;
 
-public class TimestampAssociator extends Duration implements Comparable{
-	ListIterator<? extends Duration> _associated;
-	public TimestampAssociator(ListIterator<? extends Duration> assoc) {
+public class TimestampAssociator extends Timestep implements Comparable{
+	ListIterator<? extends Timestep> _associated;
+	public TimestampAssociator(ListIterator<? extends Timestep> assoc) {
 		_associated = assoc;
 	}
 	
@@ -13,7 +13,7 @@ public class TimestampAssociator extends Duration implements Comparable{
 		return compareTo(dur);
 	}
 	
-	public ListIterator<? extends Duration> getAssociated() {
+	public ListIterator<? extends Timestep> getAssociated() {
 		return _associated;
 	}
 }
