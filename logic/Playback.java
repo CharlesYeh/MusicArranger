@@ -13,7 +13,7 @@ public class Playback{
 	public Playback(int wholeNoteDuration){
 		_wholeNoteDuration = wholeNoteDuration;
 	}
-
+	
     public void playVoice(Voice v) {
 
             LinkedList<MultiNote> mns = v.getMultiNotes();
