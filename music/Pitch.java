@@ -13,6 +13,10 @@ public class Pitch {
 		_isTiedToNext = isTiedToNext;
 	}
 	
+	public Pitch(NoteLetter noteLetter, int octave, Accidental accidental){
+		this(noteLetter, octave, accidental, false);
+	}
+	
 	public NoteLetter getNoteLetter() {
 		return _noteLetter;
 	}
