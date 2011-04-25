@@ -8,9 +8,9 @@ public enum NoteLetter {
 	private int _intValue;
 	private int _pitchValue;
 	
-	NoteLetter(int intValue, pitchValue) {
-		this._intValue = intValue;
-		this._pitchValue = pitchValue;
+	NoteLetter(int intValue, int pitchValue) {
+		_intValue = intValue;
+		_pitchValue = pitchValue;
 	}
 	
 	

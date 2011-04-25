@@ -1,6 +1,6 @@
 package logic;
 
-import music.Piece;
+import music.*;
 
 import java.util.List;
 
@@ -45,44 +45,59 @@ public class XMLParser {
 			// EVAAAAAAAAAAAAN ADD VOICES!
 			
 		}
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node node = nodeList.item(i);
-			
-			
-		}
-		while(i.hasNext()){
-			Element currElement = i.next();
-			
-			SolarBody obj;
-			String elementType = currElement.attribute("TYPE").getStringValue();
-			
-		}
 	}
+	
+	//--------------------STRUCTURE PARSING--------------------
 	
 	public KeySignature parseKeySignature(Element keySig) {
 		
+		return new KeySignature();
 	}
 	
 	public TimeSignature parseTimeSignature(Element timeSig) {
-		Duration dur = parseDuration(timeSig.element("duration"));
+		Timestep dur = parseTimestep(timeSig.element("duration"));
 		
 		Element sig = timeSig.element("timeSignature");
 		int numer = parseIntAttribute(sig, "numerator");
 		int denom = parseIntAttribute(sig, "denominator");
-		return new TimeSignature();
+		return new TimeSignature(dur.getDuration(), numer, denom);
 	}
 	
-	public Duration parseDuration(Element dur) {
-		int numer = Integer.parseInt(dur.attribute("durNumerator"));
-		int denom = Integer.parseInt(dur.attribute("durDenominator"));
-		return new Duration(new Rational(numer, denom));
+	public List<Clef> parseClefs(Element e) {
+		List<Element> clefs = e.elements("clef");
+		for (Element clef : clefs) {
+			parseClef(clef);
+		}
 	}
 	
-	public parseVoice(Element voice) {
+	public Clef parseClef(Element elemClef) {
+		Timestep dur = parseTimestep(timeSig.element("duration"));
+		
+		String type = parseStringAttribute(elemClef, "type");
+		int centLine = parseIntAttribute(elemClef, "center_line");
+		return new Clef(dur.getDuration(), type, centLine);
+	}
+	
+	//--------------------MUSIC PARSING--------------------
+	
+	public Voice parseVoice(Element elemVoice) {
 		
 	}
 	
+	public MultiNote parseMultiNote(Element mn) {
+		Timestep 
+	}
+	
+	public Timestep parseTimestep(Element dur) {
+		int numer = parseIntAttribute(dur, "durNumerator");
+		int denom = parseIntAttribute(dur, "durDenominator");
+		return new Timestep(new Rational(numer, denom));
+	}
+	
 	public int parseIntAttribute(Element e, String attr) {
-		return Integer.parseInt(e.attribute(attr));
+		return Integer.parseInt(e.attribute(attr).getValue());
+	}
+	public String parseStringAttribute(Element e, String attr) {
+		return e.attribute(attr).getValue();
 	}
 }

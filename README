@@ -33,24 +33,24 @@ public class {
 <piece>
 	<staff>
 		<timeSignatures>
-			<duration durNumerator=”4” durDenominator=”1” />
+			<timestep durNumerator=”4” durDenominator=”1” />
 			<timeSignature numerator=”4” denominator=”4” />
 		</timeSignatures>
 		<keySignatures>
-			<duration durNumerator=”4” durDenominator=”1” />
+			<timestep durNumerator=”4” durDenominator=”1” />
 			<keySignature accidentals=”0” isMajor=”true” />
 		</keySignatures>
 		<clefs>
 			<clef type=”GCLEF” center_line=”-2”>
-				<duration durNumerator=”2” durDenominator=”1” />
+				<timestep durNumerator=”2” durDenominator=”1” />
 			</clef>
 			<clef type=”FCLEF” center_line=”2”>
-				<duration durNumerator=”2” durDenominator=”1” />
+				<timestep durNumerator=”2” durDenominator=”1” />
 			</clef>
 		</clefs>
 		<voice>
 			<multinote>
-				<duration durNumerator=”1” durDenominator=”1” />
+				<timestep durNumerator=”1” durDenominator=”1” />
 				<pitches>
 					<pitch octave=”4” key=”C” accidental=”NATURAL” />
 					<pitch octave=”4” key=”E” accidental=”NATURAL” />
@@ -58,7 +58,7 @@ public class {
 				</pitches>
 			</multinote>
 			<multinote>
-				<duration durNumerator=”1” durDenominator=”1” />
+				<timestep durNumerator=”1” durDenominator=”1” />
 				<pitches>
 					<pitch octave=”4” key=”C” accidental=”NATURAL” />
 					<pitch octave=”4” key=”F” accidental=”NATURAL” />
@@ -66,7 +66,7 @@ public class {
 				</pitches>
 			</multinote>
 			<multinote> 
-				<duration durNumerator=”1” durDenominator=”1” />
+				<timestep durNumerator=”1” durDenominator=”1” />
 				<pitches>
 					<pitch octave=”4” key=”B” accidental=”NATURAL” />
 					<pitch octave=”4” key=”D” accidental=”NATURAL” />
@@ -74,7 +74,7 @@ public class {
 				</pitches>
 			</multinote>
 <multinote>
-				<duration durNumerator=”1” durDenominator=”1” />
+				<timestep durNumerator=”1” durDenominator=”1” />
 				<pitches>
 					<pitch octave=”4” key=”C” accidental=”NATURAL” />
 					<pitch octave=”4” key=”E” accidental=”NATURAL” />
@@ -85,36 +85,36 @@ public class {
 	</staff>
 	<staff>
 		<timeSignatures>
-			<duration durNumerator=”4” durDenominator=”1” />
+			<timestep durNumerator=”4” durDenominator=”1” />
 			<timeSignature numerator=”4” denominator=”4” />
 		</timeSignatures>
 		<keySignatures>
-			<duration durNumerator=”4” durDenominator=”1” />
+			<timestep durNumerator=”4” durDenominator=”1” />
 			<keySignature accidentals=”0” isMajor=”true” />
 		</keySignatures>
 		<clefs>
 			<clef type=”GCLEF” center_line=”-2”>
-				<duration durNumerator=”2” durDenominator=”1” />
+				<timestep durNumerator=”2” durDenominator=”1” />
 			</clef>
 			<clef type=”FCLEF” center_line=”2”>
-				<duration durNumerator=”2” durDenominator=”1” />
+				<timestep durNumerator=”2” durDenominator=”1” />
 			</clef>
 		</clefs>
 		<voice>
 			<multinote>
-				<duration durNumerator=”1” durDenominator=”1” />
+				<timestep durNumerator=”1” durDenominator=”1” />
 				<pitch octave = “3” key=”C” accidental=”NATURAL” />
 			</multinote>
 			<multinote>
-				<duration durNumerator=”1” durDenominator=”1” />
+				<timestep durNumerator=”1” durDenominator=”1” />
 				<pitch octave = “3” key=”F” accidental=”NATURAL” />
 			</multinote>
 			<multinote>
-				<duration durNumerator=”1” durDenominator=”1” />
+				<timestep durNumerator=”1” durDenominator=”1” />
 				<pitch octave = “3” key=”G” accidental=”NATURAL” />
 			</multinote>
 			<multinote>
-				<duration durNumerator=”1” durDenominator=”1” />
+				<timestep durNumerator=”1” durDenominator=”1” />
 				<pitch octave = “3” key=”C” accidental=”NATURAL” />
 			</multinote>
 		</voice>

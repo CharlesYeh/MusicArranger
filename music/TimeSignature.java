@@ -3,7 +3,7 @@ package music;
 /* TimeSig represents a musical time signature, which specifies which type of note represents
  * a beat, and how many beats are contained within a measure.
  */
-public class TimeSignature extends Duration {
+public class TimeSignature extends Timestep {
 	int _numerator;
 	int _denominator;
 	
@@ -13,8 +13,8 @@ public class TimeSignature extends Duration {
 		_denominator = denominator;
 	}
 	
-	public Duration getMeasureDuration() {
-		return _measureDuration;
+	public Timestep getMeasureDuration() {
+		return new Timestep(new Rational(1, 1));
 	}
 	
 	public int getNumerator() {
