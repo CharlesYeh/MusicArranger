@@ -27,7 +27,8 @@ public class Main extends JFrame{
 		_parser = new XMLParser();
 		_writer = new XMLWriter();
 		
-		_piece = new Piece();
+		// ######################################################
+		_piece = new tests.TestPiece();
 		
 		
 		MainPanel mainPanel = new MainPanel(_piece);
