@@ -20,19 +20,22 @@ public class XMLParser {
 		Document doc = _reader.read(new FileReader(fileName));
 		Element root = doc.getRootElement();
 		
+		Piece piece = new Piece();
+		
+		// iterate through time sig
+		List<Element> timeSig = root.elements("timeSignatures");
+		List<TimeSignature> timeSigs = parseTimeSignatures(timeSig);
+		// EVAAAAAAAAAAAAN ADD TIME SIGNATURE!
+		
+		// iterate through key sig
+		List<Element> keySig = root.elements("keySignatures");
+		List<KeySignature> keySigs = parseKeySignatures(keySig);
+		// EVAAAAAAAAAAAAN ADD KEY SIGNATURE!
+			
+		
 		// iterate through staffs
 		List<Element> staffs = root.elements("staff");
-		for (Element staff : staffs) {
-			// iterate through time sig
-			Element timeSig = root.element("timeSignatures");
-			parseTimeSignature(timeSig);
-			// EVAAAAAAAAAAAAN ADD TIME SIGNATURE!
-			
-			// iterate through key sig
-			Element keySig = root.element("keySignatures");
-			parseKeySignature(keySig);
-			// EVAAAAAAAAAAAAN ADD KEY SIGNATURE!
-			
+		for (Element staff : staffs) {			
 			// iterate through clefs
 			Element clefs = root.element("clefs");
 			parseClefs(clefs);
@@ -47,7 +50,6 @@ public class XMLParser {
 			
 		}
 		
-		return new Piece();
 	}
 	
 	//--------------------STRUCTURE PARSING--------------------
