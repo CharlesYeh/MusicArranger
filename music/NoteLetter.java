@@ -3,15 +3,22 @@ package music;
  * excluding accidentals.
  */
 public enum NoteLetter {
-	C(0), D(1), E(2), F(3), G(4), A(5), B(6);
+	C(0, 0), D(1, 2), E(2, 4), F(3, 5), G(4, 7), A(5, 9), B(6, 11);
 	
 	private int _intValue;
+	private int _pitchValue;
 	
-	NoteLetter(int intValue) {
+	NoteLetter(int intValue, pitchValue) {
 		this._intValue = intValue;
+		this._pitchValue = pitchValue;
 	}
+	
 	
 	public int intValue() {
 		return _intValue;
+	}
+	
+	public int pitchValue() {
+		return _pitchValue;
 	}
 }

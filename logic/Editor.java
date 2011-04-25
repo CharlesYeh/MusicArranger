@@ -9,7 +9,6 @@ import music.*;
 public class Editor{
 	Piece _piece;				// piece being edited
 	
-	
 	public Editor(){
 		
 	}
