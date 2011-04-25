@@ -13,13 +13,22 @@ public class Editor{
 		
 	}
 	
-	// STAFF EDITING
-	//public
+	// PITCH EDITING
 	
-	/* takes in a staff number, a voice number, and a MultiNote, and appends that MultiNote to 
-	 * the end of the staff/voice specified
-	 */
-	public void insertMultiNote(ListIterator iter, MultiNote note) {
-		
-	}
+	// MULTINOTE EDITING
+	
+	// VOICE EDITING
+	
+	// CLEF EDITING
+	
+	// STAFF EDITING
+	
+	// TIME SIGNATURE EDITING
+	
+	// KEY SIGNTAURE EDITING
+	
+	// CHORD SYMBOL EDITING
+	
+	// PIECE EDITING
+	
 }
