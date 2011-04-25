@@ -8,13 +8,13 @@ import java.util.ArrayList;
  */
 public class MultiNote extends Timestep {
 	ArrayList<Pitch> _pitches;					// all pitches in the MultiNote, from highest to lowest; an empty list of Pitches represents a rest.
-	
+
 	public MultiNote(Rational duration) {
 		super(duration);
 		_pitches = new ArrayList<Pitch>();
 	}
-	
-	public List<Pitch> getPitches() {
+
+	public ArrayList<Pitch> getPitches() {
 		return _pitches;
 	}
 }

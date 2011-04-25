@@ -14,9 +14,12 @@ public class Playback{
 		_wholeNoteDuration = wholeNoteDuration;
 	}
 
-    public static void playVoice(Voice v) throws Exception {
+    public void playVoice(Voice v) {
 
             LinkedList<MultiNote> mns = v.getMultiNotes();
+
+            try{
+
             Synthesizer synth = MidiSystem.getSynthesizer();
             synth.open();
             Receiver receiver = synth.getReceiver();
@@ -26,7 +29,10 @@ public class Playback{
                 ArrayList<Pitch> _pitches = mn.getPitches();
                 Rational beatduration = mn.getDuration();
 
-                int duration = _wholeNoteDuration * (beatduration.getNumerator()/beatduration.getDenominator());
+				System.out.println("beat is "+beatduration.getNumerator()+"/"+beatduration.getDenominator());
+				System.out.println("_wholeNoteDuration is "+_wholeNoteDuration);
+				double durationDouble = _wholeNoteDuration * (double) beatduration.getNumerator()/ beatduration.getDenominator();
+                int duration = (int) durationDouble;
 
                 //navigate to a single note
                 //turn on the notes
@@ -40,21 +46,26 @@ public class Playback{
 
                 //let thread sleep for the duration of the note
                     Thread.sleep(duration);
+                    System.out.println("duration of playing the note is:  " + duration);
 
                 //turn off the notes
                 for (int j = 0; j < _pitches.size(); j++) {
-                    int pitch = _pitches.get(j);
+                    Pitch p = _pitches.get(j);
                     MidiMessage noteMessage = getMessage(ShortMessage.NOTE_OFF, computeMidiPitch(p));
 
                     // 0 means execute immediately
                     receiver.send(noteMessage, 0);
                 }
             }
+            } catch (Exception e){
+            	e.printStackTrace();
+            	System.out.println("Error in playing voice");
+            }
     }
 
     //helper method for creating a midimesage;
     //volume and channel number is presumed for now. They will not be changed to not be hardcoded.
-    public static MidiMessage getMessage(int cmd, int note) throws Exception {
+    public MidiMessage getMessage(int cmd, int note) throws Exception {
 
         // no error checking
 
@@ -66,7 +77,7 @@ public class Playback{
     }
 
     //for playing a single note
-    public static void playNote(int note, int duration) throws Exception {
+    public void playNote(int note, int duration) throws Exception {
 
         Synthesizer synth = MidiSystem.getSynthesizer();
         synth.open();
