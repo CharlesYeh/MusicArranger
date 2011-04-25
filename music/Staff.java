@@ -11,6 +11,10 @@ public class Staff{
 
 	public Staff() {
 		_voices = new ArrayList<Voice>();
+		for (int i = 0; i<4; i++) {
+			_voices.add(new Voice());	// Staffs will, by default, support exactly four voices.
+		}
+		
 		_clefs = new ArrayList<Clef>();
 	}
 	

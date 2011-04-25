@@ -34,15 +34,15 @@ public class ArrangerXMLParser {
 		
 		// iterate through staffs
 		List<Element> elemStaffs = root.elements("staff");
-		for (Element staff : elemStaffs) {			
+		for (Element elemStaff : elemStaffs) {			
 			// iterate through clefs
-			Element elemClefs = root.element("clefs");
+			Element elemClefs = elemStaff.element("clefs");
 			List<Clef> clefs = parseClefs(elemClefs);
 			// EVAAAAAAAAAAAAN ADD CLEFS!
 			
 			// iterate through voices
 			List<Voice> voices = new ArrayList<Voice>();
-			List<Element> elemVoices = root.elements("voice");
+			List<Element> elemVoices = elemStaff.elements("voice");
 			for (Element voice : elemVoices) {
 				Voice v = parseVoice(voice);
 				voices.add(v);
@@ -68,7 +68,7 @@ public class ArrangerXMLParser {
 		return keySigs;
 	}
 	public KeySignature parseKeySignature(Element keySig) {
-		Rational dur = parseTimestep(keySig.element("duration"));
+		Rational dur = parseTimestep(keySig.element("timestep"));
 		
 		int accidentals = parseIntAttribute(keySig, "accidentals");
 		boolean isMajor = parseBooleanAttribute(keySig, "isMajor");
@@ -88,7 +88,7 @@ public class ArrangerXMLParser {
 	}
 	
 	public TimeSignature parseTimeSignature(Element timeSig) {
-		Rational dur = parseTimestep(timeSig.element("duration"));
+		Rational dur = parseTimestep(timeSig.element("timestep"));
 		
 		int numer = parseIntAttribute(timeSig, "numerator");
 		int denom = parseIntAttribute(timeSig, "denominator");
@@ -108,7 +108,7 @@ public class ArrangerXMLParser {
 	}
 	
 	public Clef parseClef(Element elemClef) {
-		Rational dur = parseTimestep(elemClef.element("duration"));
+		Rational dur = parseTimestep(elemClef.element("timestep"));
 		
 		String type = parseStringAttribute(elemClef, "type");
 		int centLine = parseIntAttribute(elemClef, "center_line");
@@ -135,7 +135,7 @@ public class ArrangerXMLParser {
 	}
 	
 	public MultiNote parseMultiNote(Element elemmn) {
-		Rational dur = parseTimestep(elemmn.element("duration"));
+		Rational dur = parseTimestep(elemmn.element("timestep"));
 		MultiNote mn = new MultiNote(dur);
 		List<Pitch> pitches = mn.getPitches();
 		
@@ -187,7 +187,7 @@ public class ArrangerXMLParser {
 		ArrangerXMLParser writer = new ArrangerXMLParser();
 		
 		try {
-			Piece p = writer.parse("testWrite.xml");
+			Piece p = writer.parse("tests/I_IV_V_I.xml");
 		}
 		catch (Exception e) {
 			e.printStackTrace();

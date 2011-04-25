@@ -15,7 +15,11 @@ public class Editor{
 	
 	public Editor clearScore() {
 		_piece = new Piece();
-		
+		return this;
+	}
+	
+	public Editor setPiece(Piece piece) {
+		_piece = piece;
 		return this;
 	}
 	
