@@ -81,8 +81,8 @@ public abstract class Toolbar extends Drawable {
 	
 	public void drawSelf(Graphics g) {
 		g.setColor(myColor);
-		g.drawImage((_orientation == Orientation.HORIZONTAL) ? IMG_HORIZ : IMG_VERT, _x, _y, null);
-		//g.fillRect(_x, _y, _width, _height);
+		//g.drawImage((_orientation == Orientation.HORIZONTAL) ? IMG_HORIZ : IMG_VERT, _x, _y, null);
+		g.fillRect(_x, _y, _width, _height);
 		
 		// draw buttons
 		int buttonX = _x, buttonY = _y;
