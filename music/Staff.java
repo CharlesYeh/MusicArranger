@@ -10,8 +10,8 @@ public class Staff{
 	ArrayList<Clef> _clefs;			// List of Clefs and their durations.
 
 	public Staff(ArrayList<Voice> voices, ArrayList<Clef> clefs){
-		_voices = voices;
-		_clefs = clefs;
+		_voices = new ArrayList<Voice>();
+		_clefs = new ArrayList<Clef>();
 	}
 	
 	public ArrayList<Voice> getVoices() {

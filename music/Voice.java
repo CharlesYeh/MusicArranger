@@ -8,8 +8,8 @@ import java.util.LinkedList;
 public class Voice {
 	LinkedList<MultiNote> _notes;
 	
-	public Voice(LinkedList<MultiNote> notes){
-		_notes = notes;
+	public Voice(){
+		_notes = new LinkedList<MultiNote>();
 	}
 	
 	public LinkedList<MultiNote> getMultiNotes() {
