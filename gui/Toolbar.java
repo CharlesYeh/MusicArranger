@@ -1,11 +1,17 @@
 package gui;
 
+import java.io.File;
+import java.io.IOException;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import logic.Instruction;
 
 public abstract class Toolbar extends Drawable {
+	static BufferedImage IMG_HORIZ, IMG_VERT;
 	
 	DockController _dockControl;
 	Orientation _orientation;
@@ -16,6 +22,17 @@ public abstract class Toolbar extends Drawable {
 	int _dragX, _dragY;
 	
 	Color myColor;
+	
+	public static void init(String imgHoriz, String imgVert) {
+		try{
+			IMG_HORIZ = ImageIO.read(new File(imgHoriz));
+			IMG_VERT = ImageIO.read(new File(imgVert));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
 	
 	public Toolbar(DockController dockControl, Orientation orient) {
 		_dockControl = dockControl;
@@ -64,7 +81,8 @@ public abstract class Toolbar extends Drawable {
 	
 	public void drawSelf(Graphics g) {
 		g.setColor(myColor);
-		g.fillRect(_x, _y, _width, _height);
+		g.drawImage((_orientation == Orientation.HORIZONTAL) ? IMG_HORIZ : IMG_VERT, _x, _y, null);
+		//g.fillRect(_x, _y, _width, _height);
 		
 		// draw buttons
 		int buttonX = _x, buttonY = _y;

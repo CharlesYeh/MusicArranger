@@ -15,6 +15,8 @@ public class Editor{
 	
 	public Editor clearScore() {
 		_piece = new Piece();
+		
+		return this;
 	}
 	
 	// USED FOR REMOVING A GENERAL ELEMENT FROM ANY GIVEN LIST

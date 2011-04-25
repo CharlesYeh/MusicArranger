@@ -111,13 +111,17 @@ public class ScoreWindow extends Drawable {
 		while (pQueue.size() > 0) {
 			TimestampAssociator timeAssoc = pQueue.poll();
 			ListIterator<? extends Timestep> listDur = timeAssoc.getAssociated();
-			Timestep nextDur = listDur.next();
+			
+			Timestep nextDur = null;
 			if (listDur.hasNext()) {
+				nextDur = listDur.next();
+				
 				timeAssoc.addDuration(nextDur);
 				pQueue.add(timeAssoc);
 			}
 			else {
 				// don't add back to priority queue
+				continue;
 			}
 			
 			int measureWidth = 100;

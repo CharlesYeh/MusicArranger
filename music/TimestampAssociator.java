@@ -18,7 +18,7 @@ public class TimestampAssociator extends Timestep implements Comparable{
 		return _associated;
 	}
 	
-	public int compareTo(long millis) {
+	/*public int compareTo(long millis) {
 		return ((double) _numerator / _denominator < millis) ? -1 : 1;
-	}
+	}*/
 }

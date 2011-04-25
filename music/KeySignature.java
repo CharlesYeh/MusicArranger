@@ -5,7 +5,7 @@ package music;
  */
 public class KeySignature extends Timestep {
 	int _accidentalNumber;			// Specifies the number of accidentals (negative numbers are flats, positives for sharps)
-	boolean _isMajor;				// If true, indicates that the section of the piece is in the major mode, if false, minor.	
+	boolean _isMajor;				// If true, indicates that the section of the piece is in the major mode, if false, minor.
 	
 	public KeySignature(Rational duration, int accidentalNumber, boolean isMajor) {
 		super(duration);

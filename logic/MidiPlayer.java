@@ -1,15 +1,16 @@
 package logic;
 
+import music.*;
 import java.lang.Thread;
 
 public class MidiPlayer extends Thread {
 	
-	PriorityQueue<TimestampAssociator<MultiNote>> _starts;
-	PriorityQueue<TimestampAssociator<MultiNote>> _ends;
+	/*PriorityQueue<TimestampAssociator<MultiNote>> _starts;
+	PriorityQueue<TimestampAssociator<MultiNote>> _ends;*/
 	
 	public MidiPlayer() {
-		_starts = new PriorityQueue<TimestampAssociator<MultiNote>>();
-		_ends = new PriorityQueue<TimestampAssociator<MultiNote>>();
+		/*_starts = new PriorityQueue<TimestampAssociator<MultiNote>>();
+		_ends = new PriorityQueue<TimestampAssociator<MultiNote>>();*/
 	}
 	
 	public void start() {
@@ -22,6 +23,7 @@ public class MidiPlayer extends Thread {
 	}
 	
 	public void run() {
+		/*
 		//System.currentTimeMillis()
 		long nextTime = 0;
 		
@@ -54,6 +56,6 @@ public class MidiPlayer extends Thread {
 			}
 			
 			Thread.sleep(nextTime - currentTime);
-		}
+		}*/
 	}
 }

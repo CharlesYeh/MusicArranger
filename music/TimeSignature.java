@@ -13,9 +13,9 @@ public class TimeSignature extends Timestep {
 		_denominator = denominator;
 	}
 	
-	public Timestep getMeasureDuration() {
+	/*public Timestep getMeasureDuration() {
 		return new Timestep(new Rational(1, 1));
-	}
+	}*/
 	
 	public int getNumerator() {
 		return _numerator;

@@ -11,6 +11,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 
+import java.awt.Color;
+
 import arranger.ArrangerConstants;
 import music.Piece;
 import java.awt.Component;
@@ -26,6 +28,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	ScoreWindow _scoreWindow;
 	
 	public MainPanel(Piece piece) {
+		Toolbar.init("images/gui/toolbarHorizontal.png", "images/gui/toolbarVertical.png");
+		ToolbarButton.init("images/gui/button.png", "images/gui/button_over.png");
+		
 		_toolbars = new LinkedList<Toolbar>();
 		
 		DockController dockControl = new DockController();
@@ -43,6 +48,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);
+		
+		setBackground(Color.WHITE);
 		
 		repaint();
 	}

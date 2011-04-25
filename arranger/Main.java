@@ -16,26 +16,28 @@ import music.*;
  */
 public class Main extends JFrame{
 	
-	XMLParser _parser;
-	XMLWriter _writer;
+	ArrangerXMLParser _parser;
+	ArrangerXMLWriter _writer;
 	
 	Piece _piece;
 	
 	public Main(){
 		super("Music Arranger");
 		
-		_parser = new XMLParser();
-		_writer = new XMLWriter();
+		_parser = new ArrangerXMLParser();
+		_writer = new ArrangerXMLWriter();
 		
 		// ######################################################
 		_piece = new test.TestPiece();
 		
+		ArrangerConstants.WINDOW_WIDTH = 800;
+		ArrangerConstants.WINDOW_HEIGHT = 600;
 		
 		MainPanel mainPanel = new MainPanel(_piece);
 		this.add(mainPanel);
 		
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setSize(800, 600);
+		this.setSize(ArrangerConstants.WINDOW_WIDTH, ArrangerConstants.WINDOW_HEIGHT);
 		this.setVisible(true);
 		
 		addMenuBar();

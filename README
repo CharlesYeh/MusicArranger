@@ -75,7 +75,7 @@ public class {
 					<pitch octave=”4” key=”G” accidental=”NATURAL” />
 				</pitches>
 			</multinote>
-<multinote>
+			<multinote>
 				<timestep durNumerator=”1” durDenominator=”1” />
 				<pitches>
 					<pitch octave=”4” key=”C” accidental=”NATURAL” />
@@ -97,19 +97,27 @@ public class {
 		<voice>
 			<multinote>
 				<timestep durNumerator=”1” durDenominator=”1” />
-				<pitch octave = “3” key=”C” accidental=”NATURAL” />
+				<pitches>
+					<pitch octave = “3” key=”C” accidental=”NATURAL” />
+				</pitches>
 			</multinote>
 			<multinote>
 				<timestep durNumerator=”1” durDenominator=”1” />
-				<pitch octave = “3” key=”F” accidental=”NATURAL” />
+				<pitches>
+					<pitch octave = “3” key=”F” accidental=”NATURAL” />
+				</pitches>
 			</multinote>
 			<multinote>
 				<timestep durNumerator=”1” durDenominator=”1” />
-				<pitch octave = “3” key=”G” accidental=”NATURAL” />
+				<pitches>
+					<pitch octave = “3” key=”G” accidental=”NATURAL” />
+				</pitches>
 			</multinote>
 			<multinote>
 				<timestep durNumerator=”1” durDenominator=”1” />
-				<pitch octave = “3” key=”C” accidental=”NATURAL” />
+				<pitches>
+					<pitch octave = “3” key=”C” accidental=”NATURAL” />
+				</pitches>
 			</multinote>
 		</voice>
 	</staff>
