@@ -3,7 +3,7 @@ package music;
 /* Duration is a class used to represent a rhytmic duration.  It implements rational arithmetic
  * by representing all durations as Rationals.
  */
-public class Timestep {
+public abstract class Timestep {
 	Rational _duration;	// Time duration is stored as a rational number.
 	
 	public Timestep() {
