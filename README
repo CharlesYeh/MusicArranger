@@ -31,15 +31,17 @@ public class {
 
 -----SAMPLE XML-----
 <piece>
+	<timeSignatures>
+		<timeSignature numerator=”4” denominator=”4”>
+			<timestep durNumerator=”4” durDenominator=”1” />
+		</timeSignature>
+	</timeSignatures>
+	<keySignatures>
+		<keySignature accidentals=”0” isMajor=”true”>
+			<timestep durNumerator=”4” durDenominator=”1” />
+		</keySignature>
+	</keySignatures>
 	<staff>
-		<timeSignatures>
-			<timestep durNumerator=”4” durDenominator=”1” />
-			<timeSignature numerator=”4” denominator=”4” />
-		</timeSignatures>
-		<keySignatures>
-			<timestep durNumerator=”4” durDenominator=”1” />
-			<keySignature accidentals=”0” isMajor=”true” />
-		</keySignatures>
 		<clefs>
 			<clef type=”GCLEF” center_line=”-2”>
 				<timestep durNumerator=”2” durDenominator=”1” />
@@ -84,14 +86,6 @@ public class {
 		</voice>
 	</staff>
 	<staff>
-		<timeSignatures>
-			<timestep durNumerator=”4” durDenominator=”1” />
-			<timeSignature numerator=”4” denominator=”4” />
-		</timeSignatures>
-		<keySignatures>
-			<timestep durNumerator=”4” durDenominator=”1” />
-			<keySignature accidentals=”0” isMajor=”true” />
-		</keySignatures>
 		<clefs>
 			<clef type=”GCLEF” center_line=”-2”>
 				<timestep durNumerator=”2” durDenominator=”1” />

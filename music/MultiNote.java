@@ -1,5 +1,6 @@
 package music;
 
+import java.util.List;
 import java.util.ArrayList;
 
 /* MultiNote is a broad class definition used to describe either a rest, a single note, or an
@@ -13,7 +14,7 @@ public class MultiNote extends Duration {
 		_pitches = new ArrayList<Pitch>();
 	}
 	
-	public ArrayList<Pitch> getPitches() {
+	public List<Pitch> getPitches() {
 		return _pitches;
 	}
 }

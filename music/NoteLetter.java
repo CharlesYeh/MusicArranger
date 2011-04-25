@@ -13,7 +13,6 @@ public enum NoteLetter {
 		_pitchValue = pitchValue;
 	}
 	
-	
 	public int intValue() {
 		return _intValue;
 	}
