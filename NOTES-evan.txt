@@ -1,3 +1,5 @@
+Below is the code that used to be in Clef, to get the line number of a note, given the clef and the pitch.  Implement it in the GUI once you need it.
+
 	// getLineNumber takes in a pitch and returns an int representing the pitch's line number.
 	public int getLineNumber(Pitch pitch) {
 		if (_centerLine < -4 || _centerLine > 4) {
