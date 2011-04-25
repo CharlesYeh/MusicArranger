@@ -13,6 +13,15 @@ public enum NoteLetter {
 		_pitchValue = pitchValue;
 	}
 	
+	public static NoteLetter getNoteLetter(int v) {
+		// v must be from 0 to 7
+		v = v % 8;
+		if (v < 0)
+			v += 8;
+		
+		return NoteLetter.values()[v];
+	}
+	
 	public int intValue() {
 		return _intValue;
 	}

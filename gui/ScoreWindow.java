@@ -70,40 +70,60 @@ public class ScoreWindow extends Drawable {
 		// list manuevering
 		PriorityQueue<TimestampAssociator> pQueue = new PriorityQueue<TimestampAssociator>();
 		
+		//-------------------------listiters-----------------------
 		// load structure
 		List<KeySignature> keySigs 	= _piece.getKeySignatures();
 		List<TimeSignature> timeSigs 	= _piece.getTimeSignatures();
 		List<ChordSymbol> chords		= _piece.getChordSymbols();
-		/*pQueue.add(new TimestampAssociator(keySigs.listIterator()));
-		pQueue.add(new TimestampAssociator(timeSigs.listIterator()));
-		pQueue.add(new TimestampAssociator(chords.listIterator()));*/
 		
-		// load notes
-		// mapping of notes (voice) to staffs
-		Map<ListIterator<MultiNote>, Staff> notes = new HashMap<ListIterator<MultiNote>, Staff>();
-		// mapping of staffs to clefs
-		//Map<Staff, Clef> clefs = new HashMap<Staff, Clef>();
+		ListIterator<KeySignature> keyIter 	= keySigs.listIterator();
+		ListIterator<TimeSignature> timeIter = timeSigs.listIterator();
+		ListIterator<ChordSymbol> chordIter = chords.listIterator();
 		
+		/*
+		pQueue.add(new TimestampAssociator(keyIter));
+		pQueue.add(new TimestampAssociator(timeIter));
+		pQueue.add(new TimestampAssociator(chordIter));
+		*/
+		//-----------------------end listiters----------------------
+		
+		//-----------------------current data-----------------------
+		// use map to find which staff each voice is on
+		Map<ListIterator<? extends Timestep>, Staff> timestepStaff = new HashMap<ListIterator<? extends Timestep>, Staff>();
+		// use map to find which clef each staff is currently using
+		Map<Staff, Clef> currClefs = new HashMap<Staff, Clef>();
+		
+		KeySignature currKeySig 	= keySigs.get(0);
+		TimeSignature currTimeSig 	= timeSigs.get(0);
+		//ChordSymbol currChord		= chords.get(0);
+		//---------------------end current data---------------------
+		
+		//------------------------load notes------------------------
 		// add multinote lists from each staff>voice to pQueue
 		List<Staff> staffs = _piece.getStaffs();
 		for (Staff st : staffs) {
 			List<Voice> voices = st.getVoices();
-			//clefs.put(st, st.getClef());
+			
+			// handle clefs
+			List<Clef> initClef = st.getClefs();
+			ListIterator<Clef> clefIter = initClef.listIterator();
+			timestepStaff.put(clefIter, st);
+			
+			//###pQueue.add(new TimestampAssociator(clefIter);
+			
+			// get first clef on each staff
+			currClefs.put(st, initClef.get(0));
 			
 			for (Voice v : voices) {
 				List<MultiNote> multis = v.getMultiNotes();
 				ListIterator<MultiNote> multisList = multis.listIterator();
 				
 				// so we can get the staff a voice is on easily
-				notes.put(multisList, st);
+				timestepStaff.put(multisList, st);
 				pQueue.add(new TimestampAssociator(multisList));
 			}
 		}
-		
-		Map<MultiNote, Clef> currClefs;
-		KeySignature currKeySig;
-		TimeSignature currTimeSig;
-		ChordSymbol currChord;
+		//----------------------end load notes----------------------
 		
 		// start drawing
 		boolean startDrawing = true;
@@ -112,11 +132,11 @@ public class ScoreWindow extends Drawable {
 		int noteX = staffX;
 		while (pQueue.size() > 0) {
 			TimestampAssociator timeAssoc = pQueue.poll();
-			ListIterator<? extends Timestep> listDur = timeAssoc.getAssociated();
+			ListIterator<Timestep> listDur = (ListIterator<Timestep>) timeAssoc.getAssociated();//################
 			
 			Timestep nextDur = null;
 			if (listDur.hasNext()) {
-				nextDur = listDur.next();
+				nextDur = (Timestep) listDur.next();		//################
 				
 				timeAssoc.addDuration(nextDur);
 				pQueue.add(timeAssoc);
@@ -127,7 +147,7 @@ public class ScoreWindow extends Drawable {
 			}
 			
 			int measureWidth = 100;
-			Rational measureTime = currTimeSignature;
+			Rational measureTime = currTimeSig.getMeasureDuration();
 			if (staffX + measureWidth > ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN || startDrawing) {
 				startDrawing = false;
 				
@@ -139,11 +159,12 @@ public class ScoreWindow extends Drawable {
 				noteX = staffX;
 			}
 			
+			// draw duration object
 			if (nextDur instanceof KeySignature) {
 				KeySignature keySig = (KeySignature) nextDur;
 				currKeySig = keySig;
 				
-				// draw time sig
+				// draw key sig
 			}
 			else if (nextDur instanceof TimeSignature) {
 				TimeSignature timeSig = (TimeSignature) nextDur;
@@ -162,7 +183,16 @@ public class ScoreWindow extends Drawable {
 			else if (nextDur instanceof MultiNote) {
 				MultiNote mn = (MultiNote) nextDur;
 				
-				drawNote(g, noteX, systemY);
+				// draw all pitches
+				Clef currClef = currClefs.get(listDur);
+				
+				List<Pitch> pitches = mn.getPitches();
+				for (Pitch p : pitches) {
+					// add 2 since the third line is "number 0"
+					int line = getLineNumber(currClef, p) + 2;
+					int noteY = line * SYSTEM_LINE_SPACING + systemY;
+					drawNote(g, noteX, noteY);
+				} 
 				
 				// noteX should increase proportional to note length
 				Rational dur = mn.getDuration();
@@ -215,7 +245,6 @@ public class ScoreWindow extends Drawable {
 		
 		//draw stem
 		g.drawLine(xc, yc, xc, yc - 50);
-		
 	}
 	
 	private void drawAccidental(Graphics g, Accidental accid, int xc, int yc) {
@@ -246,16 +275,26 @@ public class ScoreWindow extends Drawable {
 		g.drawImage(accidImage, xc, yc, null);
 	}
 	
+	// getLineNumber takes in a pitch and returns an int representing the pitch's line number.
+	public int getLineNumber(Clef c, Pitch pitch) {
+		int centerValue = c.getCenterValue();
+		int pitchValue = pitch.getNoteLetter().intValue() + pitch.getOctave() * 7;
+		return pitchValue - centerValue + c.getCenterLine();
+	}
+	
 	public void mouseClicked(MouseEvent e) {
 		
 	}
 	
 	public void mousePressed(MouseEvent e) {
+		
 	}
 	
 	public void mouseReleased(MouseEvent e) {
+		
 	}
 	
 	public void mouseDragged(MouseEvent e) {
+		
 	}
 }
