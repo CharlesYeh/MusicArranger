@@ -28,7 +28,7 @@ public class Main extends JFrame{
 		_writer = new ArrangerXMLWriter();
 		
 		// ######################################################
-		_piece = new test.TestPiece();
+		_piece = new test.SimplePiece();
 		
 		ArrangerConstants.WINDOW_WIDTH = 800;
 		ArrangerConstants.WINDOW_HEIGHT = 600;

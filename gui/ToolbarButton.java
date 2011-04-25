@@ -48,7 +48,7 @@ public class ToolbarButton extends Drawable {
 	}
 	
 	public void drawSelf(Graphics g) {
-		g.drawImage(IMG_OUT, _x, _y, null);
+		//g.drawImage(IMG_OUT, _x, _y, null);
 		g.drawImage(_icon, _x, _y, null);
 	}
 	

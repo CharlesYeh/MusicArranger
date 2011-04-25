@@ -23,7 +23,9 @@ public class ScoreWindow extends Drawable {
 	final static int LEFT_MARGIN	= 50;
 	final static int RIGHT_MARGIN	= 50;
 	final static int SYSTEM_LINE_SPACING = 10;
-	final static int SYSTEM_SPACING = 50;
+	final static int SYSTEM_SPACING = 80;
+	
+	final static int MEASURE_WIDTH = 100;
 	
 	Image _imgQuarter, _imgHalf, _imgWhole, _imgRest,
 			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp; 
@@ -107,7 +109,7 @@ public class ScoreWindow extends Drawable {
 		boolean startDrawing = true;
 		int systemY 	= TOP_MARGIN - SYSTEM_SPACING;
 		int staffX		= LEFT_MARGIN;
-		int noteX;
+		int noteX = staffX;
 		while (pQueue.size() > 0) {
 			TimestampAssociator timeAssoc = pQueue.poll();
 			ListIterator<? extends Timestep> listDur = timeAssoc.getAssociated();
@@ -125,6 +127,7 @@ public class ScoreWindow extends Drawable {
 			}
 			
 			int measureWidth = 100;
+			Rational measureTime = currTimeSignature;
 			if (staffX + measureWidth > ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN || startDrawing) {
 				startDrawing = false;
 				
@@ -132,12 +135,43 @@ public class ScoreWindow extends Drawable {
 				drawSystem(g, systemY);
 				systemY += SYSTEM_SPACING;
 				staffX = LEFT_MARGIN;
+				
+				noteX = staffX;
 			}
 			
-			// start of system
-			noteX = staffX;
-			
-			
+			if (nextDur instanceof KeySignature) {
+				KeySignature keySig = (KeySignature) nextDur;
+				currKeySig = keySig;
+				
+				// draw time sig
+			}
+			else if (nextDur instanceof TimeSignature) {
+				TimeSignature timeSig = (TimeSignature) nextDur;
+				currTimeSig = timeSig;
+				
+				// draw time sig
+			}
+			else if (nextDur instanceof Clef) {
+				Clef clef = (Clef) nextDur;
+				
+			}
+			else if (nextDur instanceof ChordSymbol) {
+				ChordSymbol cSymbol = (ChordSymbol) nextDur;
+				
+			}
+			else if (nextDur instanceof MultiNote) {
+				MultiNote mn = (MultiNote) nextDur;
+				
+				drawNote(g, noteX, systemY);
+				
+				// noteX should increase proportional to note length
+				Rational dur = mn.getDuration();
+				int noteWidth = (int) ((double) dur.getNumerator() / dur.getDenominator() * MEASURE_WIDTH);
+				noteX += noteWidth;
+			}
+			else {
+				System.out.println("Unrecognized timestep: " + nextDur);
+			}
 			/*for (ListIterator<MultiNote> mnotes : notes.keySet()) {
 				
 				List<Pitch> pitches = mnote.getPitches();
