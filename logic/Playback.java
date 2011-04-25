@@ -29,8 +29,8 @@ public class Playback{
                 ArrayList<Pitch> _pitches = mn.getPitches();
                 Rational beatduration = mn.getDuration();
 
-				System.out.println("beat is "+beatduration.getNumerator()+"/"+beatduration.getDenominator());
-				System.out.println("_wholeNoteDuration is "+_wholeNoteDuration);
+				//System.out.println("beat is "+beatduration.getNumerator()+"/"+beatduration.getDenominator());
+				//System.out.println("_wholeNoteDuration is "+_wholeNoteDuration);
 				double durationDouble = _wholeNoteDuration * (double) beatduration.getNumerator()/ beatduration.getDenominator();
                 int duration = (int) durationDouble;
 
@@ -46,6 +46,8 @@ public class Playback{
 
                 //let thread sleep for the duration of the note
                     Thread.sleep(duration);
+
+
                     System.out.println("duration of playing the note is:  " + duration);
 
                 //turn off the notes
@@ -76,20 +78,24 @@ public class Playback{
         return (MidiMessage) msg;
     }
 
-    //for playing a single note
-    public void playNote(int note, int duration) throws Exception {
+    //for playing a single pitch with a specified duration
+    public void playPitch(Pitch p, int duration) throws Exception {
 
-        Synthesizer synth = MidiSystem.getSynthesizer();
-        synth.open();
-        Receiver receiver = synth.getReceiver();
-        MidiMessage noteMessage = getMessage(ShortMessage.NOTE_ON, note);
-        // 0 means execute immediately
-        receiver.send(noteMessage, 0);
+		try{
+	        Synthesizer synth = MidiSystem.getSynthesizer();
+	        synth.open();
+	        Receiver receiver = synth.getReceiver();
+	        MidiMessage noteMessage = getMessage(ShortMessage.NOTE_ON, computeMidiPitch(p));
+	        // 0 means execute immediately
+	        receiver.send(noteMessage, 0);
 
-        Thread.sleep(duration);
+	        Thread.sleep(duration);
 
-        noteMessage = getMessage(ShortMessage.NOTE_OFF, note);
-        receiver.send(noteMessage, 0);
+	        noteMessage = getMessage(ShortMessage.NOTE_OFF, computeMidiPitch(p));
+	        receiver.send(noteMessage, 0);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
     }
 
     //takes a Pitch object and returns its midiPitch value

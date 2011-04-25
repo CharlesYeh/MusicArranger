@@ -33,13 +33,16 @@ public class midiAPI_test {
 		voice2.add(mary_had_a_little_lamb);
 		voice2.add(mary_had_a_little_lamb2);
 
-		Playback pb = new Playback(2000);
+		Playback pb = new Playback(1500);
 
 		//choose which voice to play!
-		Voice v = (new midiAPI_test()).createVoiceFromMidiPitches(voice1);
+		Voice v = (new midiAPI_test()).createVoiceFromMidiPitches(voice2);
+
+		Voice v2 = (new midiAPI_test()).createVoiceFromMidiPitches(voice1);
 
 
 		pb.playVoice(v);
+		pb.playVoice(v2);
     }
 
 	public Voice createVoiceFromMidiPitches(ArrayList<int[]> midiPitches){
