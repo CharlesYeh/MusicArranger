@@ -3,9 +3,18 @@ package music;
  * pitch.
  */
 public enum Accidental {
-	DOUBLEFLAT,
-	FLAT,
-	NATURAL,
-	SHARP,
-	DOUBLESHARP;
+	DOUBLEFLAT (-2),
+	FLAT (-1),
+	NATURAL (0),
+	SHARP (1),
+	DOUBLESHARP (2);
+	
+	int _accid;
+	Accidental(int accid) {
+		_accid = accid;
+	}
+	
+	public int intValue() {
+		return _accid;
+	}
 }
