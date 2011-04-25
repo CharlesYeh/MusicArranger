@@ -22,5 +22,8 @@ public class Clef extends Timestep {
 		return _centerLine;
 	}
 	
+	public int getCenterValue() {
+		return _clefName.centerValue();
+	}
 }
 
