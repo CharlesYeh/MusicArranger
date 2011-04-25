@@ -13,6 +13,10 @@ public class Editor{
 		
 	}
 	
+	public Editor clearScore() {
+		_piece = new Piece();
+	}
+	
 	// USED FOR REMOVING A GENERAL ELEMENT FROM ANY GIVEN LIST
 	public <T> Editor removeElem(ListIterator<T> iter) {
 		if (iter.hasNext()) {
