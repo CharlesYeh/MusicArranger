@@ -10,10 +10,14 @@ public class TimestampAssociator extends Timestep implements Comparable{
 	
 	public int compareTo(Object obj) {
 		TimestampAssociator dur = (TimestampAssociator) obj;
-		return compareTo(dur);
+		return getDuration().compareTo(dur.getDuration());
 	}
 	
 	public ListIterator<? extends Timestep> getAssociated() {
 		return _associated;
+	}
+	
+	public int compareTo(long millis) {
+		return ((double) _numerator / _denominator < millis) ? -1 : 1;
 	}
 }
