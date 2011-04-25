@@ -25,7 +25,6 @@ public class Rational {
 		return _denom;
 	}
 	
-	
 	// return { -1, 0, +1 } if a < b, a = b, or a > b
     public int compareTo(Rational b) {
         Rational a = this;
