@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 import java.awt.Point;
 
+import java.awt.Font;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -38,7 +39,8 @@ public class ScoreIllustrator {
 	final static int LEDGER_WIDTH = (int) (SYSTEM_LINE_SPACING * 1.5);
 	
 	Image _imgQuarter, _imgHalf, _imgWhole, _imgRest,
-			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp;
+			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp,
+			_imgClefG, _imgClefF, _imgClefC;
 	
 	// map each system to its y coordinate
 	Map<Integer, Integer> _systemPositions;
@@ -56,6 +58,10 @@ public class ScoreIllustrator {
 			_imgNatural	 	= ImageIO.read(new File("images/score/score_natural.gif"));
 			_imgSharp		= ImageIO.read(new File("images/score/score_sharp.gif"));
 			_imgDoubleSharp= ImageIO.read(new File("images/score/score_dsharp.gif"));
+			
+			_imgClefG		= ImageIO.read(new File("images/score/score_clef_g.png"));
+			_imgClefF		= ImageIO.read(new File("images/score/score_clef_f.png"));
+			_imgClefC		= ImageIO.read(new File("images/score/score_clef_c.png"));
 		}
 		catch (IOException e) {
 			System.out.println("Error while loading musical images: " + e);
@@ -76,10 +82,9 @@ public class ScoreIllustrator {
 		ListIterator<TimeSignature> timeIter = timeSigs.listIterator();
 		ListIterator<ChordSymbol> chordIter = chords.listIterator();
 		
-		/*
-		pQueue.add(new TimestampAssociator(keyIter));
-		pQueue.add(new TimestampAssociator(timeIter));
-		pQueue.add(new TimestampAssociator(chordIter));
+		pQueue.add(new TimestampAssociator(keyIter, KeySignature.class));
+		pQueue.add(new TimestampAssociator(timeIter, TimeSignature.class));
+		/*pQueue.add(new TimestampAssociator(chordIter, ChordSymbol.class));
 		*/
 		//-----------------------end listiters----------------------
 		
@@ -106,7 +111,7 @@ public class ScoreIllustrator {
 			ListIterator<Clef> clefIter = initClef.listIterator();
 			timestepStaff.put(clefIter, st);
 			
-			//###pQueue.add(new TimestampAssociator(clefIter);
+			pQueue.add(new TimestampAssociator(clefIter, Clef.class));
 			
 			// get first clef on each staff
 			currClefs.put(st, initClef.get(0));
@@ -117,7 +122,7 @@ public class ScoreIllustrator {
 				
 				// so we can get the staff a voice is on easily
 				timestepStaff.put(multisList, st);
-				pQueue.add(new TimestampAssociator(multisList));
+				pQueue.add(new TimestampAssociator(multisList, MultiNote.class));
 			}
 		}
 		//----------------------end load notes----------------------
@@ -155,13 +160,13 @@ public class ScoreIllustrator {
 				drawSystem(g, nextY);
 			}
 			
+			Staff currStaff = timestepStaff.get(currList);
+			
 			// draw duration object
 			if (currDur instanceof MultiNote) {
 				//-----------------------MULTINOTE-----------------------
 				MultiNote mnote = (MultiNote) currDur;
-				
-				Staff stf = timestepStaff.get(currList);
-				Clef currClef = currClefs.get(stf);
+				Clef currClef = currClefs.get(currStaff);
 				
 				drawMultiNote(g, stemGroup, currClef, mnote, nextX, nextY);
 				Rational dur = mnote.getDuration();
@@ -181,7 +186,8 @@ public class ScoreIllustrator {
 				currKeySig = keySig;
 				
 				// draw key sig
-				
+				drawAccidental(g, Accidental.SHARP, nextX, nextY);
+				nextX += 30;
 			}
 			else if (currDur instanceof TimeSignature) {
 				//-----------------------TIME SIG-----------------------
@@ -189,13 +195,18 @@ public class ScoreIllustrator {
 				currTimeSig = timeSig;
 				
 				// draw time sig
-				
+				g.setFont(new Font("Arial", 0, 24));
+				g.drawString("" + timeSig.getNumerator(), nextX, nextY + 1 * SYSTEM_LINE_SPACING);
+				g.drawString("" + timeSig.getDenominator(), nextX, nextY + 3 * SYSTEM_LINE_SPACING);
+				nextX += 30;
 			}
 			else if (currDur instanceof Clef) {
 				//-------------------------CLEF-------------------------
 				Clef clef = (Clef) currDur;
+				currClefs.put(currStaff, clef);
+				
 				drawClef(g, clef, nextX, nextY);
-				nextX += 100; //clef image width
+				nextX += 50; //clef image width
 			}
 			else {
 				System.out.println("Unrecognized timestep: " + currDur);
@@ -371,7 +382,17 @@ public class ScoreIllustrator {
 	}
 	
 	private void drawClef(Graphics g, Clef c, int xc, int yc) {
-		//g.drawImage(
+		switch (c.getClefName()) {
+		case GCLEF:
+			g.drawImage(_imgClefG, xc, yc, null);
+			break;
+		case FCLEF:
+			g.drawImage(_imgClefF, xc, yc, null);
+			break;
+		case CCLEF:
+			g.drawImage(_imgClefC, xc, yc, null);
+			break;
+		}
 	}
 	
 	private void drawLedgerLine(Graphics g, int xc, int yc) {
@@ -410,11 +431,11 @@ public class ScoreIllustrator {
 	public int getLineNumber(Clef c, Pitch pitch) {
 		int centerValue = c.getCenterValue();
 		int pitchValue = pitch.getNoteLetter().intValue() + pitch.getOctave() * 7;
-		
 		return pitchValue - centerValue + c.getCenterLine();
 	}
 	
 	public int getLineOffset(Clef c, int line) {
+		// - 4 since
 		return -(line - 4) * SYSTEM_LINE_SPACING / 2;
 	}
 }

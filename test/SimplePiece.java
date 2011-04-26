@@ -1,5 +1,6 @@
 package test;
 
+import logic.ArrangerXMLWriter;
 import music.*;
 
 public class SimplePiece extends Piece {
@@ -9,11 +10,11 @@ public class SimplePiece extends Piece {
 	
 		// pitches
 		Pitch cn4 = new Pitch(NoteLetter.C, 4, Accidental.NATURAL, false);
-		Pitch dn4 = new Pitch(NoteLetter.D, 4, Accidental.NATURAL, false);
+		Pitch dn4 = new Pitch(NoteLetter.D, 5, Accidental.NATURAL, false);
 		Pitch en4 = new Pitch(NoteLetter.E, 4, Accidental.NATURAL, false);
 		Pitch fs4 = new Pitch(NoteLetter.B, 4, Accidental.SHARP, false);
-		Pitch gn4 = new Pitch(NoteLetter.C, 5, Accidental.NATURAL, false);
-		Pitch af5 = new Pitch(NoteLetter.A, 5, Accidental.FLAT, false);
+		Pitch gn4 = new Pitch(NoteLetter.C, 3, Accidental.NATURAL, false);
+		Pitch af5 = new Pitch(NoteLetter.F, 3, Accidental.FLAT, false);
 		
 		// multinotes
 		MultiNote treble1 = new MultiNote(new Rational(1, 1));
@@ -27,6 +28,8 @@ public class SimplePiece extends Piece {
 		MultiNote treble5 = new MultiNote(new Rational(1, 4));
 			treble5.getPitches().add(gn4);
 		MultiNote treble6 = new MultiNote(new Rational(1, 2)); // rest
+		MultiNote treble7 = new MultiNote(new Rational(1, 4));
+			treble7.getPitches().add(af5);
 		
 		// voices
 		Voice voicetreble1 = new Voice();
@@ -36,14 +39,17 @@ public class SimplePiece extends Piece {
 			voicetreble1.getMultiNotes().add(treble4);
 			voicetreble1.getMultiNotes().add(treble5);
 			voicetreble1.getMultiNotes().add(treble6);
+			voicetreble1.getMultiNotes().add(treble7);
 
 		// clefs
-		Clef cleftreble = new Clef(new Rational(3, 1), ClefName.GCLEF, -2);
+		Clef cleftreble = new Clef(new Rational(2, 1), ClefName.GCLEF, -2);
+		Clef clefbass = new Clef(new Rational(1, 1), ClefName.FCLEF, 2);
 
 		// staffs
 		Staff stafftreble = new Staff();
 			stafftreble.getVoices().add(voicetreble1);
 			stafftreble.getClefs().add(cleftreble);
+			stafftreble.getClefs().add(clefbass);
 
 		// time signatures
 		TimeSignature timesig1 = new TimeSignature(new Rational(3, 1), 2, 4);
@@ -60,6 +66,12 @@ public class SimplePiece extends Piece {
 	}
 	
 	public static void main(String[] args) {
-		new SimplePiece();
+		ArrangerXMLWriter writer = new ArrangerXMLWriter();
+		try {
+			writer.write(new SimplePiece(), "simple_piece.xml");
+		}
+		catch (Exception e) {
+			System.out.println(e);	
+		}
 	}
 }
