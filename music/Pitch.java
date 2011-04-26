@@ -32,4 +32,8 @@ public class Pitch {
 	public boolean getIsTiedToNext() {
 		return _isTiedToNext;
 	}
+	
+	public String toString() {
+		return " " + _octave + _noteLetter + _accidental;
+	}
 }
