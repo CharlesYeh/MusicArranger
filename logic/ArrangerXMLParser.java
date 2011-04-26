@@ -12,187 +12,184 @@ import org.dom4j.io.*;
 
 public class ArrangerXMLParser {
 	SAXReader _reader;
-	public ArrangerXMLParser() {
+	Editor _editor;
+	
+	public ArrangerXMLParser(Editor editor) {
+		_editor = editor;
 		_reader = new SAXReader();
 	}
 	
-	public Piece parse(String fileName) throws Exception {
+	public void parse(String fileName) throws Exception {
 		Document doc = _reader.read(new FileReader(fileName));
+		
 		Element root = doc.getRootElement();
-		
-		Piece piece = new Piece();
-		
-		// iterate through time sig
-		Element elemTimeSig = root.element("timeSignatures");
-		List<TimeSignature> timeSigs = parseTimeSignatures(elemTimeSig);
-		// EVAAAAAAAAAAAAN ADD TIME SIGNATURE!
-		
-		// iterate through key sig
-		Element elemKeySig = root.element("keySignatures");
-		List<KeySignature> keySigs = parseKeySignatures(elemKeySig);
-		// EVAAAAAAAAAAAAN ADD KEY SIGNATURE!
-		
-		// iterate through staffs
-		List<Element> elemStaffs = root.elements("staff");
-		for (Element elemStaff : elemStaffs) {			
-			// iterate through clefs
-			Element elemClefs = elemStaff.element("clefs");
-			List<Clef> clefs = parseClefs(elemClefs);
-			// EVAAAAAAAAAAAAN ADD CLEFS!
+		_editor.clearScore();									// make new piece
+
+		Element elemStaffs = root.element("staffs");
+		parseStaffs(elemStaffs);								// parse staffs list
 			
-			// iterate through voices
-			List<Voice> voices = new ArrayList<Voice>();
-			List<Element> elemVoices = elemStaff.elements("voice");
-			for (Element voice : elemVoices) {
-				Voice v = parseVoice(voice);
-				voices.add(v);
-			}
-			// EVAAAAAAAAAAAAN ADD VOICES!
-			
+		Element elemTimeSigs = root.element("timeSignatures");
+		parseTimeSignatures(elemTimeSigs);						// parse timesigs list
+		
+		Element elemKeySigs = root.element("keySignatures");
+		parseKeySignatures(elemKeySigs);						// parse keysigs list
+		
+		Element elemChordSymbols = root.element("chordSymbols");
+		parseChordSymbols(elemChordSymbols);
 		}
+	
+	private void parseStaffs(Element elemStaffs) {
+		List<Element> elemStaffList = elemStaffs.elements("staff");
+		for (Element elemStaff : elemStaffList) {
+			parseStaff(elemStaff);								// parse staff data
+		}
+	}
+	
+	private void parseStaff(Element elemStaff) {
+		_editor.appendStaff();									// append new staff
 		
-		return piece;
+		Element elemClefList = elemStaff.element("clefs");		// parse clef list
+		parseClefs(elemClefList);
+		
+		Element elemVoiceList = elemStaff.element("voices");	// parse voice list
+		parseVoices(elemVoiceList);
 	}
 	
 	//--------------------STRUCTURE PARSING--------------------
 	
-	public List<KeySignature> parseKeySignatures(Element elemSig) {
-		List<KeySignature> keySigs = new ArrayList<KeySignature>();
-		
-		List<Element> elemKeySigs = elemSig.elements("keySignature");
-		for (Element sig : elemKeySigs) {
-			KeySignature keySig = parseKeySignature(sig);
-			keySigs.add(keySig);
+	private void parseKeySignatures(Element elemKeySigs) {
+		List<Element> elemKeySigList = elemKeySigs.elements("keySignature");
+		for (Element keySig : elemKeySigList) {
+			parseKeySignature(keySig);							// parse keysig data
 		}
-		
-		return keySigs;
 	}
-	public KeySignature parseKeySignature(Element keySig) {
-		Rational dur = parseTimestep(keySig.element("timestep"));
-		
-		int accidentals = parseIntAttribute(keySig, "accidentals");
-		boolean isMajor = parseBooleanAttribute(keySig, "isMajor");
-		return new KeySignature(dur, accidentals, isMajor);
+	private void parseKeySignature(Element elemKeySig) {
+		Rational dur = parseTimestep(elemKeySig.element("timestep"));
+		int accidentals = parseIntAttribute(elemKeySig, "accidentals");
+		boolean isMajor = parseBooleanAttribute(elemKeySig, "isMajor");
+		_editor.appendKeySig(dur, accidentals, isMajor);		// append keysig
 	}
 	
-	public List<TimeSignature> parseTimeSignatures(Element elemSig) {
-		List<TimeSignature> timeSigs = new ArrayList<TimeSignature>();
-		
-		List<Element> elemKeySigs = elemSig.elements("timeSignature");
-		for (Element sig : elemKeySigs) {
-			TimeSignature timeSig = parseTimeSignature(sig);
-			timeSigs.add(timeSig);
+	private void parseTimeSignatures(Element elemTimeSigs) {
+		List<Element> elemTimeSigList = elemTimeSigs.elements("timeSignature");
+		for (Element timeSig : elemTimeSigList) {
+			parseTimeSignature(timeSig);						// parse timesig data
 		}
-		
-		return timeSigs;
 	}
 	
-	public TimeSignature parseTimeSignature(Element timeSig) {
-		Rational dur = parseTimestep(timeSig.element("timestep"));
+	private void parseTimeSignature(Element elemTimeSig) {
+		Rational dur = parseTimestep(elemTimeSig.element("timestep"));
+		int numer = parseIntAttribute(elemTimeSig, "numerator");
+		int denom = parseIntAttribute(elemTimeSig, "denominator");
+		_editor.appendTimeSig(dur, numer, denom);				// append timesig
+	}
 		
-		int numer = parseIntAttribute(timeSig, "numerator");
-		int denom = parseIntAttribute(timeSig, "denominator");
-		return new TimeSignature(dur, numer, denom);
+	private void parseChordSymbols(Element elemChordSymbols) {
+		List<Element> elemChordSymbolList = elemChordSymbols.elements("chordSymbol");
+		for (Element elemChordSymbol : elemChordSymbolList) {
+			parseChordSymbol(elemChordSymbol);					// parse chordsymbol data
+		}
 	}
 	
-	public List<Clef> parseClefs(Element e) {
-		List<Clef> clefs = new ArrayList<Clef>();
-		
+	private void parseChordSymbol(Element elemChordSymbol) {
+		Rational dur = parseTimestep(elemChordSymbol.element("timestep"));
+		int scaleDegree = parseIntAttribute(elemChordSymbol, "scaleDegree");
+		ChordType chordType = getChordType(parseStringAttribute(elemChordSymbol, "chordType"));
+		_editor.appendChordSymbol(dur, scaleDegree, chordType);	// append chordsymbol
+	}
+
+	private void parseClefs(Element e) {
 		List<Element> elemClefs = e.elements("clef");
 		for (Element clef : elemClefs) {
-			Clef c = parseClef(clef);
-			clefs.add(c);
+			parseClef(clef);									// parse clef data
 		}
-		
-		return clefs;
 	}
 	
-	public Clef parseClef(Element elemClef) {
+	private void parseClef(Element elemClef) {
 		Rational dur = parseTimestep(elemClef.element("timestep"));
-		
-		String type = parseStringAttribute(elemClef, "type");
+		ClefName type = getClefName(parseStringAttribute(elemClef, "type"));
 		int centLine = parseIntAttribute(elemClef, "center_line");
-		return new Clef(dur, getClefName(type), centLine);
-	}
-	
-	public ClefName getClefName(String type){
-		return ClefName.valueOf(type);
+		_editor.appendClef(dur, type, centLine);				// append clef
 	}
 	
 	//--------------------MUSIC PARSING--------------------
 	
-	public Voice parseVoice(Element elemVoice) {
-		Voice v = new Voice();
-		List<MultiNote> multinotes = v.getMultiNotes();
-		
-		List<Element> elemMNs = elemVoice.elements("multinote");
-		for (Element elemMN : elemMNs) {
-			MultiNote mn = parseMultiNote(elemMN);
-			multinotes.add(mn);
+	private void parseVoices(Element elemVoices) {
+		List<Element> elemVoiceList = elemVoices.elements("voice");
+		for (Element elemVoice : elemVoiceList) {
+			parseVoice(elemVoice);								// parse voice list
 		}
-		
-		return v;
 	}
 	
-	public MultiNote parseMultiNote(Element elemmn) {
-		Rational dur = parseTimestep(elemmn.element("timestep"));
-		MultiNote mn = new MultiNote(dur);
-		List<Pitch> pitches = mn.getPitches();
+	private void parseVoice(Element elemVoice) {
+		_editor.appendVoice();									// append voice
 		
-		Element elemPitchGroup = elemmn.element("pitches");
-		List<Element> elemPitches = elemPitchGroup.elements("pitch");
-		for (Element elemPitch : elemPitches) {
-			Pitch p = parsePitch(elemPitch);
-			pitches.add(p);
-		}
-		
-		return mn;
+		Element elemMNs = elemVoice.element("multinotes");
+		parseMultiNotes(elemMNs);								// parse multinote list
 	}
 	
-	public Pitch parsePitch(Element elemPitch) {
-		int octave = parseIntAttribute(elemPitch, "octave");
+	private void parseMultiNotes(Element elemMNs) {
+		List<Element> elemMNList = elemMNs.elements("multinote");
+		for (Element elemMN : elemMNList) {
+			parseMultiNote(elemMN);								// parse multinote data
+		}
+	}
+	
+	private void parseMultiNote(Element elemMN) {
+		Rational dur = parseTimestep(elemMN.element("timestep"));
+		_editor.appendMultiNote(dur);							// append multinote
+		
+		Element elemPitches = elemMN.element("pitches");
+		parsePitches(elemPitches);								// parse pitch list
+	}
+	
+	private void parsePitches(Element elemPitches) {
+		List<Element> elemPitchList = elemPitches.elements("pitch");
+		for (Element elemPitch : elemPitchList) {
+			parsePitch(elemPitch);								// parse pitch data
+		}
+	}
+	
+	private void parsePitch(Element elemPitch) {
 		NoteLetter letter = getNoteLetter(parseStringAttribute(elemPitch, "key"));
+		int octave = parseIntAttribute(elemPitch, "octave");
 		Accidental accid = getAccidental(parseStringAttribute(elemPitch, "accidental"));
+		boolean isTied = false; 								// TODO: THIS NEEDS TO BE CHANGED
 		
-		return new Pitch(letter, octave, accid, false);
+		_editor.appendPitch(letter, octave, accid, isTied);		// append pitch
 	}
 	
-	public NoteLetter getNoteLetter(String letter) {
+	private NoteLetter getNoteLetter(String letter) {
 		return NoteLetter.valueOf(letter);
 	}
 	
-	public Accidental getAccidental(String letter) {
+	private Accidental getAccidental(String letter) {
 		return Accidental.valueOf(letter);
 	}
 	
-	public Rational parseTimestep(Element dur) {
+	private ClefName getClefName(String type){
+		return ClefName.valueOf(type);
+	}
+	
+	private ChordType getChordType(String type){
+		return ChordType.valueOf(type);
+	}
+
+	private Rational parseTimestep(Element dur) {
 		int numer = parseIntAttribute(dur, "durNumerator");
 		int denom = parseIntAttribute(dur, "durDenominator");
 		return new Rational(numer, denom);
 	}
 	
-	public int parseIntAttribute(Element e, String attr) {
+	private int parseIntAttribute(Element e, String attr) {
 		return Integer.parseInt(e.attribute(attr).getValue());
 	}
 	
-	public boolean parseBooleanAttribute(Element e, String attr) {
+	private boolean parseBooleanAttribute(Element e, String attr) {
 		return e.attribute(attr).getValue().equals("true");
 	}
 	
-	public String parseStringAttribute(Element e, String attr) {
+	private String parseStringAttribute(Element e, String attr) {
 		return e.attribute(attr).getValue();
-	}
-	
-	public static void main(String[] args) {
-		ArrangerXMLParser writer = new ArrangerXMLParser();
-		
-		try {
-			Piece p = writer.parse("tests/I_IV_V_I.xml");
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		// check piece
 	}
 }

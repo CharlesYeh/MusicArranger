@@ -13,8 +13,10 @@ public class Rational {
         if (denominator == 0) {
             throw new RuntimeException("Denominator is zero");
         }
-        _numer = numerator;
-        _denom = denominator;
+        
+        int g = gcd(numerator, denominator);
+        _numer = numerator / g;
+        _denom = denominator / g;
     }
 	
 	public int getNumerator() {
@@ -40,8 +42,7 @@ public class Rational {
 		Rational a = this;
 		int numerator = (a.getNumerator() * b.getDenominator()) + (b.getNumerator() * a.getDenominator());
 		int denominator = a.getDenominator() * b.getDenominator();
-        int g = gcd(numerator, denominator);
-		return new Rational(numerator / g, denominator / g);
+		return new Rational(numerator, denominator);
     }
 
     // return -a

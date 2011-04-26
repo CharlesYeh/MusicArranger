@@ -8,19 +8,36 @@ import music.*;
  */
 public class Editor{
 	Piece _piece;				// piece being edited
+
+	// these iterators are used for sequential addition to the list
+	ListIterator<KeySignature> _keySigIter;
+	ListIterator<TimeSignature> _timeSigIter;
+	ListIterator<ChordSymbol> _chordSymIter;
+	ListIterator<Staff> _staffIter;
+	ListIterator<Clef> _clefIter;
+	ListIterator<Voice> _voiceIter;
+	ListIterator<MultiNote> _multiNoteIter;
+	ListIterator<Pitch> _pitchIter;
 	
-	public Editor(){
-		
+	public Editor() {
 	}
 	
 	public Editor clearScore() {
-		_piece = new Piece();
+		setPiece(new Piece());
 		return this;
 	}
 	
 	public Editor setPiece(Piece piece) {
 		_piece = piece;
+		_keySigIter = _piece.getKeySignatures().listIterator();
+		_timeSigIter = _piece.getTimeSignatures().listIterator();
+		_chordSymIter = _piece.getChordSymbols().listIterator();
+		_staffIter = _piece.getStaffs().listIterator();
 		return this;
+	}
+	
+	public Piece getPiece() {
+		return _piece;
 	}
 	
 	// USED FOR REMOVING A GENERAL ELEMENT FROM ANY GIVEN LIST
@@ -34,73 +51,140 @@ public class Editor{
 		}
 		return this;
 	}
-	
-	// MULTINOTE EDITING
-	public Editor insertPitch(ListIterator<Pitch> iter, NoteLetter ltr, int octv, Accidental accd, boolean istied) {
-		Pitch pitch = new Pitch(ltr, octv, accd, istied);
-		iter.add(pitch);
+	// PIECE EDITING
+	// edits the key signature list
+	public Editor appendKeySig(Rational dur, int accds, boolean ismjr) {
+		insertKeySig(_keySigIter, dur, accds, ismjr);
+		return this;
+	}
+	public Editor insertKeySig(ListIterator<KeySignature> iter, Rational dur, int accds, boolean ismjr) {
+		KeySignature keysig = new KeySignature(dur, accds, ismjr);
+		iter.add(keysig);
+		_keySigIter = iter;
+		return this;
+	}
+	public Editor replaceKeySig(ListIterator<KeySignature> iter, Rational dur, int accds, boolean ismjr) {
+		this.removeElem(iter).insertKeySig(iter, dur, accds, ismjr);
+		iter.previous();
 		return this;
 	}
 	
-	public Editor replacePitch(ListIterator<Pitch> iter, NoteLetter ltr, int octv, Accidental accd, boolean istied) {
-		this.removeElem(iter).insertPitch(iter, ltr, octv, accd, istied);
+	// edits the time signature list
+	public Editor appendTimeSig(Rational dur, int numer, int denom) {
+		insertTimeSig(_timeSigIter, dur, numer, denom);
+		return this;
+	}
+	public Editor insertTimeSig(ListIterator<TimeSignature> iter, Rational dur, int numer, int denom) {
+		TimeSignature timesig = new TimeSignature(dur, numer, denom);
+		iter.add(timesig);
+		_timeSigIter = iter;
+		return this;
+	}
+	public Editor replaceTimeSig(ListIterator<TimeSignature> iter, Rational dur, int numer, int denom) {
+		this.removeElem(iter).insertTimeSig(iter, dur, numer, denom);
+		iter.previous();
 		return this;
 	}
 	
-	// VOICE EDITING
-	public Editor insertMultiNote(ListIterator<MultiNote> iter, Rational dur) {
-		MultiNote multi = new MultiNote(dur);
-		iter.add(multi);
+	// edits the staff list
+	public Editor appendStaff() {
+		insertStaff(_staffIter);
 		return this;
 	}
-	public Editor replaceMultiNote(ListIterator<MultiNote> iter, Rational dur) {
-		this.removeElem(iter).insertMultiNote(iter, dur);
+	public Editor insertStaff(ListIterator<Staff> iter) {
+		Staff staff = new Staff();
+		iter.add(staff);
+		_voiceIter = staff.getVoices().listIterator();
+		_clefIter = staff.getClefs().listIterator();
+		_staffIter = iter;
+		return this;
+	}
+	public Editor replaceTimeSig(ListIterator<Staff> iter) {
+		this.removeElem(iter).insertStaff(iter);
+		iter.previous();
+		return this;
+	}
+	
+	// edits the chord symbol list
+	public Editor appendChordSymbol(Rational dur, int scldgr, ChordType qual) {
+		insertChordSymbol(_chordSymIter, dur, scldgr, qual);
+		return this;
+	}
+	public Editor insertChordSymbol(ListIterator<ChordSymbol> iter, Rational dur, int scldgr, ChordType qual) {
+		ChordSymbol chordsym = new ChordSymbol(dur, scldgr, qual);
+		iter.add(chordsym);
+		_chordSymIter = iter;
+		return this;
+	}
+	public Editor replaceChordSymbol(ListIterator<ChordSymbol> iter, Rational dur, int scldgr, ChordType qual) {
+		this.removeElem(iter).insertChordSymbol(iter, dur, scldgr, qual);
+		iter.previous();
 		return this;
 	}
 	
 	// STAFF EDITING
 	// edits the clef list
+	public Editor appendClef(Rational dur, ClefName clefnm, int linenum) {
+		insertClef(_clefIter, dur, clefnm, linenum);
+		return this;
+	}
 	public Editor insertClef(ListIterator<Clef> iter, Rational dur, ClefName clefnm, int linenum) {
 		Clef clef = new Clef(dur, clefnm, linenum);
 		iter.add(clef);
+		_clefIter = iter;
 		return this;
 	}
 	public Editor replaceClef(ListIterator<Clef> iter, Rational dur, ClefName clefnm, int linenum) {
 		this.removeElem(iter).insertClef(iter, dur, clefnm, linenum);
+		iter.previous();
 		return this;
 	}
 	
-	// PIECE EDITING
-	// edits the key signature list
-	public Editor insertKeySig(ListIterator<KeySignature> iter, Rational dur, int accds, boolean ismjr) {
-		KeySignature keysig = new KeySignature(dur, accds, ismjr);
-		iter.add(keysig);
+	//edits the voice list
+	public Editor appendVoice() {
+		insertVoice(_voiceIter);
 		return this;
 	}
-	public Editor replaceKeySig(ListIterator<KeySignature> iter, Rational dur, int accds, boolean ismjr) {
-		this.removeElem(iter).insertKeySig(iter, dur, accds, ismjr);
-		return this;
-	}
-	
-	// edits the time signature list
-	public Editor insertTimeSig(ListIterator<TimeSignature> iter, Rational dur, int numer, int denom) {
-		TimeSignature timesig = new TimeSignature(dur, numer, denom);
-		iter.add(timesig);
-		return this;
-	}
-	public Editor replaceTimeSig(ListIterator<TimeSignature> iter, Rational dur, int numer, int denom) {
-		this.removeElem(iter).insertTimeSig(iter, dur, numer, denom);
+	public Editor insertVoice(ListIterator<Voice> iter) {
+		Voice voice = new Voice();
+		iter.add(voice);
+		_voiceIter = iter;
+		_multiNoteIter = voice.getMultiNotes().listIterator();
 		return this;
 	}
 	
-	// edits the chord symbol list
-	public Editor insertChordSymbol(ListIterator<ChordSymbol> iter, Rational dur, int scldgr, ChordType qual) {
-		ChordSymbol chordsym = new ChordSymbol(dur, scldgr, qual);
-		iter.add(chordsym);
+	// VOICE EDITING
+	public Editor appendMultiNote(Rational dur) {
+		insertMultiNote(_multiNoteIter, dur);
 		return this;
 	}
-	public Editor replaceChordSymbol(ListIterator<ChordSymbol> iter, Rational dur, int scldgr, ChordType qual) {
-		this.removeElem(iter).insertChordSymbol(iter, dur, scldgr, qual);
+	public Editor insertMultiNote(ListIterator<MultiNote> iter, Rational dur) {
+		MultiNote multi = new MultiNote(dur);
+		iter.add(multi);
+		_multiNoteIter = iter;
+		_pitchIter = multi.getPitches().listIterator();
+		return this;
+	}
+	public Editor replaceMultiNote(ListIterator<MultiNote> iter, Rational dur) {
+		this.removeElem(iter).insertMultiNote(iter, dur);
+		iter.previous();
+		return this;
+	}
+	
+	// MULTINOTE EDITING
+	public Editor appendPitch(NoteLetter ltr, int octv, Accidental accd, boolean istied) {
+		insertPitch(_pitchIter, ltr, octv, accd, istied);
+		return this;
+	}
+	public Editor insertPitch(ListIterator<Pitch> iter, NoteLetter ltr, int octv, Accidental accd, boolean istied) {
+		Pitch pitch = new Pitch(ltr, octv, accd, istied);
+		iter.add(pitch);
+		_pitchIter = iter;
+		return this;
+	}
+	public Editor replacePitch(ListIterator<Pitch> iter, NoteLetter ltr, int octv, Accidental accd, boolean istied) {
+		this.removeElem(iter).insertPitch(iter, ltr, octv, accd, istied);
+		iter.previous();
 		return this;
 	}
 }
