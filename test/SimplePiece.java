@@ -11,20 +11,22 @@ public class SimplePiece extends Piece {
 		Pitch cn4 = new Pitch(NoteLetter.C, 4, Accidental.NATURAL, false);
 		Pitch dn4 = new Pitch(NoteLetter.D, 4, Accidental.NATURAL, false);
 		Pitch en4 = new Pitch(NoteLetter.E, 4, Accidental.NATURAL, false);
-		Pitch fs4 = new Pitch(NoteLetter.F, 4, Accidental.SHARP, false);
+		Pitch fs4 = new Pitch(NoteLetter.F, 3, Accidental.SHARP, false);
 		Pitch gn4 = new Pitch(NoteLetter.G, 4, Accidental.NATURAL, false);
 		Pitch af5 = new Pitch(NoteLetter.A, 5, Accidental.FLAT, false);
 		
 		// multinotes
-		MultiNote treble1 = new MultiNote(new Rational(1, 2));
+		MultiNote treble1 = new MultiNote(new Rational(1, 1));
 			treble1.getPitches().add(cn4);
-		MultiNote treble2 = new MultiNote(new Rational(1, 4));
+		MultiNote treble2 = new MultiNote(new Rational(1, 2));
 			treble2.getPitches().add(dn4);
-		MultiNote treble3 = new MultiNote(new Rational(1, 8));
+		MultiNote treble3 = new MultiNote(new Rational(1, 4));
 			treble3.getPitches().add(en4);
 		MultiNote treble4 = new MultiNote(new Rational(1, 8));
 			treble4.getPitches().add(fs4);
-		MultiNote treble5 = new MultiNote(new Rational(1, 2)); // rest
+		MultiNote treble5 = new MultiNote(new Rational(1, 8));
+			treble5.getPitches().add(fs4);
+		MultiNote treble6 = new MultiNote(new Rational(1, 2)); // rest
 		
 		// voices
 		Voice voicetreble1 = new Voice();
@@ -33,6 +35,7 @@ public class SimplePiece extends Piece {
 			voicetreble1.getMultiNotes().add(treble3);
 			voicetreble1.getMultiNotes().add(treble4);
 			voicetreble1.getMultiNotes().add(treble5);
+			voicetreble1.getMultiNotes().add(treble6);
 
 		// clefs
 		Clef cleftreble = new Clef(new Rational(3, 2), ClefName.GCLEF, -2);
