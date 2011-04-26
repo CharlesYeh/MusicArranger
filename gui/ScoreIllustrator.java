@@ -1,9 +1,43 @@
 package gui;
 
+import arranger.ArrangerConstants;
+import music.*;
+import java.io.File;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.HashMap;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import javax.imageio.ImageIO;
+import java.io.IOException;
 
 public class ScoreIllustrator {
+	
+	final static double LOG_2 = Math.log(2);
+	
+	final static int TOP_MARGIN	= 150;
+	final static int LEFT_MARGIN	= 50;
+	final static int RIGHT_MARGIN	= 50;
+	final static int SYSTEM_LINE_SPACING = 10;
+	final static int SYSTEM_SPACING = 80;
+	
+	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
+	final static int NOTE_HEIGHT = SYSTEM_LINE_SPACING;
+	
+	final static int MEASURE_WIDTH = 100;
+	final static int LEDGER_WIDTH = (int) (SYSTEM_LINE_SPACING * 1.2);
+	
+	Image _imgQuarter, _imgHalf, _imgWhole, _imgRest,
+			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp;
+	
+	// map each system to its y coordinate
+	Map<Integer, Integer> _systemPositions;
 	
 	public ScoreIllustrator() {
 		// load images
@@ -24,10 +58,7 @@ public class ScoreIllustrator {
 		}
 	}
 	
-	Image _imgQuarter, _imgHalf, _imgWhole, _imgRest,
-			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp; 
-	
-	private void drawPiece(Graphics g, Piece piece) {
+	public void drawPiece(Graphics g, Piece piece) {
 		// list manuevering
 		PriorityQueue<TimestampAssociator> pQueue = new PriorityQueue<TimestampAssociator>();
 		
@@ -57,10 +88,11 @@ public class ScoreIllustrator {
 		KeySignature currKeySig 	= keySigs.get(0);
 		TimeSignature currTimeSig 	= timeSigs.get(0);
 		//ChordSymbol currChord		= chords.get(0);
+		List<MultiNote> stemGroup = new ArrayList<MultiNote>();
 		//---------------------end current data---------------------
 		
 		//------------------------load notes------------------------
-		// add multinote lists from each staff>voice to pQueue
+		// add multinote lists from each staff's voice to pQueue
 		List<Staff> staffs = piece.getStaffs();
 		for (Staff st : staffs) {
 			List<Voice> voices = st.getVoices();
@@ -88,19 +120,19 @@ public class ScoreIllustrator {
 		
 		// start drawing
 		boolean startDrawing = true;
-		int systemY 	= TOP_MARGIN - SYSTEM_SPACING;
-		int staffX		= LEFT_MARGIN;
-		int noteX = staffX;
+		int staffX	= LEFT_MARGIN;
+		int nextY 	= TOP_MARGIN - SYSTEM_SPACING;
+		int nextX 	= staffX;
 		
 		while (pQueue.size() > 0) {
 			TimestampAssociator timeAssoc = pQueue.poll();
-			ListIterator<? extends Timestep> listDur = timeAssoc.getAssociated();//################
+			ListIterator<? extends Timestep> currList = timeAssoc.getAssociated();
 			
-			Timestep nextDur = null;
-			if (listDur.hasNext()) {
-				nextDur = (Timestep) listDur.next();		//################
+			Timestep currDur = null;
+			if (currList.hasNext()) {
+				currDur = (Timestep) currList.next();
 				
-				timeAssoc.addDuration(nextDur);
+				timeAssoc.addDuration(currDur);
 				pQueue.add(timeAssoc);
 			}
 			else {
@@ -108,125 +140,185 @@ public class ScoreIllustrator {
 				continue;
 			}
 			
-			int measureWidth = 100;
-			Rational measureTime = currTimeSig.getMeasureDuration();
-			if (staffX + measureWidth > ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN || startDrawing) {
+			int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
+			// if extending into the margin, make a new line
+			if (nextX + measureWidth > ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN || startDrawing) {
 				startDrawing = false;
 				
 				// if new line, draw systems
-				systemY += SYSTEM_SPACING;
-				staffX = LEFT_MARGIN;
-				drawSystem(g, systemY);
-				
-				noteX = staffX;
+				nextX = LEFT_MARGIN;
+				nextY += SYSTEM_SPACING;
+				drawSystem(g, nextY);
 			}
 			
 			// draw duration object
-			if (nextDur instanceof KeySignature) {
-				KeySignature keySig = (KeySignature) nextDur;
+			if (currDur instanceof MultiNote) {
+				//-----------------------MULTINOTE-----------------------
+				MultiNote mnote = (MultiNote) currDur;
+				
+				Staff stf = timestepStaff.get(currList);
+				Clef currClef = currClefs.get(stf);
+				
+				drawMultiNote(g, stemGroup, currClef, mnote, nextX, nextY);
+				Rational dur = mnote.getDuration();
+				
+				// nextX should increase proportional to note length
+				int noteWidth = (int) ((double) dur.getNumerator() / dur.getDenominator() * MEASURE_WIDTH);
+				nextX += noteWidth;
+			}
+			else if (currDur instanceof ChordSymbol) {
+				//---------------------CHORD SYMBOL----------------------
+				ChordSymbol cSymbol = (ChordSymbol) currDur;
+				
+			}
+			else if (currDur instanceof KeySignature) {
+				//-----------------------KEY SIG-----------------------
+				KeySignature keySig = (KeySignature) currDur;
 				currKeySig = keySig;
 				
 				// draw key sig
 				
 			}
-			else if (nextDur instanceof TimeSignature) {
-				TimeSignature timeSig = (TimeSignature) nextDur;
+			else if (currDur instanceof TimeSignature) {
+				//-----------------------TIME SIG-----------------------
+				TimeSignature timeSig = (TimeSignature) currDur;
 				currTimeSig = timeSig;
 				
 				// draw time sig
-			}
-			else if (nextDur instanceof Clef) {
-				Clef clef = (Clef) nextDur;
-				
-				drawClef(g, clef, noteX, systemY);
-			}
-			else if (nextDur instanceof ChordSymbol) {
-				ChordSymbol cSymbol = (ChordSymbol) nextDur;
-				
 				
 			}
-			else if (nextDur instanceof MultiNote) {
-				MultiNote mn = (MultiNote) nextDur;
-				Rational dur = mn.getDuration();
-				
-				// draw all pitches
-				Staff stf = timestepStaff.get(listDur);
-				Clef currClef = currClefs.get(stf);
-				
-				List<Pitch> pitches = mn.getPitches();
-				for (Pitch p : pitches) {
-					// add 4 since the third line is "number 0"
-					int line = getLineNumber(currClef, p);
-					System.out.println(p + " " + line);
-					int noteY = -(line - 4) * SYSTEM_LINE_SPACING / 2 + systemY;
-					
-					// if too low or too high, draw ledger line
-					if (line < -5 || line > 5)
-						drawLedgerLine(g, noteX, noteY);
-					
-					drawNote(g, dur, line, noteX, noteY);
-				}
-				
-				// noteX should increase proportional to note length
-				int noteWidth = (int) ((double) dur.getNumerator() / dur.getDenominator() * MEASURE_WIDTH);
-				noteX += noteWidth;
+			else if (currDur instanceof Clef) {
+				//-------------------------CLEF-------------------------
+				Clef clef = (Clef) currDur;
+				drawClef(g, clef, nextX, nextY);
+				nextX += 100; //clef image width
 			}
 			else {
-				System.out.println("Unrecognized timestep: " + nextDur);
+				System.out.println("Unrecognized timestep: " + currDur);
 			}
 			
 			staffX += measureWidth;
 		}
 	}
 	
-	private void drawSystem(Graphics g, int yc) {
-		for (int i = 0; i < 5; i++) {
-			int yp = yc + i * SYSTEM_LINE_SPACING;
-			g.drawLine(LEFT_MARGIN, yp, ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN, yp);
-		}
-	}
-	
-	private void drawClef(Graphics g, Clef c, int xc, int yc) {
-		//g.drawImage(
-	}
-	
-	private void drawNote(Graphics g, Rational r, int line, int xc, int yc) {
-		// draw circle on the correct line
-		//g.drawImage(_imgQuarter, xc, yc, null);
-		int radius = SYSTEM_LINE_SPACING / 2;
+	/* Draws all pitches within the multinote
+	 * 
+	 */
+	private void drawMultiNote(Graphics g, List<MultiNote> stemGroup, Clef currClef, MultiNote mn, int nextX, int nextY) {
+		Rational dur = mn.getDuration();
 		
-		int numer = r.getNumerator();
-		int denom = r.getDenominator();
-		
-		// factor out triplets etc
+		int numer = dur.getNumerator();
+		int denom = dur.getDenominator();
 		
 		int numerValue = (int) (Math.log(numer) / LOG_2);
 		int denomValue = (int) (Math.log(denom) / LOG_2);
-		if (numer == 1) {
-			drawNote(g, denomValue, line, xc, yc);
+		
+		// get current clef
+		
+		List<Pitch> pitches = mn.getPitches();
+		for (Pitch p : pitches) {
+			// add 4 since the third line is "number 0"
+			int line = getLineNumber(currClef, p);
 			
-		}
-		else {
-			int dots = numerValue;
-			int base = numerValue - numerValue / 2;
-			drawNote(g, base, line, xc, yc);
+			int noteX = nextX;
+			int noteY = -(line - 4) * SYSTEM_LINE_SPACING / 2 + nextY;
 			
-			// draw dots
+			// if too low or too high, draw ledger line
+			if (line < -5 || line > 5)
+				drawLedgerLine(g, noteX, noteY);
 			
+			drawNote(g, numerValue, denomValue, noteX, noteY);
 		}
 		
+		// draw stem?
+		
 		if (denomValue >= 3) {
-			stemGroup.add(r);
+			stemGroup.add(mn);
 		}
 		else if (stemGroup.size() > 0) {
 			// render previous group
-			
-			stemGroup = new ArrayList<Rational>();
+			renderStemGroup(stemGroup);
 		}
 	}
 	
-	private void drawNoteHead(Graphics g, int xc, int yc, int radius, boolean whiteFill) {
-		int sx = xc - NOTE_WIDTH / 2
+	private void renderStemGroup(List<MultiNote> stemGroup) {
+		Rational totalDuration = new Rational(0, 1);
+		int totalLines = 0;
+		
+		for (int i = stemGroup.size() - 1; i >= 0; i++) {
+			MultiNote mnote = stemGroup.get(i);
+			
+			// calc average (above center = stems downward, below center = stems upward)
+			List<Pitch> pitches = mnote.getPitches();
+			for (Pitch p : pitches) {
+				//totalLines += getLineNumber(clef, p);
+			}
+			
+			// calc total duration
+			totalDuration = totalDuration.plus(mnote.getDuration());
+		}
+		
+		// calc slope of stem bar (last - first) / totalDuration
+		MultiNote first = stemGroup.get(0);
+		MultiNote last = stemGroup.get(stemGroup.size() - 1);
+		
+		
+		stemGroup = new ArrayList<MultiNote>();
+
+	}
+	
+	private void drawNote(Graphics g, int numerValue, int denomValue, int xc, int yc) {
+		// draw circle on the correct line
+		//g.drawImage(_imgQuarter, xc, yc, null);
+		
+		if (numerValue == 0) {
+			// note is a base note (eighth, quarter, half, etc)
+			drawBaseNoteHead(g, denomValue, xc, yc);
+		}
+		else {
+			// note is a base note + dots
+			int base = numerValue - numerValue / 2;
+			drawBaseNoteHead(g, base, xc, yc);
+			
+			// draw dots
+			int dots = numerValue - 3;
+			
+		}
+	}
+	
+	/*	Draws the note head for a base value (numerator is 1)
+	 *
+	 */
+	private void drawBaseNoteHead(Graphics g, int denomValue, int xc, int yc) {
+		
+		if (denomValue < 3) {
+			switch (denomValue) {
+			case 0:
+				// whole note
+				dynamicDrawNoteHead(g, xc, yc, true);
+				break;
+				
+			case 1:
+				// half note
+				dynamicDrawNoteHead(g, xc, yc, true);
+				break;
+				
+			case 2:
+				// quarter note
+				dynamicDrawNoteHead(g, xc, yc, false);
+				break;
+			default:
+				
+			}
+		}
+		else {
+			// eighth or smaller
+			dynamicDrawNoteHead(g, xc, yc, false);
+		}
+	}
+	
+	private void dynamicDrawNoteHead(Graphics g, int xc, int yc, boolean whiteFill) {
+		int sx = xc - NOTE_WIDTH / 2;
 		int sy = yc - NOTE_HEIGHT / 2;
 		
 		if (whiteFill)
@@ -240,43 +332,15 @@ public class ScoreIllustrator {
 		}
 	}
 	
-	private void drawNote(Graphics g, int denomValue, int line, int xc, int yc) {
-		int stemExtension = (line > 0 ) ? 50 : -50;
-		
-		if (denomValue < 3) {
-			switch (denomValue) {
-			case 0:
-				// whole note
-				drawNoteHead(g, xc, yc true);
-				break;
-				
-			case 1:
-				// half note
-				drawNoteHead(g, xc, yc, true);
-				
-				//draw stem
-				drawStem(g, xc, yc, yc + stemExtension);
-				break;
-				
-			case 2:
-				// quarter note
-				drawNoteHead(g, xc, yc, false);
-				
-				//draw stem
-				drawStem(g, xc, yc, yc + stemExtension);
-				break;
-			default:
-				// eighth note and smaller
-				
-			}
+	private void drawSystem(Graphics g, int yc) {
+		for (int i = 0; i < 5; i++) {
+			int yp = yc + i * SYSTEM_LINE_SPACING;
+			g.drawLine(LEFT_MARGIN, yp, ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN, yp);
 		}
-		else {
-			// eighth or smaller
-			drawNoteHead(g, xc, yc, false);
-			
-			//draw stem
-			drawStem(g, xc, yc, yc + stemExtension);
-		}
+	}
+	
+	private void drawClef(Graphics g, Clef c, int xc, int yc) {
+		//g.drawImage(
 	}
 	
 	private void drawStem(Graphics g, int xc, int sy, int ey) {

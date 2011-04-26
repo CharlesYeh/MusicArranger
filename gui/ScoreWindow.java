@@ -19,25 +19,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class ScoreWindow extends Drawable {
-	
-	final static double LOG_2 = Math.log(2);
-	
-	final static int TOP_MARGIN	= 150;
-	final static int LEFT_MARGIN	= 50;
-	final static int RIGHT_MARGIN	= 50;
-	final static int SYSTEM_LINE_SPACING = 10;
-	final static int SYSTEM_SPACING = 80;
-	
-	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
-	final static int NOTE_HEIGHT = SYSTEM_LINE_SPACING;
-	
-	final static int MEASURE_WIDTH = 100;
-	final static int LEDGER_WIDTH = (int) (SYSTEM_LINE_SPACING * 1.2);
-	
 	Image _buffer;
 	
 	// reference to song
 	Piece _piece;
+	ScoreIllustrator _illustrator;
 	
 	// the y position of each system (set of staff lines)
 	int[] _systemPositions;
@@ -53,7 +39,7 @@ public class ScoreWindow extends Drawable {
 	public void drawSelf(Graphics g) {
 		// buffer self-image
 		
-		_illustrator.drawPiece(g);
+		_illustrator.drawPiece(g, _piece);
 	}
 	
 	public void mouseClicked(MouseEvent e) {
