@@ -11,8 +11,8 @@ public class SimplePiece extends Piece {
 		Pitch cn4 = new Pitch(NoteLetter.C, 4, Accidental.NATURAL, false);
 		Pitch dn4 = new Pitch(NoteLetter.D, 4, Accidental.NATURAL, false);
 		Pitch en4 = new Pitch(NoteLetter.E, 4, Accidental.NATURAL, false);
-		Pitch fs4 = new Pitch(NoteLetter.F, 3, Accidental.SHARP, false);
-		Pitch gn4 = new Pitch(NoteLetter.G, 4, Accidental.NATURAL, false);
+		Pitch fs4 = new Pitch(NoteLetter.B, 4, Accidental.SHARP, false);
+		Pitch gn4 = new Pitch(NoteLetter.C, 5, Accidental.NATURAL, false);
 		Pitch af5 = new Pitch(NoteLetter.A, 5, Accidental.FLAT, false);
 		
 		// multinotes
@@ -22,10 +22,10 @@ public class SimplePiece extends Piece {
 			treble2.getPitches().add(dn4);
 		MultiNote treble3 = new MultiNote(new Rational(1, 4));
 			treble3.getPitches().add(en4);
-		MultiNote treble4 = new MultiNote(new Rational(1, 8));
+		MultiNote treble4 = new MultiNote(new Rational(1, 4));
 			treble4.getPitches().add(fs4);
-		MultiNote treble5 = new MultiNote(new Rational(1, 8));
-			treble5.getPitches().add(fs4);
+		MultiNote treble5 = new MultiNote(new Rational(1, 4));
+			treble5.getPitches().add(gn4);
 		MultiNote treble6 = new MultiNote(new Rational(1, 2)); // rest
 		
 		// voices
@@ -38,7 +38,7 @@ public class SimplePiece extends Piece {
 			voicetreble1.getMultiNotes().add(treble6);
 
 		// clefs
-		Clef cleftreble = new Clef(new Rational(3, 2), ClefName.GCLEF, -2);
+		Clef cleftreble = new Clef(new Rational(3, 1), ClefName.GCLEF, -2);
 
 		// staffs
 		Staff stafftreble = new Staff();
@@ -46,10 +46,10 @@ public class SimplePiece extends Piece {
 			stafftreble.getClefs().add(cleftreble);
 
 		// time signatures
-		TimeSignature timesig1 = new TimeSignature(new Rational(3, 2), 2, 4);
+		TimeSignature timesig1 = new TimeSignature(new Rational(3, 1), 2, 4);
 
 		// key signatures
-		KeySignature keysig1 = new KeySignature(new Rational(2, 1), 0, true);
+		KeySignature keysig1 = new KeySignature(new Rational(3, 1), 0, true);
 
 		// piece
 			getStaffs().add(stafftreble);

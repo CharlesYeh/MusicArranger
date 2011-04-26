@@ -2,7 +2,6 @@ package gui;
 
 import arranger.ArrangerConstants;
 import music.*;
-import java.io.File;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -11,10 +10,13 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.HashMap;
 
+import java.awt.Point;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.IOException;
 
 public class ScoreIllustrator {
@@ -30,8 +32,10 @@ public class ScoreIllustrator {
 	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
 	final static int NOTE_HEIGHT = SYSTEM_LINE_SPACING;
 	
+	final static int STEM_LENGTH = 30;
+	
 	final static int MEASURE_WIDTH = 100;
-	final static int LEDGER_WIDTH = (int) (SYSTEM_LINE_SPACING * 1.2);
+	final static int LEDGER_WIDTH = (int) (SYSTEM_LINE_SPACING * 1.5);
 	
 	Image _imgQuarter, _imgHalf, _imgWhole, _imgRest,
 			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp;
@@ -196,8 +200,6 @@ public class ScoreIllustrator {
 			else {
 				System.out.println("Unrecognized timestep: " + currDur);
 			}
-			
-			staffX += measureWidth;
 		}
 	}
 	
@@ -213,39 +215,69 @@ public class ScoreIllustrator {
 		int numerValue = (int) (Math.log(numer) / LOG_2);
 		int denomValue = (int) (Math.log(denom) / LOG_2);
 		
-		// get current clef
-		
 		List<Pitch> pitches = mn.getPitches();
+		if (pitches.size() == 0)
+			return;
+		
+		int minLine, maxLine;
+		minLine = maxLine = getLineNumber(currClef, pitches.get(0));
 		for (Pitch p : pitches) {
 			// add 4 since the third line is "number 0"
 			int line = getLineNumber(currClef, p);
+			minLine = Math.min(minLine, line);
+			maxLine = Math.max(maxLine, line);
 			
 			int noteX = nextX;
-			int noteY = -(line - 4) * SYSTEM_LINE_SPACING / 2 + nextY;
+			int noteY = getLineOffset(currClef, line) + nextY;
 			
 			// if too low or too high, draw ledger line
 			if (line < -5 || line > 5)
 				drawLedgerLine(g, noteX, noteY);
 			
-			drawNote(g, numerValue, denomValue, noteX, noteY);
+			drawPitch(g, numerValue, denomValue, noteX, noteY);
 		}
 		
-		// draw stem?
-		
+		// draw stem or add to stem group
 		if (denomValue >= 3) {
 			stemGroup.add(mn);
 		}
-		else if (stemGroup.size() > 0) {
-			// render previous group
-			renderStemGroup(stemGroup);
+		else {
+			if (denomValue != 0) {
+				// don't draw stem for whole notes
+				int minOffset = getLineOffset(currClef, minLine);
+				int maxOffset = getLineOffset(currClef, maxLine);
+				
+				int stemX = nextX;
+				if (minLine + maxLine <= 0) {
+					// upwards stem
+					maxOffset -= STEM_LENGTH;
+					stemX += NOTE_WIDTH / 2;
+				}
+				else {
+					// downwards stem
+					minOffset += STEM_LENGTH;
+					stemX -= NOTE_WIDTH / 2;
+				}
+				
+				drawStem(g, stemX, nextY, minOffset, maxOffset);
+			}
+			
+			if (stemGroup.size() > 0) {
+				// render previous group
+				renderStemGroup(stemGroup);
+			}
 		}
+	}
+	
+	private void drawStem(Graphics g, int xc, int yc, int minOffset, int maxOffset) {
+		g.drawLine(xc, yc + minOffset, xc, yc + maxOffset);
 	}
 	
 	private void renderStemGroup(List<MultiNote> stemGroup) {
 		Rational totalDuration = new Rational(0, 1);
 		int totalLines = 0;
 		
-		for (int i = stemGroup.size() - 1; i >= 0; i++) {
+		for (int i = stemGroup.size() - 1; i >= 0; i--) {
 			MultiNote mnote = stemGroup.get(i);
 			
 			// calc average (above center = stems downward, below center = stems upward)
@@ -262,12 +294,11 @@ public class ScoreIllustrator {
 		MultiNote first = stemGroup.get(0);
 		MultiNote last = stemGroup.get(stemGroup.size() - 1);
 		
-		
-		stemGroup = new ArrayList<MultiNote>();
-
+		//stemGroup = new ArrayList<MultiNote>();
+		stemGroup.clear();
 	}
 	
-	private void drawNote(Graphics g, int numerValue, int denomValue, int xc, int yc) {
+	private void drawPitch(Graphics g, int numerValue, int denomValue, int xc, int yc) {
 		// draw circle on the correct line
 		//g.drawImage(_imgQuarter, xc, yc, null);
 		
@@ -343,10 +374,6 @@ public class ScoreIllustrator {
 		//g.drawImage(
 	}
 	
-	private void drawStem(Graphics g, int xc, int sy, int ey) {
-		g.drawLine(xc, sy, xc, ey);
-	}
-	
 	private void drawLedgerLine(Graphics g, int xc, int yc) {
 		g.drawLine(xc - LEDGER_WIDTH / 2, yc, xc + LEDGER_WIDTH / 2, yc);
 	}
@@ -383,6 +410,11 @@ public class ScoreIllustrator {
 	public int getLineNumber(Clef c, Pitch pitch) {
 		int centerValue = c.getCenterValue();
 		int pitchValue = pitch.getNoteLetter().intValue() + pitch.getOctave() * 7;
+		
 		return pitchValue - centerValue + c.getCenterLine();
+	}
+	
+	public int getLineOffset(Clef c, int line) {
+		return -(line - 4) * SYSTEM_LINE_SPACING / 2;
 	}
 }

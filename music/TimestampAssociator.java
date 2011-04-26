@@ -10,8 +10,33 @@ public class TimestampAssociator extends Timestep implements Comparable{
 	}
 	
 	public int compareTo(Object obj) {
+		// weight clefs, key signatures, then time signatures?
+		
 		TimestampAssociator dur = (TimestampAssociator) obj;
-		return getDuration().compareTo(dur.getDuration());
+		int diff = getDuration().compareTo(dur.getDuration());
+		if (diff == 0) {
+			
+			int weightAssoc = getWeight();
+			int weightOther = dur.getWeight();
+			
+			return weightOther - weightAssoc;
+		}
+		
+		return diff;
+	}
+	
+	int getWeight() {
+		if (_associated instanceof Clef) {
+			return 3;
+		}
+		else if (_associated instanceof KeySignature) {
+			return 2;
+		}
+		else if (_associated instanceof TimeSignature) {
+			return 1;
+		}
+		
+		return 0;
 	}
 	
 	public ListIterator<? extends Timestep> getAssociated() {
