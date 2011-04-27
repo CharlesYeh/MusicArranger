@@ -21,7 +21,7 @@ public class TimestampAssociator extends Timestep implements Comparable{
 		
 		TimestampAssociator dur = (TimestampAssociator) obj;
 		int diff = getDuration().compareTo(dur.getDuration());
-		if (diff == 0) {
+		if (diff == 0 && _assocType != null) {
 			int weightAssoc = getWeight();
 			int weightOther = dur.getWeight();
 			return weightOther - weightAssoc;
