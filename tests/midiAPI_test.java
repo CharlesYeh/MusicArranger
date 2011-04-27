@@ -8,6 +8,7 @@ package tests;
  * @version 1.00 2011/4/24
  */
 import music.*;
+import logic.midiAPI;
 import logic.Playback;
 import java.util.*;
 
@@ -33,7 +34,7 @@ public class midiAPI_test {
 		voice2.add(mary_had_a_little_lamb);
 		voice2.add(mary_had_a_little_lamb2);
 
-		Playback pb = new Playback(1500);
+		midiAPI api = new midiAPI(1500);
 
 		//choose which voice to play!
 		Voice v = (new midiAPI_test()).createVoiceFromMidiPitches(voice2);
@@ -41,8 +42,8 @@ public class midiAPI_test {
 		Voice v2 = (new midiAPI_test()).createVoiceFromMidiPitches(voice1);
 
 
-		pb.playVoice(v);
-		pb.playVoice(v2);
+		api.playVoice(v);
+		api.playVoice(v2);
     }
 
 	public Voice createVoiceFromMidiPitches(ArrayList<int[]> midiPitches){

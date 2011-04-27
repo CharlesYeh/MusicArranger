@@ -19,11 +19,11 @@ public class MidiPlayer extends Thread {
 		_midi = midi;
 		_itrList = iList;
 	}
-
-	public void start() {
-		// get start timestamp
-
-	}
+//
+//	public void start() {
+//		// get start timestamp
+//
+//	}
 
 	public void addMultiNote(MultiNote mn) {
 
@@ -36,7 +36,7 @@ public class MidiPlayer extends Thread {
 		System.out.println("current time is " + currentTime.getNumerator() + "/" + currentTime.getDenominator());
 
 		//next time an action occurs
-		Rational nextTime;
+		Rational nextTime = null;
 
 		//initiate the _starts treemap with the iterators to the lists of multinotes (that represent voices)
 		for(int i = 0; i < _itrList.size(); i++){
@@ -52,7 +52,7 @@ public class MidiPlayer extends Thread {
 		boolean _noteOffDone = false; //true when _ends is empty
 
 		while (!_noteOnDone || !_noteOffDone) {
-			
+
 			Rational sleepDuration = null;
 			// turn on notes
 			if(_starts.isEmpty()){
@@ -65,7 +65,7 @@ public class MidiPlayer extends Thread {
 				if(itr.hasNext()){
 					//########################### don't compare timestamp with "current time"
 					//if the timestamp of this multinote is greater than the current timestamp
-					if (firstKey.compareTo(currentTime) >= 0){
+					if (firstKey.getDuration().compareTo(currentTime) >= 0){
 
 						currentTime = firstKey.getDuration();
 
@@ -77,15 +77,15 @@ public class MidiPlayer extends Thread {
 						firstKey.addDuration(mn);
 
 						Timestamp ts2 = new Timestamp();
-						Rational nextDuration = sleepDuration = currentTime.plus(mn.getDuration());
-						ts2.setDuration(nextDuration);
+						nextTime = currentTime.plus(mn.getDuration());
+						ts2.setDuration(nextTime);
 						_ends.put(ts2, mn);
 
 						//nextTime = currentTime.plus(mn.getDuration());
 
 					} else {
 	//					nextTime = ts.getDuration();
-						//sleepDuration = min(sleepDuration, 
+						//sleepDuration = min(sleepDuration,
 						System.out.println("nextTime is reset");
 
 					}
@@ -106,13 +106,14 @@ public class MidiPlayer extends Thread {
 				Timestamp ts2 = (Timestamp) _ends.firstKey();
 
 				//if the timestamp of this multinote is greater than the current timestamp
-				if (ts2.compareTo(currentTime) >= 0){
+				if (ts2.getDuration().compareTo(currentTime) >= 0){
 					// stop playing it
 
 					MultiNote mn = _ends.get(ts2);
 
 					_midi.multiNoteOff(mn);
 					//nextTime = min(nextTime, currentTime.plus(mn.getDuration()));
+					nextTime = min(nextTime, currentTime.plus(mn.getDuration()));
 
 				}
 //				else{
@@ -121,12 +122,13 @@ public class MidiPlayer extends Thread {
 			}
 
 			//thread sleeps for the amount of time between the current time and the next note_on/note_off event
+			sleepDuration = nextTime.plus(currentTime.negate());
 			int sleepMilli = (_midi.getWholeNoteDuration() * sleepDuration.getNumerator()) / sleepDuration.getDenominator();
 			try {
 				Thread.sleep(sleepMilli);
 			}
 			catch (Exception e) {
-				
+
 			}
 		}
 	}
