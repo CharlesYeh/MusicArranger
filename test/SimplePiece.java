@@ -31,6 +31,10 @@ public class SimplePiece extends Piece {
 		MultiNote treble7 = new MultiNote(new Rational(1, 4));
 			treble7.getPitches().add(af5);
 		
+		Pitch p1 = new Pitch(NoteLetter.A, 3, Accidental.NATURAL, false);
+		MultiNote t1 = new MultiNote(new Rational(1, 1));
+			t1.getPitches().add(p1);
+		
 		// voices
 		Voice voicetreble1 = new Voice();
 			voicetreble1.getMultiNotes().add(treble1);
@@ -40,7 +44,10 @@ public class SimplePiece extends Piece {
 			voicetreble1.getMultiNotes().add(treble5);
 			voicetreble1.getMultiNotes().add(treble6);
 			voicetreble1.getMultiNotes().add(treble7);
-
+		
+		Voice v2 = new Voice();
+			v2.getMultiNotes().add(t1);
+		
 		// clefs
 		Clef cleftreble = new Clef(new Rational(2, 1), ClefName.GCLEF, -2);
 		Clef clefbass = new Clef(new Rational(1, 1), ClefName.FCLEF, 2);
@@ -50,6 +57,7 @@ public class SimplePiece extends Piece {
 			stafftreble.getVoices().add(voicetreble1);
 			stafftreble.getClefs().add(cleftreble);
 			stafftreble.getClefs().add(clefbass);
+			//stafftreble.getVoices().add(v2);
 
 		// time signatures
 		TimeSignature timesig1 = new TimeSignature(new Rational(3, 1), 2, 4);

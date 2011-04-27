@@ -10,20 +10,30 @@ public class Timestamp extends Timestep implements Comparable {
 	public Timestamp(Class type) {
 		_assocType = type;
 	}
+	
+	public Class getAssocClass(){
+		return _assocType;
+	}
 
 	public int compareTo(Object obj) {
 		Timestamp dur = (Timestamp) obj;
 
 		int diff = getDuration().compareTo(dur.getDuration());
-		if (diff == 0 && _assocType != null) {
-			int weightAssoc = getWeight();
-			int weightOther = dur.getWeight();
-			return weightOther - weightAssoc;
+		if (diff == 0) {
+			if (_assocType != null) {
+				// not a multinote
+				int weightAssoc = getWeight();
+				int weightOther = dur.getWeight();
+				return weightOther - weightAssoc;
+			}
+			else {
+				// multinotes shouldn't have the exact same compareto value
+			}
 		}
-
+		
 		return diff;
 	}
-
+	
 	int getWeight() {
 		if (_assocType == Clef.class) {
 			return 3;

@@ -5,10 +5,10 @@ import music.*;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import java.awt.Point;
 
@@ -27,8 +27,11 @@ public class ScoreIllustrator {
 	final static int TOP_MARGIN	= 150;
 	final static int LEFT_MARGIN	= 50;
 	final static int RIGHT_MARGIN	= 50;
+	
+	final static int SYSTEM_SPACING = 90;
 	final static int SYSTEM_LINE_SPACING = 10;
-	final static int SYSTEM_SPACING = 80;
+	
+	final static int STAFF_SPACING = 70;
 	
 	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
 	final static int NOTE_HEIGHT = SYSTEM_LINE_SPACING;
@@ -43,7 +46,7 @@ public class ScoreIllustrator {
 			_imgClefG, _imgClefF, _imgClefC;
 	
 	// map each system to its y coordinate
-	Map<Integer, Integer> _systemPositions;
+	List<Integer> _systemPositions;
 	
 	public ScoreIllustrator() {
 		// load images
@@ -70,7 +73,10 @@ public class ScoreIllustrator {
 	
 	public void drawPiece(Graphics g, Piece piece) {
 		// list manuevering
-		PriorityQueue<TimestampAssociator> pQueue = new PriorityQueue<TimestampAssociator>();
+		TreeMap<Timestamp, ListIterator<? extends Timestep>> timeline = new TreeMap<Timestamp, ListIterator<? extends Timestep>>();
+		
+		_systemPositions = new ArrayList<Integer>();
+		Map<Staff, Integer> staffPositions = new HashMap<Staff, Integer>();
 		
 		//-------------------------listiters-----------------------
 		// load structure
@@ -82,9 +88,9 @@ public class ScoreIllustrator {
 		ListIterator<TimeSignature> timeIter = timeSigs.listIterator();
 		ListIterator<ChordSymbol> chordIter = chords.listIterator();
 		
-		pQueue.add(new TimestampAssociator(keyIter, KeySignature.class));
-		pQueue.add(new TimestampAssociator(timeIter, TimeSignature.class));
-		/*pQueue.add(new TimestampAssociator(chordIter, ChordSymbol.class));
+		timeline.put(new Timestamp(KeySignature.class), keyIter);
+		timeline.put(new Timestamp(TimeSignature.class), timeIter);
+		/*pQueue.add(new Timestamp(ChordSymbol.class), chordIter);
 		*/
 		//-----------------------end listiters----------------------
 		
@@ -103,15 +109,20 @@ public class ScoreIllustrator {
 		//------------------------load notes------------------------
 		// add multinote lists from each staff's voice to pQueue
 		List<Staff> staffs = piece.getStaffs();
+		int numStaffs = staffs.size();
+		
 		for (Staff st : staffs) {
+			staffPositions.put(st, staffPositions.size());
+			
 			List<Voice> voices = st.getVoices();
 			
+			System.out.println(st + " " + voices);
 			// handle clefs
 			List<Clef> initClef = st.getClefs();
 			ListIterator<Clef> clefIter = initClef.listIterator();
 			timestepStaff.put(clefIter, st);
 			
-			pQueue.add(new TimestampAssociator(clefIter, Clef.class));
+			timeline.put(new Timestamp(Clef.class), clefIter);
 			
 			// get first clef on each staff
 			currClefs.put(st, initClef.get(0));
@@ -119,10 +130,12 @@ public class ScoreIllustrator {
 			for (Voice v : voices) {
 				List<MultiNote> multis = v.getMultiNotes();
 				ListIterator<MultiNote> multisList = multis.listIterator();
-				
+				System.out.println(multis.size());
 				// so we can get the staff a voice is on easily
 				timestepStaff.put(multisList, st);
-				pQueue.add(new TimestampAssociator(multisList, MultiNote.class));
+				//System.out.println("ASDF" + timeline.size() + " " + timeline.containsKey(new Timestamp(Voice.class)));
+				timeline.put(new Timestamp(MultiNote.class), multisList);
+				//System.out.println("ASDF" + timeline.size());
 			}
 		}
 		//----------------------end load notes----------------------
@@ -133,19 +146,25 @@ public class ScoreIllustrator {
 		int nextY 	= TOP_MARGIN - SYSTEM_SPACING;
 		int nextX 	= staffX;
 		
-		while (pQueue.size() > 0) {
-			TimestampAssociator timeAssoc = pQueue.poll();
-			ListIterator<? extends Timestep> currList = timeAssoc.getAssociated();
+		while (timeline.size() > 0) {
+			Timestamp timestamp = timeline.firstKey();
+			ListIterator<? extends Timestep> currList = timeline.get(timestamp);
+			
+			if (currList == null) {
+				System.out.println("There was an empty list of class: " + timestamp.getAssocClass());
+				System.exit(1);
+			}
 			
 			Timestep currDur = null;
 			if (currList.hasNext()) {
-				currDur = (Timestep) currList.next();
-				
-				timeAssoc.addDuration(currDur);
-				pQueue.add(timeAssoc);
+				currDur = currList.next();
+				timeline.remove(timestamp);
+				timestamp.addDuration(currDur);
+				timeline.put(timestamp, currList);
 			}
 			else {
 				// don't add back to priority queue
+				timeline.remove(timestamp);
 				continue;
 			}
 			
@@ -157,7 +176,11 @@ public class ScoreIllustrator {
 				// if new line, draw systems
 				nextX = LEFT_MARGIN;
 				nextY += SYSTEM_SPACING;
-				drawSystem(g, nextY);
+				
+				_systemPositions.add(nextY);
+				for (int i = 0; i < numStaffs; i++){
+					drawSystem(g, nextY + STAFF_SPACING * i);
+				}
 			}
 			
 			Staff currStaff = timestepStaff.get(currList);
@@ -168,7 +191,10 @@ public class ScoreIllustrator {
 				MultiNote mnote = (MultiNote) currDur;
 				Clef currClef = currClefs.get(currStaff);
 				
-				drawMultiNote(g, stemGroup, currClef, mnote, nextX, nextY);
+				int noteX = nextX;
+				int noteY = nextY + staffPositions.get(currStaff) * STAFF_SPACING;
+				
+				drawMultiNote(g, stemGroup, currClef, mnote, noteX, noteY);
 				Rational dur = mnote.getDuration();
 				
 				// nextX should increase proportional to note length
@@ -285,6 +311,12 @@ public class ScoreIllustrator {
 	}
 	
 	private void renderStemGroup(List<MultiNote> stemGroup) {
+		if (stemGroup.size() <= 1) {
+			// not actually a group
+			stemGroup.clear();
+			return;
+		}
+		/*
 		Rational totalDuration = new Rational(0, 1);
 		int totalLines = 0;
 		
@@ -294,17 +326,44 @@ public class ScoreIllustrator {
 			// calc average (above center = stems downward, below center = stems upward)
 			List<Pitch> pitches = mnote.getPitches();
 			for (Pitch p : pitches) {
-				//totalLines += getLineNumber(clef, p);
+				totalLines += getLineNumber(clef, p);
 			}
 			
 			// calc total duration
 			totalDuration = totalDuration.plus(mnote.getDuration());
 		}
 		
+		// -1 = upwards, 1 = downwards
+		boolean stemDirection = (totalLines >= 0) ? -1 : 1;
+		
 		// calc slope of stem bar (last - first) / totalDuration
 		MultiNote first = stemGroup.get(0);
 		MultiNote last = stemGroup.get(stemGroup.size() - 1);
 		
+		double slope = (last.getY() - first.getY()) / (last.getX() - first.getX())
+		double maxBarOffset = 0;
+		
+		// also calc how much to offset the bar vertically
+		for (MultiNote mn : stemGroup) {
+			int dx = mn.getX() - first.getX();
+			int expectedY = first.getY() + dx * slope;
+			maxBarOffset = Math.max(maxBarOffset, expectedY);
+			
+			int stemX = mn.getX();
+			g.drawLine(stemX, mn.getY(), );
+		}
+		
+		// draw stems and additional bars next to first bar (for 16th, etc)
+		for (MultiNote mn : stemGroup) {
+			
+		}
+		
+		int barSX = first.getX();
+		int barSY = first.getY() + stemDirection * (stemLength + maxBarOffset);
+		int barEX = last.getX();
+		int barEY = last.getX() + stemDirection * (stemLength + maxBarOffset);
+		g.drawLine(barSX, barSY, barEX, barEY);
+		*/
 		//stemGroup = new ArrayList<MultiNote>();
 		stemGroup.clear();
 	}
