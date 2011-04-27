@@ -5,15 +5,15 @@ import javax.sound.midi.*;
 import java.util.*;
 import java.lang.Object;
 
-public class Playback{
+public class midiAPI{
 
-	int _wholeNoteDuration = 1000; //The duration of a whole note;
+	int _wholeNoteDuration = 1000; //The duration of a whole note
 
 
-	public Playback(int wholeNoteDuration){
+	public midiAPI(int wholeNoteDuration){
 		_wholeNoteDuration = wholeNoteDuration;
 	}
-	
+
     public void playVoice(Voice v) {
 
             LinkedList<MultiNote> mns = v.getMultiNotes();
@@ -108,5 +108,17 @@ public class Playback{
 
 		return midiPitch;
 
+	}
+
+	public void multiNoteOn(MultiNote mn){
+		System.out.println("note is turned on: "+mn.toString());
+	}
+
+	public void multiNoteOff(MultiNote mn){
+		System.out.println("note is turned off: "+mn.toString());
+	}
+
+	public int getWholeNoteDuration(){
+		return _wholeNoteDuration;
 	}
 }
