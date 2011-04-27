@@ -21,7 +21,7 @@ public class LogicManager {
 		return editor;
 	}
 	protected ArrangerXMLParser makeArrangerXMLParser() {
-		return new ArrangerXMLParser();
+		return new ArrangerXMLParser(_editor);
 	}
 	protected ArrangerXMLWriter makeArrangerXMLWriter() {
 		return new ArrangerXMLWriter();
