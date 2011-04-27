@@ -29,8 +29,6 @@ public class ArrangerXMLWriter {
 		writeStaffs(staffs, root);
 		writeChordSymbols(chordSymbols, root);
 		
-		// TODO: ############ getChordSymbols()
-		
 		//write to file
 		XMLWriter writer = new XMLWriter(new FileWriter(fileName), OutputFormat.createPrettyPrint());
 		writer.write(document);
