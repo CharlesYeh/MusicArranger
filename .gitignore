@@ -3,4 +3,5 @@
 images/psds/
 .settings/
 .project
+bin/
 *.classpath

@@ -53,7 +53,7 @@ public class Editor{
 	}
 	// PIECE EDITING
 	// edits the key signature list
-	public Editor appendKeySig(Rational dur, int accds, boolean ismjr) {
+	public Editor insertKeySig(Rational dur, int accds, boolean ismjr) {
 		insertKeySig(_keySigIter, dur, accds, ismjr);
 		return this;
 	}
@@ -70,7 +70,7 @@ public class Editor{
 	}
 	
 	// edits the time signature list
-	public Editor appendTimeSig(Rational dur, int numer, int denom) {
+	public Editor insertTimeSig(Rational dur, int numer, int denom) {
 		insertTimeSig(_timeSigIter, dur, numer, denom);
 		return this;
 	}
@@ -87,7 +87,7 @@ public class Editor{
 	}
 	
 	// edits the staff list
-	public Editor appendStaff() {
+	public Editor insertStaff() {
 		insertStaff(_staffIter);
 		return this;
 	}
@@ -106,7 +106,7 @@ public class Editor{
 	}
 	
 	// edits the chord symbol list
-	public Editor appendChordSymbol(Rational dur, int scldgr, ChordType qual) {
+	public Editor insertChordSymbol(Rational dur, int scldgr, ChordType qual) {
 		insertChordSymbol(_chordSymIter, dur, scldgr, qual);
 		return this;
 	}
@@ -124,7 +124,7 @@ public class Editor{
 	
 	// STAFF EDITING
 	// edits the clef list
-	public Editor appendClef(Rational dur, ClefName clefnm, int linenum) {
+	public Editor insertClef(Rational dur, ClefName clefnm, int linenum) {
 		insertClef(_clefIter, dur, clefnm, linenum);
 		return this;
 	}
@@ -141,7 +141,7 @@ public class Editor{
 	}
 	
 	//edits the voice list
-	public Editor appendVoice() {
+	public Editor insertVoice() {
 		insertVoice(_voiceIter);
 		return this;
 	}
@@ -154,7 +154,7 @@ public class Editor{
 	}
 	
 	// VOICE EDITING
-	public Editor appendMultiNote(Rational dur) {
+	public Editor insertMultiNote(Rational dur) {
 		insertMultiNote(_multiNoteIter, dur);
 		return this;
 	}
@@ -172,7 +172,7 @@ public class Editor{
 	}
 	
 	// MULTINOTE EDITING
-	public Editor appendPitch(NoteLetter ltr, int octv, Accidental accd, boolean istied) {
+	public Editor insertPitch(NoteLetter ltr, int octv, Accidental accd, boolean istied) {
 		insertPitch(_pitchIter, ltr, octv, accd, istied);
 		return this;
 	}

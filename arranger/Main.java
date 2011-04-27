@@ -1,15 +1,21 @@
 package arranger;
 
+import gui.MainPanel;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import java.awt.event.KeyEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import gui.MainPanel;
-import logic.*;
-import music.*;
+
+import logic.ArrangerXMLParser;
+import logic.ArrangerXMLWriter;
+import logic.Editor;
+import logic.Instruction;
+import music.Piece;
 
 /*
  * Main handles delegations of tasks between
@@ -19,16 +25,29 @@ public class Main extends JFrame{
 	ArrangerXMLParser _parser;
 	ArrangerXMLWriter _writer;
 
+	//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
+	Editor _editor;
+
 	Piece _piece;
 
 	public Main(){
 		super("Music Arranger");
 
-		_parser = new ArrangerXMLParser(new Editor());
+
+		//#$#$#_parser = new ArrangerXMLParser();
 		_writer = new ArrangerXMLWriter();
+
+
+		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
+		_editor = new Editor();
+		_parser = new ArrangerXMLParser(_editor);
 
 		// ######################################################
 		_piece = new test.SimplePiece();
+
+
+		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
+		_editor.setPiece(_piece);
 
 		ArrangerConstants.WINDOW_WIDTH = 800;
 		ArrangerConstants.WINDOW_HEIGHT = 600;

@@ -46,7 +46,7 @@ public class ArrangerXMLParser {
 	}
 
 	private void parseStaff(Element elemStaff) {
-		_editor.appendStaff();									// append new staff
+		_editor.insertStaff();									// insert new staff
 
 		Element elemClefList = elemStaff.element("clefs");		// parse clef list
 		parseClefs(elemClefList);
@@ -67,7 +67,7 @@ public class ArrangerXMLParser {
 		Rational dur = parseTimestep(elemKeySig.element("timestep"));
 		int accidentals = parseIntAttribute(elemKeySig, "accidentals");
 		boolean isMajor = parseBooleanAttribute(elemKeySig, "isMajor");
-		_editor.appendKeySig(dur, accidentals, isMajor);		// append keysig
+		_editor.insertKeySig(dur, accidentals, isMajor);		// insert keysig
 	}
 
 	private void parseTimeSignatures(Element elemTimeSigs) {
@@ -81,7 +81,7 @@ public class ArrangerXMLParser {
 		Rational dur = parseTimestep(elemTimeSig.element("timestep"));
 		int numer = parseIntAttribute(elemTimeSig, "numerator");
 		int denom = parseIntAttribute(elemTimeSig, "denominator");
-		_editor.appendTimeSig(dur, numer, denom);				// append timesig
+		_editor.insertTimeSig(dur, numer, denom);				// insert timesig
 	}
 
 	private void parseChordSymbols(Element elemChordSymbols) {
@@ -95,7 +95,7 @@ public class ArrangerXMLParser {
 		Rational dur = parseTimestep(elemChordSymbol.element("timestep"));
 		int scaleDegree = parseIntAttribute(elemChordSymbol, "scaleDegree");
 		ChordType chordType = getChordType(parseStringAttribute(elemChordSymbol, "chordType"));
-		_editor.appendChordSymbol(dur, scaleDegree, chordType);	// append chordsymbol
+		_editor.insertChordSymbol(dur, scaleDegree, chordType);	// insert chordsymbol
 	}
 
 	private void parseClefs(Element e) {
@@ -109,7 +109,7 @@ public class ArrangerXMLParser {
 		Rational dur = parseTimestep(elemClef.element("timestep"));
 		ClefName type = getClefName(parseStringAttribute(elemClef, "type"));
 		int centLine = parseIntAttribute(elemClef, "center_line");
-		_editor.appendClef(dur, type, centLine);				// append clef
+		_editor.insertClef(dur, type, centLine);				// insert clef
 	}
 
 	//--------------------MUSIC PARSING--------------------
@@ -122,7 +122,7 @@ public class ArrangerXMLParser {
 	}
 
 	private void parseVoice(Element elemVoice) {
-		_editor.appendVoice();									// append voice
+		_editor.insertVoice();									// insert voice
 
 		Element elemMNs = elemVoice.element("multinotes");
 		parseMultiNotes(elemMNs);								// parse multinote list
@@ -137,7 +137,7 @@ public class ArrangerXMLParser {
 
 	private void parseMultiNote(Element elemMN) {
 		Rational dur = parseTimestep(elemMN.element("timestep"));
-		_editor.appendMultiNote(dur);							// append multinote
+		_editor.insertMultiNote(dur);							// insert multinote
 
 		Element elemPitches = elemMN.element("pitches");
 		parsePitches(elemPitches);								// parse pitch list
@@ -156,7 +156,7 @@ public class ArrangerXMLParser {
 		Accidental accid = getAccidental(parseStringAttribute(elemPitch, "accidental"));
 		boolean isTied = false; 								// TODO: THIS NEEDS TO BE CHANGED
 
-		_editor.appendPitch(letter, octave, accid, isTied);		// append pitch
+		_editor.insertPitch(letter, octave, accid, isTied);		// insert pitch
 	}
 
 	private NoteLetter getNoteLetter(String letter) {
