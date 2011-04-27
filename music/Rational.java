@@ -28,7 +28,8 @@ public class Rational {
 	}
 	
 	// return { -1, 0, +1 } if a < b, a = b, or a > b
-    public int compareTo(Rational b) {
+    public int compareTo(Object obj) {
+        Rational b = (Rational) obj;
         Rational a = this;
         int lhs = a.getNumerator() * b.getDenominator();
         int rhs = a.getDenominator() * b.getNumerator();

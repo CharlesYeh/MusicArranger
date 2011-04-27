@@ -8,14 +8,14 @@ import java.util.ArrayList;
 
 public class MidiPlayer extends Thread {
 
-	TreeMap _starts;
-	TreeMap _ends;
+	TreeMap<Timestamp, ListIterator<MultiNote>> _starts;
+	TreeMap<Timestamp, MultiNote> _ends;
 	midiAPI _midi;
 	ArrayList<ListIterator<MultiNote>> _itrList;
 
 	public MidiPlayer(midiAPI midi, ArrayList<ListIterator<MultiNote>> iList) {
-		_starts = new TreeMap();
-		_ends = new TreeMap();
+		_starts = new TreeMap<Timestamp, ListIterator<MultiNote>>();
+		_ends = new TreeMap<Timestamp, MultiNote>();
 		_midi = midi;
 		_itrList = iList;
 	}
@@ -62,7 +62,7 @@ public class MidiPlayer extends Thread {
 				Timestamp firstKey = (Timestamp) _starts.firstKey();
 				ListIterator<MultiNote> itr = _starts.get(firstKey);
 				if(itr.hasNext()){
-
+					//########################### don't compare timestamp with "current time"
 					//if the timestamp of this multinote is greater than the current timestamp
 					if (firstKey.compareTo(currentTime) >= 0){
 
@@ -119,15 +119,20 @@ public class MidiPlayer extends Thread {
 
 			//thread sleeps for the amount of time between the current time and the next note_on/note_off event
 			Rational sleepDuration = nextTime.plus(currentTime.negate());
-			int sleepMilli = _midi.getWholeNoteDuration() * (double) sleepDuration.getNumerator()/ sleepDuration.getDenominator();
-			Thread.sleep(sleepMilli);
+			int sleepMilli = (_midi.getWholeNoteDuration() * sleepDuration.getNumerator()) / sleepDuration.getDenominator();
+			try {
+				Thread.sleep(sleepMilli);
+			}
+			catch (Exception e) {
+				
+			}
 		}
 	}
 
 	//returns the minimum of two Rationals
 	public Rational min(Rational a, Rational b){
 
-		if(a.compareTo(b) == 1){
+		if(a.compareTo(b) > 0){
 			return b;
 		} else {
 			return a;
