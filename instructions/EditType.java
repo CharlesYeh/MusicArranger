@@ -1,0 +1,5 @@
+package instructions;
+
+public enum EditType {
+	KEY_SIGNATURE, TIME_SIGNATURE, STAFF, VOICE, CLEF, CHORD_SYMBOL, MULTINOTE, PITCH
+}

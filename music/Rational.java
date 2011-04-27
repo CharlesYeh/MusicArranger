@@ -2,8 +2,8 @@ package music;
 
 public class Rational {
 
-	int _numer;			// Rational numerator
-	int _denom;			// Rational denominator
+	final int _numer;			// Rational numerator
+	final int _denom;			// Rational denominator
 
 	public Rational() {
 		_numer = _denom = 1;
