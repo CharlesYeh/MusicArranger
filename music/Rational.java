@@ -1,32 +1,32 @@
 package music;
 
 public class Rational {
-	
-	int _numer;			// Rational numerator
-	int _denom;			// Rational denominator
-	
+
+	final int _numer;			// Rational numerator
+	final int _denom;			// Rational denominator
+
 	public Rational() {
 		_numer = _denom = 1;
 	}
-	
+
 	public Rational(int numerator, int denominator) {
         if (denominator == 0) {
             throw new RuntimeException("Denominator is zero");
         }
-        
+
         int g = gcd(numerator, denominator);
         _numer = numerator / g;
         _denom = denominator / g;
     }
-	
+
 	public int getNumerator() {
 		return _numer;
 	}
-	
+
 	public int getDenominator() {
 		return _denom;
 	}
-	
+
 	// return { -1, 0, +1 } if a < b, a = b, or a > b
     public int compareTo(Object obj) {
         Rational b = (Rational) obj;
@@ -37,7 +37,7 @@ public class Rational {
         if (lhs > rhs) return +1;
         return 0;
     }
-	
+
 	// return a + b
 	public Rational plus(Rational b) {
 		Rational a = this;
@@ -64,7 +64,7 @@ public class Rational {
         if (0 == n) return m;
         else return gcd(n, m % n);
     }
-	
+
 	// returns least common multiple of two ints
 	private static int lcm(int m, int n) {
         if (m < 0) m = -m;

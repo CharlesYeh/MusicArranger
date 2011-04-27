@@ -14,8 +14,8 @@ import javax.swing.JMenuItem;
 import logic.ArrangerXMLParser;
 import logic.ArrangerXMLWriter;
 import logic.Editor;
-import logic.Instruction;
 import music.Piece;
+import instructions.*;
 
 /*
  * Main handles delegations of tasks between

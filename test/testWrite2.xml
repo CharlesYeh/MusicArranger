@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<piece>
+  <timeSignatures>
+    <timeSignature numerator="2" denominator="4">
+      <timestep durNumerator="3" durDenominator="2"/>
+    </timeSignature>
+  </timeSignatures>
+  <keySignatures>
+    <keySignature accidentals="0" isMajor="true">
+      <timestep durNumerator="2" durDenominator="1"/>
+    </keySignature>
+  </keySignatures>
+  <staffs>
+    <staff>
+      <clefs>
+        <clef type="GCLEF" center_line="-2">
+          <timestep durNumerator="3" durDenominator="2"/>
+        </clef>
+      </clefs>
+      <voices>
+        <voice>
+          <multinotes>
+            <multinote>
+              <timestep durNumerator="1" durDenominator="2"/>
+              <pitches>
+                <pitch octave="4" key="C" accidental="NATURAL"/>
+              </pitches>
+            </multinote>
+            <multinote>
+              <timestep durNumerator="1" durDenominator="4"/>
+              <pitches>
+                <pitch octave="4" key="D" accidental="NATURAL"/>
+              </pitches>
+            </multinote>
+            <multinote>
+              <timestep durNumerator="1" durDenominator="8"/>
+              <pitches>
+                <pitch octave="4" key="E" accidental="NATURAL"/>
+                <pitch octave="4" key="G" accidental="NATURAL"/>
+              </pitches>
+            </multinote>
+            <multinote>
+              <timestep durNumerator="1" durDenominator="8"/>
+              <pitches>
+                <pitch octave="4" key="F" accidental="SHARP"/>
+              </pitches>
+            </multinote>
+            <multinote>
+              <timestep durNumerator="1" durDenominator="2"/>
+              <pitches/>
+            </multinote>
+          </multinotes>
+        </voice>
+        <voice>
+          <multinotes/>
+        </voice>
+        <voice>
+          <multinotes/>
+        </voice>
+        <voice>
+          <multinotes/>
+        </voice>
+      </voices>
+    </staff>
+    <staff>
+      <clefs>
+        <clef type="FCLEF" center_line="2">
+          <timestep durNumerator="3" durDenominator="2"/>
+        </clef>
+      </clefs>
+      <voices>
+        <voice>
+          <multinotes>
+            <multinote>
+              <timestep durNumerator="1" durDenominator="4"/>
+              <pitches>
+                <pitch octave="3" key="C" accidental="NATURAL"/>
+              </pitches>
+            </multinote>
+            <multinote>
+              <timestep durNumerator="1" durDenominator="4"/>
+              <pitches>
+                <pitch octave="2" key="B" accidental="FLAT"/>
+              </pitches>
+            </multinote>
+            <multinote>
+              <timestep durNumerator="1" durDenominator="4"/>
+              <pitches>
+                <pitch octave="2" key="A" accidental="NATURAL"/>
+              </pitches>
+            </multinote>
+            <multinote>
+              <timestep durNumerator="1" durDenominator="4"/>
+              <pitches>
+                <pitch octave="3" key="B" accidental="NATURAL"/>
+              </pitches>
+            </multinote>
+            <multinote>
+              <timestep durNumerator="1" durDenominator="2"/>
+              <pitches/>
+            </multinote>
+          </multinotes>
+        </voice>
+        <voice>
+          <multinotes/>
+        </voice>
+        <voice>
+          <multinotes/>
+        </voice>
+        <voice>
+          <multinotes/>
+        </voice>
+      </voices>
+    </staff>
+  </staffs>
+  <chordSymbols>
+    <chordSymbol scaleDegree="1" chordType="MAJOR">
+      <timestep durNumerator="1" durDenominator="2"/>
+    </chordSymbol>
+    <chordSymbol scaleDegree="4" chordType="MINOR">
+      <timestep durNumerator="1" durDenominator="2"/>
+    </chordSymbol>
+    <chordSymbol scaleDegree="5" chordType="HDIMIN7">
+      <timestep durNumerator="1" durDenominator="2"/>
+    </chordSymbol>
+  </chordSymbols>
+</piece>
