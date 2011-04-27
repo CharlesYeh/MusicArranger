@@ -25,6 +25,24 @@ public class midiAPI{
 		}
 	}
 
+	public void playPiece(Piece p){
+
+		ArrayList<Staff> staffs = p.getStaffs();
+		for(int i = 0; i < staffs.size(); i++){
+			Staff s = staffs.get(i);
+			playStaff(s);
+		}
+	}
+
+	public void playStaff(Staff s){
+
+		ArrayList<Voice> voices = s.getVoices();
+		for(int i = 0; i < voices.size(); i++){
+			Voice v = voices.get(i);
+			playVoice(v);
+		}
+	}
+
     public void playVoice(Voice v) {
 
 		LinkedList<MultiNote> ll = v.getMultiNotes();
