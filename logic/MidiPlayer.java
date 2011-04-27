@@ -64,14 +64,15 @@ public class MidiPlayer extends Thread {
 				ListIterator<MultiNote> itr = _starts.get(firstKey);
 				if(itr.hasNext()){
 					//########################### don't compare timestamp with "current time"
-					//if the timestamp of this multinote is greater than the current timestamp
-					if (firstKey.getDuration().compareTo(currentTime) >= 0){
+					//if the timestamp of this multinote is less than or equal to the current timestamp
+					if (firstKey.getDuration().compareTo(currentTime) <= 0){
 
 						currentTime = firstKey.getDuration();
 
 						// play it
 
 						MultiNote mn = itr.next();
+						System.out.println("Turning note on at : " + currentTime.getNumerator() + "/" + currentTime.getDenominator());
 						_midi.multiNoteOn(mn);
 
 						firstKey.addDuration(mn);
@@ -81,13 +82,9 @@ public class MidiPlayer extends Thread {
 						ts2.setDuration(nextTime);
 						_ends.put(ts2, mn);
 
-						//nextTime = currentTime.plus(mn.getDuration());
-
 					} else {
-	//					nextTime = ts.getDuration();
-						//sleepDuration = min(sleepDuration,
-						System.out.println("nextTime is reset");
 
+						System.out.println("nextTime is reset");
 					}
 
 				} else {
@@ -105,31 +102,33 @@ public class MidiPlayer extends Thread {
 				// turn off notes
 				Timestamp ts2 = (Timestamp) _ends.firstKey();
 
-				//if the timestamp of this multinote is greater than the current timestamp
-				if (ts2.getDuration().compareTo(currentTime) >= 0){
+				//if the timestamp of this multinote is less than or equal to the current timestamp
+				if (ts2.getDuration().compareTo(currentTime) <= 0){
 					// stop playing it
 
 					MultiNote mn = _ends.get(ts2);
-
+					System.out.println("Turning note OFF at : " + currentTime.getNumerator() + "/" + currentTime.getDenominator());
 					_midi.multiNoteOff(mn);
-					//nextTime = min(nextTime, currentTime.plus(mn.getDuration()));
+					_ends.remove(ts2);
+
 					nextTime = min(nextTime, currentTime.plus(mn.getDuration()));
 
 				}
-//				else{
-//					nextTime = Math.min(nextTime, ts.getDuration());
-//				}
 			}
 
 			//thread sleeps for the amount of time between the current time and the next note_on/note_off event
 			sleepDuration = nextTime.plus(currentTime.negate());
 			int sleepMilli = (_midi.getWholeNoteDuration() * sleepDuration.getNumerator()) / sleepDuration.getDenominator();
 			try {
+				System.out.println("Sleeping for " + sleepMilli + "ms");
 				Thread.sleep(sleepMilli);
+				System.out.println("Finished sleep");
 			}
 			catch (Exception e) {
 
 			}
+
+			currentTime = nextTime;
 		}
 	}
 

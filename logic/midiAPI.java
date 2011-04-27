@@ -131,13 +131,13 @@ public class midiAPI{
 	}
 
 	public void multiNoteOn(MultiNote mn){
-		System.out.println("note is turned on: "+mn.toString());
+//		System.out.println("note is turned on: "+mn.toString());
 		multiNoteEvent(mn, ShortMessage.NOTE_ON);
 
 	}
 
 	public void multiNoteOff(MultiNote mn){
-		System.out.println("note is turned off: "+mn.toString());
+//		System.out.println("note is turned off: "+mn.toString());
 		multiNoteEvent(mn, ShortMessage.NOTE_OFF);
 	}
 
