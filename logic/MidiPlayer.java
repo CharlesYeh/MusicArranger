@@ -52,7 +52,8 @@ public class MidiPlayer extends Thread {
 		boolean _noteOffDone = false; //true when _ends is empty
 
 		while (!_noteOnDone || !_noteOffDone) {
-
+			
+			Rational sleepDuration = null;
 			// turn on notes
 			if(_starts.isEmpty()){
 
@@ -76,13 +77,15 @@ public class MidiPlayer extends Thread {
 						firstKey.addDuration(mn);
 
 						Timestamp ts2 = new Timestamp();
-						ts2.setDuration(currentTime.plus(mn.getDuration()));
+						Rational nextDuration = sleepDuration = currentTime.plus(mn.getDuration());
+						ts2.setDuration(nextDuration);
 						_ends.put(ts2, mn);
 
-						nextTime = currentTime.plus(mn.getDuration());
+						//nextTime = currentTime.plus(mn.getDuration());
 
 					} else {
 	//					nextTime = ts.getDuration();
+						//sleepDuration = min(sleepDuration, 
 						System.out.println("nextTime is reset");
 
 					}
@@ -109,7 +112,7 @@ public class MidiPlayer extends Thread {
 					MultiNote mn = _ends.get(ts2);
 
 					_midi.multiNoteOff(mn);
-					nextTime = min(nextTime, currentTime.plus(mn.getDuration()));
+					//nextTime = min(nextTime, currentTime.plus(mn.getDuration()));
 
 				}
 //				else{
@@ -118,7 +121,6 @@ public class MidiPlayer extends Thread {
 			}
 
 			//thread sleeps for the amount of time between the current time and the next note_on/note_off event
-			Rational sleepDuration = nextTime.plus(currentTime.negate());
 			int sleepMilli = (_midi.getWholeNoteDuration() * sleepDuration.getNumerator()) / sleepDuration.getDenominator();
 			try {
 				Thread.sleep(sleepMilli);
