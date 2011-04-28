@@ -54,7 +54,9 @@ public class Rational {
     // return a - b
     public Rational minus(Rational b) {
         Rational a = this;
-        return a.plus(b.negate());
+	     int numerator = (a.getNumerator() * b.getDenominator()) - (b.getNumerator() * a.getDenominator());
+	     int denominator = a.getDenominator() * b.getDenominator();
+	     return new Rational(numerator, denominator);
     }
 
 	// returns the greatest common divisor of two ints

@@ -2,9 +2,14 @@ package music;
 
 public class Timestamp extends Timestep implements Comparable {
 	Class _assocType;
+	int _id;
+	
+	static int nextId = 0;
+	
 
 	public Timestamp() {
 		_assocType = null;
+		_id = nextId++;
 	}
 
 	public Timestamp(Class type) {
@@ -28,7 +33,7 @@ public class Timestamp extends Timestep implements Comparable {
 			}
 			else {
 				// multinotes shouldn't have the exact same compareto value
-				return 1;
+				return _id;
 			}
 		}
 		

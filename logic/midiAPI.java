@@ -7,13 +7,14 @@ import java.lang.Object;
 
 public class midiAPI{
 
-	int _wholeNoteDuration = 1000; //The duration of a whole note
+	//int _wholeNoteDuration = 1000; //The duration of a whole note
 	MidiPlayer _mp;
 	ArrayList<ListIterator<MultiNote>> _voices;
 	Synthesizer _synth;
 	Receiver _receiver;
 
-
+	int _wholeNoteDuration;
+	
 	public midiAPI(int wholeNoteDuration){
 		_wholeNoteDuration = wholeNoteDuration;
 		try{
@@ -21,85 +22,52 @@ public class midiAPI{
 	        _synth.open();
 	        _receiver = _synth.getReceiver();
 		} catch (Exception e){
-
+			System.out.println("Error loading synth: " + e);
 		}
 	}
-
+	
+	public int getBeatsPerSecond() {
+		return 60;
+	}
+	
 	public void playPiece(Piece p){
-
-		ArrayList<Staff> staffs = p.getStaffs();
-		for(int i = 0; i < staffs.size(); i++){
-			Staff s = staffs.get(i);
-			playStaff(s);
-		}
-	}
-
-	public void playStaff(Staff s){
-		ArrayList<Voice> voices = s.getVoices();
-		for(int i = 0; i < voices.size(); i++){
-			Voice v = voices.get(i);
-			playVoice(v);
-		}
-	}
-
-    public void playVoice(Voice v) {
-
-		LinkedList<MultiNote> ll = v.getMultiNotes();
-		ListIterator<MultiNote> itr = ll.listIterator();
 		_voices = new ArrayList<ListIterator<MultiNote>>();
-		_voices.add(itr);
-
+		addPiece(_voices, p);
+		
 		_mp = new MidiPlayer(this, _voices);
 		_mp.start();
-
-//#########################To be taken out!
-//            LinkedList<MultiNote> mns = v.getMultiNotes();
-//
-//            try{
-//
-//            Synthesizer synth = MidiSystem.getSynthesizer();
-//            synth.open();
-//            Receiver receiver = synth.getReceiver();
-//            //navigate to a single multinote
-//            for (int i = 0; i < mns.size(); i++) {
-//                MultiNote mn = mns.get(i);
-//                ArrayList<Pitch> _pitches = mn.getPitches();
-//                Rational beatduration = mn.getDuration();
-//
-//				//System.out.println("beat is "+beatduration.getNumerator()+"/"+beatduration.getDenominator());
-//				//System.out.println("_wholeNoteDuration is "+_wholeNoteDuration);
-//				double durationDouble = _wholeNoteDuration * (double) beatduration.getNumerator()/ beatduration.getDenominator();
-//                int duration = (int) durationDouble;
-//
-//                //navigate to a single note
-//                //turn on the notes
-//                for (int j = 0; j < _pitches.size(); j++) {
-//                    Pitch p = _pitches.get(j);
-//                    MidiMessage noteMessage = getMessage(ShortMessage.NOTE_ON, computeMidiPitch(p));
-//
-//                    // 0 means execute immediately
-//                    receiver.send(noteMessage, 0);
-//                }
-//
-//                //let thread sleep for the duration of the note
-//                    Thread.sleep(duration);
-//
-//
-//                    System.out.println("duration of playing the note is:  " + duration);
-//
-//                //turn off the notes
-//                for (int j = 0; j < _pitches.size(); j++) {
-//                    Pitch p = _pitches.get(j);
-//                    MidiMessage noteMessage = getMessage(ShortMessage.NOTE_OFF, computeMidiPitch(p));
-//
-//                    // 0 means execute immediately
-//                    receiver.send(noteMessage, 0);
-//                }
-//            }
-//            } catch (Exception e){
-//            	e.printStackTrace();
-//            	System.out.println("Error in playing voice");
-//            }
+	}
+	
+	public void playStaff(Staff s){
+		_voices = new ArrayList<ListIterator<MultiNote>>();
+		addStaff(_voices, s);
+		
+		_mp = new MidiPlayer(this, _voices);
+		_mp.start();
+	}
+	
+    public void playVoice(Voice v) {
+		_voices = new ArrayList<ListIterator<MultiNote>>();
+		addVoice(_voices, v);
+		
+		_mp = new MidiPlayer(this, _voices);
+		_mp.start();
+    }
+    
+    private void addPiece(List<ListIterator<MultiNote>> list, Piece p) {
+    	for (Staff s : p.getStaffs()) {
+    		addStaff(list, s);
+    	}
+    }
+    
+    private void addStaff(List<ListIterator<MultiNote>> list, Staff s) {
+    	for (Voice v : s.getVoices()) {
+    		addVoice(list, v);
+    	}
+    }
+    
+    private void addVoice(List<ListIterator<MultiNote>> list, Voice v) {
+    	list.add(v.getMultiNotes().listIterator());
     }
 
     //helper method for creating a midimesage;
