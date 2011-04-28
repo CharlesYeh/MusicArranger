@@ -17,7 +17,7 @@ public class midiAPI{
 	public midiAPI(int wholeNoteDuration){
 		_wholeNoteDuration = wholeNoteDuration;
 		try{
-				_synth = MidiSystem.getSynthesizer();
+			_synth = MidiSystem.getSynthesizer();
 	        _synth.open();
 	        _receiver = _synth.getReceiver();
 		} catch (Exception e){

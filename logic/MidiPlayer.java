@@ -51,7 +51,8 @@ public class MidiPlayer extends Thread {
 		boolean _noteOnDone = false; //true when _starts is empty
 		boolean _noteOffDone = false; //true when _ends is empty
 
-		while (!_noteOnDone || !_noteOffDone) {
+int repeats = 0;
+		while ((!_noteOnDone || !_noteOffDone) && repeats< 20) {
 
 			Rational sleepDuration = null;
 			// turn on notes
@@ -129,6 +130,8 @@ public class MidiPlayer extends Thread {
 			}
 
 			currentTime = nextTime;
+
+			repeats ++;
 		}
 	}
 
