@@ -24,6 +24,9 @@ public abstract class Timestep {
 	}
 	
 	public void addDuration(Timestep dur) {
-		setDuration(_duration.plus(dur.getDuration()));
+		addDuration(dur.getDuration());
+	}
+	public void addDuration(Rational dur) {
+		setDuration(_duration.plus(dur));
 	}
 }
