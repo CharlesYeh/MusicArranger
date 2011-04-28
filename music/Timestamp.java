@@ -28,6 +28,7 @@ public class Timestamp extends Timestep implements Comparable {
 			}
 			else {
 				// multinotes shouldn't have the exact same compareto value
+				return 1;
 			}
 		}
 		

@@ -11,24 +11,17 @@ public class MidiPlayer extends Thread {
 	TreeMap<Timestamp, ListIterator<MultiNote>> _starts;
 	TreeMap<Timestamp, MultiNote> _ends;
 	midiAPI _midi;
-	ArrayList<ListIterator<MultiNote>> _itrList;
+	
+	// list of iterators for playback
+	ArrayList<ListIterator<MultiNote>> _multiNoteLists;
 
 	public MidiPlayer(midiAPI midi, ArrayList<ListIterator<MultiNote>> iList) {
 		_starts = new TreeMap<Timestamp, ListIterator<MultiNote>>();
 		_ends = new TreeMap<Timestamp, MultiNote>();
 		_midi = midi;
-		_itrList = iList;
+		_multiNoteLists = iList;
 	}
-//
-//	public void start() {
-//		// get start timestamp
-//
-//	}
-
-	public void addMultiNote(MultiNote mn) {
-
-	}
-
+	
 	public void run() {
 
 		//set current time to 0 beats
@@ -39,26 +32,18 @@ public class MidiPlayer extends Thread {
 		Rational nextTime = null;
 
 		//initiate the _starts treemap with the iterators to the lists of multinotes (that represent voices)
-		for(int i = 0; i < _itrList.size(); i++){
-			ListIterator<MultiNote> itr = _itrList.get(i);
-
+		for (ListIterator<MultiNote> listIter : _multiNoteLists) {
 			Timestamp ts = new Timestamp();
 			ts.setDuration(currentTime);
 
-			_starts.put(ts, itr);
+			_starts.put(ts, listIter);
 		}
-
-		boolean _noteOnDone = false; //true when _starts is empty
-		boolean _noteOffDone = false; //true when _ends is empty
-
-		while (!_noteOnDone || !_noteOffDone) {
+		
+		while (!_starts.isEmpty() || !_ends.isEmpty()) {
 
 			Rational sleepDuration = null;
 			// turn on notes
-			if(_starts.isEmpty()){
-
-				_noteOnDone = true;
-			} else {
+			if(!_starts.isEmpty()) {
 
 				Timestamp firstKey = (Timestamp) _starts.firstKey();
 				ListIterator<MultiNote> itr = _starts.get(firstKey);
@@ -94,10 +79,7 @@ public class MidiPlayer extends Thread {
 			}
 
 
-			if(_ends.isEmpty()){
-
-				_noteOffDone = true;
-			} else {
+			if(!_ends.isEmpty()){
 
 				// turn off notes
 				Timestamp ts2 = (Timestamp) _ends.firstKey();

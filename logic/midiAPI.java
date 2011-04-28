@@ -35,7 +35,6 @@ public class midiAPI{
 	}
 
 	public void playStaff(Staff s){
-
 		ArrayList<Voice> voices = s.getVoices();
 		for(int i = 0; i < voices.size(); i++){
 			Voice v = voices.get(i);
@@ -51,7 +50,7 @@ public class midiAPI{
 		_voices.add(itr);
 
 		_mp = new MidiPlayer(this, _voices);
-		new Thread(_mp).start();
+		_mp.start();
 
 //#########################To be taken out!
 //            LinkedList<MultiNote> mns = v.getMultiNotes();
