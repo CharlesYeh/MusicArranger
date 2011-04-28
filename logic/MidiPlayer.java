@@ -48,15 +48,17 @@ public class MidiPlayer extends Thread {
 			}
 
 			if (nextIsStart) {
+				System.out.println(startTime);
 				ListIterator<MultiNote> itr = _starts.get(startTime);
 
 				// this note has started
 				_starts.remove(startTime);
+				System.out.println(itr);
 				if(itr.hasNext()) {
 					// play multinote
 					MultiNote mn = itr.next();
 
-					//System.out.println("Turning note on at : " + currentTime.getNumerator() + "/" + currentTime.getDenominator());
+					System.out.println("Turning note on at : "/* + currentTime.getDuration().getNumerator() + "/" + currentTime.getDuration().getDenominator()*/);
 					_midi.multiNoteOn(mn);
 
 						// get next timestamp
@@ -69,7 +71,7 @@ public class MidiPlayer extends Thread {
 				// stop playing it
 				_ends.remove(endTime);
 
-				//System.out.println("Turning note OFF at : " + currentTime.getNumerator() + "/" + currentTime.getDenominator());
+				System.out.println("Turning note OFF at : "/* + currentTime.getDuration().getNumerator() + "/" + currentTime.getDuration().getDenominator()*/);
 				MultiNote mn = _ends.get(endTime);
 				_midi.multiNoteOff(mn);
 			}
