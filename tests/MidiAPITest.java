@@ -38,17 +38,17 @@ public class MidiAPITest {
 		//choose which voice to play!
 		Voice v = MidiAPITest.createVoiceFromMidiPitches(voice2);
 		Voice v2 = MidiAPITest.createVoiceFromMidiPitches(voice1);
-		
+
 		/*Staff st = new Staff();
 		st.getVoices.add(v);
 		st.getVoices.add(v2);*/
 
 
-//		api.playVoice(v);
+		api.playVoice(v);
 //		api.playVoice(v2);
 
 		Piece p = new test.TestPiece();
-		api.playPiece(p);
+//		api.playPiece(p);
     }
 
 	public static Voice createVoiceFromMidiPitches(ArrayList<int[]> midiPitches){

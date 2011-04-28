@@ -14,7 +14,7 @@ public class MidiPlayer extends Thread {
 	midiAPI _midi;
 
 	// list of iterators for playback
-	List<ListIterator<MultiNote>> _multiNoteLists;
+	ArrayList<ListIterator<MultiNote>> _multiNoteLists;
 
 	public MidiPlayer(midiAPI midi, ArrayList<ListIterator<MultiNote>> iList) {
 		_midi = midi;
@@ -36,7 +36,9 @@ public class MidiPlayer extends Thread {
 
 			// find whether start or end is next with timestamps (firstKey())
 			Timestamp startTime = _starts.isEmpty() ? null : _starts.firstKey();
+			System.out.println("startTime is : " + startTime.getDuration().toString());
 			Timestamp endTime = _ends.isEmpty() ? null : _ends.firstKey();
+			System.out.println("endTime is : " + endTime.getDuration().toString());
 
 			// if start is empty, default to ends list
 			boolean nextIsStart = !_starts.isEmpty();
