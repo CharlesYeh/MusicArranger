@@ -1,7 +1,7 @@
 package gui;
 
 import java.util.EventListener;
-import logic.Instruction;
+import instructions.Instruction;
 
 public interface InstructionListener extends EventListener {
 	public void instructionReceived(Instruction instr);

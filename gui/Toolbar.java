@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
-import logic.Instruction;
+import instructions.Instruction;
 
 public abstract class Toolbar extends Drawable {
 	static BufferedImage IMG_HORIZ, IMG_VERT;
@@ -107,7 +107,7 @@ public abstract class Toolbar extends Drawable {
 		// test button clicks
 		for (ToolbarButton btn : _buttons) {
 			if (btn.hitTestPoint(ex, ey)) {
-				btn.getInstruction();
+				//btn.getInstruction();
 			}
 		}
 	}

@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 import java.awt.Graphics;
-import logic.Instruction;
+import instructions.*;
 
 public class ToolbarButton extends Drawable {
 	final static int PADDING = 1;
@@ -43,9 +43,9 @@ public class ToolbarButton extends Drawable {
 		_height = _icon.getHeight();
 	}  	
 	
-	public Instruction getInstruction() {
-		return new Instruction(this);
-	}
+	/*public Instruction getInstruction() {
+		return new EditInstruction(this);
+	}*/
 	
 	public void drawSelf(Graphics g) {
 		//g.drawImage(IMG_OUT, _x, _y, null);
