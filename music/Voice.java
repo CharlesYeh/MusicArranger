@@ -12,7 +12,7 @@ public class Voice {
 		_multiNotes = new ArrayList<MultiNote>();
 	}
 	
-	public ArrayList<MultiNote> getMultinotes() {
+	public ArrayList<MultiNote> getMultiNotes() {
 		return _multiNotes;
 	}
 }

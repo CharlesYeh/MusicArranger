@@ -13,53 +13,19 @@ import org.dom4j.io.*;
 public class ArrangerXMLWriter {
 	public ArrangerXMLWriter() {}
 	
-	public void write(Piece p, String fileName) throws Exception {
+	public void write(Piece piece, String fileName) throws Exception {
 		Document document = DocumentHelper.createDocument();
 		
 		Element root = DocumentHelper.createElement("piece");
 		document.setRootElement(root);
 		
-		List<TimeSignature> timeSigs = p.getTimeSignatures();
-		List<KeySignature> keySigs = p.getKeySignatures();
-		List<Staff> staffs = p.getStaffs();
-		List<ChordSymbol> chordSymbols = p.getChordSymbols();
-		
-		writeTimeSigs(timeSigs, root);
-		writeKeySigs(keySigs, root);
+		List<Staff> staffs = piece.getStaffs();
 		writeStaffs(staffs, root);
-		writeChordSymbols(chordSymbols, root);
 		
 		//write to file
 		XMLWriter writer = new XMLWriter(new FileWriter(fileName), OutputFormat.createPrettyPrint());
 		writer.write(document);
 		writer.close();
-	}
-	
-	private void writeTimeSigs(List<TimeSignature> timeSigs, Element root) {
-		Element elemTimeSigs = DocumentHelper.createElement("timeSignatures");
-		root.add(elemTimeSigs);
-
-		for (TimeSignature timeSig : timeSigs) {
-			Element elemTimeSig = DocumentHelper.createElement("timeSignature");
-			elemTimeSigs.add(elemTimeSig);
-
-			writeTimestep(timeSig, elemTimeSig);
-			elemTimeSig.addAttribute("numerator", "" + timeSig.getNumerator());
-			elemTimeSig.addAttribute("denominator", "" + timeSig.getDenominator());
-		}
-	}
-	private void writeKeySigs(List<KeySignature> keySigs, Element root) {
-		Element elemKeySigs = DocumentHelper.createElement("keySignatures");
-		root.add(elemKeySigs);
-		
-		for (KeySignature keySig : keySigs) {
-			Element elemKeySig = DocumentHelper.createElement("keySignature");
-			elemKeySigs.add(elemKeySig);
-
-			writeTimestep(keySig, elemKeySig);
-			elemKeySig.addAttribute("accidentals", "" + keySig.getAccidentalNumber());
-			elemKeySig.addAttribute("isMajor", "" + keySig.getIsMajor());
-		}
 	}
 	
 	private void writeStaffs(List<Staff> staffs, Element root) {
@@ -70,45 +36,95 @@ public class ArrangerXMLWriter {
 			Element elemStaff = DocumentHelper.createElement("staff");
 			elemStaffs.add(elemStaff);
 			
-			List<Clef> clefs = staff.getClefs();
-			writeClefs(clefs, elemStaff);
-			
-			List<Voice> voices = staff.getVoices();
-			writeVoices(voices, elemStaff);
+			List<Measure> measures = staff.getMeasures();
+			writeMeasures(measures, elemStaff);
 		}
 	}
 	
-	private void writeChordSymbols(List<ChordSymbol> chordSymbols, Element root) {
+	private void writeMeasures(List<Measure> measures, Element elemStaff) {
+		Element elemMeasures = DocumentHelper.createElement("measures");
+		elemStaff.add(elemMeasures);
+		
+		for (Measure measure : measures) {
+			Element elemMeasure = DocumentHelper.createElement("measure");
+			elemMeasures.add(elemMeasure);
+
+			List<TimeSignature> timeSigs = measure.getTimeSignatures();
+			List<KeySignature> keySigs = measure.getKeySignatures();
+			List<Clef> clefs = measure.getClefs();
+			List<ChordSymbol> chordSymbols = measure.getChordSymbols();
+			List<Voice> voices = measure.getVoices();
+			
+			writeTimeSigs(timeSigs, elemMeasure);
+			writeKeySigs(keySigs, elemMeasure);
+			writeClefs(clefs, elemMeasure);
+			writeChordSymbols(chordSymbols, elemMeasure);
+			writeVoices(voices, elemMeasure);
+		}
+	}
+	
+	private void writeTimeSigs(List<TimeSignature> timeSigs, Element elemMeasure) {
+		Element elemTimeSigs = DocumentHelper.createElement("timeSignatures");
+		elemMeasure.add(elemTimeSigs);
+
+		for (TimeSignature timeSig : timeSigs) {
+			Element elemTimeSig = DocumentHelper.createElement("timeSignature");
+			elemTimeSigs.add(elemTimeSig);
+
+			Rational duration = timeSig.getDuration();
+			elemTimeSig.addAttribute("duration", duration.toString());
+			elemTimeSig.addAttribute("numerator", "" + timeSig.getNumerator());
+			elemTimeSig.addAttribute("denominator", "" + timeSig.getDenominator());
+		}
+	}
+	private void writeKeySigs(List<KeySignature> keySigs, Element elemMeasure) {
+		Element elemKeySigs = DocumentHelper.createElement("keySignatures");
+		elemMeasure.add(elemKeySigs);
+		
+		for (KeySignature keySig : keySigs) {
+			Element elemKeySig = DocumentHelper.createElement("keySignature");
+			elemKeySigs.add(elemKeySig);
+
+			Rational duration = keySig.getDuration();
+			elemKeySig.addAttribute("duration", duration.toString());
+			elemKeySig.addAttribute("accidentals", "" + keySig.getAccidentalNumber());
+			elemKeySig.addAttribute("isMajor", "" + keySig.getIsMajor());
+		}
+	}
+	
+	private void writeChordSymbols(List<ChordSymbol> chordSymbols, Element elemMeasure) {
 		Element elemChordSymbols = DocumentHelper.createElement("chordSymbols");
-		root.add(elemChordSymbols);
+		elemMeasure.add(elemChordSymbols);
 		
 		for (ChordSymbol chordSymbol : chordSymbols) {
 			Element elemChordSymbol = DocumentHelper.createElement("chordSymbol");
 			elemChordSymbols.add(elemChordSymbol);
-			
-			writeTimestep(chordSymbol, elemChordSymbol);
+
+			Rational duration = chordSymbol.getDuration();
+			elemChordSymbol.addAttribute("duration", duration.toString());
 			elemChordSymbol.addAttribute("scaleDegree", "" + chordSymbol.getScaleDegree());
 			elemChordSymbol.addAttribute("chordType", "" + chordSymbol.getChordType());
 		}
 	}
 	
-	private void writeClefs(List<Clef> clefs, Element elemStaff) {
+	private void writeClefs(List<Clef> clefs, Element elemMeasure) {
 		Element elemClefs = DocumentHelper.createElement("clefs");
-		elemStaff.add(elemClefs);
+		elemMeasure.add(elemClefs);
 		
 		for (Clef clef : clefs) {
 			Element elemClef = DocumentHelper.createElement("clef");
 			elemClefs.add(elemClef);
-			
+
+			Rational duration = clef.getDuration();
+			elemClef.addAttribute("duration", duration.toString());
 			elemClef.addAttribute("type", "" + clef.getClefName());
 			elemClef.addAttribute("center_line", "" + clef.getCenterLine());
-			writeTimestep(clef, elemClef);
 		}
 	}
 	
-	private void writeVoices(List<Voice> voices, Element elemStaff) {
+	private void writeVoices(List<Voice> voices, Element elemMeasure) {
 		Element elemVoices = DocumentHelper.createElement("voices");
-		elemStaff.add(elemVoices);
+		elemMeasure.add(elemVoices);
 		
 		for (Voice voice : voices) {
 			Element elemVoice = DocumentHelper.createElement("voice");
@@ -126,8 +142,9 @@ public class ArrangerXMLWriter {
 		for (MultiNote multinote : multinotes) {
 			Element elemMultinote = DocumentHelper.createElement("multinote");
 			elemMultinotes.add(elemMultinote);
-			
-			writeTimestep(multinote, elemMultinote);
+
+			Rational duration = multinote.getDuration();
+			elemMultinote.addAttribute("duration", duration.toString());
 			List<Pitch> pitches = multinote.getPitches();
 			writePitches(pitches, elemMultinote);
 		}
@@ -147,25 +164,14 @@ public class ArrangerXMLWriter {
 		}
 	}
 	
-	private void writeTimestep(Timestep t, Element node) {
-		Rational r = t.getDuration();
-		
-		Element obj = DocumentHelper.createElement("timestep");
-		obj.addAttribute("durNumerator", "" + r.getNumerator());
-		obj.addAttribute("durDenominator", "" + r.getDenominator());
-		
-		node.add(obj);
-	}
-	
 	public static void main(String[] args) {
 		ArrangerXMLWriter writer = new ArrangerXMLWriter();
 		Editor editor = new Editor();
 		ArrangerXMLParser parser = new ArrangerXMLParser(editor);
-		Piece p = new Piece();
+		Piece p = new test.TestPiece();
 		editor.setPiece(p);
 		
 		try {
-			parser.parse("test/testWrite.xml");
 			writer.write(editor.getPiece(), "test/testWrite2.xml");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
