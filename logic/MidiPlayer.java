@@ -25,21 +25,37 @@ public class MidiPlayer extends Thread {
 		// initiate the _starts treemap with the iterators to the lists of multinotes (that represent voices)
 		_starts = new TreeMap<Timestamp, ListIterator<MultiNote>>();
 		_ends = new TreeMap<Timestamp, MultiNote>();
+		Timestamp tempTimestamp = new Timestamp();
 
 		for (ListIterator<MultiNote> listIter : _multiNoteLists) {
-			Timestamp ts = new Timestamp();
-			_starts.put(ts, listIter);
+			Timestamp timestampKey = new Timestamp();
+			_starts.put(timestampKey, listIter);
+			System.out.println(_starts.get(timestampKey));
 		}
+
+//		for (int i = 0; i < _multiNoteLists.size(); i++) {
+//
+//			Timestamp timestampKey = new Timestamp();
+//			_starts.put(timestampKey, _multiNoteLists.get(i));
+//		}
+
 
 
 		while (!_starts.isEmpty() || !_ends.isEmpty()) {
 
 			// find whether start or end is next with timestamps (firstKey())
 			Timestamp startTime = _starts.isEmpty() ? null : _starts.firstKey();
-			System.out.println("startTime is : " + startTime.getDuration().toString());
-			Timestamp endTime = _ends.isEmpty() ? null : _ends.firstKey();
-			System.out.println("endTime is : " + endTime.getDuration().toString());
 
+			if(startTime != null)
+				System.out.println("startTime is : " + startTime.getDuration().toString());
+			else
+				System.out.println("startTime is null");
+			Timestamp endTime = _ends.isEmpty() ? null : _ends.firstKey();
+
+			if(endTime != null)
+				System.out.println("endTime is : " + endTime.getDuration().toString());
+			else
+				System.out.println("endTime is null");
 			// if start is empty, default to ends list
 			boolean nextIsStart = !_starts.isEmpty();
 
@@ -50,32 +66,41 @@ public class MidiPlayer extends Thread {
 			}
 
 			if (nextIsStart) {
-				System.out.println(startTime);
+				System.out.println("startTime is " + startTime);
+
+				System.out.println("firstKey() = " + _starts.firstKey());
+				System.out.println("get(startTime) = " + _starts.get(startTime));
 				ListIterator<MultiNote> itr = _starts.get(startTime);
+
 
 				// this note has started
 				_starts.remove(startTime);
+				System.out.println(startTime.equals(_starts.firstKey()));
 				System.out.println(itr);
 				if(itr.hasNext()) {
 					// play multinote
 					MultiNote mn = itr.next();
 
-					System.out.println("Turning note on at : "/* + currentTime.getDuration().getNumerator() + "/" + currentTime.getDuration().getDenominator()*/);
+					System.out.println("Turning note on at : " + startTime.getDuration().getNumerator() + "/" + startTime.getDuration().getDenominator());
 					_midi.multiNoteOn(mn);
 
-						// get next timestamp
+					// get next timestamp
+					tempTimestamp.setDuration(startTime.getDuration().clone());
+					tempTimestamp.addDuration(mn.getDuration());
+
 					startTime.addDuration(mn.getDuration());
 					_starts.put(startTime, itr);
-					_ends.put(startTime, mn);
+					_ends.put(tempTimestamp, mn);
 				}
 			}
 			else {
-				// stop playing it
-				_ends.remove(endTime);
+				// stop playing a multinote
+				System.out.println("endTime is " + endTime);
 
-				System.out.println("Turning note OFF at : "/* + currentTime.getDuration().getNumerator() + "/" + currentTime.getDuration().getDenominator()*/);
+				System.out.println("Turning note OFF at : " + endTime.getDuration().getNumerator() + "/" + endTime.getDuration().getDenominator());
 				MultiNote mn = _ends.get(endTime);
 				_midi.multiNoteOff(mn);
+				_ends.remove(endTime);
 			}
 
 			// calculate sleep time
@@ -143,6 +168,8 @@ public class MidiPlayer extends Thread {
 			//int sleepMilli = (_midi.getWholeNoteDuration() * sleepDuration.getNumerator()) / sleepDuration.getDenominator();
 
 			// get sleep duration
+
+
 			Rational currentTime = nextIsStart ? startTime.getDuration() : endTime.getDuration();
 
 			if (_starts.isEmpty() && _ends.isEmpty())

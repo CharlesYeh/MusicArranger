@@ -79,4 +79,8 @@ public class Rational {
 
     	return (_numer + "/" + _denom);
     }
+
+    public Rational clone(){
+    	return new Rational(_numer, _denom);
+    }
 }

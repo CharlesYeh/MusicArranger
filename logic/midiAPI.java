@@ -14,7 +14,7 @@ public class midiAPI{
 	Receiver _receiver;
 
 	int _wholeNoteDuration;
-	
+
 	public midiAPI(int wholeNoteDuration){
 		_wholeNoteDuration = wholeNoteDuration;
 		try{
@@ -25,49 +25,55 @@ public class midiAPI{
 			System.out.println("Error loading synth: " + e);
 		}
 	}
-	
+
 	public int getBeatsPerSecond() {
 		return 60;
 	}
-	
+
 	public void playPiece(Piece p){
 		_voices = new ArrayList<ListIterator<MultiNote>>();
 		addPiece(_voices, p);
-		
+
 		_mp = new MidiPlayer(this, _voices);
 		_mp.start();
 	}
-	
+
 	public void playStaff(Staff s){
 		_voices = new ArrayList<ListIterator<MultiNote>>();
 		addStaff(_voices, s);
-		
+
 		_mp = new MidiPlayer(this, _voices);
 		_mp.start();
 	}
-	
+
     public void playVoice(Voice v) {
 		_voices = new ArrayList<ListIterator<MultiNote>>();
 		addVoice(_voices, v);
-		
+
 		_mp = new MidiPlayer(this, _voices);
 		_mp.start();
     }
-    
+
     private void addPiece(List<ListIterator<MultiNote>> list, Piece p) {
     	for (Staff s : p.getStaffs()) {
     		addStaff(list, s);
     	}
     }
-    
+
     private void addStaff(List<ListIterator<MultiNote>> list, Staff s) {
-    	for (Voice v : s.getVoices()) {
+    	for (Measure m : s.getMeasures()) {
+    		addMeasure(list, m);
+    	}
+    }
+
+    private void addMeasure(List<ListIterator<MultiNote>> list, Measure m){
+    	for (Voice v : m.getVoices()) {
     		addVoice(list, v);
     	}
     }
-    
+
     private void addVoice(List<ListIterator<MultiNote>> list, Voice v) {
-    	list.add(v.getMultiNotes().listIterator());
+    	list.add(v.getMultinotes().listIterator());
     }
 
     //helper method for creating a midimesage;
