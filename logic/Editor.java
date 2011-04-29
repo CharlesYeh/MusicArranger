@@ -53,10 +53,14 @@ public class Editor{
 	}
 	// PIECE EDITING
 	// edits the key signature list
+	
+	// insert at current iterator location, if no iterator is specified
 	public Editor insertKeySig(Rational dur, int accds, boolean ismjr) {
 		insertKeySig(_keySigIter, dur, accds, ismjr);
 		return this;
 	}
+
+	// insert at specified iterator location
 	public Editor insertKeySig(ListIterator<KeySignature> iter, Rational dur, int accds, boolean ismjr) {
 		KeySignature keysig = new KeySignature(dur, accds, ismjr);
 		iter.add(keysig);
@@ -70,10 +74,13 @@ public class Editor{
 	}
 	
 	// edits the time signature list
+	
+	// insert at current iterator location, if no iterator is specified
 	public Editor insertTimeSig(Rational dur, int numer, int denom) {
 		insertTimeSig(_timeSigIter, dur, numer, denom);
 		return this;
 	}
+	// insert at specified iterator location
 	public Editor insertTimeSig(ListIterator<TimeSignature> iter, Rational dur, int numer, int denom) {
 		TimeSignature timesig = new TimeSignature(dur, numer, denom);
 		iter.add(timesig);
@@ -87,10 +94,13 @@ public class Editor{
 	}
 	
 	// edits the staff list
+	
+	// insert at current iterator location, if no iterator is specified
 	public Editor insertStaff() {
 		insertStaff(_staffIter);
 		return this;
 	}
+	// insert at specified iterator location
 	public Editor insertStaff(ListIterator<Staff> iter) {
 		Staff staff = new Staff();
 		iter.add(staff);
@@ -106,10 +116,13 @@ public class Editor{
 	}
 	
 	// edits the chord symbol list
+	
+	// insert at current iterator location, if no iterator is specified
 	public Editor insertChordSymbol(Rational dur, int scldgr, ChordType qual) {
 		insertChordSymbol(_chordSymIter, dur, scldgr, qual);
 		return this;
 	}
+	// insert at specified iterator location
 	public Editor insertChordSymbol(ListIterator<ChordSymbol> iter, Rational dur, int scldgr, ChordType qual) {
 		ChordSymbol chordsym = new ChordSymbol(dur, scldgr, qual);
 		iter.add(chordsym);
@@ -124,10 +137,13 @@ public class Editor{
 	
 	// STAFF EDITING
 	// edits the clef list
+	
+	// insert at current iterator location, if no iterator is specified
 	public Editor insertClef(Rational dur, ClefName clefnm, int linenum) {
 		insertClef(_clefIter, dur, clefnm, linenum);
 		return this;
 	}
+	// insert at specified iterator location
 	public Editor insertClef(ListIterator<Clef> iter, Rational dur, ClefName clefnm, int linenum) {
 		Clef clef = new Clef(dur, clefnm, linenum);
 		iter.add(clef);
@@ -141,10 +157,13 @@ public class Editor{
 	}
 	
 	//edits the voice list
+	
+	// insert at current iterator location, if no iterator is specified
 	public Editor insertVoice() {
 		insertVoice(_voiceIter);
 		return this;
 	}
+	// insert at specified iterator location
 	public Editor insertVoice(ListIterator<Voice> iter) {
 		Voice voice = new Voice();
 		iter.add(voice);
@@ -154,10 +173,13 @@ public class Editor{
 	}
 	
 	// VOICE EDITING
+	
+	// insert at current iterator location, if no iterator is specified
 	public Editor insertMultiNote(Rational dur) {
 		insertMultiNote(_multiNoteIter, dur);
 		return this;
 	}
+	// insert at specified iterator location
 	public Editor insertMultiNote(ListIterator<MultiNote> iter, Rational dur) {
 		MultiNote multi = new MultiNote(dur);
 		iter.add(multi);
@@ -172,10 +194,13 @@ public class Editor{
 	}
 	
 	// MULTINOTE EDITING
+	
+	// insert at current iterator location, if no iterator is specified
 	public Editor insertPitch(NoteLetter ltr, int octv, Accidental accd, boolean istied) {
 		insertPitch(_pitchIter, ltr, octv, accd, istied);
 		return this;
 	}
+	// insert at specified iterator location
 	public Editor insertPitch(ListIterator<Pitch> iter, NoteLetter ltr, int octv, Accidental accd, boolean istied) {
 		Pitch pitch = new Pitch(ltr, octv, accd, istied);
 		iter.add(pitch);

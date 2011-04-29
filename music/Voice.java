@@ -1,18 +1,18 @@
 package music;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /* Voice represents a single musical voice within a staff.  It is comprised of a linked list of
  * MultiNotes.
  */
 public class Voice {
-	LinkedList<MultiNote> _notes;
+	ArrayList<MultiNote> _multiNotes;
 	
 	public Voice(){
-		_notes = new LinkedList<MultiNote>();
+		_multiNotes = new ArrayList<MultiNote>();
 	}
 	
-	public LinkedList<MultiNote> getMultiNotes() {
-		return _notes;
+	public ArrayList<MultiNote> getMultinotes() {
+		return _multiNotes;
 	}
 }

@@ -5,41 +5,20 @@ import java.util.ArrayList;
 
 public class Piece {
 	ArrayList<Staff> _staffs;					// staffs in the piece
-	LinkedList<KeySignature> _keySigs;			// key signatures
-	LinkedList<TimeSignature> _timeSigs;		// time signatures
-	LinkedList<ChordSymbol> _chordSymbols;		// chord symbols
 	
-	public Piece () {
-		this(new ArrayList<Staff>(),
-				new LinkedList<KeySignature>(),
-				new LinkedList<TimeSignature>(),
-				new LinkedList<ChordSymbol>());
+	public Piece() {
+		_staffs = new ArrayList<Staff>();
 	}
 	
-	public Piece (ArrayList<Staff> staffs,
-						LinkedList<KeySignature> keySigs, 
-						LinkedList<TimeSignature> timeSigs,
-						LinkedList<ChordSymbol> chordSymbols) {
-		_staffs 		= staffs;
-		_keySigs 	= keySigs;
-		_timeSigs 	= timeSigs;
-		_chordSymbols = chordSymbols;
+	public Piece (int numStaffs, int numMeasures) {
+		this();
+		for (int i = 0; i < numStaffs; i++) {
+			_staffs.add(new Staff(numMeasures));
+		}
 	}
 	
 	public ArrayList<Staff> getStaffs() {
 		return _staffs;
-	}
-	
-	public LinkedList<KeySignature> getKeySignatures() {
-		return _keySigs;
-	}
-	
-	public LinkedList<TimeSignature> getTimeSignatures() {
-		return _timeSigs;
-	}
-	
-	public LinkedList<ChordSymbol> getChordSymbols() {
-		return _chordSymbols;
 	}
 	
 }

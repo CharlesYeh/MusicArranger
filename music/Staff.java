@@ -6,23 +6,22 @@ import java.util.ArrayList;
  * four separate voices, as well as the clef(s) assigned to the staff.
  */
 public class Staff{
-	ArrayList<Voice> _voices;		// Voices contained within the staff.
-	ArrayList<Clef> _clefs;			// List of Clefs and their durations.
-
+	ArrayList<Measure> _measures;		// measures in the staff
+	
+	// constructor
 	public Staff() {
-		_voices = new ArrayList<Voice>();
-		/*for (int i = 0; i<4; i++) {
-			_voices.add(new Voice());	// Staffs will, by default, support exactly four voices.
-		}*/
-		
-		_clefs = new ArrayList<Clef>();
+		_measures = new ArrayList<Measure>();
 	}
 	
-	public ArrayList<Voice> getVoices() {
-		return _voices;
+	// constructor, if a number of initial measures is specified
+	public Staff(int numMeasures) {
+		this();
+		for (int i = 0; i < numMeasures; i++) {
+			_measures.add(new Measure());
+		}
 	}
 	
-	public ArrayList<Clef> getClefs() {
-		return _clefs;
+	public ArrayList<Measure> getMeasures() {
+		return _measures;
 	}
 }
