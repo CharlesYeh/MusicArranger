@@ -36,8 +36,8 @@ public class MidiAPITest {
 		midiAPI api = new midiAPI(1500);
 
 		//choose which voice to play!
-		Voice v = MidiAPITest.createVoiceFromMidiPitches(voice2);
-		Voice v2 = MidiAPITest.createVoiceFromMidiPitches(voice1);
+		Voice v = MidiAPITest.createVoiceFromMidiPitches(voice1);
+		Voice v2 = MidiAPITest.createVoiceFromMidiPitches(voice2);
 
 		/*Staff st = new Staff();
 		st.getVoices.add(v);
@@ -47,14 +47,14 @@ public class MidiAPITest {
 		api.playVoice(v);
 //		api.playVoice(v2);
 
-		Piece p = new test.TestPiece();
+//		Piece p = new test.TestPiece();
 //		api.playPiece(p);
     }
 
 	public static Voice createVoiceFromMidiPitches(ArrayList<int[]> midiPitches){
 
 		Voice v = new Voice();
-		LinkedList<MultiNote> mns = v.getMultiNotes();
+		List<MultiNote> mns = v.getMultinotes();
 
 		int numberOfNotes = midiPitches.get(0).length;
 
