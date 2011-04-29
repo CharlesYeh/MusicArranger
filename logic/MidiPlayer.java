@@ -25,12 +25,20 @@ public class MidiPlayer extends Thread {
 		// initiate the _starts treemap with the iterators to the lists of multinotes (that represent voices)
 		_starts = new TreeMap<Timestamp, ListIterator<MultiNote>>();
 		_ends = new TreeMap<Timestamp, MultiNote>();
-		Timestamp tempTimestamp = null;
+		Timestamp tempTimestamp = new Timestamp();
 
 		for (ListIterator<MultiNote> listIter : _multiNoteLists) {
 			Timestamp timestampKey = new Timestamp();
 			_starts.put(timestampKey, listIter);
+			System.out.println(_starts.get(_starts.firstKey()));
 		}
+
+//		for (int i = 0; i < _multiNoteLists.size(); i++) {
+//
+//			Timestamp timestampKey = new Timestamp();
+//			_starts.put(timestampKey, _multiNoteLists.get(i));
+//		}
+
 
 
 		while (!_starts.isEmpty() || !_ends.isEmpty()) {
@@ -59,10 +67,15 @@ public class MidiPlayer extends Thread {
 
 			if (nextIsStart) {
 				System.out.println("startTime is " + startTime);
+
+				System.out.println("firstKey() = " + _starts.firstKey());
+				System.out.println("get(startTime) = " + _starts.get(startTime));
 				ListIterator<MultiNote> itr = _starts.get(startTime);
+
 
 				// this note has started
 				_starts.remove(startTime);
+				System.out.println(startTime.equals(_starts.firstKey()));
 				System.out.println(itr);
 				if(itr.hasNext()) {
 					// play multinote
@@ -71,10 +84,12 @@ public class MidiPlayer extends Thread {
 					System.out.println("Turning note on at : " + startTime.getDuration().getNumerator() + "/" + startTime.getDuration().getDenominator());
 					_midi.multiNoteOn(mn);
 
-						// get next timestamp
+					// get next timestamp
 					tempTimestamp.setDuration(startTime.getDuration().clone());
 					tempTimestamp.addDuration(mn.getDuration());
-					_starts.put(tempTimestamp, itr);
+
+					startTime.addDuration(mn.getDuration());
+					_starts.put(startTime, itr);
 					_ends.put(tempTimestamp, mn);
 				}
 			}
