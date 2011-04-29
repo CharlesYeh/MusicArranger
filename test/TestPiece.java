@@ -66,20 +66,6 @@ public class TestPiece extends Piece {
 		Clef cleftreble = new Clef(new Rational(3, 2), ClefName.GCLEF, -2);
 		Clef clefbass = new Clef(new Rational(3, 2), ClefName.FCLEF, 2);
 
-		// staffs
-		Staff stafftreble = new Staff();
-			stafftreble.getVoices().add(voicetreble1);
-			stafftreble.getVoices().add(voicetreble2);
-			stafftreble.getVoices().add(voicetreble3);
-			stafftreble.getVoices().add(voicetreble4);
-			stafftreble.getClefs().add(cleftreble);
-		Staff staffbass = new Staff();
-			staffbass.getVoices().add(voicebass1);
-			staffbass.getVoices().add(voicebass2);
-			staffbass.getVoices().add(voicebass3);
-			staffbass.getVoices().add(voicebass4);
-			staffbass.getClefs().add(clefbass);
-
 		// time signatures
 		TimeSignature timesig1 = new TimeSignature(new Rational(3, 2), 2, 4);
 
@@ -91,17 +77,81 @@ public class TestPiece extends Piece {
 		ChordSymbol chordsymbol2 = new ChordSymbol(new Rational(1, 2), 4, ChordType.MINOR);
 		ChordSymbol chordsymbol3 = new ChordSymbol(new Rational(1, 2), 5, ChordType.HDIMIN7);
 
+		// measures
+		Measure measure1Treble = new Measure();
+			measure1Treble.getVoices().add(voicetreble1);
+			measure1Treble.getVoices().add(voicetreble2);
+			measure1Treble.getVoices().add(voicetreble3);
+			measure1Treble.getVoices().add(voicetreble4);
+			measure1Treble.getClefs().add(cleftreble);
+
+			measure1Treble.getKeySignatures().add(keysig1);
+
+			measure1Treble.getTimeSignatures().add(timesig1);
+
+			measure1Treble.getChordSymbols().add(chordsymbol1);
+			measure1Treble.getChordSymbols().add(chordsymbol2);
+			measure1Treble.getChordSymbols().add(chordsymbol3);
+
+		Measure measure1Bass = new Measure();
+			measure1Bass.getVoices().add(voicebass1);
+			measure1Bass.getVoices().add(voicebass2);
+			measure1Bass.getVoices().add(voicebass3);
+			measure1Bass.getVoices().add(voicebass4);
+			measure1Bass.getClefs().add(clefbass);
+
+			measure1Bass.getKeySignatures().add(keysig1);
+
+			measure1Bass.getTimeSignatures().add(timesig1);
+
+			measure1Bass.getChordSymbols().add(chordsymbol1);
+			measure1Bass.getChordSymbols().add(chordsymbol2);
+			measure1Bass.getChordSymbols().add(chordsymbol3);
+
+		Measure measure2Treble = new Measure();
+			measure2Treble.getVoices().add(voicetreble1);
+			measure2Treble.getVoices().add(voicetreble2);
+			measure2Treble.getVoices().add(voicetreble3);
+			measure2Treble.getVoices().add(voicetreble4);
+			measure2Treble.getClefs().add(cleftreble);
+
+			measure2Treble.getKeySignatures().add(keysig1);
+
+			measure2Treble.getTimeSignatures().add(timesig1);
+
+			measure2Treble.getChordSymbols().add(chordsymbol1);
+			measure2Treble.getChordSymbols().add(chordsymbol2);
+			measure2Treble.getChordSymbols().add(chordsymbol3);
+
+		Measure measure2Bass = new Measure();
+			measure2Bass.getVoices().add(voicebass1);
+			measure2Bass.getVoices().add(voicebass2);
+			measure2Bass.getVoices().add(voicebass3);
+			measure2Bass.getVoices().add(voicebass4);
+			measure2Bass.getClefs().add(clefbass);
+
+			measure2Bass.getKeySignatures().add(keysig1);
+
+			measure2Bass.getTimeSignatures().add(timesig1);
+
+			measure2Bass.getChordSymbols().add(chordsymbol1);
+			measure2Bass.getChordSymbols().add(chordsymbol2);
+			measure2Bass.getChordSymbols().add(chordsymbol3);
+
+		// staffs
+		Staff stafftreble = new Staff();
+			stafftreble.getMeasures().add(measure1Treble);
+			stafftreble.getMeasures().add(measure2Treble);
+
+		Staff staffbass = new Staff();
+			stafftreble.getMeasures().add(measure1Bass);
+			stafftreble.getMeasures().add(measure2Bass);
+
 		// piece
-			getStaffs().add(stafftreble);
-			getStaffs().add(staffbass);
+		getStaffs().add(stafftreble);
+		getStaffs().add(staffbass);
 
-			getKeySignatures().add(keysig1);
 
-			getTimeSignatures().add(timesig1);
-
-			getChordSymbols().add(chordsymbol1);
-			getChordSymbols().add(chordsymbol2);
-			getChordSymbols().add(chordsymbol3);
 	}
 
 	public static void main(String[] args) {
