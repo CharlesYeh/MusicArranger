@@ -52,25 +52,40 @@ public class SimplePiece extends Piece {
 		Clef cleftreble = new Clef(new Rational(2, 1), ClefName.GCLEF, -2);
 		Clef clefbass = new Clef(new Rational(1, 1), ClefName.FCLEF, 2);
 
-		// staffs
-		Staff stafftreble = new Staff();
-			stafftreble.getVoices().add(voicetreble1);
-			stafftreble.getClefs().add(cleftreble);
-			stafftreble.getClefs().add(clefbass);
-			//stafftreble.getVoices().add(v2);
-
 		// time signatures
 		TimeSignature timesig1 = new TimeSignature(new Rational(3, 1), 2, 4);
 
 		// key signatures
 		KeySignature keysig1 = new KeySignature(new Rational(3, 1), 0, true);
 
+		// measures
+		Measure measure1Treble = new Measure();
+			measure1Treble.getVoices().add(voicetreble1);
+			measure1Treble.getClefs().add(cleftreble);
+
+			measure1Treble.getKeySignatures().add(keysig1);
+
+			measure1Treble.getTimeSignatures().add(timesig1);
+
+		Measure measure1Bass = new Measure();
+			measure1Bass.getClefs().add(clefbass);
+			//measure1Bass.getVoices().add(v2);
+
+			measure1Bass.getKeySignatures().add(keysig1);
+
+			measure1Bass.getTimeSignatures().add(timesig1);
+
+		// staffs
+		Staff stafftreble = new Staff();
+			stafftreble.getMeasures().add(measure1Treble);
+
+		Staff staffbass = new Staff();
+			staffbass.getMeasures().add(measure1Bass);
+
 		// piece
 			getStaffs().add(stafftreble);
+			getStaffs().add(staffbass);
 
-			getKeySignatures().add(keysig1);
-
-			getTimeSignatures().add(timesig1);
 	}
 
 	public static void main(String[] args) {
