@@ -6,8 +6,8 @@ public class TestPiece extends Piece {
 
 	public TestPiece() {
 		super();
-	
-		// pitches 
+
+		// pitches
 		Pitch cn4 = new Pitch(NoteLetter.C, 4, Accidental.NATURAL, false);
 		Pitch dn4 = new Pitch(NoteLetter.D, 4, Accidental.NATURAL, false);
 		Pitch en4 = new Pitch(NoteLetter.E, 4, Accidental.NATURAL, false);
@@ -43,21 +43,21 @@ public class TestPiece extends Piece {
 
 		// voices
 		Voice voicetreble1 = new Voice();
-			voicetreble1.getMultiNotes().add(treble1);
-			voicetreble1.getMultiNotes().add(treble2);
-			voicetreble1.getMultiNotes().add(treble3);
-			voicetreble1.getMultiNotes().add(treble4);
-			voicetreble1.getMultiNotes().add(treble5);
+			voicetreble1.getMultinotes().add(treble1);
+			voicetreble1.getMultinotes().add(treble2);
+			voicetreble1.getMultinotes().add(treble3);
+			voicetreble1.getMultinotes().add(treble4);
+			voicetreble1.getMultinotes().add(treble5);
 		Voice voicetreble2 = new Voice();
 		Voice voicetreble3 = new Voice();
 		Voice voicetreble4 = new Voice();
 
 		Voice voicebass1 = new Voice();
-			voicebass1.getMultiNotes().add(bass1);
-			voicebass1.getMultiNotes().add(bass2);
-			voicebass1.getMultiNotes().add(bass3);
-			voicebass1.getMultiNotes().add(bass4);
-			voicebass1.getMultiNotes().add(bass5);
+			voicebass1.getMultinotes().add(bass1);
+			voicebass1.getMultinotes().add(bass2);
+			voicebass1.getMultinotes().add(bass3);
+			voicebass1.getMultinotes().add(bass4);
+			voicebass1.getMultinotes().add(bass5);
 		Voice voicebass2 = new Voice();
 		Voice voicebass3 = new Voice();
 		Voice voicebass4 = new Voice();
@@ -94,16 +94,16 @@ public class TestPiece extends Piece {
 		// piece
 			getStaffs().add(stafftreble);
 			getStaffs().add(staffbass);
-			
+
 			getKeySignatures().add(keysig1);
-			
+
 			getTimeSignatures().add(timesig1);
-			
+
 			getChordSymbols().add(chordsymbol1);
 			getChordSymbols().add(chordsymbol2);
 			getChordSymbols().add(chordsymbol3);
 	}
-	
+
 	public static void main(String[] args) {
 		new TestPiece();
 	}

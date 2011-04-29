@@ -30,7 +30,7 @@ public class MidiPlayer extends Thread {
 		for (ListIterator<MultiNote> listIter : _multiNoteLists) {
 			Timestamp timestampKey = new Timestamp();
 			_starts.put(timestampKey, listIter);
-			System.out.println(_starts.get(_starts.firstKey()));
+			System.out.println(_starts.get(timestampKey));
 		}
 
 //		for (int i = 0; i < _multiNoteLists.size(); i++) {

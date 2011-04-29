@@ -7,7 +7,7 @@ public class SimplePiece extends Piece {
 
 	public SimplePiece() {
 		super();
-	
+
 		// pitches
 		Pitch cn4 = new Pitch(NoteLetter.C, 4, Accidental.NATURAL, false);
 		Pitch dn4 = new Pitch(NoteLetter.D, 5, Accidental.NATURAL, false);
@@ -15,7 +15,7 @@ public class SimplePiece extends Piece {
 		Pitch fs4 = new Pitch(NoteLetter.B, 4, Accidental.SHARP, false);
 		Pitch gn4 = new Pitch(NoteLetter.C, 3, Accidental.NATURAL, false);
 		Pitch af5 = new Pitch(NoteLetter.F, 3, Accidental.FLAT, false);
-		
+
 		// multinotes
 		MultiNote treble1 = new MultiNote(new Rational(1, 1));
 			treble1.getPitches().add(cn4);
@@ -30,24 +30,24 @@ public class SimplePiece extends Piece {
 		MultiNote treble6 = new MultiNote(new Rational(1, 2)); // rest
 		MultiNote treble7 = new MultiNote(new Rational(1, 4));
 			treble7.getPitches().add(af5);
-		
+
 		Pitch p1 = new Pitch(NoteLetter.A, 3, Accidental.NATURAL, false);
 		MultiNote t1 = new MultiNote(new Rational(1, 1));
 			t1.getPitches().add(p1);
-		
+
 		// voices
 		Voice voicetreble1 = new Voice();
-			voicetreble1.getMultiNotes().add(treble1);
-			voicetreble1.getMultiNotes().add(treble2);
-			voicetreble1.getMultiNotes().add(treble3);
-			voicetreble1.getMultiNotes().add(treble4);
-			voicetreble1.getMultiNotes().add(treble5);
-			voicetreble1.getMultiNotes().add(treble6);
-			voicetreble1.getMultiNotes().add(treble7);
-		
+			voicetreble1.getMultinotes().add(treble1);
+			voicetreble1.getMultinotes().add(treble2);
+			voicetreble1.getMultinotes().add(treble3);
+			voicetreble1.getMultinotes().add(treble4);
+			voicetreble1.getMultinotes().add(treble5);
+			voicetreble1.getMultinotes().add(treble6);
+			voicetreble1.getMultinotes().add(treble7);
+
 		Voice v2 = new Voice();
-			v2.getMultiNotes().add(t1);
-		
+			v2.getMultinotes().add(t1);
+
 		// clefs
 		Clef cleftreble = new Clef(new Rational(2, 1), ClefName.GCLEF, -2);
 		Clef clefbass = new Clef(new Rational(1, 1), ClefName.FCLEF, 2);
@@ -67,19 +67,19 @@ public class SimplePiece extends Piece {
 
 		// piece
 			getStaffs().add(stafftreble);
-			
+
 			getKeySignatures().add(keysig1);
-			
+
 			getTimeSignatures().add(timesig1);
 	}
-	
+
 	public static void main(String[] args) {
 		ArrangerXMLWriter writer = new ArrangerXMLWriter();
 		try {
 			writer.write(new SimplePiece(), "simple_piece.xml");
 		}
 		catch (Exception e) {
-			System.out.println(e);	
+			System.out.println(e);
 		}
 	}
 }

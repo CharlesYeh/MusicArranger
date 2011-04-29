@@ -18,15 +18,15 @@ public class Editor{
 	ListIterator<Voice> _voiceIter;
 	ListIterator<MultiNote> _multiNoteIter;
 	ListIterator<Pitch> _pitchIter;
-	
+
 	public Editor() {
 	}
-	
+
 	public Editor clearScore() {
 		setPiece(new Piece());
 		return this;
 	}
-	
+
 	public Editor setPiece(Piece piece) {
 		_piece = piece;
 		_keySigIter = _piece.getKeySignatures().listIterator();
@@ -35,17 +35,17 @@ public class Editor{
 		_staffIter = _piece.getStaffs().listIterator();
 		return this;
 	}
-	
+
 	public Piece getPiece() {
 		return _piece;
 	}
-	
+
 	// USED FOR REMOVING A GENERAL ELEMENT FROM ANY GIVEN LIST
 	public <T> Editor removeElem(ListIterator<T> iter) {
 		if (iter.hasNext()) {
 			iter.next();
 			iter.remove();
-		} 
+		}
 		else {
 			throw new RuntimeException("Tried to remove from end of list");
 		}
@@ -53,7 +53,7 @@ public class Editor{
 	}
 	// PIECE EDITING
 	// edits the key signature list
-	
+
 	// insert at current iterator location, if no iterator is specified
 	public Editor insertKeySig(Rational dur, int accds, boolean ismjr) {
 		insertKeySig(_keySigIter, dur, accds, ismjr);
@@ -72,9 +72,9 @@ public class Editor{
 		iter.previous();
 		return this;
 	}
-	
+
 	// edits the time signature list
-	
+
 	// insert at current iterator location, if no iterator is specified
 	public Editor insertTimeSig(Rational dur, int numer, int denom) {
 		insertTimeSig(_timeSigIter, dur, numer, denom);
@@ -92,9 +92,9 @@ public class Editor{
 		iter.previous();
 		return this;
 	}
-	
+
 	// edits the staff list
-	
+
 	// insert at current iterator location, if no iterator is specified
 	public Editor insertStaff() {
 		insertStaff(_staffIter);
@@ -114,9 +114,9 @@ public class Editor{
 		iter.previous();
 		return this;
 	}
-	
+
 	// edits the chord symbol list
-	
+
 	// insert at current iterator location, if no iterator is specified
 	public Editor insertChordSymbol(Rational dur, int scldgr, ChordType qual) {
 		insertChordSymbol(_chordSymIter, dur, scldgr, qual);
@@ -134,10 +134,10 @@ public class Editor{
 		iter.previous();
 		return this;
 	}
-	
+
 	// STAFF EDITING
 	// edits the clef list
-	
+
 	// insert at current iterator location, if no iterator is specified
 	public Editor insertClef(Rational dur, ClefName clefnm, int linenum) {
 		insertClef(_clefIter, dur, clefnm, linenum);
@@ -155,9 +155,9 @@ public class Editor{
 		iter.previous();
 		return this;
 	}
-	
+
 	//edits the voice list
-	
+
 	// insert at current iterator location, if no iterator is specified
 	public Editor insertVoice() {
 		insertVoice(_voiceIter);
@@ -168,12 +168,12 @@ public class Editor{
 		Voice voice = new Voice();
 		iter.add(voice);
 		_voiceIter = iter;
-		_multiNoteIter = voice.getMultiNotes().listIterator();
+		_multiNoteIter = voice.getMultinotes().listIterator();
 		return this;
 	}
-	
+
 	// VOICE EDITING
-	
+
 	// insert at current iterator location, if no iterator is specified
 	public Editor insertMultiNote(Rational dur) {
 		insertMultiNote(_multiNoteIter, dur);
@@ -192,9 +192,9 @@ public class Editor{
 		iter.previous();
 		return this;
 	}
-	
+
 	// MULTINOTE EDITING
-	
+
 	// insert at current iterator location, if no iterator is specified
 	public Editor insertPitch(NoteLetter ltr, int octv, Accidental accd, boolean istied) {
 		insertPitch(_pitchIter, ltr, octv, accd, istied);
