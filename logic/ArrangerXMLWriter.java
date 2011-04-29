@@ -168,11 +168,12 @@ public class ArrangerXMLWriter {
 		ArrangerXMLWriter writer = new ArrangerXMLWriter();
 		Editor editor = new Editor();
 		ArrangerXMLParser parser = new ArrangerXMLParser(editor);
-		Piece p = new test.TestPiece();
+		Piece p = new Piece();
 		editor.setPiece(p);
 		
 		try {
-			writer.write(editor.getPiece(), "test/testWrite2.xml");
+			parser.parse("test/testWrite2.xml");
+			writer.write(editor.getPiece(), "test/testWrite.xml");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

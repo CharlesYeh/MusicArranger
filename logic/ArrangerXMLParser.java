@@ -40,8 +40,8 @@ public class ArrangerXMLParser {
 		Staff staff = new Staff();
 		_editor.insertStaff(staff);								// insert new staff
 
-		Element elemMeasureList = elemStaff.element("measures");// parse measure list
-		parseMeasures(elemMeasureList);
+		Element elemMeasures = elemStaff.element("measures");	// parse measure list
+		parseMeasures(elemMeasures);
 	}
 
 	private void parseMeasures(Element elemMeasures) {
@@ -53,10 +53,19 @@ public class ArrangerXMLParser {
 
 	private void parseMeasure(Element elemMeasure) {
 		Measure measure = new Measure();
-		_editor.insertMeasure(measure);								// insert new measure
+	_editor.insertMeasure(measure);								// insert new measure
 
-		Element elemMeasureList = elemMeasure.element("measures");	// parse measure list
-		parseMeasures(elemMeasureList);
+	Element elemKeySignatures = elemMeasure.element("keySignatures");
+	Element elemTimeSignatures = elemMeasure.element("timeSignatures");
+	Element elemClefs = elemMeasure.element("clefs");
+	Element elemChordSymbols = elemMeasure.element("chordSymbols");
+	Element elemVoices = elemMeasure.element("voices");
+
+	parseKeySignatures(elemKeySignatures);						// parse keysig list
+	parseTimeSignatures(elemTimeSignatures);					// parse timesig list
+	parseClefs(elemClefs);										// parse clef list
+	parseChordSymbols(elemChordSymbols);						// parse chordsymbol list
+	parseVoices(elemVoices);									// parse voice list
 	}
 
 
@@ -184,7 +193,7 @@ public class ArrangerXMLParser {
 	}
 	
 	private Rational parseRationalAttribute(Element e, String attr) {
-		String[] strings = attr.split("/");
+		String[] strings = e.attribute(attr).getValue().split("/");
 		int numerator = Integer.parseInt(strings[0]);
 		int denominator = Integer.parseInt(strings[1]);
 		return new Rational(numerator, denominator);
