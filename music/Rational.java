@@ -73,4 +73,10 @@ public class Rational {
         if (n < 0) n = -n;
         return m * (n / gcd(m, n));
     }
+
+    //override toString() function
+    public String toString(){
+
+    	return (_numer + "/" + _denom);
+    }
 }
