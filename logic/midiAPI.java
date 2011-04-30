@@ -73,7 +73,7 @@ public class midiAPI{
     }
 
     private void addVoice(List<ListIterator<MultiNote>> list, Voice v) {
-    	list.add(v.getMultinotes().listIterator());
+    	list.add(v.getMultiNotes().listIterator());
     }
 
     //helper method for creating a midimesage;

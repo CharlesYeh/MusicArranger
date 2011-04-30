@@ -54,7 +54,7 @@ public class MidiAPITest {
 	public static Voice createVoiceFromMidiPitches(ArrayList<int[]> midiPitches){
 
 		Voice v = new Voice();
-		List<MultiNote> mns = v.getMultinotes();
+		List<MultiNote> mns = v.getMultiNotes();
 
 		int numberOfNotes = midiPitches.get(0).length;
 

@@ -27,8 +27,11 @@ public class MidiPlayer extends Thread {
 		_ends = new TreeMap<Timestamp, MultiNote>();
 		Timestamp tempTimestamp = new Timestamp();
 
+		Timestamp timestampKey = new Timestamp();
+
 		for (ListIterator<MultiNote> listIter : _multiNoteLists) {
-			Timestamp timestampKey = new Timestamp();
+
+			System.out.println(listIter);
 			_starts.put(timestampKey, listIter);
 			System.out.println(_starts.get(timestampKey));
 		}
@@ -71,7 +74,7 @@ public class MidiPlayer extends Thread {
 				System.out.println("firstKey() = " + _starts.firstKey());
 				System.out.println("get(startTime) = " + _starts.get(startTime));
 				ListIterator<MultiNote> itr = _starts.get(startTime);
-
+				System.out.println("compare: " + _starts.firstKey().compareTo(startTime));
 
 				// this note has started
 				_starts.remove(startTime);
