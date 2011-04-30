@@ -45,10 +45,10 @@ public class MidiAPITest {
 
 
 		api.playVoice(v);
-//		api.playVoice(v2);
+		api.playVoice(v2);
 
-//		Piece p = new test.TestPiece();
-//		api.playPiece(p);
+		Piece p = new test.TestPiece();
+		api.playPiece(p);
     }
 
 	public static Voice createVoiceFromMidiPitches(ArrayList<int[]> midiPitches){

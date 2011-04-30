@@ -26,7 +26,7 @@ public class midiAPI{
 		}
 	}
 
-	public int getBeatsPerSecond() {
+	public int getBeatsPerMinute() {
 		return 60;
 	}
 
@@ -52,6 +52,12 @@ public class midiAPI{
 
 		_mp = new MidiPlayer(this, _voices);
 		_mp.start();
+//		try{
+//			_mp.wait();
+//		} catch (Exception e){
+//			e.printStackTrace();
+//		}
+
     }
 
     private void addPiece(List<ListIterator<MultiNote>> list, Piece p) {

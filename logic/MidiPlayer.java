@@ -31,9 +31,7 @@ public class MidiPlayer extends Thread {
 
 		for (ListIterator<MultiNote> listIter : _multiNoteLists) {
 
-			System.out.println(listIter);
 			_starts.put(timestampKey, listIter);
-			System.out.println(_starts.get(timestampKey));
 		}
 
 //		for (int i = 0; i < _multiNoteLists.size(); i++) {
@@ -46,6 +44,8 @@ public class MidiPlayer extends Thread {
 
 		while (!_starts.isEmpty() || !_ends.isEmpty()) {
 
+			System.out.println("======New iteration======");
+
 			// find whether start or end is next with timestamps (firstKey())
 			Timestamp startTime = _starts.isEmpty() ? null : _starts.firstKey();
 
@@ -53,6 +53,7 @@ public class MidiPlayer extends Thread {
 				System.out.println("startTime is : " + startTime.getDuration().toString());
 			else
 				System.out.println("startTime is null");
+
 			Timestamp endTime = _ends.isEmpty() ? null : _ends.firstKey();
 
 			if(endTime != null)
@@ -68,18 +69,13 @@ public class MidiPlayer extends Thread {
 				nextIsStart = false;
 			}
 
-			if (nextIsStart) {
-				System.out.println("startTime is " + startTime);
+			Rational currentTime = nextIsStart ? startTime.getDuration().clone() : endTime.getDuration().clone();
 
-				System.out.println("firstKey() = " + _starts.firstKey());
-				System.out.println("get(startTime) = " + _starts.get(startTime));
+			if (nextIsStart) {
 				ListIterator<MultiNote> itr = _starts.get(startTime);
-				System.out.println("compare: " + _starts.firstKey().compareTo(startTime));
 
 				// this note has started
 				_starts.remove(startTime);
-				System.out.println(startTime.equals(_starts.firstKey()));
-				System.out.println(itr);
 				if(itr.hasNext()) {
 					// play multinote
 					MultiNote mn = itr.next();
@@ -171,10 +167,6 @@ public class MidiPlayer extends Thread {
 			//int sleepMilli = (_midi.getWholeNoteDuration() * sleepDuration.getNumerator()) / sleepDuration.getDenominator();
 
 			// get sleep duration
-
-
-			Rational currentTime = nextIsStart ? startTime.getDuration() : endTime.getDuration();
-
 			if (_starts.isEmpty() && _ends.isEmpty())
 				break;
 
@@ -185,22 +177,29 @@ public class MidiPlayer extends Thread {
 
 			if (_starts.isEmpty()) {
 				sleepDuration = endTime.getDuration().minus(currentTime);
+				System.out.println("case 1: sleepDuration is: " + sleepDuration);
 			}
 			else {
 				// starts is not empty so compare with ends list
 				Timestamp nextStart = _starts.firstKey();
 				if (!_ends.isEmpty() && endTime.compareTo(startTime) < 0) {
 					sleepDuration = endTime.getDuration().minus(currentTime);
+					System.out.println("case 2: sleepDuration is: " + sleepDuration);
 				}
 				else {
 					sleepDuration = startTime.getDuration().minus(currentTime);
+					System.out.println("case 3: sleepDuration is: " + sleepDuration);
 				}
 			}
 
-			int sleepMilli = 1000 * sleepDuration.getNumerator() / _midi.getBeatsPerSecond() / sleepDuration.getDenominator();
+			int sleepMilli = 60 * 1000 * sleepDuration.getNumerator() / _midi.getBeatsPerMinute() / sleepDuration.getDenominator();
+			System.out.println("currentTime is :" + currentTime);
+			System.out.println("sleepMilli is: " + sleepMilli);
 
 			try {
+				System.out.println("going to sleep ");
 				Thread.sleep(sleepMilli);
+				System.out.println("slept ");
 			}
 			catch (Exception e) {
 				System.out.println("Couldn't SLEEP: " + e);
