@@ -74,7 +74,7 @@ public class ScoreIllustrator {
 	public void drawPiece(Graphics g, Piece piece) {
 		// list manuevering
 		TreeMap<Timestamp, ListIterator<? extends Timestep>> timeline = new TreeMap<Timestamp, ListIterator<? extends Timestep>>();
-
+		/*
 		_systemPositions = new ArrayList<Integer>();
 		Map<Staff, Integer> staffPositions = new HashMap<Staff, Integer>();
 
@@ -90,8 +90,7 @@ public class ScoreIllustrator {
 
 		timeline.put(new Timestamp(KeySignature.class), keyIter);
 		timeline.put(new Timestamp(TimeSignature.class), timeIter);
-		/*pQueue.add(new Timestamp(ChordSymbol.class), chordIter);
-		*/
+		//pQueue.add(new Timestamp(ChordSymbol.class), chordIter);
 		//-----------------------end listiters----------------------
 
 		//-----------------------current data-----------------------
@@ -99,7 +98,7 @@ public class ScoreIllustrator {
 		Map<ListIterator<? extends Timestep>, Staff> timestepStaff = new HashMap<ListIterator<? extends Timestep>, Staff>();
 		// use map to find which clef each staff is currently using
 		Map<Staff, Clef> currClefs = new HashMap<Staff, Clef>();
-
+		
 		KeySignature currKeySig 	= keySigs.get(0);
 		TimeSignature currTimeSig 	= timeSigs.get(0);
 		//ChordSymbol currChord		= chords.get(0);
@@ -230,14 +229,46 @@ public class ScoreIllustrator {
 				//-------------------------CLEF-------------------------
 				Clef clef = (Clef) currDur;
 				currClefs.put(currStaff, clef);
-
+				
 				drawClef(g, clef, nextX, nextY);
 				nextX += 50; //clef image width
 			}
 			else {
 				System.out.println("Unrecognized timestep: " + currDur);
 			}
+		}*/
+		
+		// keep track of lists of measures
+		for (Staff staff : p.getStaffs()) {
+			Map<ListIterator<? extends Timestep>, Staff> timestepStaff = new HashMap<ListIterator<? extends Timestep>, Staff>();
+			// use map to find which clef each staff is currently using
+			Map<Staff, Clef> currClefs = new HashMap<Staff, Clef>();
+			
+			//-------------------------listiters-----------------------
+			// load structure
+			List<KeySignature> keySigs 	= staff.getKeySignatures();
+			List<TimeSignature> timeSigs 	= staff.getTimeSignatures();
+			List<ChordSymbol> chords	= staff.getChordSymbols();
+			
+			ListIterator<KeySignature> keyIter 	= keySigs.listIterator();
+			ListIterator<TimeSignature> timeIter = timeSigs.listIterator();
+			ListIterator<ChordSymbol> chordIter = chords.listIterator();
+			
+			timeline.put(new Timestamp(KeySignature.class), keyIter);
+			timeline.put(new Timestamp(TimeSignature.class), timeIter);
+			//pQueue.add(new Timestamp(ChordSymbol.class), chordIter);
+			//-----------------------end listiters----------------------
+			
+			KeySignature currKeySig 	= keySigs.get(0);
+			TimeSignature currTimeSig 	= timeSigs.get(0);
+			//ChordSymbol currChord		= chords.get(0);
+			List<MultiNote> stemGroup = new ArrayList<MultiNote>();
 		}
+		
+		// while there are measures left in the staff
+			// get all lists from measures and map to staff
+			// draw stuff like before
+		
 	}
 
 	/* Draws all pitches within the multinote
