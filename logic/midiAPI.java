@@ -60,13 +60,13 @@ public class midiAPI{
 
     }
 
-    private void addPiece(List<ListIterator<MultiNote>> list, Piece p) {
+    private void addPiece(List<ListIterator<MultiNote>> voiceList, Piece p) {
     	for (Staff s : p.getStaffs()) {
-    		addStaff(list, s);
+    		addStaff(voiceList, s);
     	}
     }
 
-    private void addStaff(List<ListIterator<MultiNote>> list, Staff s) {
+    private void addStaff(List<ListIterator<MultiNote>> voiceList, Staff s) {
     	for (Measure m : s.getMeasures()) {
     		addMeasure(list, m);
     	}
