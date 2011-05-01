@@ -61,7 +61,7 @@ public class MidiAPITest {
 		for(int i = 0; i < numberOfNotes; i++){
 			//assuming that the duration of each note is a quarter note;
 			MultiNote mn = new MultiNote(new Rational(1, 4));
-			ArrayList<Pitch> pitchList = mn.getPitches();
+			List<Pitch> pitchList = mn.getPitches();
 
 			//System.out.println("Multinote " + i + " contains:");
 

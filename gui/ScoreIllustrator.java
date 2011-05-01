@@ -82,7 +82,7 @@ public class ScoreIllustrator {
 		// load structure
 		List<KeySignature> keySigs 	= piece.getKeySignatures();
 		List<TimeSignature> timeSigs 	= piece.getTimeSignatures();
-		List<ChordSymbol> chords		= piece.getChordSymbols();
+		List<ChordSymbol> chords	= piece.getChordSymbols();
 
 		ListIterator<KeySignature> keyIter 	= keySigs.listIterator();
 		ListIterator<TimeSignature> timeIter = timeSigs.listIterator();
