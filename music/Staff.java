@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * four separate voices, as well as the clef(s) assigned to the staff.
  */
 public class Staff{
-	ArrayList<Measure> _measures;		// measures in the staff
+	List<Measure> _measures;	// measures in the staff
 	
 	// constructor
 	public Staff() {
@@ -21,7 +21,7 @@ public class Staff{
 		}
 	}
 	
-	public ArrayList<Measure> getMeasures() {
+	public List<Measure> getMeasures() {
 		return _measures;
 	}
 }

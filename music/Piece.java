@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 
 public class Piece {
-	ArrayList<Staff> _staffs;					// staffs in the piece
+	List<Staff> _staffs;					// staffs in the piece
 	
 	public Piece() {
 		_staffs = new ArrayList<Staff>();
@@ -17,7 +17,7 @@ public class Piece {
 		}
 	}
 	
-	public ArrayList<Staff> getStaffs() {
+	public List<Staff> getStaffs() {
 		return _staffs;
 	}
 	

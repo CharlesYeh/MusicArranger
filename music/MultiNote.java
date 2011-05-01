@@ -7,14 +7,14 @@ import java.util.ArrayList;
  * arbitrary number of notes being played in unison.
  */
 public class MultiNote extends Timestep {
-	ArrayList<Pitch> _pitches;					// all pitches in the MultiNote, from highest to lowest; an empty list of Pitches represents a rest.
+	List<Pitch> _pitches;					// all pitches in the MultiNote, from highest to lowest; an empty list of Pitches represents a rest.
 
 	public MultiNote(Rational duration) {
 		super(duration);
 		_pitches = new ArrayList<Pitch>();
 	}
 
-	public ArrayList<Pitch> getPitches() {
+	public List<Pitch> getPitches() {
 		return _pitches;
 	}
 }
