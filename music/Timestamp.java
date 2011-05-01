@@ -3,9 +3,9 @@ package music;
 public class Timestamp extends Timestep implements Comparable {
 	Class _assocType;
 	int _id;
-	
+
 	static int nextId = 0;
-	
+
 
 	public Timestamp() {
 		_assocType = null;
@@ -15,9 +15,13 @@ public class Timestamp extends Timestep implements Comparable {
 	public Timestamp(Class type) {
 		_assocType = type;
 	}
-	
+
 	public Class getAssocClass(){
 		return _assocType;
+	}
+
+	public int getId() {
+		return _id;
 	}
 
 	public int compareTo(Object obj) {
@@ -33,13 +37,13 @@ public class Timestamp extends Timestep implements Comparable {
 			}
 			else {
 				// multinotes shouldn't have the exact same compareto value
-				return _id;
+				return _id - dur.getId();
 			}
 		}
-		
+
 		return diff;
 	}
-	
+
 	int getWeight() {
 		if (_assocType == Clef.class) {
 			return 3;

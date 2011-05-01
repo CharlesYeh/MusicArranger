@@ -45,16 +45,16 @@ public class MidiAPITest {
 
 
 		api.playVoice(v);
-//		api.playVoice(v2);
+		api.playVoice(v2);
 
-//		Piece p = new test.TestPiece();
-//		api.playPiece(p);
+		Piece p = new test.TestPiece();
+		api.playPiece(p);
     }
 
 	public static Voice createVoiceFromMidiPitches(ArrayList<int[]> midiPitches){
 
 		Voice v = new Voice();
-		List<MultiNote> mns = v.getMultinotes();
+		List<MultiNote> mns = v.getMultiNotes();
 
 		int numberOfNotes = midiPitches.get(0).length;
 
