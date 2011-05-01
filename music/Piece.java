@@ -1,6 +1,6 @@
 package music;
 
-import java.util.LinkedList;
+import java.util.List;
 import java.util.ArrayList;
 
 public class Piece {

@@ -37,16 +37,16 @@ public class SimplePiece extends Piece {
 
 		// voices
 		Voice voicetreble1 = new Voice();
-			voicetreble1.getMultinotes().add(treble1);
-			voicetreble1.getMultinotes().add(treble2);
-			voicetreble1.getMultinotes().add(treble3);
-			voicetreble1.getMultinotes().add(treble4);
-			voicetreble1.getMultinotes().add(treble5);
-			voicetreble1.getMultinotes().add(treble6);
-			voicetreble1.getMultinotes().add(treble7);
+			voicetreble1.getMultiNotes().add(treble1);
+			voicetreble1.getMultiNotes().add(treble2);
+			voicetreble1.getMultiNotes().add(treble3);
+			voicetreble1.getMultiNotes().add(treble4);
+			voicetreble1.getMultiNotes().add(treble5);
+			voicetreble1.getMultiNotes().add(treble6);
+			voicetreble1.getMultiNotes().add(treble7);
 
 		Voice v2 = new Voice();
-			v2.getMultinotes().add(t1);
+			v2.getMultiNotes().add(t1);
 
 		// clefs
 		Clef cleftreble = new Clef(new Rational(2, 1), ClefName.GCLEF, -2);

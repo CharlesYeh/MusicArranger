@@ -29,7 +29,7 @@ public class TestPiece extends Piece {
 			treble3.getPitches().add(gn4);
 		MultiNote treble4 = new MultiNote(new Rational(1, 8));
 			treble4.getPitches().add(fs4);
-		MultiNote treble5 = new MultiNote(new Rational(1, 2)); // rest
+		MultiNote treble5 = new MultiNote(new Rational(3, 4)); // rest
 
 		MultiNote bass1 = new MultiNote(new Rational(1, 4));
 			bass1.getPitches().add(cn3);
@@ -44,36 +44,41 @@ public class TestPiece extends Piece {
 		// voices
 		Voice voice1_1_1 = new Voice();				// staff 1, measure 1, voice 1
 			voice1_1_1.getMultiNotes().add(treble1);
+			voice1_1_1.getMultiNotes().add(treble2);
 		Voice voice1_2_1 = new Voice();
 			voice1_2_1.getMultiNotes().add(treble2);
 			voice1_2_1.getMultiNotes().add(treble3);
 			voice1_2_1.getMultiNotes().add(treble4);
+			voice1_2_1.getMultiNotes().add(treble2);
 		Voice voice1_3_1 = new Voice();
 			voice1_3_1.getMultiNotes().add(treble5);
 		Voice voice2_1_1 = new Voice();
 			voice2_1_1.getMultiNotes().add(bass1);
 			voice2_1_1.getMultiNotes().add(bass2);
+			voice2_1_1.getMultiNotes().add(bass2);
 		Voice voice2_2_1 = new Voice();
 			voice2_2_1.getMultiNotes().add(bass3);
 			voice2_2_1.getMultiNotes().add(bass4);
+			voice2_2_1.getMultiNotes().add(bass3);
 		Voice voice2_3_1 = new Voice();
 			voice2_3_1.getMultiNotes().add(bass5);
-
+			voice2_2_1.getMultiNotes().add(bass1);
+		
 		// clefs
-		Clef cleftreble = new Clef(new Rational(3, 2), ClefName.GCLEF, -2);
-		Clef clefbass = new Clef(new Rational(3, 2), ClefName.FCLEF, 2);
-
+		Clef cleftreble = new Clef(new Rational(3, 4), ClefName.GCLEF, -2);
+		Clef clefbass = new Clef(new Rational(3, 4), ClefName.FCLEF, 2);
+		
 		// time signatures
-		TimeSignature timesig1 = new TimeSignature(new Rational(3, 2), 2, 4);
-
+		TimeSignature timesig1 = new TimeSignature(new Rational(3, 4), 3, 4);
+		
 		// key signatures
-		KeySignature keysig1 = new KeySignature(new Rational(2, 1), 0, true);
-
+		KeySignature keysig1 = new KeySignature(new Rational(3, 4), 0, true);
+		
 		// chord symbols
-		ChordSymbol chordsymbol1 = new ChordSymbol(new Rational(1, 2), 1, ChordType.MAJOR);
-		ChordSymbol chordsymbol2 = new ChordSymbol(new Rational(1, 2), 4, ChordType.MINOR);
-		ChordSymbol chordsymbol3 = new ChordSymbol(new Rational(1, 2), 5, ChordType.HDIMIN7);
-			
+		ChordSymbol chordsymbol1 = new ChordSymbol(new Rational(3, 4), 1, ChordType.MAJOR);
+		ChordSymbol chordsymbol2 = new ChordSymbol(new Rational(3, 4), 4, ChordType.MINOR);
+		ChordSymbol chordsymbol3 = new ChordSymbol(new Rational(3, 4), 5, ChordType.HDIMIN7);
+		
 		// measures
 		Measure measure1_1 = new Measure();
 			measure1_1.getKeySignatures().add(keysig1);
