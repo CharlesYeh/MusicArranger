@@ -101,25 +101,29 @@ public class LogicManager {
 		}
 	}
 	private void editStaff(EditInstruction editInstr) {
-		int staffNumber = editInstr.getIndex().getStaffNumber();
-		ListIterator<Staff> iterator = _piece.getStaffs().listIterator(staffNumber);
-		_editor.setStaffIter(iterator);
+		List<InstructionIndex> indices = editInstr.getIndices();
 		
-		EditInstructionType instrType = editInstr.getType();
-		switch (instrType) {
-		// TODO: THESE STAFF INSERTION/REMOVAL FUNCTIONS ARE DUMMIES, HAVE TO CHECK FOR STAFF LENGTH, MAKING KEY SIGNATURES/TIME SIGNATURES CONSISTENT, ETC.
-		// ALSO HAVE TO DECIDE WHAT KIND OF INFORMATION NEEDS TO BE PASSED WHEN CREATING A NEW STAFF.
-			case INSERT:
-				_editor.insertStaff(new Staff());
-				break;
-			case REMOVE:
-				_editor.removeStaff();
-				break;
-			case REPLACE:
-				_editor.replaceStaff(new Staff());
-				break;
-			default:
-				throw new RuntimeException("Instruction of unrecognized EditInstructionType");
+		for (InstructionIndex index : indices) {
+			int staffNumber = index.getStaffNumber();
+			ListIterator<Staff> iterator = _piece.getStaffs().listIterator(staffNumber);
+			_editor.setStaffIter(iterator);
+			
+			EditInstructionType instrType = editInstr.getType();
+			switch (instrType) {
+			// TODO: THESE STAFF INSERTION/REMOVAL FUNCTIONS ARE DUMMIES, HAVE TO CHECK FOR STAFF LENGTH, MAKING KEY SIGNATURES/TIME SIGNATURES CONSISTENT, ETC.
+			// ALSO HAVE TO DECIDE WHAT KIND OF INFORMATION NEEDS TO BE PASSED WHEN CREATING A NEW STAFF.
+				case INSERT:
+					_editor.insertStaff(new Staff());
+					break;
+				case REMOVE:
+					_editor.removeStaff();
+					break;
+				case REPLACE:
+					_editor.replaceStaff(new Staff());
+					break;
+				default:
+					throw new RuntimeException("Instruction of unrecognized EditInstructionType");
+			}
 		}
 		
 	}
