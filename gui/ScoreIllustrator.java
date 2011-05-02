@@ -233,7 +233,7 @@ public class ScoreIllustrator {
 					}
 					
 					// draw system lines
-					systemY += SYSTEM_SPACING;
+					systemY += SYSTEM_SPACING + numStaffs * STAFF_SPACING;
 					
 					_systemPositions.add(systemY);
 					for (int i = 0; i < numStaffs; i++){
