@@ -1,23 +1,28 @@
 package gui;
 
+// for graphics
 import javax.swing.JPanel;
 import java.awt.Graphics;
+import java.awt.Color;
+
+// data struct
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.ListIterator;
+
+// for events
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 
-import java.awt.Color;
+import instructions.*;
+import javax.swing.event.EventListenerList;
+import java.awt.Component;
 
 import arranger.ArrangerConstants;
 import music.Piece;
-import java.awt.Component;
-
-import javax.swing.event.EventListenerList;
 
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
 	
@@ -199,21 +204,22 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 	}
 	
-	public synchronized void addEventListener(InstructionListener listener)  {
-		_listeners.add(listener);
+	public synchronized void addInstructionListener(InstructionListener listener)  {
+		_listeners.add(InstructionListener.class, listener);
 	}
 	
-	public synchronized void removeEventListener(InstructionListener listener) {
-		_listeners.remove(listener);
+	public synchronized void removeInstructionListener(InstructionListener listener) {
+		_listeners.remove(InstructionListener.class, listener);
 	}
 	
 	// call this method whenever you want to notify
 	//the event listeners of the particular event
 	private synchronized void fireEvent() {
-		Instruction instr = new EventClass(this);
-		Iterator<MyEventClassListener> i = _listeners.iterator();
-		while(i.hasNext())  {
-			i.next().handleMyEventClassEvent(event);
+		Instruction instr = new PlaybackInstruction(this);
+		
+		InstructionListener[] listeners = _listeners.getListeners(InstructionListener.class);
+		for (int i = 0; i < listeners.length; i++) {
+			listeners[i].receiveInstruction(instr);
 		}
 	}
 }

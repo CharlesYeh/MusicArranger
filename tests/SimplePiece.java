@@ -73,7 +73,7 @@ public class SimplePiece extends Piece {
 			measure1Bass.getClefs().add(clefbass);
 			measure1Bass.getKeySignatures().add(keysig1);
 			measure1Bass.getTimeSignatures().add(timesig1);
-
+		
 		// staffs
 		Staff stafftreble = new Staff();
 			stafftreble.getMeasures().add(measure1Treble);

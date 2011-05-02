@@ -53,7 +53,7 @@ public class Main extends JFrame implements InstructionListener {
 		ArrangerConstants.WINDOW_HEIGHT = 600;
 		
 		MainPanel mainPanel = new MainPanel(_piece);
-		mainPanel.add(InstructionListener.class, this);
+		mainPanel.addInstructionListener(this);
 		this.add(mainPanel);
 		
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
