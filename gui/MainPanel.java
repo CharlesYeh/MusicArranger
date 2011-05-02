@@ -17,15 +17,20 @@ import arranger.ArrangerConstants;
 import music.Piece;
 import java.awt.Component;
 
+import javax.swing.event.EventListenerList;
+
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
 	
 	boolean _disabled;
 	
+	// the last toolbar which was used
 	Toolbar _activeToolbar;
 	
 	LinkedList<Toolbar> _toolbars;
 	Toolbar _modeToolbar, _noteToolbar, _playToolbar;
 	ScoreWindow _scoreWindow;
+	
+	protected EventListenerList _listeners = new EventListenerList();
 	
 	public MainPanel(Piece piece) {
 		Toolbar.init("images/gui/toolbarHorizontal.png", "images/gui/toolbarVertical.png");
@@ -92,9 +97,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		if (_disabled)
 			return;
 		
-    	// clicked on which toolbar?
-    	_activeToolbar = null;
-    	Toolbar tbar = mouseEventToolbar(e);
+		// clicked on which toolbar?
+		_activeToolbar = null;
+		Toolbar tbar = mouseEventToolbar(e);
 		if (tbar == null) {
 			// clicked on score window
 			_scoreWindow.mouseClicked(e);
@@ -192,5 +197,23 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	}
 	public void componentShown(ComponentEvent e) {
 		
+	}
+	
+	public synchronized void addEventListener(InstructionListener listener)  {
+		_listeners.add(listener);
+	}
+	
+	public synchronized void removeEventListener(InstructionListener listener) {
+		_listeners.remove(listener);
+	}
+	
+	// call this method whenever you want to notify
+	//the event listeners of the particular event
+	private synchronized void fireEvent() {
+		Instruction instr = new EventClass(this);
+		Iterator<MyEventClassListener> i = _listeners.iterator();
+		while(i.hasNext())  {
+			i.next().handleMyEventClassEvent(event);
+		}
 	}
 }
