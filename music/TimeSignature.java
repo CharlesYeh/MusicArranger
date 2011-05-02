@@ -24,4 +24,10 @@ public class TimeSignature extends Timestep {
 	public int getDenominator() {
 		return _denominator;
 	}
+	
+	public boolean equals(Object o) {
+		TimeSignature timesig = (TimeSignature) o;
+		return _numerator == timesig.getNumerator() && _denominator == timesig.getDenominator();
+	}
+	
 }

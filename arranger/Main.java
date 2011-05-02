@@ -43,7 +43,7 @@ public class Main extends JFrame implements InstructionListener {
 		_parser = new ArrangerXMLParser(_editor);
 
 		// ######################################################
-		_piece = new tests.SimplePiece();
+		_piece = new tests.TestPiece();
 
 
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
@@ -64,22 +64,60 @@ public class Main extends JFrame implements InstructionListener {
 	}
 	
 	public void addMenuBar(){
-		JMenuBar menubar = new JMenuBar();
-
+		JMenuBar menuBar = new JMenuBar();
+		
+		//----------------FILE----------------
 		JMenu file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
-
-		JMenuItem eMenuItem = new JMenuItem("Exit");
-		eMenuItem.setMnemonic(KeyEvent.VK_C);
-		eMenuItem.setToolTipText("Exit application");
-		eMenuItem.addActionListener(
+		
+		JMenuItem menuItemNew = new JMenuItem("New");
+		menuItemNew.setMnemonic(KeyEvent.VK_N);
+		menuItemNew.setToolTipText("New song");
+		menuItemNew.addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					
+				}
+			});
+		
+		JMenuItem menuItemOpen = new JMenuItem("Open");
+		menuItemOpen.setMnemonic(KeyEvent.VK_O);
+		menuItemOpen.setToolTipText("Open XML file");
+		menuItemOpen.addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					
+				}
+			});
+		
+		JMenuItem menuItemSave = new JMenuItem("Save");
+		menuItemSave.setMnemonic(KeyEvent.VK_S);
+		menuItemSave.setToolTipText("Save current song");
+		menuItemSave.addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					
+				}
+			});
+		
+		JMenuItem menuItemExit = new JMenuItem("Exit");
+		menuItemExit.setMnemonic(KeyEvent.VK_X);
+		menuItemExit.setToolTipText("Exit application");
+		menuItemExit.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
 					System.exit(0);
 				}
 			});
 		
-		file.add(eMenuItem);
+		file.add(menuItemNew);
+		file.add(menuItemOpen);
+		file.add(menuItemSave);
+		file.add(menuItemExit);
+		//----------------EDIT----------------
+		menuBar.add(file);
+		
+		setJMenuBar(menuBar);
 	}
 	
 	public void receiveInstruction(Instruction instr) {

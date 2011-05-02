@@ -51,7 +51,7 @@ public class ScoreIllustrator {
 
 	// map each system to its y coordinate
 	List<Integer> _systemPositions;
-
+	
 	public ScoreIllustrator() {
 		// load images
 		try {
@@ -87,6 +87,7 @@ public class ScoreIllustrator {
 		// the staff each object is in
 		Map<ListIterator<Measure>, Staff> measureStaffs = new HashMap<ListIterator<Measure>, Staff>();
 		Map<ListIterator<? extends Timestep>, Staff> timestepStaff = new HashMap<ListIterator<? extends Timestep>, Staff>();
+		Map<ListIterator<? extends Timestep>, Voice> timestepVoice = new HashMap<ListIterator<? extends Timestep>, Voice>();
 		
 		List<Clef> clefs;
 		List<KeySignature> keySigs;
@@ -98,17 +99,22 @@ public class ScoreIllustrator {
 		ListIterator<TimeSignature> timeIter;
 		ListIterator<ChordSymbol> chordIter;
 		
-		KeySignature currKeySig 	= null;
-		TimeSignature currTimeSig 	= null;
-		Map<Staff, List<MultiNote>> stemGroups = new HashMap<Staff, List<MultiNote>>();
-		
 		// use map to find which clef each staff is currently using
 		Map<Staff, Clef> currClefs = new HashMap<Staff, Clef>();
+		Map<Staff, KeySignature> currKeySigs 	= new HashMap<Staff, KeySignature>();
+		Map<Staff, TimeSignature> currTimeSigs 	= new HashMap<Staff, TimeSignature>();
+		Map<Staff, List<MultiNote>> stemGroups = new HashMap<Staff, List<MultiNote>>();
 		
 		// list of measures in each staff
 		List<ListIterator<Measure>> measureLists = new ArrayList<ListIterator<Measure>>();
 		// current horizontal positions within each staff
+		Map<Staff, Integer> staffX = new HashMap<Staff, Integer>();
 		Map<Voice, Integer> voiceX = new HashMap<Voice, Integer>();
+		int finalVoiceX = 0;
+		
+		boolean startDrawing = true;
+		int systemY	= TOP_MARGIN - SYSTEM_SPACING;
+		int numStaffs	= piece.getStaffs().size();
 		
 		for (Staff staff : piece.getStaffs()) {
 			List<Measure> staffMeasures = staff.getMeasures();
@@ -116,7 +122,10 @@ public class ScoreIllustrator {
 			
 			measureLists.add(measureIterator);
 			measureStaffs.put(measureIterator, staff);
+			
 			staffPositions.put(staff, staffPositions.size());
+			staffX.put(staff, LEFT_MARGIN);
+			
 			stemGroups.put(staff, new ArrayList<MultiNote>());
 		}
 		
@@ -130,6 +139,7 @@ public class ScoreIllustrator {
 				
 				// if measure list is empty, don't add back to list
 				if (!measureIter.hasNext()) {
+					System.out.println("REMOVE MEASURE LIST");
 					measureLists.remove(i);
 					i--;
 				}
@@ -164,7 +174,8 @@ public class ScoreIllustrator {
 					List<MultiNote> multis = v.getMultiNotes();
 					ListIterator<MultiNote> multisList = multis.listIterator();
 					
-					voiceX.put(v, LEFT_MARGIN);
+					voiceX.put(v, 0);
+					finalVoiceX = 0;
 					
 					timeline.put(new Timestamp(MultiNote.class), multisList);
 					timestepStaff.put(multisList, staff);
@@ -172,10 +183,6 @@ public class ScoreIllustrator {
 				}
 				
 			}
-			
-			boolean startDrawing = true;
-			int systemY	= TOP_MARGIN - SYSTEM_SPACING;
-			int numStaffs = piece.getStaffs().size();
 			
 			while (timeline.size() > 0) {
 				Timestamp timestamp = timeline.firstKey();
@@ -201,17 +208,31 @@ public class ScoreIllustrator {
 				
 				Staff currStaff = timestepStaff.get(currList);
 				Voice currVoice = timestepVoice.get(currList);
+				Clef currClef = currClefs.get(currStaff);
+				KeySignature currKeySig = currKeySigs.get(currStaff);
+				TimeSignature currTimeSig = currTimeSigs.get(currStaff);
 				
 				int nextX = staffX.get(currStaff);
+				if (currDur instanceof MultiNote) {
+					nextX += voiceX.get(currVoice);
+				}
+				else {
+					nextX += finalVoiceX;
+				}
 				
 				//int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
 				// if extending into the margin, make a new line
 				if (nextX > ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN || startDrawing) {
 					startDrawing = false;
 					
-					// if new line, draw systems
-					//nextX = LEFT_MARGIN;
-					voiceX.put(currVoice, LEFT_MARGIN);
+					// if new line, set left position
+					staffX.put(currStaff, LEFT_MARGIN);
+					if (currDur instanceof MultiNote) {
+						voiceX.put(currVoice, 0);
+						finalVoiceX = 0;
+					}
+					
+					// draw system lines
 					systemY += SYSTEM_SPACING;
 					
 					_systemPositions.add(systemY);
@@ -219,14 +240,12 @@ public class ScoreIllustrator {
 						drawSystem(g, systemY + i * STAFF_SPACING);
 					}
 				}
-				
 				int nextY = systemY + staffPositions.get(currStaff) * STAFF_SPACING;;
 				
 				// draw duration object
 				if (currDur instanceof MultiNote) {
 					//-----------------------MULTINOTE-----------------------
 					MultiNote mnote = (MultiNote) currDur;
-					Clef currClef = currClefs.get(currStaff);
 					
 					int noteX = nextX;
 					int noteY = nextY;
@@ -235,44 +254,50 @@ public class ScoreIllustrator {
 					Rational dur = mnote.getDuration();
 					
 					// nextX should increase proportional to note length
-					int noteWidth = (int) ((double) dur.getNumerator() / dur.getDenominator() * MEASURE_WIDTH);
-					voiceX.put(currVoice, nextX + noteWidth);
+					int noteWidth = (int) (((double) dur.getNumerator()) / dur.getDenominator() * MEASURE_WIDTH);
+					
+					voiceX.put(currVoice, voiceX.get(currVoice) + noteWidth);
+					finalVoiceX += noteWidth / voiceX.size();
 				}
 				else if (currDur instanceof ChordSymbol) {
 					//---------------------CHORD SYMBOL----------------------
 					ChordSymbol cSymbol = (ChordSymbol) currDur;
 					
+					drawChordSymbol(g, cSymbol, nextX, nextY);
+					//staffX.put(currStaff, nextX + CHORDSYMBOL_WIDTH);
 				}
-				else if (currDur instanceof KeySignature) {
+				else if (currDur instanceof KeySignature && (currKeySig == null || !currDur.equals(currKeySig))) {
 					//-----------------------KEY SIG-----------------------
 					KeySignature keySig = (KeySignature) currDur;
-					currKeySig = keySig;
 					
 					// draw key sig
 					drawAccidental(g, Accidental.SHARP, nextX, nextY);
-					voiceX.put(currVoice, nextX + KEYSIG_WIDTH);
+					staffX.put(currStaff, nextX + KEYSIG_WIDTH);
+					
+					currKeySigs.put(currStaff, keySig);
 				}
-				else if (currDur instanceof TimeSignature) {
+				else if (currDur instanceof TimeSignature && (currTimeSig == null || !currDur.equals(currTimeSig))) {
 					//-----------------------TIME SIG-----------------------
 					TimeSignature timeSig = (TimeSignature) currDur;
-					currTimeSig = timeSig;
 					
 					// draw time sig
 					g.setFont(new Font("Arial", 0, 24));
 					g.drawString("" + timeSig.getNumerator(), nextX, nextY + 1 * SYSTEM_LINE_SPACING);
 					g.drawString("" + timeSig.getDenominator(), nextX, nextY + 3 * SYSTEM_LINE_SPACING);
-					voiceX.put(currVoice, nextX + TIMESIG_WIDTH);
+					staffX.put(currStaff, nextX + TIMESIG_WIDTH);
+					
+					currTimeSigs.put(currStaff, timeSig);
 				}
-				else if (currDur instanceof Clef) {
+				else if (currDur instanceof Clef && (currClef == null || !currDur.equals(currClef))) {
 					//-------------------------CLEF-------------------------
 					Clef clef = (Clef) currDur;
-					currClefs.put(currStaff, clef);
 					
 					drawClef(g, clef, nextX, nextY);
-					voiceX.put(currVoice, nextX + CLEF_WIDTH);
+					staffX.put(currStaff, nextX + CLEF_WIDTH);
+					
+					currClefs.put(currStaff, clef);
 				}
 				else {
-					System.out.println("Unrecognized timestep: " + currDur);
 				}
 			}
 			
@@ -280,18 +305,22 @@ public class ScoreIllustrator {
 			for (Staff stf : staffPositions.keySet()) {
 				int pos = staffPositions.get(stf);
 				
-				Voice v = stf.getVoices().get(0);
-				int stfX = voiceX.get(v);
+				Measure m = stf.getMeasures().get(0);
+				System.out.println(finalVoiceX);
+				int stfX = staffX.get(stf) + finalVoiceX;
 				int startY = systemY + pos * STAFF_SPACING;
 				int endY = systemY + pos * STAFF_SPACING + 4 * SYSTEM_LINE_SPACING;
-				System.out.println(stfX);
 				
 				g.drawLine(stfX, startY, stfX, endY);
-				staffX.put(stf, stfX + 20);
+				staffX.put(stf, stfX + 15);
 			}
+			voiceX.clear();
+			finalVoiceX = 0;
 		}
 	}
-
+	
+	//------------------specific drawing calculations------------------
+	
 	/* Draws all pitches within the multinote
 	 *
 	 */
@@ -310,7 +339,6 @@ public class ScoreIllustrator {
 
 		int minLine, maxLine;
 		minLine = maxLine = getLineNumber(currClef, pitches.get(0));
-		
 		if (pitches.size() == 0) {
 			// draw rest
 			drawRest(g, numerValue, denomValue, nextX, nextY);
@@ -364,9 +392,14 @@ public class ScoreIllustrator {
 		}
 	}
 	
+	private void drawChordSymbol(Graphics g, ChordSymbol symb, int xc, int yc) {
+		
+	}
+	
 	private void drawRest(Graphics g, int numerValue, int denomValue, int xc, int yc) {
 		// draw rest
-		
+		System.out.println("REST");
+		g.drawImage(_imgRest, xc, yc, null);
 	}
 	
 	private void drawStem(Graphics g, int xc, int yc, int minOffset, int maxOffset) {
@@ -449,7 +482,9 @@ public class ScoreIllustrator {
 
 		}
 	}
-
+	
+	//-----------------------actual drawing methods-----------------------
+	
 	/*	Draws the note head for a base value (numerator is 1)
 	 *
 	 */
@@ -541,7 +576,7 @@ public class ScoreIllustrator {
 				accidImage = _imgDoubleSharp;
 				break;
 			default:
-				System.out.println("Accidental " + accid);
+				System.out.println("Accidental error: " + accid);
 				System.exit(1);
 				break;
 		}

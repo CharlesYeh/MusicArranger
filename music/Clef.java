@@ -25,5 +25,11 @@ public class Clef extends Timestep {
 	public int getCenterValue() {
 		return _clefName.centerValue();
 	}
+	
+	public boolean equals(Object o) {
+		Clef clef = (Clef) o;
+		return _clefName == clef.getClefName() && _centerLine == clef.getCenterLine();
+	}
+	
 }
 

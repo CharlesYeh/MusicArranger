@@ -20,4 +20,9 @@ public class KeySignature extends Timestep {
 	public boolean getIsMajor() {
 		return _isMajor;
 	}
+	
+	public boolean equals(Object o) {
+		KeySignature keysig = (KeySignature) o;
+		return _isMajor == keysig.getIsMajor() && _accidentalNumber == keysig.getAccidentalNumber();
+	}
 }

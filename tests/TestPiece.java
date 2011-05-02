@@ -18,7 +18,7 @@ public class TestPiece extends Piece {
 		Pitch bf2 = new Pitch(NoteLetter.B, 2, Accidental.FLAT, false);
 		Pitch bn2 = new Pitch(NoteLetter.B, 3, Accidental.NATURAL, false);
 		Pitch cn3 = new Pitch(NoteLetter.C, 3, Accidental.NATURAL, false);
-
+		
 		// multinotes
 		MultiNote treble1 = new MultiNote(new Rational(1, 2));
 			treble1.getPitches().add(cn4);
@@ -40,7 +40,7 @@ public class TestPiece extends Piece {
 		MultiNote bass4 = new MultiNote(new Rational(1, 4));
 			bass4.getPitches().add(bn2);
 		MultiNote bass5 = new MultiNote(new Rational(1, 2)); // rest
-
+		
 		// voices
 		Voice voice1_1_1 = new Voice();				// staff 1, measure 1, voice 1
 			voice1_1_1.getMultiNotes().add(treble1);
@@ -59,7 +59,6 @@ public class TestPiece extends Piece {
 		Voice voice2_2_1 = new Voice();
 			voice2_2_1.getMultiNotes().add(bass3);
 			voice2_2_1.getMultiNotes().add(bass4);
-			voice2_2_1.getMultiNotes().add(bass3);
 		Voice voice2_3_1 = new Voice();
 			voice2_3_1.getMultiNotes().add(bass5);
 			voice2_2_1.getMultiNotes().add(bass1);
