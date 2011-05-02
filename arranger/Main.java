@@ -43,7 +43,7 @@ public class Main extends JFrame implements InstructionListener {
 		_parser = new ArrangerXMLParser(_editor);
 
 		// ######################################################
-		_piece = new tests.TestPiece();
+		_piece = new tests.LongMelodyPiece();
 
 
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
@@ -59,7 +59,7 @@ public class Main extends JFrame implements InstructionListener {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(ArrangerConstants.WINDOW_WIDTH, ArrangerConstants.WINDOW_HEIGHT);
 		this.setVisible(true);
-
+		
 		addMenuBar();
 	}
 	

@@ -118,11 +118,11 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	}
 
 	public void mouseEntered(MouseEvent e) {
-    	
+		
 	}
-
+	
 	public void mouseExited(MouseEvent e) {
-    	
+		
 	}
 
 	/* Handle a mouse click on a toolbar or the score window
@@ -132,8 +132,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		if (_disabled)
 			return;
 		
-    	// clicked on which toolbar?
-    	Toolbar tbar = mouseEventToolbar(e);
+		// clicked on which toolbar?
+		Toolbar tbar = mouseEventToolbar(e);
 		if (tbar == null) {
 			// clicked on score window
 			_scoreWindow.mouseClicked(e);
