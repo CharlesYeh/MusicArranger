@@ -23,7 +23,12 @@ public class Timestamp extends Timestep implements Comparable {
 	public int getId() {
 		return _id;
 	}
-
+	
+	/* Compare by 3 factors in order:
+	 *	1. Timestamp (shortest first)
+	 *	2. Classes in the order they're drawn: clef, key, time
+	 *	3. By ID so that timestamps with the same time and class are not equal
+	 */
 	public int compareTo(Object obj) {
 		Timestamp dur = (Timestamp) obj;
 
