@@ -14,6 +14,7 @@ public class MidiPlayer extends Thread {
 	TreeMap<Timestamp, MultiNote> _ends;
 	midiAPI _midi;
 
+//<<<<<<< HEAD
 	// list of iterators for playback, each iterator for each voice in the measure
 //	ArrayList<ListIterator<MultiNote>> _multiNoteLists;
 
@@ -21,10 +22,18 @@ public class MidiPlayer extends Thread {
 
 	public MidiPlayer(midiAPI midi, Piece piece) {
 		_staffList = piece.getStaffs();
+//=======
+//	// list of iterators for playback
+//	ArrayList<ListIterator<MultiNote>> _multiNoteLists;
+//	Piece _piece;
+//
+//	public MidiPlayer(MidiAPI midi, ArrayList<ListIterator<MultiNote>> iList) {
+//>>>>>>> 75196a049669dac6aa6084fc628930607d1e2f89
 		_midi = midi;
 	}
 
 	public void run() {
+//<<<<<<< HEAD
 
 		for(int measureNumber = 0; measureNumber < _staffList.get(0).getMeasures().size(); measureNumber ++){
 
@@ -219,16 +228,105 @@ public class MidiPlayer extends Thread {
 					}
 				}
 			measureNumber++;
+//=======
+//		// initiate the _starts treemap with the iterators to the lists of multinotes (that represent voices)
+//
+//		// used to play things from left to right
+//		TreeMap<Timestamp, ListIterator<? extends Timestep>> timeline = new TreeMap<Timestamp, ListIterator<? extends Timestep>>();
+//
+//		// list of measures in each staff
+//		List<ListIterator<Measure>> measureLists = new ArrayList<ListIterator<Measure>>();
+//
+//		for (Staff staff : _piece.getStaffs()) {
+//			List<Measure> staffMeasures = staff.getMeasures();
+//			ListIterator<Measure> measureIterator = staffMeasures.listIterator();
+//
+//			measureLists.add(measureIterator);
+//		}
+//
+//		// play all notes within the measure
+//		while (!measureLists.isEmpty()) {
+//			// set up lists within each list of measures
+//			for (int i = 0; i < measureLists.size(); i++) {
+//				ListIterator<Measure> measureIter = measureLists.get(i);
+//				Measure m = measureIter.next();
+//
+//				// if measure list is empty, don't add back to list
+//				if (!measureIter.hasNext()) {
+//					measureLists.remove(i);
+//					i--;
+//				}
+//
+//				List<Voice> voices = m.getVoices();
+//
+//				for (Voice v : voices) {
+//					List<MultiNote> multis = v.getMultiNotes();
+//					ListIterator<MultiNote> multisList = multis.listIterator();
+//
+//					timeline.put(new Timestamp(), multisList);
+//				}
+//
+//			}
+//
+//			// play all notes within this measure
+//			while (timeline.size() > 0) {
+//				Timestamp currentTime = timeline.firstKey();
+//				ListIterator<? extends Timestep> currList = timeline.get(currentTime);
+//
+//				if (currList == null) {
+//					System.out.println("ERROR: There was an empty list of class: " + currentTime.getAssocClass());
+//					System.exit(1);
+//				}
+//
+//				Timestep currDur = null;
+//				if (currList.hasNext()) {
+//					currDur = currList.next();
+//					timeline.remove(currentTime);
+//
+//					currentTime.addDuration(currDur);
+//					timeline.put(currentTime, currList);
+//				}
+//				else {
+//					// don't add back to priority queue
+//					timeline.remove(currentTime);
+//					continue;
+//				}
+//
+//				// draw duration object
+//				if (currDur instanceof MultiNote) {
+//					//-----------------------MULTINOTE-----------------------
+//					MultiNote mnote = (MultiNote) currDur;
+//					Rational dur = mnote.getDuration();
+//
+//
+//				}
+//				else if (currDur instanceof ChordSymbol) {
+//					//---------------------CHORD SYMBOL----------------------
+//					ChordSymbol cSymbol = (ChordSymbol) currDur;
+//				}
+//				else {
+//					System.out.println("ERROR: Unplayable timestep: " + currDur);
+//				}
+//
+//				// sleep until the next note
+//				Timestamp nextTime = timeline.firstKey();
+//				Rational sleepDuration = nextTime.getDuration().minus(currentTime.getDuration());
+//
+//				int sleepMilli = 60 * 1000 * sleepDuration.getNumerator() / getBeatsPerMinute() / sleepDuration.getDenominator();
+//
+//				try {
+//					Thread.sleep(sleepMilli);
+//				}
+//				catch (Exception e) {
+//					System.out.println("Playback failed during sleep.");
+//					System.exit(1);
+//				}
+//			}
+//>>>>>>> 75196a049669dac6aa6084fc628930607d1e2f89
 		}
 	}
 
-	//returns the minimum of two Rationals
-	public Rational min(Rational a, Rational b){
-
-		if(a.compareTo(b) > 0){
-			return b;
-		} else {
-			return a;
-		}
+	public int getBeatsPerMinute() {
+		return 60;
 	}
 }

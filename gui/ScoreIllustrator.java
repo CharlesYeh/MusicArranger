@@ -76,170 +76,6 @@ public class ScoreIllustrator {
 	}
 
 	public void drawPiece(Graphics g, Piece piece) {
-		// list manuevering
-		/*
-		_systemPositions = new ArrayList<Integer>();
-		Map<Staff, Integer> staffPositions = new HashMap<Staff, Integer>();
-
-		//-------------------------listiters-----------------------
-		// load structure
-		List<KeySignature> keySigs 	= piece.getKeySignatures();
-		List<TimeSignature> timeSigs 	= piece.getTimeSignatures();
-		List<ChordSymbol> chords	= piece.getChordSymbols();
-
-		ListIterator<KeySignature> keyIter 	= keySigs.listIterator();
-		ListIterator<TimeSignature> timeIter = timeSigs.listIterator();
-		ListIterator<ChordSymbol> chordIter = chords.listIterator();
-
-		timeline.put(new Timestamp(KeySignature.class), keyIter);
-		timeline.put(new Timestamp(TimeSignature.class), timeIter);
-		//pQueue.add(new Timestamp(ChordSymbol.class), chordIter);
-		//-----------------------end listiters----------------------
-
-		//-----------------------current data-----------------------
-		// use map to find which staff each voice is on
-		Map<ListIterator<? extends Timestep>, Staff> timestepStaff = new HashMap<ListIterator<? extends Timestep>, Staff>();
-		// use map to find which clef each staff is currently using
-		Map<Staff, Clef> currClefs = new HashMap<Staff, Clef>();
-		
-		KeySignature currKeySig 	= keySigs.get(0);
-		TimeSignature currTimeSig 	= timeSigs.get(0);
-		//ChordSymbol currChord		= chords.get(0);
-		List<MultiNote> stemGroup = new ArrayList<MultiNote>();
-		//---------------------end current data---------------------
-
-		//------------------------load notes------------------------
-		// add multinote lists from each staff's voice to pQueue
-		List<Staff> staffs = piece.getStaffs();
-		int numStaffs = staffs.size();
-
-		for (Staff st : staffs) {
-			staffPositions.put(st, staffPositions.size());
-
-			List<Voice> voices = st.getVoices();
-
-			System.out.println(st + " " + voices);
-			// handle clefs
-			List<Clef> initClef = st.getClefs();
-			ListIterator<Clef> clefIter = initClef.listIterator();
-			timestepStaff.put(clefIter, st);
-
-			timeline.put(new Timestamp(Clef.class), clefIter);
-
-			// get first clef on each staff
-			currClefs.put(st, initClef.get(0));
-
-			for (Voice v : voices) {
-				List<MultiNote> multis = v.getMultinotes();
-				ListIterator<MultiNote> multisList = multis.listIterator();
-				System.out.println(multis.size());
-				// so we can get the staff a voice is on easily
-				timestepStaff.put(multisList, st);
-				//System.out.println("ASDF" + timeline.size() + " " + timeline.containsKey(new Timestamp(Voice.class)));
-				timeline.put(new Timestamp(MultiNote.class), multisList);
-				//System.out.println("ASDF" + timeline.size());
-			}
-		}
-		//----------------------end load notes----------------------
-
-		// start drawing
-		boolean startDrawing = true;
-		int staffX	= LEFT_MARGIN;
-		int nextY 	= TOP_MARGIN - SYSTEM_SPACING;
-		int nextX 	= staffX;
-
-		while (timeline.size() > 0) {
-			Timestamp timestamp = timeline.firstKey();
-			ListIterator<? extends Timestep> currList = timeline.get(timestamp);
-
-			if (currList == null) {
-				System.out.println("There was an empty list of class: " + timestamp.getAssocClass());
-				System.exit(1);
-			}
-
-			Timestep currDur = null;
-			if (currList.hasNext()) {
-				currDur = currList.next();
-				timeline.remove(timestamp);
-				timestamp.addDuration(currDur);
-				timeline.put(timestamp, currList);
-			}
-			else {
-				// don't add back to priority queue
-				timeline.remove(timestamp);
-				continue;
-			}
-
-			int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
-			// if extending into the margin, make a new line
-			if (nextX + measureWidth > ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN || startDrawing) {
-				startDrawing = false;
-
-				// if new line, draw systems
-				nextX = LEFT_MARGIN;
-				nextY += SYSTEM_SPACING;
-
-				_systemPositions.add(nextY);
-				for (int i = 0; i < numStaffs; i++){
-					drawSystem(g, nextY + STAFF_SPACING * i);
-				}
-			}
-
-			Staff currStaff = timestepStaff.get(currList);
-
-			// draw duration object
-			if (currDur instanceof MultiNote) {
-				//-----------------------MULTINOTE-----------------------
-				MultiNote mnote = (MultiNote) currDur;
-				Clef currClef = currClefs.get(currStaff);
-
-				int noteX = nextX;
-				int noteY = nextY + staffPositions.get(currStaff) * STAFF_SPACING;
-
-				drawMultiNote(g, stemGroup, currClef, mnote, noteX, noteY);
-				Rational dur = mnote.getDuration();
-
-				// nextX should increase proportional to note length
-				int noteWidth = (int) ((double) dur.getNumerator() / dur.getDenominator() * MEASURE_WIDTH);
-				nextX += noteWidth;
-			}
-			else if (currDur instanceof ChordSymbol) {
-				//---------------------CHORD SYMBOL----------------------
-				ChordSymbol cSymbol = (ChordSymbol) currDur;
-
-			}
-			else if (currDur instanceof KeySignature) {
-				//-----------------------KEY SIG-----------------------
-				KeySignature keySig = (KeySignature) currDur;
-				currKeySig = keySig;
-
-				// draw key sig
-				drawAccidental(g, Accidental.SHARP, nextX, nextY);
-				nextX += 30;
-			}
-			else if (currDur instanceof TimeSignature) {
-				//-----------------------TIME SIG-----------------------
-				TimeSignature timeSig = (TimeSignature) currDur;
-				currTimeSig = timeSig;
-
-				// draw time sig
-				g.setFont(new Font("Arial", 0, 24));
-				g.drawString("" + timeSig.getNumerator(), nextX, nextY + 1 * SYSTEM_LINE_SPACING);
-				g.drawString("" + timeSig.getDenominator(), nextX, nextY + 3 * SYSTEM_LINE_SPACING);
-				nextX += 30;
-			}
-			else if (currDur instanceof Clef) {
-				//-------------------------CLEF-------------------------
-				Clef clef = (Clef) currDur;
-				currClefs.put(currStaff, clef);
-				
-				drawClef(g, clef, nextX, nextY);
-				nextX += 50; //clef image width
-			}
-			else {
-				System.out.println("Unrecognized timestep: " + currDur);
-			}
-		}*/
 		
 		// used to draw things from left to right
 		TreeMap<Timestamp, ListIterator<? extends Timestep>> timeline = new TreeMap<Timestamp, ListIterator<? extends Timestep>>();
@@ -386,7 +222,6 @@ public class ScoreIllustrator {
 				// draw duration object
 				if (currDur instanceof MultiNote) {
 					//-----------------------MULTINOTE-----------------------
-					System.out.println("MULTINOTE");
 					MultiNote mnote = (MultiNote) currDur;
 					Clef currClef = currClefs.get(currStaff);
 					
@@ -402,13 +237,11 @@ public class ScoreIllustrator {
 				}
 				else if (currDur instanceof ChordSymbol) {
 					//---------------------CHORD SYMBOL----------------------
-					System.out.println("CHORD SYMBOL");
 					ChordSymbol cSymbol = (ChordSymbol) currDur;
 					
 				}
 				else if (currDur instanceof KeySignature) {
 					//-----------------------KEY SIG-----------------------
-					System.out.println("KEY SIG");
 					KeySignature keySig = (KeySignature) currDur;
 					currKeySig = keySig;
 					
@@ -418,7 +251,6 @@ public class ScoreIllustrator {
 				}
 				else if (currDur instanceof TimeSignature) {
 					//-----------------------TIME SIG-----------------------
-					System.out.println("TIME SIG");
 					TimeSignature timeSig = (TimeSignature) currDur;
 					currTimeSig = timeSig;
 					
@@ -430,7 +262,6 @@ public class ScoreIllustrator {
 				}
 				else if (currDur instanceof Clef) {
 					//-------------------------CLEF-------------------------
-					System.out.println("Clef");
 					System.out.println(nextY);
 					Clef clef = (Clef) currDur;
 					currClefs.put(currStaff, clef);
@@ -443,10 +274,6 @@ public class ScoreIllustrator {
 				}
 			}
 		}
-		// while there are measures left in the staff
-			// get all lists from measures and map to staff
-			// draw stuff like before
-		
 	}
 
 	/* Draws all pitches within the multinote
