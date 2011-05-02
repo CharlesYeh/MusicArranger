@@ -31,6 +31,8 @@ public class ScoreWindow extends Drawable {
 	int[] _systemPositions;
 	
 	PageSlider _slider;
+	boolean _sliding;
+	int dragY;
 	
 	// measure positions within each system
 	
@@ -38,23 +40,27 @@ public class ScoreWindow extends Drawable {
 		_piece = piece;
 		_illustrator = new ScoreIllustrator();
 		
-		_buffer = new BufferedImage(ArrangerConstants.WINDOW_WIDTH,
-						ArrangerConstants.WINDOW_HEIGHT,
-						BufferedImage.TYPE_INT_RGB);
+		_buffer = new BufferedImage(ArrangerConstants.PAGE_WIDTH,
+						ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT,
+						BufferedImage.TYPE_INT_ARGB);
 		_bufferGraphics = _buffer.getGraphics();
 		
 		_slider = new PageSlider();
+		_sliding = false;
 	}
 	
 	public void drawSelf(Graphics g) {
 		// buffer self-image
 		
 		_illustrator.drawPiece(_bufferGraphics, _piece);
-		//_illustrator.drawPiece(g, _piece);
 		
+		// draw with offset from slider
 		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
-		int offset = (int) (_slider.getSlideY() * scrollHeight);
+		int offset = (int) (_slider.getSlidePercent() * scrollHeight);
 		g.drawImage(_buffer, 0, -offset, null);
+		
+		// draw slider on top
+		_slider.drawSelf(g);
 	}
 	
 	public void mouseClicked(MouseEvent e) {
@@ -63,15 +69,19 @@ public class ScoreWindow extends Drawable {
 	
 	public void mousePressed(MouseEvent e) {
 		if (_slider.hitTestPoint(e.getX(), e.getY())) {
-			
+			_sliding = true;
+			dragY = e.getY() - _slider.getY();
 		}
 	}
 	
 	public void mouseReleased(MouseEvent e) {
-		
+		_sliding = false;
 	}
 	
 	public void mouseDragged(MouseEvent e) {
 		// drag slider?
+		if (_sliding) {
+			_slider.setY(e.getY() - dragY);
+		}
 	}
 }
