@@ -12,15 +12,15 @@ public class MidiPlayer extends Thread {
 //	Piece _piece;
 	TreeMap<Timestamp, ListIterator<MultiNote>> _starts;
 	TreeMap<Timestamp, MultiNote> _ends;
-	midiAPI _midi;
+	MidiAPI _midi;
 
 //<<<<<<< HEAD
 	// list of iterators for playback, each iterator for each voice in the measure
-//	ArrayList<ListIterator<MultiNote>> _multiNoteLists;
+	ArrayList<ListIterator<MultiNote>> _multiNoteLists;
 
 	List<Staff> _staffList;
 
-	public MidiPlayer(midiAPI midi, Piece piece) {
+	public MidiPlayer(MidiAPI midi, Piece piece) {
 		_staffList = piece.getStaffs();
 //=======
 //	// list of iterators for playback

@@ -5,7 +5,7 @@ import javax.sound.midi.*;
 import java.util.*;
 import java.lang.Object;
 
-public class midiAPI{
+public class MidiAPI{
 
 	//int _wholeNoteDuration = 1000; //The duration of a whole note
 	MidiPlayer _mp;
@@ -15,7 +15,7 @@ public class midiAPI{
 
 	int _wholeNoteDuration;
 
-	public midiAPI(int wholeNoteDuration){
+	public MidiAPI(int wholeNoteDuration){
 		_wholeNoteDuration = wholeNoteDuration;
 		try{
 			_synth = MidiSystem.getSynthesizer();
