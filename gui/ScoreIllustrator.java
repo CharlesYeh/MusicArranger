@@ -139,7 +139,6 @@ public class ScoreIllustrator {
 				
 				// if measure list is empty, don't add back to list
 				if (!measureIter.hasNext()) {
-					System.out.println("REMOVE MEASURE LIST");
 					measureLists.remove(i);
 					i--;
 				}
@@ -226,7 +225,8 @@ public class ScoreIllustrator {
 					startDrawing = false;
 					
 					// if new line, set left position
-					staffX.put(currStaff, LEFT_MARGIN);
+					nextX = LEFT_MARGIN;
+					staffX.put(currStaff, nextX);
 					if (currDur instanceof MultiNote) {
 						voiceX.put(currVoice, 0);
 						finalVoiceX = 0;
@@ -240,7 +240,7 @@ public class ScoreIllustrator {
 						drawSystem(g, systemY + i * STAFF_SPACING);
 					}
 				}
-				int nextY = systemY + staffPositions.get(currStaff) * STAFF_SPACING;;
+				int nextY = systemY + staffPositions.get(currStaff) * STAFF_SPACING;
 				
 				// draw duration object
 				if (currDur instanceof MultiNote) {
@@ -306,7 +306,7 @@ public class ScoreIllustrator {
 				int pos = staffPositions.get(stf);
 				
 				Measure m = stf.getMeasures().get(0);
-				System.out.println(finalVoiceX);
+				
 				int stfX = staffX.get(stf) + finalVoiceX;
 				int startY = systemY + pos * STAFF_SPACING;
 				int endY = systemY + pos * STAFF_SPACING + 4 * SYSTEM_LINE_SPACING;
@@ -332,34 +332,41 @@ public class ScoreIllustrator {
 
 		int numerValue = (int) (Math.log(numer) / LOG_2);
 		int denomValue = (int) (Math.log(denom) / LOG_2);
-
+		
+		int minLine = 0, maxLine = 0;
+		
 		List<Pitch> pitches = mn.getPitches();
-		if (pitches.size() == 0)
-			return;
-
-		int minLine, maxLine;
-		minLine = maxLine = getLineNumber(currClef, pitches.get(0));
 		if (pitches.size() == 0) {
 			// draw rest
 			drawRest(g, numerValue, denomValue, nextX, nextY);
+			
+			// render previous group
+			renderStemGroup(stemGroup);
+			
+			// don't render stem
+			return;
+		}
+		else {
+			// determine stem direction
+			minLine = maxLine = getLineNumber(currClef, pitches.get(0));
+			
+			for (Pitch p : pitches) {
+				// add 4 since the third line is "number 0"
+				int line = getLineNumber(currClef, p);
+				minLine = Math.min(minLine, line);
+				maxLine = Math.max(maxLine, line);
+	
+				int noteX = nextX;
+				int noteY = getLineOffset(currClef, line) + nextY;
+	
+				// if too low or too high, draw ledger line
+				if (line < -5 || line > 5)
+					drawLedgerLine(g, noteX, noteY);
+				
+				drawPitch(g, numerValue, denomValue, noteX, noteY);
+			}
 		}
 		
-		for (Pitch p : pitches) {
-			// add 4 since the third line is "number 0"
-			int line = getLineNumber(currClef, p);
-			minLine = Math.min(minLine, line);
-			maxLine = Math.max(maxLine, line);
-
-			int noteX = nextX;
-			int noteY = getLineOffset(currClef, line) + nextY;
-
-			// if too low or too high, draw ledger line
-			if (line < -5 || line > 5)
-				drawLedgerLine(g, noteX, noteY);
-			
-			drawPitch(g, numerValue, denomValue, noteX, noteY);
-		}
-
 		// draw stem or add to stem group
 		if (denomValue >= 3) {
 			stemGroup.add(mn);
@@ -385,10 +392,8 @@ public class ScoreIllustrator {
 				drawStem(g, stemX, nextY, minOffset, maxOffset);
 			}
 			
-			if (stemGroup.size() > 0) {
-				// render previous group
-				renderStemGroup(stemGroup);
-			}
+			// render previous group
+			renderStemGroup(stemGroup);
 		}
 	}
 	
@@ -398,7 +403,6 @@ public class ScoreIllustrator {
 	
 	private void drawRest(Graphics g, int numerValue, int denomValue, int xc, int yc) {
 		// draw rest
-		System.out.println("REST");
 		g.drawImage(_imgRest, xc, yc, null);
 	}
 	
@@ -407,8 +411,15 @@ public class ScoreIllustrator {
 	}
 
 	private void renderStemGroup(List<MultiNote> stemGroup) {
-		if (stemGroup.size() <= 1) {
-			// not actually a group
+		if (stemGroup.size() == 0) {
+			return;
+		}
+		else if (stemGroup.size() == 1) {
+			// draw single stem
+			
+			
+			
+			
 			stemGroup.clear();
 			return;
 		}

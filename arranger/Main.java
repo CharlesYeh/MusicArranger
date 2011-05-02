@@ -43,7 +43,7 @@ public class Main extends JFrame implements InstructionListener {
 		_parser = new ArrangerXMLParser(_editor);
 
 		// ######################################################
-		_piece = new tests.TestPiece();
+		_piece = new tests.LongMelodyPiece();
 
 
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
