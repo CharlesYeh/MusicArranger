@@ -59,7 +59,7 @@ public class Main extends JFrame implements InstructionListener {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(ArrangerConstants.WINDOW_WIDTH, ArrangerConstants.WINDOW_HEIGHT);
 		this.setVisible(true);
-
+		
 		addMenuBar();
 	}
 	

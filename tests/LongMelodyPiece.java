@@ -60,7 +60,7 @@ public class LongMelodyPiece extends Piece {
 			measure1_1.getVoices().add(voice1_1_1);
 			measure1_1.getChordSymbols().add(chordsymbol1);
 		
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 50; i++) {
 			stafftreble.getMeasures().add(measure1_1);
 		}
 		
