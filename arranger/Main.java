@@ -20,7 +20,7 @@ import instructions.*;
 /*
  * Main handles delegations of tasks between
  */
-public class Main extends JFrame{
+public class Main extends JFrame implements InstructionListener {
 
 	ArrangerXMLParser _parser;
 	ArrangerXMLWriter _writer;
@@ -51,17 +51,18 @@ public class Main extends JFrame{
 
 		ArrangerConstants.WINDOW_WIDTH = 800;
 		ArrangerConstants.WINDOW_HEIGHT = 600;
-
+		
 		MainPanel mainPanel = new MainPanel(_piece);
+		mainPanel.addInstructionListener(this);
 		this.add(mainPanel);
-
+		
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(ArrangerConstants.WINDOW_WIDTH, ArrangerConstants.WINDOW_HEIGHT);
 		this.setVisible(true);
 
 		addMenuBar();
 	}
-
+	
 	public void addMenuBar(){
 		JMenuBar menubar = new JMenuBar();
 
@@ -77,15 +78,27 @@ public class Main extends JFrame{
 					System.exit(0);
 				}
 			});
-
+		
 		file.add(eMenuItem);
 	}
-
+	
 	public void receiveInstruction(Instruction instr) {
 		// delegate instruction
-
+		if (instr instanceof EditInstruction) {
+			
+		}
+		else if (instr instanceof FileInstruction) {
+			
+		}
+		else if (instr instanceof PlaybackInstruction) {
+			
+		}
+		else {
+			System.out.println("Instruction unrecognized: " + instr);
+			System.exit(1);
+		}
 	}
-
+	
 	public static void main(String[] args){
 		new Main();
 	}

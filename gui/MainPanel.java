@@ -1,31 +1,41 @@
 package gui;
 
+// for graphics
 import javax.swing.JPanel;
 import java.awt.Graphics;
+import java.awt.Color;
+
+// data struct
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.ListIterator;
+
+// for events
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 
-import java.awt.Color;
+import instructions.*;
+import javax.swing.event.EventListenerList;
+import java.awt.Component;
 
 import arranger.ArrangerConstants;
 import music.Piece;
-import java.awt.Component;
 
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
 	
 	boolean _disabled;
 	
+	// the last toolbar which was used
 	Toolbar _activeToolbar;
 	
 	LinkedList<Toolbar> _toolbars;
 	Toolbar _modeToolbar, _noteToolbar, _playToolbar;
 	ScoreWindow _scoreWindow;
+	
+	protected EventListenerList _listeners = new EventListenerList();
 	
 	public MainPanel(Piece piece) {
 		Toolbar.init("images/gui/toolbarHorizontal.png", "images/gui/toolbarVertical.png");
@@ -92,9 +102,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		if (_disabled)
 			return;
 		
-    	// clicked on which toolbar?
-    	_activeToolbar = null;
-    	Toolbar tbar = mouseEventToolbar(e);
+		// clicked on which toolbar?
+		_activeToolbar = null;
+		Toolbar tbar = mouseEventToolbar(e);
 		if (tbar == null) {
 			// clicked on score window
 			_scoreWindow.mouseClicked(e);
@@ -192,5 +202,24 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	}
 	public void componentShown(ComponentEvent e) {
 		
+	}
+	
+	public synchronized void addInstructionListener(InstructionListener listener)  {
+		_listeners.add(InstructionListener.class, listener);
+	}
+	
+	public synchronized void removeInstructionListener(InstructionListener listener) {
+		_listeners.remove(InstructionListener.class, listener);
+	}
+	
+	// call this method whenever you want to notify
+	//the event listeners of the particular event
+	private synchronized void fireEvent() {
+		Instruction instr = new PlaybackInstruction(this);
+		
+		InstructionListener[] listeners = _listeners.getListeners(InstructionListener.class);
+		for (int i = 0; i < listeners.length; i++) {
+			listeners[i].receiveInstruction(instr);
+		}
 	}
 }

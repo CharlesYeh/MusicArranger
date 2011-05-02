@@ -2,6 +2,7 @@ package instructions;
 
 public class FileInstruction extends Instruction {
 	FileInstructionType _type;	// type of instruction
+	
 	String _filePath;			// filepath, if loading/saving a file
 	
 	public FileInstruction(Object src, FileInstructionType type, String filePath) {

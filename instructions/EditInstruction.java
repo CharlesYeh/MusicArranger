@@ -1,6 +1,7 @@
 package instructions;
 
 import music.*;
+import java.util.List;
 
 /*
  * EditInstruction is used for basic editing functions (addition, removal,
@@ -8,13 +9,14 @@ import music.*;
  */
 
 public class EditInstruction extends Instruction {
-	InstructionIndex _index;		// where in the piece is being edited
 	EditInstructionType _type;		// insertion, addition, or removal
+	
+	List<InstructionIndex> _index;		// where in the piece is being edited
 	EditType _elemType;				// what type of element is being modified
 	Timestep _element;				// element to insert/add, left blank if EditInstruction is a removal
 	
 	
-	public EditInstruction(Object src, InstructionIndex index, EditInstructionType type, 
+	public EditInstruction(Object src, List<InstructionIndex> index, EditInstructionType type, 
 			EditType elemType) {
 		super(src);
 		
@@ -23,11 +25,17 @@ public class EditInstruction extends Instruction {
 		_elemType = elemType;
 	}
 	
-	public InstructionIndex getIndex() {
+	public EditInstruction(Object src, List<InstructionIndex> index, EditInstructionType type, 
+			EditType elemType, Timestep element) {
+		this(src, index, type, elemType);
+		_element = element;
+	}
+	
+	public List<InstructionIndex> getIndex() {
 		return _index;
 	}
 
-	public void setIndex(InstructionIndex index) {
+	public void setIndex(List<InstructionIndex> index) {
 		this._index = index;
 	}
 
@@ -53,11 +61,5 @@ public class EditInstruction extends Instruction {
 
 	public void setElement(Timestep element) {
 		this._element = element;
-	}
-
-	public EditInstruction(Object src, InstructionIndex index, EditInstructionType type, 
-			EditType elemType, Timestep element) {
-		this(src, index, type, elemType);
-		_element = element;
 	}
 }
