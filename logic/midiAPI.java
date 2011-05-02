@@ -31,29 +31,29 @@ public class midiAPI{
 	}
 
 	public void playPiece(Piece p){
-		_voices = new ArrayList<ListIterator<MultiNote>>();
-		addPiece(_voices, p);
+//		_voices = new ArrayList<ListIterator<MultiNote>>();
+//		addPiece(_voices, p);
 
-		_mp = new MidiPlayer(this, _voices);
+		_mp = new MidiPlayer(this, p);
 		_mp.start();
 	}
 
-	public void playStaff(Staff s){
-		_voices = new ArrayList<ListIterator<MultiNote>>();
-		addStaff(_voices, s);
-
-		_mp = new MidiPlayer(this, _voices);
-		_mp.start();
-	}
-
-	public void playVoice(Voice v) {
-		_voices = new ArrayList<ListIterator<MultiNote>>();
-		addVoice(_voices, v);
-
-		_mp = new MidiPlayer(this, _voices);
-		_mp.start();
-
-	}
+//	public void playStaff(Staff s){
+//		_voices = new ArrayList<ListIterator<MultiNote>>();
+//		addStaff(_voices, s);
+//
+//		_mp = new MidiPlayer(this, _voices);
+//		_mp.start();
+//	}
+//
+//	public void playVoice(Voice v) {
+//		_voices = new ArrayList<ListIterator<MultiNote>>();
+//		addVoice(_voices, v);
+//
+//		_mp = new MidiPlayer(this, _voices);
+//		_mp.start();
+//
+//	}
 
 	private void addPiece(List<ListIterator<MultiNote>> list, Piece p) {
 		for (Staff s : p.getStaffs()) {

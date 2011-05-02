@@ -44,8 +44,8 @@ public class MidiAPITest {
 		st.getVoices.add(v2);*/
 
 
-		api.playVoice(v);
-		api.playVoice(v2);
+//		api.playVoice(v);
+//		api.playVoice(v2);
 
 		Piece p = new test.TestPiece();
 		api.playPiece(p);
