@@ -225,29 +225,78 @@ public class Editor{
 	}
 	
 // MULTINOTES
-	public Editor setMultiNoteIter(ListIterator<MultiNote> iter) {
+	public void setMultiNoteIter(ListIterator<MultiNote> iter) {
 		_multiNoteIter = iter;
-		return this;
 	}
-	public Editor insertMultiNote(MultiNote multiNote) {
+	public void insertMultiNote(MultiNote multiNote) {
 		_multiNoteIter.add(multiNote);
 		_pitchIter = multiNote.getPitches().listIterator();
-		return this;
 	}
-	public Editor removeMultiNote() {
+	// Remove a MultiNote and returns the removed MultiNote
+	public MultiNote removeMultiNote() {
+		MultiNote removed;
+		
 		if (_multiNoteIter.hasNext()) {
-			_multiNoteIter.next();
+			removed = _multiNoteIter.next();
 			_multiNoteIter.remove();
 		} 
 		else {
 			throw new RuntimeException("Tried to remove from end of list");
 		}
-		return this;
+		return removed;
 	}
-	public Editor replaceMultiNote(MultiNote multiNote) {
-		this.removeMultiNote().insertMultiNote(multiNote);
-		_multiNoteIter.previous();
-		return this;
+	
+	// Replaces a MultiNote and fills in rests/overwrites notes as necessary.
+	public void replaceMultiNote(MultiNote replacement) {
+		MultiNote replaced = this.removeMultiNote();
+		if (replacement.getDuration().compareTo(replaced.getDuration()) == 1) {
+			// Replace current note and overwrite following notes
+			this.insertMultiNote(replacement);
+			this.overwriteNotes(replacement.getDuration().minus(replaced.getDuration()));
+		}
+		else {
+			// If the replacement is of shorter/equal length:
+			this.insertMultiNote(replacement);
+			this.insertRests(replaced.getDuration().minus(replacement.getDuration()));
+		}
+	}
+	
+	// Given an amount of space, fills that space with rests
+	private void insertRests(Rational amountOfSpace) {
+		MultiNote rest;
+		int numerator = amountOfSpace.getNumerator();
+		int denominator = amountOfSpace.getDenominator();
+		if (amountOfSpace.getNumerator() == 0) {
+			return;
+		}
+		else if (amountOfSpace.getNumerator() == 1) {
+			rest = new MultiNote(amountOfSpace);
+			insertMultiNote(rest);
+		}
+		else {
+			Rational largerChunk;
+			Rational remainder;
+			remainder = new Rational(numerator % 2, denominator / 2);
+			largerChunk = new Rational(numerator / 2, denominator / 2);
+			insertRests(remainder);
+			insertRests(largerChunk);
+		}
+	}
+	
+	// if a replacement note runs into other notes as well, those notes are removed and
+	// the space is occupied by the replacement note
+	private void overwriteNotes(Rational spaceToOverwrite) {
+		MultiNote overwritten = this.removeMultiNote();
+		if (overwritten.getDuration().compareTo(spaceToOverwrite) == -1) {
+			// if the overwritten note is smaller than the space being overwritten
+			// remove the note, and continue overwriting further in the list
+			overwriteNotes(spaceToOverwrite.minus(overwritten.getDuration()));
+		}
+		else {
+			// if the overwritten note is larger than the space being overwritten
+			// remove the note, and insert rests to compensate for the remaining space
+			insertRests(overwritten.getDuration().minus(spaceToOverwrite));
+		}
 	}
 	
 // PITCHES
