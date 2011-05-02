@@ -34,8 +34,23 @@ public class MidiAPI{
 //		_voices = new ArrayList<ListIterator<MultiNote>>();
 //		addPiece(_voices, p);
 
-		_mp = new MidiPlayer(this, p);
-		_mp.start();
+		List<Staff> staffList = p.getStaffs();
+		if(staffList != null){
+
+			Staff s = staffList.get(0);
+			if(s != null){
+
+				List<Measure> ml = s.getMeasures();
+				if(ml != null){
+
+					if(ml.get(0)!=null){
+
+						_mp = new MidiPlayer(this, p);
+						_mp.start();
+					}
+				}
+			}
+		}
 	}
 
 //	public void playStaff(Staff s){
