@@ -1,4 +1,4 @@
-package test;
+package tests;
 
 import logic.ArrangerXMLWriter;
 import music.*;
@@ -31,7 +31,7 @@ public class SimplePiece extends Piece {
 		MultiNote treble6 = new MultiNote(new Rational(1, 2)); // rest
 		MultiNote treble7 = new MultiNote(new Rational(1, 4));
 			treble7.getPitches().add(ff3);
-		
+
 		// voices
 		Voice voice1_1 = new Voice();
 			voice1_1.getMultiNotes().add(treble1);
@@ -48,17 +48,17 @@ public class SimplePiece extends Piece {
 			voice2_2.getMultiNotes().add(treble5);
 			voice2_2.getMultiNotes().add(treble6);
 			voice2_2.getMultiNotes().add(treble7);
-		
+
 		// clefs
 		Clef cleftreble = new Clef(new Rational(1, 1), ClefName.GCLEF, -2);
 		Clef clefbass = new Clef(new Rational(1, 1), ClefName.FCLEF, 2);
-		
+
 		// time signatures
 		TimeSignature timesig1 = new TimeSignature(new Rational(1, 1), 4, 4);
-		
+
 		// key signatures
 		KeySignature keysig1 = new KeySignature(new Rational(1, 1), 0, true);
-		
+
 		// measures
 		Measure measure1Treble = new Measure();
 			measure1Treble.getVoices().add(voice1_1);
@@ -73,20 +73,20 @@ public class SimplePiece extends Piece {
 			measure1Bass.getClefs().add(clefbass);
 			measure1Bass.getKeySignatures().add(keysig1);
 			measure1Bass.getTimeSignatures().add(timesig1);
-		
+
 		// staffs
 		Staff stafftreble = new Staff();
 			stafftreble.getMeasures().add(measure1Treble);
-		
+
 		Staff staffbass = new Staff();
 			staffbass.getMeasures().add(measure1Bass);
-		
+
 		// piece
 			getStaffs().add(stafftreble);
 			getStaffs().add(staffbass);
-		
+
 	}
-	
+
 	public static void main(String[] args) {
 		ArrangerXMLWriter writer = new ArrangerXMLWriter();
 		try {

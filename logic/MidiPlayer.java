@@ -53,7 +53,6 @@ public class MidiPlayer extends Thread {
 					listIter = currentVoice.getMultiNotes().listIterator();
 					_starts.put(timestampKey, listIter);
 				}
-			}
 
 		//		for (int i = 0; i < _multiNoteLists.size(); i++) {
 		//
@@ -323,6 +322,7 @@ public class MidiPlayer extends Thread {
 //				}
 //			}
 //>>>>>>> 75196a049669dac6aa6084fc628930607d1e2f89
+			}
 		}
 	}
 

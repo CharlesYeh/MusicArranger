@@ -47,7 +47,7 @@ public class MidiAPITest {
 //		api.playVoice(v);
 //		api.playVoice(v2);
 
-		Piece p = new test.TestPiece();
+		Piece p = new tests.TestPiece();
 		api.playPiece(p);
     }
 

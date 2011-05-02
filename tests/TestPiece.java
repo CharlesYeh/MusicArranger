@@ -1,4 +1,4 @@
-package test;
+package tests;
 
 import music.*;
 
@@ -6,8 +6,8 @@ public class TestPiece extends Piece {
 
 	public TestPiece() {
 		super();
-	
-		// pitches 
+
+		// pitches
 		Pitch cn4 = new Pitch(NoteLetter.C, 4, Accidental.NATURAL, false);
 		Pitch dn4 = new Pitch(NoteLetter.D, 4, Accidental.NATURAL, false);
 		Pitch en4 = new Pitch(NoteLetter.E, 4, Accidental.NATURAL, false);
@@ -63,22 +63,22 @@ public class TestPiece extends Piece {
 		Voice voice2_3_1 = new Voice();
 			voice2_3_1.getMultiNotes().add(bass5);
 			voice2_2_1.getMultiNotes().add(bass1);
-		
+
 		// clefs
 		Clef cleftreble = new Clef(new Rational(3, 4), ClefName.GCLEF, -2);
 		Clef clefbass = new Clef(new Rational(3, 4), ClefName.FCLEF, 2);
-		
+
 		// time signatures
 		TimeSignature timesig1 = new TimeSignature(new Rational(3, 4), 3, 4);
-		
+
 		// key signatures
 		KeySignature keysig1 = new KeySignature(new Rational(3, 4), 0, true);
-		
+
 		// chord symbols
 		ChordSymbol chordsymbol1 = new ChordSymbol(new Rational(3, 4), 1, ChordType.MAJOR);
 		ChordSymbol chordsymbol2 = new ChordSymbol(new Rational(3, 4), 4, ChordType.MINOR);
 		ChordSymbol chordsymbol3 = new ChordSymbol(new Rational(3, 4), 5, ChordType.HDIMIN7);
-		
+
 		// measures
 		Measure measure1_1 = new Measure();
 			measure1_1.getKeySignatures().add(keysig1);
@@ -98,7 +98,7 @@ public class TestPiece extends Piece {
 			measure1_3.getClefs().add(cleftreble);
 			measure1_3.getVoices().add(voice1_3_1);
 			measure1_3.getChordSymbols().add(chordsymbol3);
-			
+
 		Measure measure2_1 = new Measure();
 			measure2_1.getKeySignatures().add(keysig1);
 			measure2_1.getTimeSignatures().add(timesig1);
@@ -132,7 +132,7 @@ public class TestPiece extends Piece {
 		getStaffs().add(stafftreble);
 		getStaffs().add(staffbass);
 	}
-	
+
 	public static void main(String[] args) {
 		new TestPiece();
 	}

@@ -43,7 +43,7 @@ public class Main extends JFrame{
 		_parser = new ArrangerXMLParser(_editor);
 
 		// ######################################################
-		_piece = new test.SimplePiece();
+		_piece = new tests.SimplePiece();
 
 
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
