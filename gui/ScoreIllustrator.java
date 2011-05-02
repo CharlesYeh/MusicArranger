@@ -30,9 +30,13 @@ public class ScoreIllustrator {
 
 	final static int SYSTEM_SPACING = 90;
 	final static int SYSTEM_LINE_SPACING = 10;
-
+	
+	final static int TIMESIG_WIDTH = 30;
+	final static int KEYSIG_WIDTH = 30;
+	final static int CLEF_WIDTH = 50;
+	
 	final static int STAFF_SPACING = 70;
-
+	
 	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
 	final static int NOTE_HEIGHT = SYSTEM_LINE_SPACING;
 
@@ -267,6 +271,8 @@ public class ScoreIllustrator {
 		
 		// list of measures in each staff
 		List<ListIterator<Measure>> measureLists = new ArrayList<ListIterator<Measure>>();
+		// current horizontal positions within each staff
+		Map<Staff, Integer> staffX = new HashMap<Staff, Integer>();
 		
 		for (Staff staff : piece.getStaffs()) {
 			List<Measure> staffMeasures = staff.getMeasures();
@@ -275,18 +281,20 @@ public class ScoreIllustrator {
 			measureLists.add(measureIterator);
 			measureStaffs.put(measureIterator, staff);
 			staffPositions.put(staff, staffPositions.size());
+			stemGroups.put(staff, new ArrayList<MultiNote>());
 		}
 		
 		while (!measureLists.isEmpty()) {
 			// set up lists within each list of measures
 			for (int i = 0; i < measureLists.size(); i++) {
-				ListIterator<Measure> measureList = measureLists.get(i);
-				Measure m = measureList.next();
+				ListIterator<Measure> measureIter = measureLists.get(i);
+				Measure m = measureIter.next();
 				
-				Staff staff = measureStaffs.get(measureList);
+				Staff staff = measureStaffs.get(measureIter);
+				staffX.put(staff, LEFT_MARGIN);
 				
 				// if measure list is empty, don't add back to list
-				if (!measureList.hasNext()) {
+				if (!measureIter.hasNext()) {
 					measureLists.remove(i);
 					i--;
 				}
@@ -315,13 +323,20 @@ public class ScoreIllustrator {
 				timestepStaff.put(timeIter, staff);
 				timestepStaff.put(chordIter, staff);
 				//-----------------------end listiters----------------------
+				List<Voice> voices = m.getVoices();
+				
+				for (Voice v : voices) {
+					List<MultiNote> multis = v.getMultiNotes();
+					ListIterator<MultiNote> multisList = multis.listIterator();
+					
+					timeline.put(new Timestamp(MultiNote.class), multisList);
+					timestepStaff.put(multisList, staff);
+				}
 				
 			}
 			
 			boolean startDrawing = true;
-			int staffX	= LEFT_MARGIN;
 			int systemY	= TOP_MARGIN - SYSTEM_SPACING;
-			int nextX 	= staffX;
 			int numStaffs = piece.getStaffs().size();
 			
 			while (timeline.size() > 0) {
@@ -346,13 +361,18 @@ public class ScoreIllustrator {
 					continue;
 				}
 				
+				Staff currStaff = timestepStaff.get(currList);
+				
+				int nextX = staffX.get(currStaff);
+				
 				//int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
 				// if extending into the margin, make a new line
 				if (nextX > ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN || startDrawing) {
 					startDrawing = false;
 					
 					// if new line, draw systems
-					nextX = LEFT_MARGIN;
+					//nextX = LEFT_MARGIN;
+					staffX.put(currStaff, LEFT_MARGIN);
 					systemY += SYSTEM_SPACING;
 					
 					_systemPositions.add(systemY);
@@ -361,41 +381,44 @@ public class ScoreIllustrator {
 					}
 				}
 				
-				Staff currStaff = timestepStaff.get(currList);
-				int nextY = systemY + staffPositions.get(currStaff) * STAFF_SPACING;
+				int nextY = systemY + staffPositions.get(currStaff) * STAFF_SPACING;;
 				
 				// draw duration object
 				if (currDur instanceof MultiNote) {
 					//-----------------------MULTINOTE-----------------------
+					System.out.println("MULTINOTE");
 					MultiNote mnote = (MultiNote) currDur;
 					Clef currClef = currClefs.get(currStaff);
 					
 					int noteX = nextX;
-					int noteY = nextY + staffPositions.get(currStaff) * STAFF_SPACING;
+					int noteY = nextY;
 					
 					drawMultiNote(g, stemGroups.get(currStaff), currClef, mnote, noteX, noteY);
 					Rational dur = mnote.getDuration();
 					
 					// nextX should increase proportional to note length
 					int noteWidth = (int) ((double) dur.getNumerator() / dur.getDenominator() * MEASURE_WIDTH);
-					nextX += noteWidth;
+					staffX.put(currStaff, nextX + noteWidth);
 				}
 				else if (currDur instanceof ChordSymbol) {
 					//---------------------CHORD SYMBOL----------------------
+					System.out.println("CHORD SYMBOL");
 					ChordSymbol cSymbol = (ChordSymbol) currDur;
 					
 				}
 				else if (currDur instanceof KeySignature) {
 					//-----------------------KEY SIG-----------------------
+					System.out.println("KEY SIG");
 					KeySignature keySig = (KeySignature) currDur;
 					currKeySig = keySig;
 					
 					// draw key sig
 					drawAccidental(g, Accidental.SHARP, nextX, nextY);
-					nextX += 30;
+					staffX.put(currStaff, nextX + KEYSIG_WIDTH);
 				}
 				else if (currDur instanceof TimeSignature) {
 					//-----------------------TIME SIG-----------------------
+					System.out.println("TIME SIG");
 					TimeSignature timeSig = (TimeSignature) currDur;
 					currTimeSig = timeSig;
 					
@@ -403,15 +426,17 @@ public class ScoreIllustrator {
 					g.setFont(new Font("Arial", 0, 24));
 					g.drawString("" + timeSig.getNumerator(), nextX, nextY + 1 * SYSTEM_LINE_SPACING);
 					g.drawString("" + timeSig.getDenominator(), nextX, nextY + 3 * SYSTEM_LINE_SPACING);
-					nextX += 30;
+					staffX.put(currStaff, nextX + TIMESIG_WIDTH);
 				}
 				else if (currDur instanceof Clef) {
 					//-------------------------CLEF-------------------------
+					System.out.println("Clef");
+					System.out.println(nextY);
 					Clef clef = (Clef) currDur;
 					currClefs.put(currStaff, clef);
 					
 					drawClef(g, clef, nextX, nextY);
-					nextX += 50; //clef image width
+					staffX.put(currStaff, nextX + CLEF_WIDTH);
 				}
 				else {
 					System.out.println("Unrecognized timestep: " + currDur);
@@ -442,6 +467,12 @@ public class ScoreIllustrator {
 
 		int minLine, maxLine;
 		minLine = maxLine = getLineNumber(currClef, pitches.get(0));
+		
+		if (pitches.size() == 0) {
+			// draw rest
+			drawRest(g, numerValue, denomValue, nextX, nextY);
+		}
+		
 		for (Pitch p : pitches) {
 			// add 4 since the third line is "number 0"
 			int line = getLineNumber(currClef, p);
@@ -454,7 +485,7 @@ public class ScoreIllustrator {
 			// if too low or too high, draw ledger line
 			if (line < -5 || line > 5)
 				drawLedgerLine(g, noteX, noteY);
-
+			
 			drawPitch(g, numerValue, denomValue, noteX, noteY);
 		}
 
@@ -489,7 +520,12 @@ public class ScoreIllustrator {
 			}
 		}
 	}
-
+	
+	private void drawRest(Graphics g, int numerValue, int denomValue, int xc, int yc) {
+		// draw rest
+		
+	}
+	
 	private void drawStem(Graphics g, int xc, int yc, int minOffset, int maxOffset) {
 		g.drawLine(xc, yc + minOffset, xc, yc + maxOffset);
 	}

@@ -8,12 +8,12 @@ public class Timestamp extends Timestep implements Comparable {
 
 
 	public Timestamp() {
-		_assocType = null;
-		_id = nextId++;
+		this(null);
 	}
 
 	public Timestamp(Class type) {
 		_assocType = type;
+		_id = nextId++;
 	}
 
 	public Class getAssocClass(){
@@ -33,7 +33,15 @@ public class Timestamp extends Timestep implements Comparable {
 				// not a multinote
 				int weightAssoc = getWeight();
 				int weightOther = dur.getWeight();
-				return weightOther - weightAssoc;
+				
+				// if weights are the same, then use ids too
+				int weightDiff = weightOther - weightAssoc;
+				if (weightDiff == 0) {
+					return _id - dur.getId();
+				}
+				else {
+					return weightDiff;
+				}
 			}
 			else {
 				// multinotes shouldn't have the exact same compareto value

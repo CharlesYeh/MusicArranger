@@ -22,7 +22,7 @@ public class SimplePiece extends Piece {
 		MultiNote treble2 = new MultiNote(new Rational(1, 2));
 			treble2.getPitches().add(dn5);
 		MultiNote treble3 = new MultiNote(new Rational(1, 4));
-			treble1.getPitches().add(cn4);
+			treble3.getPitches().add(cn4);
 			treble3.getPitches().add(en4);
 		MultiNote treble4 = new MultiNote(new Rational(1, 4));
 			treble4.getPitches().add(fs4);
