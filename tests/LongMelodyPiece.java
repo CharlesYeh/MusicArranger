@@ -15,11 +15,11 @@ public class LongMelodyPiece extends Piece {
 		Pitch gn4 = new Pitch(NoteLetter.G, 4, Accidental.NATURAL, false);
 		Pitch an4 = new Pitch(NoteLetter.A, 4, Accidental.NATURAL, false);
 		Pitch bn4 = new Pitch(NoteLetter.B, 4, Accidental.NATURAL, false);
-		
+
 		Pitch cs3 = new Pitch(NoteLetter.C, 3, Accidental.SHARP, false);
 		Pitch fs3 = new Pitch(NoteLetter.F, 3, Accidental.SHARP, false);
 		Pitch gn3 = new Pitch(NoteLetter.G, 3, Accidental.NATURAL, false);
-		
+
 		// multinotes
 		MultiNote I = new MultiNote(new Rational(2, 4));
 			I.getPitches().add(dn4);
@@ -33,43 +33,43 @@ public class LongMelodyPiece extends Piece {
 			V.getPitches().add(cs4);
 			V.getPitches().add(en4);
 			V.getPitches().add(an4);
-		
+
 		MultiNote IBass = new MultiNote(new Rational(2, 4));
-			IBass.getPitches().add(cs3);
+			IBass.getPitches().add(fs3);
 		MultiNote IVBass = new MultiNote(new Rational(1, 4));
-			IVBass.getPitches().add(fs3);
+			IVBass.getPitches().add(gn3);
 		MultiNote VBass = new MultiNote(new Rational(1, 4));
-			VBass.getPitches().add(gn3);
-		
+			VBass.getPitches().add(cs3);
+
 		// clefs
 		Clef cleftreble = new Clef(new Rational(4, 4), ClefName.GCLEF, -2);
 		Clef clefbass = new Clef(new Rational(4, 4), ClefName.FCLEF, 2);
-		
+
 		// time signatures
 		TimeSignature timesig1 = new TimeSignature(new Rational(4, 4), 4, 4);
-		
+
 		// key signatures
 		KeySignature keysig1 = new KeySignature(new Rational(4, 4), 2, true);
-		
+
 		// chord symbols
 		ChordSymbol chordsymbol1 = new ChordSymbol(new Rational(4, 4), 1, ChordType.MAJOR);
 		ChordSymbol chordsymbol2 = new ChordSymbol(new Rational(4, 4), 4, ChordType.MINOR);
 		ChordSymbol chordsymbol3 = new ChordSymbol(new Rational(4, 4), 5, ChordType.MAJOR7);
-		
+
 		// staffs
 		Staff stafftreble = new Staff();
 		Staff staffbass = new Staff();
-		
+
 		Voice voice1_1_1 = new Voice();				// staff 1, measure 1, voice 1
 			voice1_1_1.getMultiNotes().add(I);
 			voice1_1_1.getMultiNotes().add(IV);
 			voice1_1_1.getMultiNotes().add(V);
-		
+
 		Voice voice2_1_1 = new Voice();
 			voice2_1_1.getMultiNotes().add(IBass);
 			voice2_1_1.getMultiNotes().add(IVBass);
 			voice2_1_1.getMultiNotes().add(VBass);
-		
+
 		// measures
 		Measure measure1_1 = new Measure();
 			measure1_1.getKeySignatures().add(keysig1);
@@ -77,19 +77,19 @@ public class LongMelodyPiece extends Piece {
 			measure1_1.getClefs().add(cleftreble);
 			measure1_1.getVoices().add(voice1_1_1);
 			measure1_1.getChordSymbols().add(chordsymbol1);
-			
+
 		Measure measure2_1 = new Measure();
 			measure2_1.getKeySignatures().add(keysig1);
 			measure2_1.getTimeSignatures().add(timesig1);
 			measure2_1.getClefs().add(clefbass);
 			measure2_1.getVoices().add(voice2_1_1);
 			measure2_1.getChordSymbols().add(chordsymbol1);
-		
+
 		for (int i = 0; i < 50; i++) {
 			stafftreble.getMeasures().add(measure1_1);
 			staffbass.getMeasures().add(measure2_1);
 		}
-		
+
 		// piece
 		getStaffs().add(stafftreble);
 		getStaffs().add(staffbass);

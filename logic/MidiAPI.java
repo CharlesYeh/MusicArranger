@@ -13,10 +13,10 @@ public class MidiAPI{
 	Synthesizer _synth;
 	Receiver _receiver;
 
-	int _wholeNoteDuration;
+	int _wholeNotesPerMinute;
 
-	public MidiAPI(int wholeNoteDuration){
-		_wholeNoteDuration = wholeNoteDuration;
+	public MidiAPI(int wholeNotesPerMinute){
+		_wholeNotesPerMinute = wholeNotesPerMinute;
 		try{
 			_synth = MidiSystem.getSynthesizer();
 	        _synth.open();
@@ -24,14 +24,6 @@ public class MidiAPI{
 		} catch (Exception e){
 			System.out.println("Error loading synth: " + e);
 		}
-	}
-
-	public int getBeatsPerMinute() {
-		return 60;
-	}
-
-	public int getWholeNotesPerMinute() {
-		return 15;
 	}
 
 	public void playPiece(Piece p){
@@ -57,76 +49,83 @@ public class MidiAPI{
 		}
 	}
 
-//	public void playStaff(Staff s){
-//		_voices = new ArrayList<ListIterator<MultiNote>>();
-//		addStaff(_voices, s);
+	public void playStaff(Staff s){
+
+		if(s != null){
+
+			List<Measure> ml = s.getMeasures();
+			if(ml != null){
+
+				if(ml.get(0)!=null){
+
+					Piece p = new Piece();
+					p.getStaffs().add(s);
+					_mp = new MidiPlayer(this, p);
+					_mp.start();
+				}
+			}
+		}
+	}
+
+	public void playVoice(Voice v) {
+
+		Measure m = new Measure();
+		m.getVoices().add(v);
+
+		Staff s = new Staff();
+		s.getMeasures().add(m);
+
+		Piece p = new Piece();
+		p.getStaffs().add(s);
+
+		_mp = new MidiPlayer(this, p);
+		_mp.start();
+
+	}
 //
-//		_mp = new MidiPlayer(this, _voices);
-//		_mp.start();
+//	private void addPiece(List<ListIterator<MultiNote>> list, Piece p) {
+//		for (Staff s : p.getStaffs()) {
+//			addStaff(list, s);
+//		}
 //	}
 //
-//	public void playVoice(Voice v) {
-//		_voices = new ArrayList<ListIterator<MultiNote>>();
-//		addVoice(_voices, v);
+//	private void addStaff(List<ListIterator<MultiNote>> list, Staff s) {
+//		for (Measure m : s.getMeasures()) {
+//			addMeasure(list, m);
+//		}
+//	}
 //
-//		_mp = new MidiPlayer(this, _voices);
-//		_mp.start();
+//	private void addMeasure(List<ListIterator<MultiNote>> list, Measure m){
+//		for (Voice v : m.getVoices()) {
+//			addVoice(list, v);
+//		}
+//	}
 //
+//	private void addVoice(List<ListIterator<MultiNote>> list, Voice v) {
+//		list.add(v.getMultiNotes().listIterator());
 //	}
 
-	private void addPiece(List<ListIterator<MultiNote>> list, Piece p) {
-		for (Staff s : p.getStaffs()) {
-			addStaff(list, s);
-		}
-	}
-
-	private void addStaff(List<ListIterator<MultiNote>> list, Staff s) {
-		for (Measure m : s.getMeasures()) {
-			addMeasure(list, m);
-		}
-	}
-
-	private void addMeasure(List<ListIterator<MultiNote>> list, Measure m){
-		for (Voice v : m.getVoices()) {
-			addVoice(list, v);
-		}
-	}
-
-	private void addVoice(List<ListIterator<MultiNote>> list, Voice v) {
-		list.add(v.getMultiNotes().listIterator());
-	}
-
-	//helper method for creating a midimesage;
-	//volume and channel number is presumed for now. They will not be changed to not be hardcoded.
-	public MidiMessage getMessage(int cmd, int note) throws Exception {
-
-	        // no error checking
-
-	        ShortMessage msg = new ShortMessage();
-
-	        // command (on/off), channel, note pitch, volume
-	        msg.setMessage(cmd, 0, note, 100);
-	        return (MidiMessage) msg;
-	}
 
 	//for playing a single pitch with a specified duration
-	public void playPitch(Pitch p, int duration) throws Exception {
+	public void playPitch(Pitch pitch) {
 
-		try{
-			Synthesizer synth = MidiSystem.getSynthesizer();
-			synth.open();
-			Receiver receiver = synth.getReceiver();
-			MidiMessage noteMessage = getMessage(ShortMessage.NOTE_ON, computeMidiPitch(p));
-			// 0 means execute immediately
-			receiver.send(noteMessage, 0);
+		MultiNote mn = new MultiNote(new Rational(1, 4));
+		mn.getPitches().add(pitch);
 
-			Thread.sleep(duration);
+		Voice v = new Voice();
+		v.getMultiNotes().add(mn);
 
-			noteMessage = getMessage(ShortMessage.NOTE_OFF, computeMidiPitch(p));
-			receiver.send(noteMessage, 0);
-		} catch(Exception e){
-			e.printStackTrace();
-		}
+		Measure m = new Measure();
+		m.getVoices().add(v);
+
+		Staff s = new Staff();
+		s.getMeasures().add(m);
+
+		Piece p = new Piece();
+		p.getStaffs().add(s);
+
+		_mp = new MidiPlayer(this, p);
+		_mp.start();
 	}
 
 	//takes a Pitch object and returns its midiPitch value
@@ -155,17 +154,18 @@ public class MidiAPI{
 	public void multiNoteEvent(MultiNote mn, int msg){
 		try{
 			List<Pitch> _pitches = mn.getPitches();
-			Rational beatduration = mn.getDuration();
+//			Rational beatduration = mn.getDuration();
 
 			//System.out.println("beat is "+beatduration.getNumerator()+"/"+beatduration.getDenominator());
 			//System.out.println("_wholeNoteDuration is "+_wholeNoteDuration);
-			double durationDouble = _wholeNoteDuration * (double) beatduration.getNumerator()/ beatduration.getDenominator();
-			int duration = (int) durationDouble;
+//			double durationDouble = 60 * 1000 * _wholeNotesPerMinute * (double) beatduration.getNumerator()/ beatduration.getDenominator();
+//			int duration = (int) durationDouble;
 
 			//navigate to a single note
 			//send the wanted note message
 			for (Pitch p : _pitches) {
 				MidiMessage noteMessage = getMessage(msg, computeMidiPitch(p));
+				tests.MidiAPITest.printPitch(p);
 
 				// 0 means execute immediately
 				_receiver.send(noteMessage, 0);
@@ -176,7 +176,20 @@ public class MidiAPI{
 		}
 	}
 
-	public int getWholeNoteDuration(){
-		return _wholeNoteDuration;
+	//helper method for creating a midimesage;
+	//volume and channel number is presumed for now. They will not be changed to not be hardcoded.
+	public MidiMessage getMessage(int cmd, int note) throws Exception {
+
+	        // no error checking
+
+	        ShortMessage msg = new ShortMessage();
+
+	        // command (on/off), channel, note pitch, volume
+	        msg.setMessage(cmd, 0, note, 100);
+	        return (MidiMessage) msg;
+	}
+
+	public int getWholeNotesPerMinute(){
+		return _wholeNotesPerMinute;
 	}
 }

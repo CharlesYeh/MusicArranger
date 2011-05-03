@@ -33,25 +33,30 @@ public class MidiAPITest {
 		voice2.add(mary_had_a_little_lamb);
 		voice2.add(mary_had_a_little_lamb2);
 
-		MidiAPI api = new MidiAPI(1500);
+		MidiAPI api = new MidiAPI(30);
 
 		//choose which voice to play!
 		Voice v = MidiAPITest.createVoiceFromMidiPitches(voice1);
 		Voice v2 = MidiAPITest.createVoiceFromMidiPitches(voice2);
 
-		/*Staff st = new Staff();
-		st.getVoices.add(v);
-		st.getVoices.add(v2);*/
-
-
+		//Testing for playVoice
 //		api.playVoice(v);
 //		api.playVoice(v2);
 
+		//Testing for playPiece
 //		Piece p = new tests.TestPiece();
 //		api.playPiece(p);
 
 		Piece p2 = new tests.LongMelodyPiece();
 		api.playPiece(p2);
+
+		//Testing for playStaff
+//		api.playStaff(p2.getStaffs().get(0));
+//		api.playStaff(p2.getStaffs().get(1));
+
+		//Testing for playPitch
+//		api.playPitch(createPitchFromMidiPitch(50));
+
     }
 
 	public static Voice createVoiceFromMidiPitches(ArrayList<int[]> midiPitches){
@@ -73,7 +78,7 @@ public class MidiAPITest {
 				int currentPitch = pitchArray[i];
 				Pitch temp = createPitchFromMidiPitch(currentPitch);
 				pitchList.add(temp);
-				printPitch(temp);
+//				printPitch(temp);
 			}
 
 			mns.add(mn);
@@ -119,7 +124,7 @@ public class MidiAPITest {
 	}
 
 	public static void printPitch(Pitch p){
-		//System.out.println("Pitch name: "+p.getNoteLetter().toString()+" "+p.getAccidental().toString()+" "+p.getOctave()+"  tied = "+p.getIsTiedToNext());
+		System.out.println("Pitch name: "+p.getNoteLetter().toString()+" "+p.getAccidental().toString()+" "+p.getOctave()+"  tied = "+p.getIsTiedToNext());
 
 	}
 
