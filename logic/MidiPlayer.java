@@ -87,7 +87,7 @@ public class MidiPlayer extends Thread {
 				System.out.println(nextIsStart);
 
 				// if starts isn't empty, make sure ends isn't empty, and compare end time
-				if (nextIsStart && !_ends.isEmpty() && startTime.compareTo(endTime) > 0) {
+				if (nextIsStart && !_ends.isEmpty() && startTime.compareTo(endTime) >= 0) {
 					// ending a note is next
 					nextIsStart = false;
 				}
