@@ -105,14 +105,16 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		// clicked on which toolbar?
 		_activeToolbar = null;
 		Toolbar tbar = mouseEventToolbar(e);
+		Instruction instr;
 		if (tbar == null) {
 			// clicked on score window
-			_scoreWindow.mouseClicked(e);
+			instr = _scoreWindow.mouseClicked(e);
 		}
 		else {
 			// clicked on a toolbar
-			tbar.mouseReleased(e);
+			instr = tbar.mouseReleased(e);
 		}
+		sendInstruction(instr);
 		
 		repaint();
 	}
@@ -134,14 +136,16 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		// clicked on which toolbar?
 		Toolbar tbar = mouseEventToolbar(e);
+		Instruction instr;
 		if (tbar == null) {
 			// clicked on score window
-			_scoreWindow.mouseClicked(e);
+			instr = _scoreWindow.mouseClicked(e);
 		}
 		else {
 			// clicked on a toolbar
-			tbar.mouseClicked(e);
+			instr = tbar.mouseClicked(e);
 		}
+		sendInstruction(instr);
 	}
 	
 	public void mouseDragged(MouseEvent e) {
@@ -149,14 +153,16 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			return;
 		
 		// clicked on which toolbar?
+		Instruction instr;
 		if (_activeToolbar == null) {
 			// clicked on score window
-			_scoreWindow.mouseDragged(e);
+			instr = _scoreWindow.mouseDragged(e);
 		}
 		else {
 			// dragging a toolbar
-			_activeToolbar.mouseDragged(e);
+			instr = _activeToolbar.mouseDragged(e);
 		}
+		sendInstruction(instr);
 		
 		repaint();
 	}
@@ -214,8 +220,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	// call this method whenever you want to notify
 	//the event listeners of the particular event
-	private synchronized void fireEvent() {
-		Instruction instr = new PlaybackInstruction(this);
+	private synchronized void sendInstruction(Instruction instr) {
+		if (instr == null)
+			return;
 		
 		InstructionListener[] listeners = _listeners.getListeners(InstructionListener.class);
 		for (int i = 0; i < listeners.length; i++) {

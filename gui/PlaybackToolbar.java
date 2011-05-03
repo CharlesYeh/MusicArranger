@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.Graphics;
+import instructions.PlaybackInstruction;
+import instructions.PlaybackInstructionType;
 
 public class PlaybackToolbar extends Toolbar {
 	public PlaybackToolbar(DockController dockControl) {
@@ -13,6 +15,9 @@ public class PlaybackToolbar extends Toolbar {
 		// add mode buttons (note, selection, zoom)
 		ToolbarButton playPlay 	= new ToolbarButton("images/note/note_quarter.png");
 		ToolbarButton playStop 	= new ToolbarButton("images/note/note_whole.png");
+		
+		playPlay.setInstruction(new PlaybackInstruction(this, PlaybackInstructionType.START));
+		playStop.setInstruction(new PlaybackInstruction(this, PlaybackInstructionType.STOP));
 		
 		_buttons = new ToolbarButton[]{playPlay, playStop};
 	}

@@ -13,6 +13,7 @@ import javax.swing.JMenuItem;
 
 import logic.ArrangerXMLParser;
 import logic.ArrangerXMLWriter;
+import logic.MidiAPI;
 import logic.Editor;
 import music.Piece;
 import instructions.*;
@@ -22,6 +23,8 @@ import instructions.*;
  */
 public class Main extends JFrame implements InstructionListener {
 
+	MidiAPI _api;
+	
 	ArrangerXMLParser _parser;
 	ArrangerXMLWriter _writer;
 
@@ -32,7 +35,8 @@ public class Main extends JFrame implements InstructionListener {
 
 	public Main(){
 		super("Music Arranger");
-
+		
+		_api = new MidiAPI(30);
 
 		//#$#$#_parser = new ArrangerXMLParser();
 		_writer = new ArrangerXMLWriter();
@@ -43,7 +47,7 @@ public class Main extends JFrame implements InstructionListener {
 		_parser = new ArrangerXMLParser(_editor);
 
 		// ######################################################
-		_piece = new tests.LongMelodyPiece();
+		_piece = new tests.TestPiece();
 
 
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
@@ -140,7 +144,16 @@ public class Main extends JFrame implements InstructionListener {
 			
 		}
 		else if (instr instanceof PlaybackInstruction) {
+			PlaybackInstruction playInstr = (PlaybackInstruction) instr;
 			
+			switch (playInstr.getPlaybackType()) {
+			case START:
+				_api.playPiece(_piece);
+				break;
+			case STOP:
+				_api.stopPlayback();
+				break;
+			}
 		}
 		else {
 			System.out.println("Instruction unrecognized: " + instr);

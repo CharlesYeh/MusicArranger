@@ -117,6 +117,8 @@ public class ScoreIllustrator {
 		int finalVoiceX = 0;
 		
 		boolean startDrawing = true;
+		
+		//Map<ListIterator<? extends Timestep>, Boolean> nextSystem = new HashMap<ListIterator<? extends Timestep>, Boolean>();
 		int systemY	= TOP_MARGIN;
 		int numStaffs	= piece.getStaffs().size();
 		
@@ -170,6 +172,7 @@ public class ScoreIllustrator {
 				timestepStaff.put(keyIter, staff);
 				timestepStaff.put(timeIter, staff);
 				timestepStaff.put(chordIter, staff);
+				
 				//-----------------------end listiters----------------------
 				List<Voice> voices = m.getVoices();
 				

@@ -14,6 +14,7 @@ public class ToolbarButton extends Drawable {
 	static BufferedImage IMG_OUT, IMG_OVER;
 	
 	BufferedImage _icon;
+	Instruction _instruction;
 	
 	public static void init(String btnOut, String btnOver) {
 		try{
@@ -41,11 +42,15 @@ public class ToolbarButton extends Drawable {
 		_y = cy;
 		_width = _icon.getWidth();
 		_height = _icon.getHeight();
-	}  	
+	}
 	
-	/*public Instruction getInstruction() {
-		return new EditInstruction(this);
-	}*/
+	public void setInstruction(Instruction instr) {
+		_instruction = instr;
+	}
+	
+	public Instruction getInstruction() {
+		return _instruction;
+	}
 	
 	public void drawSelf(Graphics g) {
 		//g.drawImage(IMG_OUT, _x, _y, null);

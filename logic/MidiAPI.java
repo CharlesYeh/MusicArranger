@@ -19,11 +19,15 @@ public class MidiAPI{
 		_wholeNotesPerMinute = wholeNotesPerMinute;
 		try{
 			_synth = MidiSystem.getSynthesizer();
-	        _synth.open();
-	        _receiver = _synth.getReceiver();
+			_synth.open();
+			_receiver = _synth.getReceiver();
 		} catch (Exception e){
 			System.out.println("Error loading synth: " + e);
 		}
+	}
+	
+	public void stopPlayback() {
+		_mp.stop();
 	}
 
 	public void playPiece(Piece p){

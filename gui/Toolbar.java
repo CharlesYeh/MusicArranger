@@ -100,34 +100,36 @@ public abstract class Toolbar extends Drawable {
 		}
 	}
 
-	public void mouseClicked(MouseEvent e) {
+	public Instruction mouseClicked(MouseEvent e) {
 		int ex = e.getX();
 		int ey = e.getY();
 
 		// test button clicks
 		for (ToolbarButton btn : _buttons) {
 			if (btn.hitTestPoint(ex, ey)) {
-				//btn.getInstruction();
+				return btn.getInstruction();
 			}
 		}
+		return null;
 	}
 
 	/* Begin dragging and undock
 	 *
 	 */
-	public void mousePressed(MouseEvent e) {
+	public Instruction mousePressed(MouseEvent e) {
 		_drag = true;
 
 		_dragX = e.getX() - _x;
 		_dragY = e.getY() - _y;
 
 		_dockControl.unDock(this);
+		return null;
 	}
-
+	
 	/* Stop dragging and check dockings
 	 *
 	 */
-	public void mouseReleased(MouseEvent e) {
+	public Instruction mouseReleased(MouseEvent e) {
 		_drag = false;
 
 		// check docking to a side
@@ -137,16 +139,20 @@ public abstract class Toolbar extends Drawable {
 		else if (_x < 0) {
 			_dockControl.dockToLeft(this);
 		}
+		
+		return null;
 	}
 
 	/* Drag this toolbar
 	 *
 	 */
-	public void mouseDragged(MouseEvent e) {
-		if (!_drag) return;
+	public Instruction mouseDragged(MouseEvent e) {
+		if (!_drag) return null;
 
 		// if being dragged, move toolbar
 		_x = e.getX() - _dragX;
 		_y = e.getY() - _dragY;
+		
+		return null;
 	}
 }

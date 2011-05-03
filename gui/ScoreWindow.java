@@ -12,7 +12,7 @@ import java.util.PriorityQueue;
 
 import arranger.ArrangerConstants;
 import music.*;
-import instructions.InstructionIndex;
+import instructions.*;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -64,11 +64,12 @@ public class ScoreWindow extends Drawable {
 		_slider.drawSelf(g);
 	}
 	
-	public void mouseClicked(MouseEvent e) {
+	public Instruction mouseClicked(MouseEvent e) {
 		InstructionIndex index = _illustrator.getEventIndex(e);
+		return null;
 	}
 	
-	public void mousePressed(MouseEvent e) {
+	public Instruction mousePressed(MouseEvent e) {
 		if (_slider.hitTestPoint(e.getX(), e.getY())) {
 			// clicked on slider
 			_sliding = true;
@@ -78,13 +79,15 @@ public class ScoreWindow extends Drawable {
 			// clicked on score sheet
 			//InstructionIndex index = _illustrator.getEventIndex(e);
 		}
+		return null;
 	}
 	
-	public void mouseReleased(MouseEvent e) {
+	public Instruction mouseReleased(MouseEvent e) {
 		_sliding = false;
+		return null;
 	}
 	
-	public void mouseDragged(MouseEvent e) {
+	public Instruction mouseDragged(MouseEvent e) {
 		// drag slider?
 		if (_sliding) {
 			_slider.setY(e.getY() - dragY);
@@ -93,5 +96,6 @@ public class ScoreWindow extends Drawable {
 			//InstructionIndex index = _illustrator.getEventIndex(e);
 			
 		}
+		return null;
 	}
 }
