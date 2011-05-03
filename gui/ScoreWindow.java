@@ -28,9 +28,6 @@ public class ScoreWindow extends Drawable {
 	Piece _piece;
 	ScoreIllustrator _illustrator;
 	
-	// the y position of each system (set of staff lines)
-	int[] _systemPositions;
-	
 	PageSlider _slider;
 	boolean _sliding;
 	int dragY;
@@ -66,6 +63,9 @@ public class ScoreWindow extends Drawable {
 	
 	public Instruction mouseClicked(MouseEvent e) {
 		InstructionIndex index = _illustrator.getEventIndex(e);
+		// determine which instruction to send
+		
+		
 		return null;
 	}
 	

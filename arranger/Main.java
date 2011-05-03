@@ -24,6 +24,7 @@ import instructions.*;
 public class Main extends JFrame implements InstructionListener {
 
 	MidiAPI _api;
+	MainPanel _mainPanel;
 	
 	ArrangerXMLParser _parser;
 	ArrangerXMLWriter _writer;
@@ -56,9 +57,9 @@ public class Main extends JFrame implements InstructionListener {
 		ArrangerConstants.WINDOW_WIDTH = 800;
 		ArrangerConstants.WINDOW_HEIGHT = 600;
 		
-		MainPanel mainPanel = new MainPanel(_piece);
-		mainPanel.addInstructionListener(this);
-		this.add(mainPanel);
+		_mainPanel = new MainPanel(_piece);
+		_mainPanel.addInstructionListener(this);
+		this.add(_mainPanel);
 		
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(ArrangerConstants.WINDOW_WIDTH, ArrangerConstants.WINDOW_HEIGHT);
@@ -73,6 +74,9 @@ public class Main extends JFrame implements InstructionListener {
 		//----------------FILE----------------
 		JMenu file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
+		
+		// new file
+		//Instruction instrNew = new FileInstruction();
 		
 		JMenuItem menuItemNew = new JMenuItem("New");
 		menuItemNew.setMnemonic(KeyEvent.VK_N);
@@ -100,7 +104,13 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemSave.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
-					
+					System.out.println("SAVE FILE");
+					try {
+						_writer.write(_piece, "saved.xml");
+					}
+					catch (Exception e) {
+						System.out.println("Error saving: " + e);
+					}
 				}
 			});
 		
@@ -142,6 +152,8 @@ public class Main extends JFrame implements InstructionListener {
 		}
 		else if (instr instanceof FileInstruction) {
 			
+			
+			_mainPanel.repaint();
 		}
 		else if (instr instanceof PlaybackInstruction) {
 			PlaybackInstruction playInstr = (PlaybackInstruction) instr;
