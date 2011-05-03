@@ -117,7 +117,7 @@ public class ScoreIllustrator {
 		int finalVoiceX = 0;
 		
 		boolean startDrawing = true;
-		int systemY	= TOP_MARGIN - SYSTEM_SPACING;
+		int systemY	= TOP_MARGIN;
 		int numStaffs	= piece.getStaffs().size();
 		
 		for (Staff staff : piece.getStaffs()) {
@@ -226,6 +226,10 @@ public class ScoreIllustrator {
 				//int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
 				// if extending into the margin, make a new line
 				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN || startDrawing) {
+					// draw system lines
+					if (!startDrawing)
+						systemY += SYSTEM_SPACING + (numStaffs - 1) * STAFF_SPACING;
+					
 					startDrawing = false;
 					
 					// if new line, set left position
@@ -235,9 +239,6 @@ public class ScoreIllustrator {
 						voiceX.put(currVoice, 0);
 						finalVoiceX = 0;
 					}
-					
-					// draw system lines
-					systemY += SYSTEM_SPACING + numStaffs * STAFF_SPACING;
 					
 					_systemPositions.add(systemY);
 					for (int i = 0; i < numStaffs; i++){
@@ -612,9 +613,17 @@ public class ScoreIllustrator {
 	}
 	
 	public InstructionIndex getEventIndex(MouseEvent e) {
+		System.out.println("X: " + e.getX() + " Y: " + e.getY());
+		
 		// determine system index
-		int totalSystemHeight = _staffPositions.size() * STAFF_SPACING + SYSTEM_SPACING;
+		int totalSystemHeight = (_staffPositions.size() - 1) * STAFF_SPACING + SYSTEM_SPACING;
 		int systemOffset = e.getY() - TOP_MARGIN;
+		System.out.println(_staffPositions);
+		if (systemOffset < 0) {
+			// clicked above systems
+			return null;
+		}
+		System.out.println(totalSystemHeight);
 		
 		int indexSystem = systemOffset / totalSystemHeight;
 		
