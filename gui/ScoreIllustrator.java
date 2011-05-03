@@ -20,6 +20,9 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 
+import instructions.*;
+import java.awt.event.MouseEvent;
+
 public class ScoreIllustrator {
 
 	final static double LOG_2 = Math.log(2);
@@ -51,6 +54,7 @@ public class ScoreIllustrator {
 
 	// map each system to its y coordinate
 	List<Integer> _systemPositions;
+	Map<Staff, Integer> _staffPositions;
 	
 	public ScoreIllustrator() {
 		// load images
@@ -82,7 +86,7 @@ public class ScoreIllustrator {
 		
 		// positions
 		_systemPositions = new ArrayList<Integer>();
-		Map<Staff, Integer> staffPositions = new HashMap<Staff, Integer>();
+		_staffPositions = new HashMap<Staff, Integer>();
 		
 		// the staff each object is in
 		Map<ListIterator<Measure>, Staff> measureStaffs = new HashMap<ListIterator<Measure>, Staff>();
@@ -113,7 +117,7 @@ public class ScoreIllustrator {
 		int finalVoiceX = 0;
 		
 		boolean startDrawing = true;
-		int systemY	= TOP_MARGIN - SYSTEM_SPACING;
+		int systemY	= TOP_MARGIN;
 		int numStaffs	= piece.getStaffs().size();
 		
 		for (Staff staff : piece.getStaffs()) {
@@ -123,7 +127,7 @@ public class ScoreIllustrator {
 			measureLists.add(measureIterator);
 			measureStaffs.put(measureIterator, staff);
 			
-			staffPositions.put(staff, staffPositions.size());
+			_staffPositions.put(staff, _staffPositions.size());
 			staffX.put(staff, LEFT_MARGIN);
 			
 			stemGroups.put(staff, new ArrayList<MultiNote>());
@@ -221,7 +225,11 @@ public class ScoreIllustrator {
 				
 				//int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
 				// if extending into the margin, make a new line
-				if (nextX > ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN || startDrawing) {
+				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN || startDrawing) {
+					// draw system lines
+					if (!startDrawing)
+						systemY += SYSTEM_SPACING + (numStaffs - 1) * STAFF_SPACING;
+					
 					startDrawing = false;
 					
 					// if new line, set left position
@@ -232,15 +240,12 @@ public class ScoreIllustrator {
 						finalVoiceX = 0;
 					}
 					
-					// draw system lines
-					systemY += SYSTEM_SPACING;
-					
 					_systemPositions.add(systemY);
 					for (int i = 0; i < numStaffs; i++){
 						drawSystem(g, systemY + i * STAFF_SPACING);
 					}
 				}
-				int nextY = systemY + staffPositions.get(currStaff) * STAFF_SPACING;
+				int nextY = systemY + _staffPositions.get(currStaff) * STAFF_SPACING;
 				
 				// draw duration object
 				if (currDur instanceof MultiNote) {
@@ -302,8 +307,8 @@ public class ScoreIllustrator {
 			}
 			
 			// draw barline
-			for (Staff stf : staffPositions.keySet()) {
-				int pos = staffPositions.get(stf);
+			for (Staff stf : _staffPositions.keySet()) {
+				int pos = _staffPositions.get(stf);
 				
 				Measure m = stf.getMeasures().get(0);
 				
@@ -591,7 +596,7 @@ public class ScoreIllustrator {
 				System.exit(1);
 				break;
 		}
-
+		
 		g.drawImage(accidImage, xc, yc, null);
 	}
 
@@ -605,5 +610,39 @@ public class ScoreIllustrator {
 	public int getLineOffset(Clef c, int line) {
 		// - 4 since
 		return -(line - 4) * SYSTEM_LINE_SPACING / 2;
+	}
+	
+	public InstructionIndex getEventIndex(MouseEvent e) {
+		
+		//------------------Y COORDINATE PARSE------------------
+		// determine system index
+		int totalSystemHeight = (_staffPositions.size() - 1) * STAFF_SPACING + SYSTEM_SPACING;
+		int systemOffset = e.getY() - TOP_MARGIN;
+		
+		if (systemOffset < 0) {
+			// clicked above systems
+			return null;
+		}
+		
+		int indexSystem = systemOffset / totalSystemHeight;
+		
+		int staffY = systemOffset % totalSystemHeight;
+		int indexStaff = staffY / STAFF_SPACING;
+		
+		int lineY = staffY % STAFF_SPACING;
+		// actually represents the line/spaces
+		int indexLine = lineY / (SYSTEM_LINE_SPACING / 2);
+		
+		//------------------X COORDINATE PARSE------------------
+		// which measure
+		
+		
+		System.out.println("System: " + indexSystem);
+		System.out.println("Staff: " + indexStaff);
+		System.out.println("Measure: " + 0);
+		System.out.println("Line: " + indexLine);
+		System.out.println("Voice: " + 0);
+		
+		return new InstructionIndex(indexStaff, 0, 0, new Rational());
 	}
 }

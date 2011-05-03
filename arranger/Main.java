@@ -100,6 +100,16 @@ public class Main extends JFrame implements InstructionListener {
 				}
 			});
 		
+		JMenuItem menuItemPrint = new JMenuItem("Print");
+		menuItemPrint.setMnemonic(KeyEvent.VK_X);
+		menuItemPrint.setToolTipText("Print song");
+		menuItemPrint.addActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					System.exit(0);
+				}
+			});
+		
 		JMenuItem menuItemExit = new JMenuItem("Exit");
 		menuItemExit.setMnemonic(KeyEvent.VK_X);
 		menuItemExit.setToolTipText("Exit application");
@@ -113,6 +123,7 @@ public class Main extends JFrame implements InstructionListener {
 		file.add(menuItemNew);
 		file.add(menuItemOpen);
 		file.add(menuItemSave);
+		file.add(menuItemPrint);
 		file.add(menuItemExit);
 		//----------------EDIT----------------
 		menuBar.add(file);

@@ -101,7 +101,7 @@ public class LogicManager {
 		}
 	}
 	private void editStaff(EditInstruction editInstr) {
-		List<InstructionIndex> indices = editInstr.getIndex();
+		List<InstructionIndex> indices = editInstr.getIndices();
 		
 		for (InstructionIndex index : indices) {
 			int staffNumber = index.getStaffNumber();
@@ -128,41 +128,6 @@ public class LogicManager {
 		
 	}
 	private void editChordSymbol(EditInstruction editInstr) {
-		List<InstructionIndex> indices = editInstr.getIndex();
-		
-		for (InstructionIndex index : indices) {
-			
-			int staffNumber = index.getStaffNumber();
-			int measureNumber = index.getMeasureNumber();
-			Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
-			List<ChordSymbol> chordSymbolList = measure.getChordSymbols();
-			Rational measureOffset = index.getMeasureOffset();
-	
-			// calculate iterator and offset
-			IteratorAndOffset iterAndOffset = calcIterAndOffset(chordSymbolList, measureOffset);
-			ListIterator<ChordSymbol> iter = (ListIterator<ChordSymbol>) iterAndOffset.iter;
-			Rational offset = iterAndOffset.offset;
-			ChordSymbol chordSymbol;
-			
-			// set the iterator in the editor
-			_editor.setChordSymbolIter(iter);
-			
-			EditInstructionType instrType = editInstr.getType();
-			switch (instrType) {
-			// offset SHOULD be 0 for insertion and removal functions
-				case INSERT:
-					chordSymbol = (ChordSymbol) editInstr.getElement();
-					_editor.insertChordSymbol(chordSymbol);
-					break;
-				case REMOVE:
-					// TODO, this, and following Edit functions
-					break;
-				case REPLACE:
-					break;
-				default:
-					throw new RuntimeException("Instruction of unrecognized EditInstructionType");
-			}
-		}
 	}
 	private void editMeasure(EditInstruction editInstr) {
 	}
@@ -175,15 +140,14 @@ public class LogicManager {
 	private void editVoice(EditInstruction editInstr) {
 	}
 	private void editMultiNote(EditInstruction editInstr) {
-		List<InstructionIndex> indices = editInstr.getIndex();
-		
+		List<InstructionIndex> indices = editInstr.getIndices();
 		for (InstructionIndex index : indices) {
-			int staffNumber		= index.getStaffNumber();
-			int measureNumber	= index.getMeasureNumber();
-			int voiceNumber		= index.getVoiceNumber();
-			Measure measure		= _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
+			int staffNumber = index.getStaffNumber();
+			int measureNumber = index.getMeasureNumber();
+			int voiceNumber = index.getVoiceNumber();
+			Rational measureOffset = index.getMeasureOffset();
+			Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
 			List<MultiNote> multiNoteList = measure.getVoices().get(voiceNumber).getMultiNotes();
-			Rational measureOffset 	= index.getMeasureOffset();
 	
 			// calculate iterator and offset
 			IteratorAndOffset iterAndOffset = calcIterAndOffset(multiNoteList, measureOffset);
