@@ -69,8 +69,12 @@ public class ScoreWindow extends Drawable {
 	
 	public void mousePressed(MouseEvent e) {
 		if (_slider.hitTestPoint(e.getX(), e.getY())) {
+			// clicked on slider
 			_sliding = true;
 			dragY = e.getY() - _slider.getY();
+		}
+		else {
+			// clicked on score sheet
 		}
 	}
 	
