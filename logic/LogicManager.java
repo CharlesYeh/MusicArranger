@@ -45,25 +45,74 @@ public class LogicManager {
 	public void interpretInstr(Instruction instr) {
 		Class<?> instructionClass = instr.getClass();
 		
-		if (instructionClass == FileInstruction.class){
+		if (FileInstruction.class.isAssignableFrom(instructionClass)){
 			FileInstruction fileInstr = (FileInstruction) instr;
 			interpretFileInstr(fileInstr);
 		}
-		else if (instructionClass == EditInstruction.class) {
+		else if (EditInstruction.class.isAssignableFrom(instructionClass)) {
 			EditInstruction editInstr = (EditInstruction) instr;
 			interpretEditInstr(editInstr);
 		}
-		else if (instructionClass == PlaybackInstruction.class) {
+		else if (PlaybackInstruction.class.isAssignableFrom(instructionClass)) {
 			PlaybackInstruction playbackInstr = (PlaybackInstruction) instr;
 			interpretPlaybackInstr(playbackInstr);
 		}
 		else {
 			throw new RuntimeException("Instruction of unrecognized InstructionType");
 		}
-		
 	}
 	
 	public void interpretFileInstr(FileInstruction fileInstr) {
+		Class<?> fileInstructionClass = fileInstr.getClass();
+		if (FileInstructionNew.class.isAssignableFrom(fileInstructionClass)) {
+			FileInstructionNew fileInstrNew = (FileInstructionNew) fileInstr;
+			interpretFileInstrNew(fileInstrNew);
+		}
+		else if (FileInstructionIO.class.isAssignableFrom(fileInstructionClass)) {
+			FileInstructionIO fileInstrIO = (FileInstructionIO) fileInstr;
+			interpretFileInstrIO(fileInstrIO);
+		}
+		
+		// Since file instructions instantiate a new piece, rather than mutating the old one, the
+		// the new piece must be updated in Logic and passed back.
+		Piece piece = _editor.getPiece();
+		this._piece = piece;
+		// TODO: SEND NEw PIECE BACK TO MAIN, THEN TO GUI
+	}
+	
+	public void interpretFileInstrNew(FileInstructionNew fileInstrNew) {
+		int numStaffs = fileInstrNew.getNumStaffs();
+		int numMeasures = fileInstrNew.getNumMeasures();
+		int keySigNumer = fileInstrNew.getKeySigNumer();
+		int keySigDenom = fileInstrNew.getKeySigDenom();
+		int accidentals = fileInstrNew.getAccidentals();
+		boolean isMajor = fileInstrNew.getIsMajor();
+		
+		_editor.clearScore();
+		// loop through staffs
+		for (int stfnm = 0; stfnm < numStaffs; stfnm++) {
+			Staff staff = new Staff();
+			_editor.insertStaff(staff);
+			// loop through measures
+			for (int msrnm = 0; msrnm < numMeasures; msrnm++) {
+				Measure measure = new Measure();
+				_editor.insertMeasure(measure);
+				// Instantiate key signature, time signature
+				Rational duration = new Rational(keySigNumer, keySigDenom);
+				TimeSignature timeSig = new TimeSignature(duration,
+						keySigNumer, keySigDenom);
+				KeySignature keySig = new KeySignature(duration, accidentals, isMajor);
+				_editor.insertKeySig(keySig);
+				_editor.insertTimeSig(timeSig);
+				// Instantiate single voice with a rest;
+				Voice voice = new Voice();
+				MultiNote rest = new MultiNote(duration);
+				_editor.insertVoice(voice);
+				_editor.insertMultiNote(rest);
+			}
+		}
+	}
+	public void interpretFileInstrIO(FileInstructionIO fileInstrIO) {		
 	}
 	
 	public void interpretEditInstr(EditInstruction editInstr) {
