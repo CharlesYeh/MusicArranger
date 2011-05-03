@@ -8,7 +8,7 @@ public class ChordSymbol extends Timestep {
 	ChordType _chordType;		// quality of the chord (major, minor, etc.)
 	
 	public ChordSymbol(int scaleDegree, ChordType chordType) {
-		this(new Rational(), scaledegree, chordType);
+		this(new Rational(), scaleDegree, chordType);
 	}
 	
 	public ChordSymbol(Rational duration, int scaleDegree, ChordType chordType){

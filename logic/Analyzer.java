@@ -4,7 +4,7 @@ import music.*;
 
 public class Analyzer{
 	
-	Graph<ChordSymbol> _chordPossibilities;
+	//Graph<ChordSymbol> _chordPossibilities;
 	
 	public Analyzer(){
 		initMajorKeyGraph();
@@ -16,7 +16,7 @@ public class Analyzer{
 	}
 	
 	private void initMajorKeyGraph() {
-		_chordPossibilities = new Graph<ChordSymbol>();
+		//_chordPossibilities = new Graph<ChordSymbol>();
 		
 		// create chords
 		ChordSymbol chordI	= new ChordSymbol(0, ChordType.MAJOR);
@@ -49,7 +49,7 @@ public class Analyzer{
 	}
 	
 	private void initMinorKeyGraph() {
-		_chordPossibilities = new Graph<ChordSymbol>();
+		//_chordPossibilities = new Graph<ChordSymbol>();
 		
 		// create chords
 		ChordSymbol chordi	= new ChordSymbol(0, ChordType.MINOR);
