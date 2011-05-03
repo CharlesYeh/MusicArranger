@@ -30,6 +30,10 @@ public class MidiAPI{
 		return 60;
 	}
 
+	public int getWholeNotesPerMinute() {
+		return 15;
+	}
+
 	public void playPiece(Piece p){
 //		_voices = new ArrayList<ListIterator<MultiNote>>();
 //		addPiece(_voices, p);
