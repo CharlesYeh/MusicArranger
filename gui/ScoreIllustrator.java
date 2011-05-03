@@ -613,17 +613,16 @@ public class ScoreIllustrator {
 	}
 	
 	public InstructionIndex getEventIndex(MouseEvent e) {
-		System.out.println("X: " + e.getX() + " Y: " + e.getY());
 		
+		//------------------Y COORDINATE PARSE------------------
 		// determine system index
 		int totalSystemHeight = (_staffPositions.size() - 1) * STAFF_SPACING + SYSTEM_SPACING;
 		int systemOffset = e.getY() - TOP_MARGIN;
-		System.out.println(_staffPositions);
+		
 		if (systemOffset < 0) {
 			// clicked above systems
 			return null;
 		}
-		System.out.println(totalSystemHeight);
 		
 		int indexSystem = systemOffset / totalSystemHeight;
 		
@@ -631,7 +630,12 @@ public class ScoreIllustrator {
 		int indexStaff = staffY / STAFF_SPACING;
 		
 		int lineY = staffY % STAFF_SPACING;
-		int indexLine = staffY / SYSTEM_LINE_SPACING;
+		// actually represents the line/spaces
+		int indexLine = lineY / (SYSTEM_LINE_SPACING / 2);
+		
+		//------------------X COORDINATE PARSE------------------
+		// which measure
+		
 		
 		System.out.println("System: " + indexSystem);
 		System.out.println("Staff: " + indexStaff);
