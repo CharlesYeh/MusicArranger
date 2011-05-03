@@ -9,6 +9,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeMap;
+import java.util.Set;
 
 import java.awt.Point;
 
@@ -226,9 +227,14 @@ public class ScoreIllustrator {
 					nextX += finalVoiceX;
 				}
 				
+				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN) {
+					System.out.println(currDur);
+					System.out.println(currDur.getClass());
+				}
+				
 				//int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
 				// if extending into the margin, make a new line
-				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN || startDrawing) {
+				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN && !timeline.firstKey().equals(timestamp) || startDrawing) {
 					// draw system lines
 					if (!startDrawing)
 						systemY += SYSTEM_SPACING + (numStaffs - 1) * STAFF_SPACING;
@@ -237,13 +243,24 @@ public class ScoreIllustrator {
 					
 					// if new line, set left position
 					nextX = LEFT_MARGIN;
-					staffX.put(currStaff, nextX);
-					if (currDur instanceof MultiNote) {
-						voiceX.put(currVoice, 0);
-						finalVoiceX = 0;
+					
+					// reset x for all staffs
+					Set<Staff> staffs = staffX.keySet();
+					for (Staff stf : staffs) {
+						staffX.put(stf, nextX);
 					}
 					
+					// reset x for all voices
+					Set<Voice> voices = voiceX.keySet();
+					for (Voice v : voices) {
+						voiceX.put(v, 0);
+					}
+					
+					finalVoiceX = 0;
+					
 					_systemPositions.add(systemY);
+					
+					g.setColor(Color.BLACK);
 					for (int i = 0; i < numStaffs; i++){
 						drawSystem(g, systemY + i * STAFF_SPACING);
 					}

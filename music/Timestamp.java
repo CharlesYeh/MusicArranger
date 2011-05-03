@@ -56,7 +56,7 @@ public class Timestamp extends Timestep implements Comparable {
 
 		return diff;
 	}
-
+	
 	int getWeight() {
 		if (_assocType == Clef.class) {
 			return 3;

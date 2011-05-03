@@ -52,9 +52,9 @@ public class LongMelodyPiece extends Piece {
 		KeySignature keysig1 = new KeySignature(new Rational(4, 4), 2, true);
 
 		// chord symbols
-		ChordSymbol chordsymbol1 = new ChordSymbol(new Rational(4, 4), 1, ChordType.MAJOR);
-		ChordSymbol chordsymbol2 = new ChordSymbol(new Rational(4, 4), 4, ChordType.MINOR);
-		ChordSymbol chordsymbol3 = new ChordSymbol(new Rational(4, 4), 5, ChordType.MAJOR7);
+		ChordSymbol chordsymbol1 = new ChordSymbol(new Rational(2, 4), 1, ChordType.MAJOR);
+		ChordSymbol chordsymbol2 = new ChordSymbol(new Rational(1, 4), 4, ChordType.MINOR);
+		ChordSymbol chordsymbol3 = new ChordSymbol(new Rational(1, 4), 5, ChordType.MAJOR7);
 
 		// staffs
 		Staff stafftreble = new Staff();
@@ -69,7 +69,7 @@ public class LongMelodyPiece extends Piece {
 			voice2_1_1.getMultiNotes().add(IBass);
 			voice2_1_1.getMultiNotes().add(IVBass);
 			voice2_1_1.getMultiNotes().add(VBass);
-
+		
 		// measures
 		Measure measure1_1 = new Measure();
 			measure1_1.getKeySignatures().add(keysig1);
@@ -77,6 +77,8 @@ public class LongMelodyPiece extends Piece {
 			measure1_1.getClefs().add(cleftreble);
 			measure1_1.getVoices().add(voice1_1_1);
 			measure1_1.getChordSymbols().add(chordsymbol1);
+			measure1_1.getChordSymbols().add(chordsymbol2);
+			measure1_1.getChordSymbols().add(chordsymbol3);
 
 		Measure measure2_1 = new Measure();
 			measure2_1.getKeySignatures().add(keysig1);
@@ -84,12 +86,14 @@ public class LongMelodyPiece extends Piece {
 			measure2_1.getClefs().add(clefbass);
 			measure2_1.getVoices().add(voice2_1_1);
 			measure2_1.getChordSymbols().add(chordsymbol1);
-
-		for (int i = 0; i < 50; i++) {
+			measure2_1.getChordSymbols().add(chordsymbol2);
+			measure2_1.getChordSymbols().add(chordsymbol3);
+		
+		for (int i = 0; i < 10; i++) {
 			stafftreble.getMeasures().add(measure1_1);
 			staffbass.getMeasures().add(measure2_1);
 		}
-
+		
 		// piece
 		getStaffs().add(stafftreble);
 		getStaffs().add(staffbass);

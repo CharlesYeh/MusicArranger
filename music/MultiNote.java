@@ -17,4 +17,8 @@ public class MultiNote extends Timestep {
 	public List<Pitch> getPitches() {
 		return _pitches;
 	}
+	
+	public String toString() {
+		return "MultiNote: " + _pitches + "| " + super.toString();
+	}
 }

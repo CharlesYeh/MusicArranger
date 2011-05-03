@@ -45,13 +45,16 @@ public class ScoreWindow extends Drawable {
 		
 		_slider = new PageSlider();
 		_sliding = false;
+		
+		redrawScore();
+	}
+	
+	public void redrawScore() {
+		// buffer self-image
+		_illustrator.drawPiece(_bufferGraphics, _piece);
 	}
 	
 	public void drawSelf(Graphics g) {
-		// buffer self-image
-		
-		_illustrator.drawPiece(_bufferGraphics, _piece);
-		
 		// draw with offset from slider
 		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
 		int offset = (int) (_slider.getSlidePercent() * scrollHeight);
@@ -64,7 +67,6 @@ public class ScoreWindow extends Drawable {
 	public Instruction mouseClicked(MouseEvent e) {
 		InstructionIndex index = _illustrator.getEventIndex(e);
 		// determine which instruction to send
-		
 		
 		return null;
 	}

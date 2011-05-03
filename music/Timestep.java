@@ -29,4 +29,18 @@ public abstract class Timestep {
 	public void addDuration(Rational dur) {
 		setDuration(_duration.plus(dur));
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof Timestep) {
+			Timestep ts = (Timestep) obj;
+			return _duration.equals(ts.getDuration());
+		}
+		else {
+			return false;
+		}
+	}
+	
+	public String toString() {
+		return "Timestep: " + _duration;
+	}
 }
