@@ -15,7 +15,7 @@ public class MidiPlayer extends Thread {
 	MidiAPI _midi;
 
 	List<Staff> _staffList;
-	
+
 	boolean _isPlaying;
 
 	public MidiPlayer(MidiAPI midi, Piece piece) {
@@ -25,7 +25,7 @@ public class MidiPlayer extends Thread {
 
 	public void run() {
 		_isPlaying = true;
-		
+
 		for(int measureNumber = 0; measureNumber < _staffList.get(0).getMeasures().size(); measureNumber ++){
 
 			System.out.println("+++++This is measure " + measureNumber + "+++++++");
@@ -51,9 +51,20 @@ public class MidiPlayer extends Thread {
 
 			while (!_starts.isEmpty() || !_ends.isEmpty()) {
 				// check to stop playing
-				if (!_isPlaying)
+				if (!_isPlaying){
+
+					//stop playing all the notes when the playback is stopped
+					while(!_ends.isEmpty()){
+
+							Timestamp ts = _ends.firstKey();
+							MultiNote mn = _ends.get(ts);
+							_ends.remove(ts);
+							_midi.multiNoteOff(mn);
+					}
 					return;
-				
+				}
+
+
 				System.out.println("======New iteration======");
 
 				// find whether start or end is next with timestamps (firstKey())
@@ -115,7 +126,7 @@ public class MidiPlayer extends Thread {
 					_midi.multiNoteOff(mn);
 					_ends.remove(endTime);
 				}
-				
+
 				// get sleep duration
 				if (_starts.isEmpty() && _ends.isEmpty())
 					break;
@@ -146,11 +157,11 @@ public class MidiPlayer extends Thread {
 						System.out.println("case 3: sleepDuration is: " + sleepDuration);
 					}
 				}
-				
+
 				int sleepMilli = 60 * 1000 * sleepDuration.getNumerator() / _midi.getWholeNotesPerMinute() / sleepDuration.getDenominator();
 				System.out.println("currentTime is :" + currentTime);
 				System.out.println("sleepMilli is: " + sleepMilli);
-				
+
 				try {
 					Thread.sleep(sleepMilli);
 				}
@@ -161,8 +172,8 @@ public class MidiPlayer extends Thread {
 			}
 		}
 	}
-	
+
 	public void stopPlayback() {
 		_isPlaying = false;
-	} 
+	}
 }
