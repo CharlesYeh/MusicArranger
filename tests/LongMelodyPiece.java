@@ -79,7 +79,7 @@ public class LongMelodyPiece extends Piece {
 			measure1_1.getChordSymbols().add(chordsymbol1);
 			measure1_1.getChordSymbols().add(chordsymbol2);
 			measure1_1.getChordSymbols().add(chordsymbol3);
-
+		
 		Measure measure2_1 = new Measure();
 			measure2_1.getKeySignatures().add(keysig1);
 			measure2_1.getTimeSignatures().add(timesig1);

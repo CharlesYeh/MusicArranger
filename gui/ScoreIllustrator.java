@@ -38,6 +38,7 @@ public class ScoreIllustrator {
 	final static int TIMESIG_WIDTH = 30;
 	final static int KEYSIG_WIDTH = 30;
 	final static int CLEF_WIDTH = 50;
+	final static int CHORD_SPACING = 10;
 	
 	final static int STAFF_SPACING = 70;
 	
@@ -56,6 +57,8 @@ public class ScoreIllustrator {
 	// map each system to its y coordinate
 	List<Integer> _systemPositions;
 	Map<Staff, Integer> _staffPositions;
+	// staff to position > measure index
+	List<Map<Integer, Integer>> _measurePositions;
 	
 	public ScoreIllustrator() {
 		// load images
@@ -88,6 +91,7 @@ public class ScoreIllustrator {
 		// positions
 		_systemPositions = new ArrayList<Integer>();
 		_staffPositions = new HashMap<Staff, Integer>();
+		_measurePositions = new ArrayList<Map<Integer, Integer>>();
 		
 		// the staff each object is in
 		Map<ListIterator<Measure>, Staff> measureStaffs = new HashMap<ListIterator<Measure>, Staff>();
@@ -200,9 +204,12 @@ public class ScoreIllustrator {
 					System.exit(1);
 				}
 				
+				Rational currTime = null;
 				Timestep currDur = null;
 				if (currList.hasNext()) {
+					currTime = timestamp.getDuration();
 					currDur = currList.next();
+					
 					timeline.remove(timestamp);
 					timestamp.addDuration(currDur);
 					timeline.put(timestamp, currList);
@@ -227,14 +234,15 @@ public class ScoreIllustrator {
 					nextX += finalVoiceX;
 				}
 				
-				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN) {
-					System.out.println(currDur);
-					System.out.println(currDur.getClass());
-				}
-				
 				//int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
 				// if extending into the margin, make a new line
-				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN && !timeline.firstKey().equals(timestamp) || startDrawing) {
+				Timestamp nextStamp = timeline.firstKey();
+				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN) {
+					System.out.println(currTime + " " + nextStamp.getDuration());
+					System.out.println(timestamp.getAssocClass());
+					System.out.println(nextStamp.getAssocClass());
+				}
+				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN && !currTime.equals(nextStamp.getDuration()) || startDrawing) {
 					// draw system lines
 					if (!startDrawing)
 						systemY += SYSTEM_SPACING + (numStaffs - 1) * STAFF_SPACING;
@@ -264,6 +272,8 @@ public class ScoreIllustrator {
 					for (int i = 0; i < numStaffs; i++){
 						drawSystem(g, systemY + i * STAFF_SPACING);
 					}
+					
+					_measurePositions.add(new HashMap<Integer, Integer>());
 				}
 				int nextY = systemY + _staffPositions.get(currStaff) * STAFF_SPACING;
 				
@@ -288,8 +298,9 @@ public class ScoreIllustrator {
 					//---------------------CHORD SYMBOL----------------------
 					ChordSymbol cSymbol = (ChordSymbol) currDur;
 					
-					drawChordSymbol(g, cSymbol, nextX, nextY);
-					//staffX.put(currStaff, nextX + CHORDSYMBOL_WIDTH);
+					int chordX = nextX;
+					int chordY = nextY + 5 * SYSTEM_LINE_SPACING + CHORD_SPACING;
+					drawChordSymbol(g, cSymbol, chordX, chordY);
 				}
 				else if (currDur instanceof KeySignature && (currKeySig == null || !currDur.equals(currKeySig))) {
 					//-----------------------KEY SIG-----------------------
@@ -423,7 +434,11 @@ public class ScoreIllustrator {
 	}
 	
 	private void drawChordSymbol(Graphics g, ChordSymbol symb, int xc, int yc) {
+		g.setFont(new Font("Arial", 0, 24));
 		
+		g.drawString(symb.getSymbolText(), xc, yc);
+		g.drawString(symb.getTopInversionText(), xc + 10, yc);
+		g.drawString(symb.getBotInversionText(), xc + 10, yc + 10);
 	}
 	
 	private void drawRest(Graphics g, int numerValue, int denomValue, int xc, int yc) {

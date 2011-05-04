@@ -27,7 +27,7 @@ public class MidiAPI{
 	}
 
 	public void stopPlayback() {
-		_mp.stop();
+		_mp.stopPlayback();
 	}
 
 	public void playPiece(Piece p){

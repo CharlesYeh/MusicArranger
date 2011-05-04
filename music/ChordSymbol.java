@@ -7,8 +7,17 @@ public class ChordSymbol extends Timestep {
 	int _scaleDegree;			// which scale degree the chord starts on (I, ii, V, etc.) represented as an integer from 1-7
 	ChordType _chordType;		// quality of the chord (major, minor, etc.)
 	
+	int _inversion;
+	
+	
 	public ChordSymbol(int scaleDegree, ChordType chordType) {
 		this(new Rational(), scaleDegree, chordType);
+	}
+	
+	public ChordSymbol(int scaleDegree, ChordType chordType, int inv) {
+		this(new Rational(), scaleDegree, chordType);
+		
+		_inversion = inv;
 	}
 	
 	public ChordSymbol(Rational duration, int scaleDegree, ChordType chordType){
@@ -23,5 +32,97 @@ public class ChordSymbol extends Timestep {
 	
 	public ChordType getChordType() {
 		return _chordType;
+	}
+	
+	public String getSymbolText() {
+		switch (_scaleDegree) {
+		case 1:
+			return "I";
+		case 2:
+			return "ii";
+		case 3:
+			return "iii";
+		case 4:
+			return "IV";
+		case 5:
+			return "V";
+		case 6:
+			return "vi";
+		case 7:
+			return "vii";
+		case 8:
+			return "I";
+		}
+		
+		return "";
+	}
+	
+	public String getTopInversionText() {
+		switch (_chordType) {
+			case MAJOR:
+			case MINOR:
+			case DIMIN:
+				// not a 7th chord
+				switch (_inversion) {
+					case 0: return "";
+					case 1: return "6";
+					case 2: return "6";
+				}
+				break;
+				
+			case MAJOR7:
+			case MAJORMINOR7:
+			case MINOR7:
+			case DIMIN7:
+			case HDIMIN7:
+				// 7th chord
+				switch (_inversion) {
+					case 0: return "";
+					case 1: return "6";
+					case 2: return "4";
+					case 3: return "4";
+				}
+				
+				break;
+				
+			case ITAUG6:
+			case FRAUG6:
+			case GERAUG6:
+				return "+6";
+		}
+		
+		return "";
+	}
+	
+	public String getBotInversionText() {
+		switch (_chordType) {
+			case MAJOR:
+			case MINOR:
+			case DIMIN:
+				// not a 7th chord
+				switch (_inversion) {
+					case 0: return "";
+					case 1: return "";
+					case 2: return "4";
+				}
+				break;
+				
+			case MAJOR7:
+			case MAJORMINOR7:
+			case MINOR7:
+			case DIMIN7:
+			case HDIMIN7:
+				// 7th chord
+				switch (_inversion) {
+					case 0: return "";
+					case 1: return "5";
+					case 2: return "3";
+					case 3: return "2";
+				}
+				
+				break;
+		}
+		
+		return "";
 	}
 }
