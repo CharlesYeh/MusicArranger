@@ -13,6 +13,7 @@ import javax.swing.JMenuItem;
 
 import logic.ArrangerXMLParser;
 import logic.ArrangerXMLWriter;
+import logic.LogicManager;
 import logic.MidiAPI;
 import logic.Editor;
 import music.Piece;
@@ -31,6 +32,7 @@ public class Main extends JFrame implements InstructionListener {
 
 	//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 	Editor _editor;
+	LogicManager _logicManager;
 
 	Piece _piece;
 
@@ -44,16 +46,16 @@ public class Main extends JFrame implements InstructionListener {
 
 
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
-		_editor = new Editor();
-		_parser = new ArrangerXMLParser(_editor);
-
 		// ######################################################
 		_piece = new tests.LongMelodyPiece();
 
 
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
-		_editor.setPiece(_piece);
-
+		_logicManager = new LogicManager(_piece);
+		_editor = _logicManager.getEditor();
+		
+		_parser = new ArrangerXMLParser(_editor);
+		
 		ArrangerConstants.WINDOW_WIDTH = 800;
 		ArrangerConstants.WINDOW_HEIGHT = 600;
 		
@@ -148,7 +150,9 @@ public class Main extends JFrame implements InstructionListener {
 	public void receiveInstruction(Instruction instr) {
 		// delegate instruction
 		if (instr instanceof EditInstruction) {
-			
+			EditInstruction editInstr = (EditInstruction) instr;
+			_logicManager.interpretEditInstr(editInstr);
+			_mainPanel.updateScore();
 		}
 		else if (instr instanceof FileInstruction) {
 			

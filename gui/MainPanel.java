@@ -76,6 +76,10 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		}
 	}
 	
+	public void updateScore() {
+		_scoreWindow.updateScore();
+	}
+	
 	/* Handle a mouse press on a toolbar or the score window
 	 * 
 	 */
@@ -145,6 +149,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			// clicked on a toolbar
 			instr = tbar.mouseClicked(e);
 		}
+		
 		sendInstruction(instr);
 	}
 	
@@ -221,10 +226,12 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	// call this method whenever you want to notify
 	//the event listeners of the particular event
 	private synchronized void sendInstruction(Instruction instr) {
+		System.out.println(instr);
 		if (instr == null)
 			return;
 		
 		InstructionListener[] listeners = _listeners.getListeners(InstructionListener.class);
+		
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].receiveInstruction(instr);
 		}

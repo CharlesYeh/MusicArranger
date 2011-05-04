@@ -243,9 +243,9 @@ public class ScoreIllustrator {
 				// if extending into the margin, make a new line
 				Timestamp nextStamp = timeline.firstKey();
 				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN) {
-					System.out.println(currTime + " " + nextStamp.getDuration());
+					/*System.out.println(currTime + " " + nextStamp.getDuration());
 					System.out.println(timestamp.getAssocClass());
-					System.out.println(nextStamp.getAssocClass());
+					System.out.println(nextStamp.getAssocClass());*/
 				}
 				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN && !currTime.equals(nextStamp.getDuration()) || startDrawing) {
 					// draw system lines
@@ -691,15 +691,14 @@ public class ScoreIllustrator {
 		int indexMeasure = 0;
 		
 		System.out.println(staffX + " " + staffMeasures);
-		boolean first = true;
 		// get index of measure right after the x position: staffX
 		for (int measureX : staffMeasures.keySet()) {
-			if (staffX < measureX && !first) {
+			indexMeasure = staffMeasures.get(measureX);
+			
+			if (staffX < measureX) {
+				indexMeasure--;
 				break;
 			}
-			
-			first = false;
-			indexMeasure = staffMeasures.get(measureX);
 		}
 		
 		System.out.println("----------------------");

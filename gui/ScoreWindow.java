@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Iterator;
 import java.util.Map;
@@ -46,10 +47,10 @@ public class ScoreWindow extends Drawable {
 		_slider = new PageSlider();
 		_sliding = false;
 		
-		redrawScore();
+		updateScore();
 	}
 	
-	public void redrawScore() {
+	public void updateScore() {
 		// buffer self-image
 		_illustrator.drawPiece(_bufferGraphics, _piece);
 	}
@@ -67,8 +68,14 @@ public class ScoreWindow extends Drawable {
 	public Instruction mouseClicked(MouseEvent e) {
 		InstructionIndex index = _illustrator.getEventIndex(e);
 		// determine which instruction to send
+		List<InstructionIndex> listIndex = new ArrayList<InstructionIndex>();
+		listIndex.add(index);
 		
-		return null;
+		Instruction instr = new EditInstruction(this, listIndex, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(new Rational(1, 2)));
+		
+		System.out.println("SCOREWINDOW" + instr);
+		
+		return instr;
 	}
 	
 	public Instruction mousePressed(MouseEvent e) {

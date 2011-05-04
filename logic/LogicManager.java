@@ -25,12 +25,17 @@ public class LogicManager {
 		_arrangerXMLParser = makeArrangerXMLParser();
 		_arrangerXMLWriter = makeArrangerXMLWriter();
 	}
-
+	
+	public Editor getEditor() {
+		return _editor;
+	}
+	
 	protected Editor makeEditor() {
 		Editor editor = new Editor();
 		editor.setPiece(_piece);
 		return editor;
 	}
+	
 	protected ArrangerXMLParser makeArrangerXMLParser() {
 
 		return new ArrangerXMLParser(_editor);
@@ -43,6 +48,7 @@ public class LogicManager {
 	 * the Instruction, after casting it appropriately.
 	 */
 	public void interpretInstr(Instruction instr) {
+		System.out.println(instr);
 		Class<?> instructionClass = instr.getClass();
 		
 		if (FileInstruction.class.isAssignableFrom(instructionClass)){
@@ -224,9 +230,11 @@ public class LogicManager {
 					multiNote = (MultiNote) editInstr.getElement();
 					if (multiNote.getDuration().compareTo(remainingSpace) == 1) {
 						// if the replaced note is bigger than the remaining space in the measure
+						System.out.println("New note is too big");
 						return;
 					}
 					else {
+						System.out.println(multiNote);
 						_editor.replaceMultiNote(multiNote);
 					}
 					break;
