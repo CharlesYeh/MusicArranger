@@ -50,19 +50,6 @@ public class MidiPlayer extends Thread {
 
 
 			while (!_starts.isEmpty() || !_ends.isEmpty()) {
-				// check to stop playing
-				if (!_isPlaying){
-
-					//stop playing all the notes when the playback is stopped
-					while(!_ends.isEmpty()){
-
-							Timestamp ts = _ends.firstKey();
-							MultiNote mn = _ends.get(ts);
-							_ends.remove(ts);
-							_midi.multiNoteOff(mn);
-					}
-					return;
-				}
 
 
 				System.out.println("======New iteration======");
@@ -165,15 +152,23 @@ public class MidiPlayer extends Thread {
 				try {
 					Thread.sleep(sleepMilli);
 				}
-				catch (Exception e) {
-					System.out.println("Couldn't SLEEP: " + e);
-					System.exit(1);
+				catch (InterruptedException ie){
+					//stop playing all the notes when the playback is stopped
+					while(!_ends.isEmpty()){
+
+							Timestamp ts = _ends.firstKey();
+							MultiNote mn = _ends.get(ts);
+							_ends.remove(ts);
+							_midi.multiNoteOff(mn);
+							System.out.println("Playback interrupted while asleep");
+					}
+					return;
 				}
 			}
 		}
 	}
 
-	public void stopPlayback() {
-		_isPlaying = false;
-	}
+//	public void stopPlayback() {
+//		_isPlaying = false;
+//	}
 }
