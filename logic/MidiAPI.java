@@ -25,7 +25,7 @@ public class MidiAPI{
 			System.out.println("Error loading synth: " + e);
 		}
 	}
-	
+
 	public void stopPlayback() {
 		_mp.stop();
 	}
@@ -109,6 +109,24 @@ public class MidiAPI{
 //		list.add(v.getMultiNotes().listIterator());
 //	}
 
+	public void playMultiNote(MultiNote mn){
+
+
+		Voice v = new Voice();
+		v.getMultiNotes().add(mn);
+
+		Measure m = new Measure();
+		m.getVoices().add(v);
+
+		Staff s = new Staff();
+		s.getMeasures().add(m);
+
+		Piece p = new Piece();
+		p.getStaffs().add(s);
+
+		_mp = new MidiPlayer(this, p);
+		_mp.start();
+	}
 
 	//for playing a single pitch with a specified duration
 	public void playPitch(Pitch pitch) {
