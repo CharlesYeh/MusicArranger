@@ -109,6 +109,7 @@ public class ScoreIllustrator {
 		ListIterator<ChordSymbol> chordIter;
 		
 		// use map to find which clef each staff is currently using
+		ChordSymbol currChord = null;
 		Map<Staff, Clef> currClefs = new HashMap<Staff, Clef>();
 		Map<Staff, KeySignature> currKeySigs 	= new HashMap<Staff, KeySignature>();
 		Map<Staff, TimeSignature> currTimeSigs 	= new HashMap<Staff, TimeSignature>();
@@ -139,6 +140,8 @@ public class ScoreIllustrator {
 			
 			stemGroups.put(staff, new ArrayList<MultiNote>());
 		}
+		
+		int measureCount = 1;
 		
 		while (!measureLists.isEmpty()) {
 			// set up lists within each list of measures
@@ -220,8 +223,10 @@ public class ScoreIllustrator {
 					continue;
 				}
 				
+				// get data related to this timestep
 				Staff currStaff = timestepStaff.get(currList);
 				Voice currVoice = timestepVoice.get(currList);
+				
 				Clef currClef = currClefs.get(currStaff);
 				KeySignature currKeySig = currKeySigs.get(currStaff);
 				TimeSignature currTimeSig = currTimeSigs.get(currStaff);
@@ -273,7 +278,7 @@ public class ScoreIllustrator {
 						drawSystem(g, systemY + i * STAFF_SPACING);
 					}
 					
-					_measurePositions.add(new HashMap<Integer, Integer>());
+					_measurePositions.add(new TreeMap<Integer, Integer>());
 				}
 				int nextY = systemY + _staffPositions.get(currStaff) * STAFF_SPACING;
 				
@@ -294,13 +299,15 @@ public class ScoreIllustrator {
 					voiceX.put(currVoice, voiceX.get(currVoice) + noteWidth);
 					finalVoiceX += noteWidth / voiceX.size();
 				}
-				else if (currDur instanceof ChordSymbol) {
+				else if (currDur instanceof ChordSymbol && (currChord == null || !currDur.equals(currChord))) {
 					//---------------------CHORD SYMBOL----------------------
 					ChordSymbol cSymbol = (ChordSymbol) currDur;
 					
 					int chordX = nextX;
-					int chordY = nextY + 5 * SYSTEM_LINE_SPACING + CHORD_SPACING;
+					int chordY = nextY + 5 * SYSTEM_LINE_SPACING + (numStaffs - 1) * STAFF_SPACING + CHORD_SPACING;
 					drawChordSymbol(g, cSymbol, chordX, chordY);
+					
+					currChord = cSymbol;
 				}
 				else if (currDur instanceof KeySignature && (currKeySig == null || !currDur.equals(currKeySig))) {
 					//-----------------------KEY SIG-----------------------
@@ -337,6 +344,7 @@ public class ScoreIllustrator {
 				}
 			}
 			
+			int measureX = 0;
 			// draw barline
 			for (Staff stf : _staffPositions.keySet()) {
 				int pos = _staffPositions.get(stf);
@@ -344,6 +352,8 @@ public class ScoreIllustrator {
 				Measure m = stf.getMeasures().get(0);
 				
 				int stfX = staffX.get(stf) + finalVoiceX;
+				measureX = stfX;
+				
 				int startY = systemY + pos * STAFF_SPACING;
 				int endY = systemY + pos * STAFF_SPACING + 4 * SYSTEM_LINE_SPACING;
 				
@@ -352,6 +362,10 @@ public class ScoreIllustrator {
 			}
 			voiceX.clear();
 			finalVoiceX = 0;
+			
+			Map<Integer, Integer> lastPositions = _measurePositions.get(_measurePositions.size() - 1);
+			lastPositions.put(measureX, measureCount);
+			measureCount++;
 		}
 	}
 	
@@ -391,7 +405,7 @@ public class ScoreIllustrator {
 				int line = getLineNumber(currClef, p);
 				minLine = Math.min(minLine, line);
 				maxLine = Math.max(maxLine, line);
-	
+				
 				int noteX = nextX;
 				int noteY = getLineOffset(currClef, line) + nextY;
 	
@@ -670,12 +684,31 @@ public class ScoreIllustrator {
 		
 		//------------------X COORDINATE PARSE------------------
 		// which measure
+		int staffFromTop = indexSystem;
+		int staffX = e.getX();
 		
+		Map<Integer, Integer> staffMeasures = _measurePositions.get(staffFromTop);
+		int indexMeasure = 0;
 		
+		System.out.println(staffX + " " + staffMeasures);
+		boolean first = true;
+		// get index of measure right after the x position: staffX
+		for (int measureX : staffMeasures.keySet()) {
+			if (staffX < measureX && !first) {
+				break;
+			}
+			
+			first = false;
+			indexMeasure = staffMeasures.get(measureX);
+		}
+		
+		System.out.println("----------------------");
 		System.out.println("System: " + indexSystem);
 		System.out.println("Staff: " + indexStaff);
-		System.out.println("Measure: " + 0);
+		System.out.println("Measure: " + indexMeasure);
 		System.out.println("Line: " + indexLine);
+		
+		// current voice being edited
 		System.out.println("Voice: " + 0);
 		
 		return new InstructionIndex(indexStaff, 0, 0, new Rational());
