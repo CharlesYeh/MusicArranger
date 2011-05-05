@@ -208,11 +208,12 @@ public class LogicManager {
 			Rational measureOffset = index.getMeasureOffset();
 			Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
 			List<MultiNote> multiNoteList = measure.getVoices().get(voiceNumber).getMultiNotes();
-	
+			
 			// calculate iterator and offset
 			IteratorAndOffset iterAndOffset = calcIterAndOffset(multiNoteList, measureOffset);
-			ListIterator<MultiNote> iter = (ListIterator<MultiNote>) iterAndOffset.iter;
-			Rational offset = iterAndOffset.offset;
+			ListIterator<MultiNote> iter = (ListIterator<MultiNote>) iterAndOffset.getIter();
+			Rational offset = iterAndOffset.getOffset();
+			
 			MultiNote multiNote;
 			
 			// set the iterator in the editor
@@ -231,9 +232,13 @@ public class LogicManager {
 				case REPLACE:
 					// check if replacement note runs over end of measure
 					Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
+					System.out.println("AAA" + measureLength);
 					Rational remainingSpace = measureLength.minus(measureOffset);
+					System.out.println(measureOffset);
 					multiNote = (MultiNote) editInstr.getElement();
-					if (multiNote.getDuration().compareTo(remainingSpace) == 1) {
+					System.out.println(multiNote);
+					System.out.println("remaining: " + remainingSpace);
+					if (multiNote.getDuration().compareTo(remainingSpace) > 0) {
 						// if the replaced note is bigger than the remaining space in the measure
 						System.out.println("New note is too big");
 						return;
@@ -277,16 +282,19 @@ public class LogicManager {
 		iter = list.listIterator();
 		offsetFromIter = offset;
 		
+		System.out.println("OFFSET" + offset);
 		Rational rationalZero = new Rational(0,1);
 		while (iter.hasNext()) {
 			// subtract duration of next element from the current offset
 			Rational newOffset = offsetFromIter.minus(iter.next().getDuration());
-			if (newOffset.compareTo(rationalZero) == -1) {
+			System.out.println("new offset: " + newOffset);
+			if (newOffset.compareTo(rationalZero) < 0) {
 				// if the next element is longer than the current offset
 				iter.previous();
 				break;
 			}
 			else {
+				System.out.println("set new: " + newOffset);
 				offsetFromIter = newOffset;
 			}
 		}
