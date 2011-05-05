@@ -6,7 +6,8 @@ public class Rational {
 	final int _denom;		// Rational denominator
 	
 	public Rational() {
-		_numer = _denom = 1;
+		_numer = 0;
+		_denom = 1;
 	}
 	
 	public Rational(int numerator, int denominator) {

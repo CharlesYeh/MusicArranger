@@ -70,26 +70,26 @@ public class LongMelodyPiece extends Piece {
 			voice2_1_1.getMultiNotes().add(IVBass);
 			voice2_1_1.getMultiNotes().add(VBass);
 		
-		// measures
-		Measure measure1_1 = new Measure();
-			measure1_1.getKeySignatures().add(keysig1);
-			measure1_1.getTimeSignatures().add(timesig1);
-			measure1_1.getClefs().add(cleftreble);
-			measure1_1.getVoices().add(voice1_1_1);
-			measure1_1.getChordSymbols().add(chordsymbol1);
-			measure1_1.getChordSymbols().add(chordsymbol2);
-			measure1_1.getChordSymbols().add(chordsymbol3);
-		
-		Measure measure2_1 = new Measure();
-			measure2_1.getKeySignatures().add(keysig1);
-			measure2_1.getTimeSignatures().add(timesig1);
-			measure2_1.getClefs().add(clefbass);
-			measure2_1.getVoices().add(voice2_1_1);
-			measure2_1.getChordSymbols().add(chordsymbol1);
-			measure2_1.getChordSymbols().add(chordsymbol2);
-			measure2_1.getChordSymbols().add(chordsymbol3);
-		
 		for (int i = 0; i < 10; i++) {
+			// measures
+			Measure measure1_1 = new Measure();
+				measure1_1.getKeySignatures().add(keysig1);
+				measure1_1.getTimeSignatures().add(timesig1);
+				measure1_1.getClefs().add(cleftreble);
+				measure1_1.getVoices().add(voice1_1_1);
+				measure1_1.getChordSymbols().add(chordsymbol1);
+				measure1_1.getChordSymbols().add(chordsymbol2);
+				measure1_1.getChordSymbols().add(chordsymbol3);
+			
+			Measure measure2_1 = new Measure();
+				measure2_1.getKeySignatures().add(keysig1);
+				measure2_1.getTimeSignatures().add(timesig1);
+				measure2_1.getClefs().add(clefbass);
+				measure2_1.getVoices().add(voice2_1_1);
+				measure2_1.getChordSymbols().add(chordsymbol1);
+				measure2_1.getChordSymbols().add(chordsymbol2);
+				measure2_1.getChordSymbols().add(chordsymbol3);
+			
 			stafftreble.getMeasures().add(measure1_1);
 			staffbass.getMeasures().add(measure2_1);
 		}

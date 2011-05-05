@@ -710,6 +710,6 @@ public class ScoreIllustrator {
 		// current voice being edited
 		System.out.println("Voice: " + 0);
 		
-		return new InstructionIndex(indexStaff, 0, 0, new Rational());
+		return new InstructionIndex(indexStaff, indexMeasure, 0, new Rational(0, 1));
 	}
 }

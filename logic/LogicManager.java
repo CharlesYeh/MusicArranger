@@ -117,6 +117,9 @@ public class LogicManager {
 				MultiNote rest = new MultiNote(duration);
 				_editor.insertVoice(voice);
 				_editor.insertMultiNote(rest);
+				// Add blank placeholder chordsymbols
+				ChordSymbol chordSymbol = new ChordSymbol(duration, 0, ChordType.BLANK);
+				_editor.insertChordSymbol(chordSymbol);
 			}
 		}
 		
@@ -202,6 +205,8 @@ public class LogicManager {
 	private void editMultiNote(EditInstruction editInstr) {
 		List<InstructionIndex> indices = editInstr.getIndices();
 		for (InstructionIndex index : indices) {
+			
+			System.out.println(index);
 			int staffNumber = index.getStaffNumber();
 			int measureNumber = index.getMeasureNumber();
 			int voiceNumber = index.getVoiceNumber();
@@ -299,5 +304,53 @@ public class LogicManager {
 			}
 		}
 		return new IteratorAndOffset(iter, offsetFromIter);
+	}
+	
+	public static void main(String[] args) {
+		// testing FileInstructionNew
+		/*
+		LogicManager logicManager = new LogicManager(new Piece());
+		FileInstruction testInstruction = new FileInstructionNew(logicManager, 2, 9, 3, 4, 0, true);
+		logicManager.interpretInstr(testInstruction);
+		try {
+			logicManager._arrangerXMLWriter.write(logicManager._piece, "tests/testNew.xml");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+		
+		// testing EditMultiNote
+		LogicManager logicManager = new LogicManager(new Piece());
+		FileInstruction testInstruction = new FileInstructionNew(logicManager, 2, 9, 3, 4, 0, true);
+		logicManager.interpretInstr(testInstruction);
+		List<InstructionIndex> indices1 = new ArrayList<InstructionIndex>();
+		List<InstructionIndex> indices2 = new ArrayList<InstructionIndex>();
+		indices1.add(new InstructionIndex(0, 0, 0, new Rational(0, 1)));
+		indices2.add(new InstructionIndex(0, 0, 0, new Rational(1, 8)));
+		EditInstruction editInstruction1 = new EditInstruction(logicManager, 
+				indices1,
+				EditInstructionType.REPLACE,
+				EditType.MULTINOTE,
+				new MultiNote(new Rational(1, 8)));
+		EditInstruction editInstruction2 = new EditInstruction(logicManager, 
+				indices2,
+				EditInstructionType.REPLACE,
+				EditType.MULTINOTE,
+				new MultiNote(new Rational(1, 4)));
+		EditInstruction editInstruction3 = new EditInstruction(logicManager, 
+				indices2,
+				EditInstructionType.REPLACE,
+				EditType.MULTINOTE,
+				new MultiNote(new Rational(3, 4)));
+		logicManager.interpretInstr(editInstruction1);
+		logicManager.interpretInstr(editInstruction2);
+		logicManager.interpretInstr(editInstruction3);
+		try {
+			logicManager._arrangerXMLWriter.write(logicManager._piece, "tests/testNew.xml");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

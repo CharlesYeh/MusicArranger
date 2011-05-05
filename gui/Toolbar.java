@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -12,7 +15,10 @@ import instructions.Instruction;
 
 public abstract class Toolbar extends Drawable {
 	static BufferedImage IMG_HORIZ, IMG_VERT;
-
+	
+	Image _buffer;
+	Graphics _bufferGraphics;
+	
 	DockController _dockControl;
 	Orientation _orientation;
 
@@ -47,7 +53,12 @@ public abstract class Toolbar extends Drawable {
 
 		// JUST FOR TESTING
 		myColor = new Color((int)(Math.random() * 0xFFFFFF));
-
+		
+		_buffer = new BufferedImage(_width,
+						_height,
+						BufferedImage.TYPE_INT_ARGB);
+		_bufferGraphics = _buffer.getGraphics();
+		
 		createButtons();
 		setOrientation(orient);
 	}
@@ -78,11 +89,11 @@ public abstract class Toolbar extends Drawable {
 		}
 
 	}
-
-	public void drawSelf(Graphics g) {
-		g.setColor(myColor);
-		//g.drawImage((_orientation == Orientation.HORIZONTAL) ? IMG_HORIZ : IMG_VERT, _x, _y, null);
-		g.fillRect(_x, _y, _width, _height);
+	
+	public void drawBuffer() {
+		_bufferGraphics.setColor(myColor);
+		
+		_bufferGraphics.fillRect(0, 0, _width, _height);
 
 		// draw buttons
 		int buttonX = _x, buttonY = _y;
@@ -96,8 +107,12 @@ public abstract class Toolbar extends Drawable {
 			else
 				buttonY += btn.getHeight();
 
-			btn.drawSelf(g);
+			btn.drawSelf(_bufferGraphics);
 		}
+	}
+	
+	public void drawSelf(Graphics g) {
+		g.drawImage(_buffer, _x, _y, null);
 	}
 
 	public Instruction mouseClicked(MouseEvent e) {

@@ -112,7 +112,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		Instruction instr;
 		if (tbar == null) {
 			// clicked on score window
-			instr = _scoreWindow.mouseClicked(e);
+			instr = _scoreWindow.mouseReleased(e);
 		}
 		else {
 			// clicked on a toolbar
@@ -226,10 +226,11 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	// call this method whenever you want to notify
 	//the event listeners of the particular event
 	private synchronized void sendInstruction(Instruction instr) {
-		System.out.println(instr);
+		System.out.println("about to send: " + instr);
 		if (instr == null)
 			return;
 		
+		System.out.println("sending instruction");
 		InstructionListener[] listeners = _listeners.getListeners(InstructionListener.class);
 		
 		for (int i = 0; i < listeners.length; i++) {

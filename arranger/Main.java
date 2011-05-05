@@ -85,7 +85,7 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemNew.setToolTipText("New song");
 		menuItemNew.addActionListener(
 			new ActionListener() {
-				Instruction myInstr = new FileInstructionIO(this, FileInstructionType.NEW, "new.xml");
+				Instruction myInstr = new FileInstructionNew(this, 2, 30, 4, 4, 0, true);
 				public void actionPerformed(ActionEvent event) {
 					receiveInstruction(myInstr);
 				}
@@ -153,14 +153,13 @@ public class Main extends JFrame implements InstructionListener {
 			_logicManager.interpretEditInstr(editInstr);
 			_mainPanel.updateScore();
 		}
+		else if (instr instanceof FileInstructionNew) {
+			_logicManager.interpretFileInstrNew((FileInstructionNew) instr);
+		}
 		else if (instr instanceof FileInstructionIO) {
 			FileInstructionIO fileInstr = (FileInstructionIO) instr;
 			System.out.println("File isntr: " + fileInstr.getType());
 			switch(fileInstr.getType()) {
-			case NEW:
-				System.out.println("create new song");
-				_logicManager.interpretFileInstrNew(new FileInstructionNew(this, 2, 30, 4, 4, 0, true));
-				break;
 			case SAVE:
 				System.out.println("SAVE FILE");
 				try {
@@ -180,7 +179,7 @@ public class Main extends JFrame implements InstructionListener {
 				System.exit(1);
 			}
 			
-			_mainPanel.repaint();
+			_mainPanel.updateScore();
 		}
 		else if (instr instanceof PlaybackInstruction) {
 			PlaybackInstruction playInstr = (PlaybackInstruction) instr;
