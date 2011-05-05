@@ -4,10 +4,10 @@ import music.Rational;
 
 public class InstructionIndex {
 	int _staffNumber;		// which staff to modify, not specified if irrelevant
-	int _voiceNumber;		// which voice to modify, not specified if irrelevant
 	int _measureNumber;		// which measure to modify, not specified if irrelevant
-	int _pitchNumber;		// which pitch to modify in the multinote, not specified if irrelevant
+	int _voiceNumber;		// which voice to modify, not specified if irrelevant
 	Rational _measureOffset;// rhythmic position of element, relative to start of measure
+	int _pitchNumber;		// which pitch to modify in the multinote, not specified if irrelevant
 	
 	// constructors
 	
