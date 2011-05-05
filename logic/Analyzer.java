@@ -181,7 +181,7 @@ public class Analyzer extends Thread{
 		// vii -> I iv V
 	}
 	
-	public void start() {
+	public void run() {
 		// start analysis process here
 		
 	}
