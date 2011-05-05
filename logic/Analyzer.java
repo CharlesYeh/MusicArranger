@@ -16,7 +16,7 @@ public class Analyzer extends Thread{
 
 	public void addChordSymbols(Piece p) {
 		// go through piece matching notes to chords
-		
+
 	}
 
 	private void initMajorKeyGraph() {
@@ -25,11 +25,11 @@ public class Analyzer extends Thread{
 		// create chords
 		Node<ChordSymbol> chordI		= new Node<ChordSymbol>(new ChordSymbol(1, ChordType.MAJOR));
 		Node<ChordSymbol> chordii		= new Node<ChordSymbol>(new ChordSymbol(2, ChordType.MINOR));
-		Node<ChordSymbol> chordiii	= new Node<ChordSymbol>(new ChordSymbol(3, ChordType.MINOR));
-		Node<ChordSymbol> chordIV		= new Node<ChordSymbol>(new ChordSymbol(4, ChordType.MAJOR));
+		Node<ChordSymbol> chordIII	= new Node<ChordSymbol>(new ChordSymbol(3, ChordType.MINOR));
+		Node<ChordSymbol> chordiv		= new Node<ChordSymbol>(new ChordSymbol(4, ChordType.MAJOR));
 		Node<ChordSymbol> chordV		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR));
-		Node<ChordSymbol> chordvi		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.MINOR));
-		Node<ChordSymbol> chordviio	= new Node<ChordSymbol>(new ChordSymbol(7, ChordType.DIMIN));
+		Node<ChordSymbol> chordVI		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.MINOR));
+		Node<ChordSymbol> chordVIio	= new Node<ChordSymbol>(new ChordSymbol(7, ChordType.DIMIN));
 
 		// V seven chords
 		Node<ChordSymbol> chordV7		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 0));
@@ -42,21 +42,21 @@ public class Analyzer extends Thread{
 		Node<ChordSymbol> chordFr6	= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.FRAUG6));
 		Node<ChordSymbol> chordGer6	= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.GERAUG6));
 
-		// I -> I ii iii IV V vi viio N It6 Fr6 Ger6
-		// ii -> V viio N It6 Fr6 Ger6
-		// iii -> vi IV
-		// iv -> I V viio ii N It6 Fr6 Ger6
-		// V -> I vi
-		// vi -> ii IV
-		// vii -> I V ii N It6 Fr6 Ger6
-		
+		// I -> I ii III iv V VI VIio N It6 Fr6 Ger6
+		// ii -> V VIio N It6 Fr6 Ger6
+		// III -> VI iv
+		// iv -> I V VIio ii N It6 Fr6 Ger6
+		// V -> I VI
+		// VI -> ii iv
+		// VIi -> I V ii N It6 Fr6 Ger6
+
 		///Adding edges for chordI
 		_chordgraph.addEdge(chordI, chordii, 	1);
-		_chordgraph.addEdge(chordI, chordiii, 	1);
-		_chordgraph.addEdge(chordI, chordIV, 	1);
+		_chordgraph.addEdge(chordI, chordIII, 	1);
+		_chordgraph.addEdge(chordI, chordiv, 	1);
 		_chordgraph.addEdge(chordI, chordV, 	1);
-		_chordgraph.addEdge(chordI, chordvi, 	1);
-		_chordgraph.addEdge(chordI, chordviio, 	1);
+		_chordgraph.addEdge(chordI, chordVI, 	1);
+		_chordgraph.addEdge(chordI, chordVIio, 	1);
 		_chordgraph.addEdge(chordI, chordN, 	2);
 		_chordgraph.addEdge(chordI, chordIt6, 	2);
 		_chordgraph.addEdge(chordI, chordFr6, 	2);
@@ -64,45 +64,45 @@ public class Analyzer extends Thread{
 
 		//Adding edges for chordii
 		_chordgraph.addEdge(chordii, chordV, 	1);
-		_chordgraph.addEdge(chordii, chordviio,	2);
+		_chordgraph.addEdge(chordii, chordVIio,	2);
 		_chordgraph.addEdge(chordii, chordN, 	3);
 		_chordgraph.addEdge(chordii, chordIt6, 	3);
 		_chordgraph.addEdge(chordii, chordFr6, 	3);
 		_chordgraph.addEdge(chordii, chordGer6,	3);
 
-		//Adding edges for chordiii
-		_chordgraph.addEdge(chordiii, chordvi, 	1);
-		_chordgraph.addEdge(chordiii, chordIV, 	1);
-		
-		//Adding edges for chordIV
-		_chordgraph.addEdge(chordIV, chordV, 	1);
-		_chordgraph.addEdge(chordIV, chordii, 	1);
-		_chordgraph.addEdge(chordIV, chordviio, 	1);
-		_chordgraph.addEdge(chordIV, chordI, 	2); //plagal cadence
-		_chordgraph.addEdge(chordIV, chordN, 	2);
-		_chordgraph.addEdge(chordIV, chordIt6, 	2);
-		_chordgraph.addEdge(chordIV, chordFr6, 	2);
-		_chordgraph.addEdge(chordIV, chordGer6,	2);
+		//Adding edges for chordIII
+		_chordgraph.addEdge(chordIII, chordVI, 	1);
+		_chordgraph.addEdge(chordIII, chordiv, 	1);
+
+		//Adding edges for chordiv
+		_chordgraph.addEdge(chordiv, chordV, 	1);
+		_chordgraph.addEdge(chordiv, chordii, 	1);
+		_chordgraph.addEdge(chordiv, chordVIio, 	1);
+		_chordgraph.addEdge(chordiv, chordI, 	2); //plagal cadence
+		_chordgraph.addEdge(chordiv, chordN, 	2);
+		_chordgraph.addEdge(chordiv, chordIt6, 	2);
+		_chordgraph.addEdge(chordiv, chordFr6, 	2);
+		_chordgraph.addEdge(chordiv, chordGer6,	2);
 
 		//Adding edges for chordV
 		_chordgraph.addEdge(chordV, chordI, 	1); //Authentic cadence
-		_chordgraph.addEdge(chordV, chordvi, 	2); //Deceptive cadence
+		_chordgraph.addEdge(chordV, chordVI, 	2); //Deceptive cadence
 
-		//Adding edges for chordvi
-		_chordgraph.addEdge(chordvi, chordii, 	1);
-		_chordgraph.addEdge(chordvi, chordIV, 	1);
+		//Adding edges for chordVI
+		_chordgraph.addEdge(chordVI, chordii, 	1);
+		_chordgraph.addEdge(chordVI, chordiv, 	1);
 
-		//Adding edges for chordviio
-		_chordgraph.addEdge(chordviio, chordV, 	1);
-		_chordgraph.addEdge(chordviio, chordI, 	1); //Authentic cadence (I don't think this is an AC? - Charles)
-		_chordgraph.addEdge(chordviio, chordii,	1);
-		_chordgraph.addEdge(chordviio, chordN, 	2);
-		
+		//Adding edges for chordVIio
+		_chordgraph.addEdge(chordVIio, chordV, 	1);
+		_chordgraph.addEdge(chordVIio, chordI, 	1); //Authentic cadence (I don't think this is an AC? - Charles)
+		_chordgraph.addEdge(chordVIio, chordii,	1);
+		_chordgraph.addEdge(chordVIio, chordN, 	2);
+
 	}
 
 	private void initMinorKeyGraph() {
 		_chordgraph = new Graph<ChordSymbol>();
-		
+
 		// create chords
 		Node<ChordSymbol> chordi		= new Node<ChordSymbol>(new ChordSymbol(1, ChordType.MINOR));
 		Node<ChordSymbol> chordiio	= new Node<ChordSymbol>(new ChordSymbol(2, ChordType.DIMIN));
@@ -110,8 +110,8 @@ public class Analyzer extends Thread{
 		Node<ChordSymbol> chordiv		= new Node<ChordSymbol>(new ChordSymbol(4, ChordType.MINOR));
 		Node<ChordSymbol> chordV		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR));
 		Node<ChordSymbol> chordVI		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.MAJOR));
-		Node<ChordSymbol> chordviio	= new Node<ChordSymbol>(new ChordSymbol(7, ChordType.DIMIN));
-		
+		Node<ChordSymbol> chordVIio	= new Node<ChordSymbol>(new ChordSymbol(7, ChordType.DIMIN));
+
 		// V seven chords
 		Node<ChordSymbol> chordV7		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 0));
 		Node<ChordSymbol> chordV65	= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 1));
@@ -122,35 +122,43 @@ public class Analyzer extends Thread{
 		Node<ChordSymbol> chordIt6	= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.ITAUG6));
 		Node<ChordSymbol> chordFr6	= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.FRAUG6));
 		Node<ChordSymbol> chordGer6	= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.GERAUG6));
-		
-		///Adding edges for chordI
+
+		// i -> iio III iv V VI viio N It6 Fr6 Ger6
+		// iio -> V viio N It6 Fr6 Ger6
+		// III -> VI iv
+		// iv -> I V viio iio N It6 Fr6 Ger6
+		// V -> I VI
+		// VI -> iio iv
+		// VIi -> I V iio N It6 Fr6 Ger6
+
+		///Adding edges for chordi
 		_chordgraph.addEdge(chordi, chordiio, 	1);
 		_chordgraph.addEdge(chordi, chordIII, 	1);
 		_chordgraph.addEdge(chordi, chordiv, 	1);
 		_chordgraph.addEdge(chordi, chordV, 	1);
 		_chordgraph.addEdge(chordi, chordVI, 	1);
-		_chordgraph.addEdge(chordi, chordviio, 	1);
+		_chordgraph.addEdge(chordi, chordVIio, 	1);
 		_chordgraph.addEdge(chordi, chordN, 	2);
 		_chordgraph.addEdge(chordi, chordIt6, 	2);
 		_chordgraph.addEdge(chordi, chordFr6, 	2);
 		_chordgraph.addEdge(chordi, chordGer6, 	2);
-		
-		//Adding edges for chordii
+
+		//Adding edges for chordiio
 		_chordgraph.addEdge(chordiio, chordV, 	1);
-		_chordgraph.addEdge(chordiio, chordviio,	2);
+		_chordgraph.addEdge(chordiio, chordVIio,	2);
 		_chordgraph.addEdge(chordiio, chordN, 	3);
 		_chordgraph.addEdge(chordiio, chordIt6, 	3);
 		_chordgraph.addEdge(chordiio, chordFr6, 	3);
 		_chordgraph.addEdge(chordiio, chordGer6,	3);
-		
-		//Adding edges for chordiii
+
+		//Adding edges for chordIII
 		_chordgraph.addEdge(chordIII, chordVI, 	1);
 		_chordgraph.addEdge(chordIII, chordiv, 	1);
 
-		//Adding edges for chordIV
+		//Adding edges for chordiv
 		_chordgraph.addEdge(chordiv, chordV, 	1);
 		_chordgraph.addEdge(chordiv, chordiio, 	1);
-		_chordgraph.addEdge(chordiv, chordviio,	1);
+		_chordgraph.addEdge(chordiv, chordVIio,	1);
 		_chordgraph.addEdge(chordiv, chordi, 	2); //plagal cadence
 		_chordgraph.addEdge(chordiv, chordN, 	2);
 		_chordgraph.addEdge(chordiv, chordIt6, 	2);
@@ -161,28 +169,20 @@ public class Analyzer extends Thread{
 		_chordgraph.addEdge(chordV, chordi, 	1); //Authentic cadence
 		_chordgraph.addEdge(chordV, chordVI, 	2); //Deceptive cadence
 
-		//Adding edges for chordvi
+		//Adding edges for chordVI
 		_chordgraph.addEdge(chordVI, chordiio, 	1);
 		_chordgraph.addEdge(chordVI, chordi, 	1);
 
-		//Adding edges for chordviio
-		_chordgraph.addEdge(chordviio, chordV, 	1);
-		_chordgraph.addEdge(chordviio, chordi, 	1); //Authentic cadence (I don't think this is an AC? - Charles)
-		_chordgraph.addEdge(chordviio, chordiio,1);
-		_chordgraph.addEdge(chordviio, chordN, 	2);
-		
-		// I -> I ii iii IV V vi vii
+		//Adding edges for chordVIio
+		_chordgraph.addEdge(chordVIio, chordV, 	1);
+		_chordgraph.addEdge(chordVIio, chordi, 	1); //Authentic cadence (I don't think this is an AC? - Charles)
+		_chordgraph.addEdge(chordVIio, chordiio,1);
+		_chordgraph.addEdge(chordVIio, chordN, 	2);
 
-		// ii -> IV V
-		// iii -> vi
-		// iv -> I V vi
-		// V -> I
-		// vi -> I V
-		// vii -> I iv V
 	}
-	
+
 	public void run() {
 		// start analysis process here
-		
+
 	}
 }
