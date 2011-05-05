@@ -10,39 +10,38 @@ import music.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Node{
+public class Node<T>{
 
-	ChordSymbol _chordSymbol;
-	List<Edge> _precedingChords;//a list of edges of the chords that can precede the current one
-	List<Edge> _followingChords;//a list of edges of the chords that the current one can lead to
+	T _value;
+	List<Edge> _preceding;//a list of edges of the chords that can precede the current one
+	List<Edge> _following;//a list of edges of the chords that the current one can lead to
 
-	public Node(ChordSymbol chordsymb){
+	public Node(T v){
 
-		_chordSymbol = chordsymb;
-		_precedingChords = new ArrayList();
-		_followingChords = new ArrayList();
+		_value = v;
+		_preceding = new ArrayList();
+		_following = new ArrayList();
 	}
 
-	public List<Edge> getPrecedingChords(){
-
-		return _precedingChords;
+	public List<Edge> getPreceding(){
+		return _preceding;
 	}
 
-	public ChordSymbol getChordSymbol(){
+	public T getValue(){
 
-		return _chordSymbol;
+		return _value;
 	}
 
-	public List<Edge> getFollowigChords(){
+	public List<Edge> getFollowing(){
 
-		return _followingChords;
+		return _following;
 	}
 
 	//adds an Edge to the list _followingChords
 	public void addFollowingEdge(Edge edge){
 
-		if(!_followingChords.contains(edge))
-			_followingChords.add(edge);
+		if(!_following.contains(edge))
+			_following.add(edge);
 		else {
 			System.out.println("edge to be added is already present in list _followingEdge");
 		}
@@ -51,8 +50,8 @@ public class Node{
 	//adds an Edge to the list _precedingChords
 	public void addPrecedingEdge(Edge edge){
 
-		if(!_precedingChords.contains(edge))
-		_precedingChords.add(edge);
+		if(!_preceding.contains(edge))
+		_preceding.add(edge);
 		else {
 			System.out.println("edge to be added is already present in list _precedingEdge");
 		}
@@ -61,7 +60,7 @@ public class Node{
 	//returns true if current node leads to the given node, else return false
 	public boolean canLeadTo(Node node){
 
-		if(_followingChords.contains(node))
+		if(_following.contains(node))
 			return true;
 		else
 			return false;
@@ -70,7 +69,7 @@ public class Node{
 	//returns true if current node can be preceded by the given node, else return false
 	public boolean canComeFrom(Node node){
 
-		if(_precedingChords.contains(node))
+		if(_preceding.contains(node))
 			return true;
 		else
 			return false;

@@ -6,16 +6,15 @@ package util;
  *
  */
 
- public class Edge{
+public class Edge<T>{
 
- 	Node _chord1;
- 	Node _chord2;
- 	int _weight;
-
- 	public Edge(Node chord1, Node chord2, int weight){
-
- 		_chord1 = chord1;
- 		_chord2 = chord2;
- 		_weight = weight;
- 	}
- }
+	Node<T> _front;
+	Node<T> _back;
+	int _weight;
+	
+	public Edge(Node<T> f, Node<T> b, int weight){
+		_front	= f;
+		_back	= b;
+		_weight	= weight;
+	}
+}

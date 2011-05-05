@@ -1,6 +1,7 @@
 package util;
 
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 import music.*;
 
 /*
@@ -8,34 +9,34 @@ import music.*;
  *
  */
 
-public class Graph {
+public class Graph<T> {
 
-	List<Node> _chordGraph;
+	List<Node<T>> _nodes;
 
 	public Graph(){
 
-		_chordGraph = new ArrayList();
+		_nodes = new ArrayList<Node<T>>();
 	}
 
 	//makes a connection between node1 and node2 with the specified weight.
 	//An Edge is created for each node and added to the other node's adjacency list.
 	//The shorter the weight, the more likely that edge (chord progression) will be used
-	public void addEdge(Node node1, Node node2, int weight){
+	public void addEdge(Node<T> node1, Node<T> node2, int weight){
 
 
-		if(!_chordGraph.contains(node1))
-			_chordGraph.add(node1);
+		if(!_nodes.contains(node1))
+			_nodes.add(node1);
 
-		if(!_chordGraph.contains(node2))
-			_chordGraph.add(node2);
+		if(!_nodes.contains(node2))
+			_nodes.add(node2);
 
-		Edge edge = new Edge(node1, node2, weight);
+		Edge<T> edge = new Edge<T>(node1, node2, weight);
 		node1.addFollowingEdge(edge);
 		node2.addPrecedingEdge(edge);
 	}
 
 	//returns true is node1 is adjacent to node2, else return false
-	public boolean isAdjacent(Node node1, Node node2){
+	public boolean isAdjacent(Node<T> node1, Node<T> node2){
 
 		if(node1.canLeadTo(node2) || node1.canComeFrom(node2))
 			return true;
@@ -43,9 +44,9 @@ public class Graph {
 			return false;
 	}
 
-	public List<Node> getChordGraph(){
+	public List<Node<T>> getNodes(){
 
-		return _chordGraph;
+		return _nodes;
 	}
 
 //	//returns true if node1 connects to node2 in a certain number of steps, using bidirectional search
