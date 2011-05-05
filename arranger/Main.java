@@ -85,8 +85,9 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemNew.setToolTipText("New song");
 		menuItemNew.addActionListener(
 			new ActionListener() {
+				Instruction myInstr = new FileInstructionIO(this, FileInstructionType.NEW, "new.xml");
 				public void actionPerformed(ActionEvent event) {
-					
+					receiveInstruction(myInstr);
 				}
 			});
 		
@@ -95,8 +96,9 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemOpen.setToolTipText("Open XML file");
 		menuItemOpen.addActionListener(
 			new ActionListener() {
+				Instruction myInstr = new FileInstructionIO(this, FileInstructionType.OPEN, "open.xml");
 				public void actionPerformed(ActionEvent event) {
-					
+					receiveInstruction(myInstr);
 				}
 			});
 		
@@ -105,14 +107,9 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemSave.setToolTipText("Save current song");
 		menuItemSave.addActionListener(
 			new ActionListener() {
+				Instruction myInstr = new FileInstructionIO(this, FileInstructionType.SAVE, "saved.xml");
 				public void actionPerformed(ActionEvent event) {
-					System.out.println("SAVE FILE");
-					try {
-						_writer.write(_piece, "saved.xml");
-					}
-					catch (Exception e) {
-						System.out.println("Error saving: " + e);
-					}
+					receiveInstruction(myInstr);
 				}
 			});
 		
@@ -121,8 +118,9 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemPrint.setToolTipText("Print song");
 		menuItemPrint.addActionListener(
 			new ActionListener() {
+				Instruction myInstr = new FileInstructionIO(this, FileInstructionType.PRINT, "");
 				public void actionPerformed(ActionEvent event) {
-					System.exit(0);
+					receiveInstruction(myInstr);
 				}
 			});
 		
@@ -131,8 +129,9 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemExit.setToolTipText("Exit application");
 		menuItemExit.addActionListener(
 			new ActionListener() {
+				Instruction myInstr = new FileInstructionIO(this, FileInstructionType.EXIT, "");
 				public void actionPerformed(ActionEvent event) {
-					System.exit(0);
+					receiveInstruction(myInstr);
 				}
 			});
 		
@@ -154,8 +153,32 @@ public class Main extends JFrame implements InstructionListener {
 			_logicManager.interpretEditInstr(editInstr);
 			_mainPanel.updateScore();
 		}
-		else if (instr instanceof FileInstruction) {
-			
+		else if (instr instanceof FileInstructionIO) {
+			FileInstructionIO fileInstr = (FileInstructionIO) instr;
+			System.out.println("File isntr: " + fileInstr.getType());
+			switch(fileInstr.getType()) {
+			case NEW:
+				System.out.println("create new song");
+				_logicManager.interpretFileInstrNew(new FileInstructionNew(this, 2, 30, 4, 4, 0, true));
+				break;
+			case SAVE:
+				System.out.println("SAVE FILE");
+				try {
+					_writer.write(_piece, "saved.xml");
+				}
+				catch (Exception e) {
+					System.out.println("Error saving: " + e);
+				}
+				break;
+			case OPEN:
+				
+				break;
+			case PRINT:
+				
+				break;
+			case EXIT:
+				System.exit(1);
+			}
 			
 			_mainPanel.repaint();
 		}

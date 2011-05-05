@@ -87,10 +87,12 @@ public class LogicManager {
 	}
 	
 	public void interpretFileInstrNew(FileInstructionNew fileInstrNew) {
+		System.out.println("start new file");
+		
 		int numStaffs = fileInstrNew.getNumStaffs();
 		int numMeasures = fileInstrNew.getNumMeasures();
-		int keySigNumer = fileInstrNew.getKeySigNumer();
-		int keySigDenom = fileInstrNew.getKeySigDenom();
+		int timeSigNumer = fileInstrNew.getTimeSigNumer();
+		int timeSigDenom = fileInstrNew.getTimeSigDenom();
 		int accidentals = fileInstrNew.getAccidentals();
 		boolean isMajor = fileInstrNew.getIsMajor();
 		
@@ -104,9 +106,9 @@ public class LogicManager {
 				Measure measure = new Measure();
 				_editor.insertMeasure(measure);
 				// Instantiate key signature, time signature
-				Rational duration = new Rational(keySigNumer, keySigDenom);
+				Rational duration = new Rational(timeSigNumer, timeSigDenom);
 				TimeSignature timeSig = new TimeSignature(duration,
-						keySigNumer, keySigDenom);
+						timeSigNumer, timeSigDenom);
 				KeySignature keySig = new KeySignature(duration, accidentals, isMajor);
 				_editor.insertKeySig(keySig);
 				_editor.insertTimeSig(timeSig);
@@ -117,8 +119,11 @@ public class LogicManager {
 				_editor.insertMultiNote(rest);
 			}
 		}
+		
+		System.out.println("created new piece");
 	}
-	public void interpretFileInstrIO(FileInstructionIO fileInstrIO) {		
+	public void interpretFileInstrIO(FileInstructionIO fileInstrIO) {
+		
 	}
 	
 	public void interpretEditInstr(EditInstruction editInstr) {

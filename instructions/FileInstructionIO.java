@@ -9,4 +9,8 @@ public class FileInstructionIO extends FileInstruction {
 		_type = type;
 		_filename = filename;
 	}
+	
+	public FileInstructionType getType() {
+		return _type;
+	}
 }
