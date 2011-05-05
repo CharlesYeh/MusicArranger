@@ -207,7 +207,9 @@ public class MidiAPI{
 	        ShortMessage msg = new ShortMessage();
 
 	        // command (on/off), channel, note pitch, volume
-	        msg.setMessage(cmd, 0, note, 100);
+
+	        	msg.setMessage(cmd, 0, note, 100);
+
 	        return (MidiMessage) msg;
 	}
 
