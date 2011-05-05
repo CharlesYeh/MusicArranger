@@ -17,7 +17,9 @@ public class Graph {
 		_chordGraph = new ArrayList();
 	}
 
-	//makes a connection between node1 and node2 with the specified weight. An Edge is created for each node and added to the other node's adjacency list.
+	//makes a connection between node1 and node2 with the specified weight.
+	//An Edge is created for each node and added to the other node's adjacency list.
+	//The shorter the weight, the more likely that edge (chord progression) will be used
 	public void addEdge(Node node1, Node node2, int weight){
 
 
@@ -41,6 +43,11 @@ public class Graph {
 			return false;
 	}
 
+	public List<Node> getChordGraph(){
+
+		return _chordGraph;
+	}
+
 //	//returns true if node1 connects to node2 in a certain number of steps, using bidirectional search
 //	public boolean isConnectedBidirectional(Node node1, Node node2, int steps){
 //
@@ -49,7 +56,7 @@ public class Graph {
 //
 //		}
 //	}
-
+//
 //	//returns true if node1 can lead to node2 in a certain number of steps
 //	public boolean leadsTo(Node node1, Node node2, int steps){
 //
