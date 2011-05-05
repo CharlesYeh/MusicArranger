@@ -250,6 +250,7 @@ public class Editor{
 	public void replaceMultiNote(MultiNote replacement) {
 		MultiNote replaced = this.removeMultiNote();
 		if (replacement.getDuration().compareTo(replaced.getDuration()) == 1) {
+			// If the replacement is longer
 			// Replace current note and overwrite following notes
 			this.insertMultiNote(replacement);
 			this.overwriteNotes(replacement.getDuration().minus(replaced.getDuration()));
@@ -276,7 +277,7 @@ public class Editor{
 		else {
 			Rational largerChunk;
 			Rational remainder;
-			remainder = new Rational(numerator % 2, denominator / 2);
+			remainder = new Rational(numerator % 2, denominator);
 			largerChunk = new Rational(numerator / 2, denominator / 2);
 			insertRests(remainder);
 			insertRests(largerChunk);
