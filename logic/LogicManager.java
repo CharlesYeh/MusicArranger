@@ -117,6 +117,9 @@ public class LogicManager {
 				MultiNote rest = new MultiNote(duration);
 				_editor.insertVoice(voice);
 				_editor.insertMultiNote(rest);
+				// Add blank placeholder chordsymbols
+				ChordSymbol chordSymbol = new ChordSymbol(duration, 0, ChordType.BLANK);
+				_editor.insertChordSymbol(chordSymbol);
 			}
 		}
 		
@@ -299,5 +302,17 @@ public class LogicManager {
 			}
 		}
 		return new IteratorAndOffset(iter, offsetFromIter);
+	}
+	
+	public static void main(String[] args) {
+		LogicManager logicManager = new LogicManager(new Piece());
+		FileInstruction testInstruction = new FileInstructionNew(logicManager, 1, 1, 4, 4, 0, true);
+		logicManager.interpretInstr(testInstruction);
+		try {
+			logicManager._arrangerXMLWriter.write(logicManager._piece, "tests/testNew.xml");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
