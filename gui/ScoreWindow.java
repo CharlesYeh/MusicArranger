@@ -67,13 +67,16 @@ public class ScoreWindow extends Drawable {
 	
 	public Instruction mouseClicked(MouseEvent e) {
 		InstructionIndex index = _illustrator.getEventIndex(e);
+		if (index == null)
+			return null;
+		
 		// determine which instruction to send
 		List<InstructionIndex> listIndex = new ArrayList<InstructionIndex>();
 		listIndex.add(index);
 		
 		Instruction instr = new EditInstruction(this, listIndex, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(new Rational(1, 2)));
 		
-		System.out.println("SCOREWINDOW" + instr);
+		System.out.println("SCOREWINDOW CLICK" + instr);
 		
 		return instr;
 	}
@@ -82,6 +85,7 @@ public class ScoreWindow extends Drawable {
 		if (_slider.hitTestPoint(e.getX(), e.getY())) {
 			// clicked on slider
 			_sliding = true;
+			System.out.println("start sliding");
 			dragY = e.getY() - _slider.getY();
 		}
 		else {
@@ -93,6 +97,7 @@ public class ScoreWindow extends Drawable {
 	
 	public Instruction mouseReleased(MouseEvent e) {
 		_sliding = false;
+		System.out.println("stop slidign");
 		return null;
 	}
 	

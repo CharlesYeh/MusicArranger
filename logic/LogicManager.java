@@ -205,6 +205,8 @@ public class LogicManager {
 	private void editMultiNote(EditInstruction editInstr) {
 		List<InstructionIndex> indices = editInstr.getIndices();
 		for (InstructionIndex index : indices) {
+			
+			System.out.println(index);
 			int staffNumber = index.getStaffNumber();
 			int measureNumber = index.getMeasureNumber();
 			int voiceNumber = index.getVoiceNumber();
