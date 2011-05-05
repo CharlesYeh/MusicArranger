@@ -8,12 +8,14 @@ package util;
 
  public class Edge{
 
- 	Node _adjacentChord;
+ 	Node _chord1;
+ 	Node _chord2;
  	int _weight;
 
- 	public Edge(Node chord, int weight){
+ 	public Edge(Node chord1, Node chord2, int weight){
 
- 		_adjacentChord = chord;
+ 		_chord1 = chord1;
+ 		_chord2 = chord2;
  		_weight = weight;
  	}
  }

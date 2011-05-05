@@ -27,8 +27,9 @@ public class Graph {
 		if(!_chordGraph.contains(node2))
 			_chordGraph.add(node2);
 
-		node1.addFollowingEdge(node2, weight);
-		node2.addPrecedingEdge(node1, weight);
+		Edge edge = new Edge(node1, node2, weight);
+		node1.addFollowingEdge(edge);
+		node2.addPrecedingEdge(edge);
 	}
 
 	//returns true is node1 is adjacent to node2, else return false

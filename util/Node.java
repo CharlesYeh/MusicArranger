@@ -7,7 +7,8 @@ package util;
  */
 
 import music.*;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Node{
 
@@ -33,9 +34,8 @@ public class Node{
 	}
 
 	//adds an Edge to the list _followingChords
-	public void addFollowingEdge(Node node, int weight){
+	public void addFollowingEdge(Edge edge){
 
-		Edge edge = new Edge(node, weight);
 		if(!_followingChords.contains(edge))
 			_followingChords.add(edge);
 		else {
@@ -44,9 +44,8 @@ public class Node{
 	}
 
 	//adds an Edge to the list _precedingChords
-	public void addPrecedingEdge(Node node, int weight){
+	public void addPrecedingEdge(Edge edge){
 
-		Edge edge = new Edge(node, weight);
 		if(!_precedingChords.contains(edge))
 		_precedingChords.add(edge);
 		else {
