@@ -4,11 +4,14 @@ import java.lang.Thread;
 import music.ChordSymbol;
 import music.ChordType;
 import music.Piece;
+import music.KeySignature;
+import java.util.ArrayList;
 import util.*;
 
 public class Analyzer extends Thread{
 
 	Graph<ChordSymbol> _chordgraph;
+
 
 	public Analyzer(){
 		initMajorKeyGraph();
@@ -25,22 +28,22 @@ public class Analyzer extends Thread{
 		// create chords
 		Node<ChordSymbol> chordI		= new Node<ChordSymbol>(new ChordSymbol(1, ChordType.MAJOR));
 		Node<ChordSymbol> chordii		= new Node<ChordSymbol>(new ChordSymbol(2, ChordType.MINOR));
-		Node<ChordSymbol> chordIII	= new Node<ChordSymbol>(new ChordSymbol(3, ChordType.MINOR));
+		Node<ChordSymbol> chordIII		= new Node<ChordSymbol>(new ChordSymbol(3, ChordType.MINOR));
 		Node<ChordSymbol> chordiv		= new Node<ChordSymbol>(new ChordSymbol(4, ChordType.MAJOR));
 		Node<ChordSymbol> chordV		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR));
 		Node<ChordSymbol> chordVI		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.MINOR));
-		Node<ChordSymbol> chordVIio	= new Node<ChordSymbol>(new ChordSymbol(7, ChordType.DIMIN));
+		Node<ChordSymbol> chordVIio		= new Node<ChordSymbol>(new ChordSymbol(7, ChordType.DIMIN));
 
 		// V seven chords
 		Node<ChordSymbol> chordV7		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 0));
-		Node<ChordSymbol> chordV65	= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 1));
-		Node<ChordSymbol> chordV43	= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 2));
-		Node<ChordSymbol> chordV42	= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 3));
+		Node<ChordSymbol> chordV65		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 1));
+		Node<ChordSymbol> chordV43		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 2));
+		Node<ChordSymbol> chordV42		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 3));
 
 		Node<ChordSymbol> chordN		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.NEAPOLITAN));
-		Node<ChordSymbol> chordIt6	= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.ITAUG6));
-		Node<ChordSymbol> chordFr6	= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.FRAUG6));
-		Node<ChordSymbol> chordGer6	= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.GERAUG6));
+		Node<ChordSymbol> chordIt6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.ITAUG6));
+		Node<ChordSymbol> chordFr6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.FRAUG6));
+		Node<ChordSymbol> chordGer6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.GERAUG6));
 
 		// I -> I ii III iv V VI VIio N It6 Fr6 Ger6
 		// ii -> V VIio N It6 Fr6 Ger6
@@ -105,23 +108,23 @@ public class Analyzer extends Thread{
 
 		// create chords
 		Node<ChordSymbol> chordi		= new Node<ChordSymbol>(new ChordSymbol(1, ChordType.MINOR));
-		Node<ChordSymbol> chordiio	= new Node<ChordSymbol>(new ChordSymbol(2, ChordType.DIMIN));
-		Node<ChordSymbol> chordIII	= new Node<ChordSymbol>(new ChordSymbol(3, ChordType.MAJOR));
+		Node<ChordSymbol> chordiio		= new Node<ChordSymbol>(new ChordSymbol(2, ChordType.DIMIN));
+		Node<ChordSymbol> chordIII		= new Node<ChordSymbol>(new ChordSymbol(3, ChordType.MAJOR));
 		Node<ChordSymbol> chordiv		= new Node<ChordSymbol>(new ChordSymbol(4, ChordType.MINOR));
 		Node<ChordSymbol> chordV		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR));
 		Node<ChordSymbol> chordVI		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.MAJOR));
-		Node<ChordSymbol> chordVIio	= new Node<ChordSymbol>(new ChordSymbol(7, ChordType.DIMIN));
+		Node<ChordSymbol> chordVIio		= new Node<ChordSymbol>(new ChordSymbol(7, ChordType.DIMIN));
 
 		// V seven chords
 		Node<ChordSymbol> chordV7		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 0));
-		Node<ChordSymbol> chordV65	= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 1));
-		Node<ChordSymbol> chordV43	= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 2));
-		Node<ChordSymbol> chordV42	= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 3));
+		Node<ChordSymbol> chordV65		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 1));
+		Node<ChordSymbol> chordV43		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 2));
+		Node<ChordSymbol> chordV42		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 3));
 
 		Node<ChordSymbol> chordN		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.NEAPOLITAN));
-		Node<ChordSymbol> chordIt6	= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.ITAUG6));
-		Node<ChordSymbol> chordFr6	= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.FRAUG6));
-		Node<ChordSymbol> chordGer6	= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.GERAUG6));
+		Node<ChordSymbol> chordIt6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.ITAUG6));
+		Node<ChordSymbol> chordFr6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.FRAUG6));
+		Node<ChordSymbol> chordGer6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.GERAUG6));
 
 		// i -> iio III iv V VI viio N It6 Fr6 Ger6
 		// iio -> V viio N It6 Fr6 Ger6
@@ -180,6 +183,42 @@ public class Analyzer extends Thread{
 		_chordgraph.addEdge(chordVIio, chordN, 	2);
 
 	}
+
+//	public void listPossibleChords(KeySignature key, ChordSymbol chord){
+//
+//
+//	}
+
+	//this functino takes a pitch,
+//	public ArrayList<ChordSymbol> findNoteBelonging(int pitch, KeySignature keysig){
+//
+//		int intervalFromC = pitch % 12;
+//		int key = keysig.halfStepsFromC();
+//		int scaleDegree = intervalFromC - key;
+//
+//		if(keysig.getIsMajor())
+//			initMajorKeyGraph();
+//		else
+//			initMinorKeyGraph();
+//
+//		ArrayList<ChordSymbol> matchingChords = new ArrayList<ChordSymbol>();
+//		for(Node chord : _chordgraph.getNodes()){
+//
+//			ChordSymbol chordsym = chord.getValue();
+//
+//			//checking if the root of the chord matces the given pitch
+//			if(scaleDegree == chordsym.getScaleDegree())
+//				matchingChords.add(chordsym);
+//			else{
+//
+//				for(int intervalFromRoot : chordsym.getNonRootNotes()){
+//
+//					//checking to see
+//					if(((chordsym.getScaleDegree() + intervalFromRoot) % 12) == scaleDegree)
+//				}
+//			}
+//		}
+//	}
 
 	public void run() {
 		// start analysis process here

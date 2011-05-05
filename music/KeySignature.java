@@ -6,23 +6,32 @@ package music;
 public class KeySignature extends Timestep {
 	int _accidentalNumber;			// Specifies the number of accidentals (negative numbers are flats, positives for sharps)
 	boolean _isMajor;				// If true, indicates that the section of the piece is in the major mode, if false, minor.
-	
+
 	public KeySignature(Rational duration, int accidentalNumber, boolean isMajor) {
 		super(duration);
 		_accidentalNumber = accidentalNumber;
 		_isMajor = isMajor;
 	}
-	
+
 	public int getAccidentalNumber() {
 		return _accidentalNumber;
 	}
-	
+
 	public boolean getIsMajor() {
 		return _isMajor;
 	}
-	
+
 	public boolean equals(Object o) {
 		KeySignature keysig = (KeySignature) o;
 		return _isMajor == keysig.getIsMajor() && _accidentalNumber == keysig.getAccidentalNumber();
+	}
+
+	public int halfStepsFromC(){
+
+		int returnVal = (_accidentalNumber * 7) % 12;
+		if(returnVal < 0)
+			returnVal = 12 + returnVal;
+
+		return returnVal;
 	}
 }
