@@ -180,7 +180,7 @@ public class Main extends JFrame implements InstructionListener {
 				System.exit(1);
 			}
 			
-			_mainPanel.repaint();
+			_mainPanel.updateScore();
 		}
 		else if (instr instanceof PlaybackInstruction) {
 			PlaybackInstruction playInstr = (PlaybackInstruction) instr;
