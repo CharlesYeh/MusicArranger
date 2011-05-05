@@ -28,6 +28,11 @@ public class Node{
 		return _precedingChords;
 	}
 
+	public ChordSymbol getChordSymbol(){
+
+		return _chordSymbol;
+	}
+
 	public List<Edge> getFollowigChords(){
 
 		return _followingChords;
