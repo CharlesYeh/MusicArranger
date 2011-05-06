@@ -60,17 +60,19 @@ public class LongMelodyPiece extends Piece {
 		Staff stafftreble = new Staff();
 		Staff staffbass = new Staff();
 
-		Voice voice1_1_1 = new Voice();				// staff 1, measure 1, voice 1
-			voice1_1_1.getMultiNotes().add(I);
-			voice1_1_1.getMultiNotes().add(IV);
-			voice1_1_1.getMultiNotes().add(V);
-
-		Voice voice2_1_1 = new Voice();
-			voice2_1_1.getMultiNotes().add(IBass);
-			voice2_1_1.getMultiNotes().add(IVBass);
-			voice2_1_1.getMultiNotes().add(VBass);
 		
 		for (int i = 0; i < 10; i++) {
+			
+			Voice voice1_1_1 = new Voice();
+				// staff 1, measure 1, voice 1
+				voice1_1_1.getMultiNotes().add(I);
+				voice1_1_1.getMultiNotes().add(IV);
+				voice1_1_1.getMultiNotes().add(V);
+			
+			Voice voice2_1_1 = new Voice();
+				voice2_1_1.getMultiNotes().add(IBass);
+				voice2_1_1.getMultiNotes().add(IVBass);
+				voice2_1_1.getMultiNotes().add(VBass);
 			// measures
 			Measure measure1_1 = new Measure();
 				measure1_1.getKeySignatures().add(keysig1);

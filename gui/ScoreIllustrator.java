@@ -58,7 +58,10 @@ public class ScoreIllustrator {
 	List<Integer> _systemPositions;
 	Map<Staff, Integer> _staffPositions;
 	// staff to position > measure index
-	List<Map<Integer, Integer>> _measurePositions;
+	List<TreeMap<Integer, Integer>> _measurePositions;
+	// staff to measure > multinote position > timestamp value of this mnote
+	List<Map<Integer, TreeMap<Integer, Rational>>> _mNotePositions;
+	Map<MultiNote, Clef> _mNoteClefs;
 	
 	public ScoreIllustrator() {
 		// load images
@@ -93,7 +96,8 @@ public class ScoreIllustrator {
 		// positions
 		_systemPositions = new ArrayList<Integer>();
 		_staffPositions = new HashMap<Staff, Integer>();
-		_measurePositions = new ArrayList<Map<Integer, Integer>>();
+		_measurePositions = new ArrayList<TreeMap<Integer, Integer>>();
+		_mNotePositions = new ArrayList<Map<Integer, TreeMap<Integer, Rational>>>();
 		
 		// the staff each object is in
 		Map<ListIterator<Measure>, Staff> measureStaffs = new HashMap<ListIterator<Measure>, Staff>();
