@@ -1,9 +1,10 @@
 package instructions;
 
 import music.*;
+import java.util.*;
 
 public class FileInstructionNew extends FileInstruction {
-	int _numStaffs;
+	List<Clef> _clefs;
 	int _numMeasures;
 	int _timeSigNumer;
 	int _timeSigDenom;
@@ -16,10 +17,10 @@ public class FileInstructionNew extends FileInstruction {
 	 * 		- key signature, represented by numerator and denominator
 	 * 		- time signature, represented by the number of accidentals
 	 */
-	public FileInstructionNew(Object src, int numStaffs, int numMeasures,
+	public FileInstructionNew(Object src, List<Clef> clefs, int numMeasures,
 			int timeSigNumer, int timeSigDenom, int accidentals, boolean isMajor) {
 		super(src);
-		_numStaffs = numStaffs;
+		_clefs = clefs;
 		_numMeasures = numMeasures;
 		_timeSigNumer = timeSigNumer;
 		_timeSigDenom = timeSigDenom;
@@ -27,8 +28,8 @@ public class FileInstructionNew extends FileInstruction {
 		_isMajor = isMajor;
 	}
 
-	public int getNumStaffs() {
-		return _numStaffs;
+	public List<Clef> getClefs() {
+		return _clefs;
 	}
 	public int getNumMeasures() {
 		return _numMeasures;
