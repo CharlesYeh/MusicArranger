@@ -14,6 +14,10 @@ public class Clef extends Timestep {
 		_centerLine = centerLine;
 	}
 	
+	public Clef(ClefName clefName, int centerLine) {
+		this(new Rational(), clefName, centerLine);
+	}
+	
 	public ClefName getClefName() {
 		return _clefName;
 	}
