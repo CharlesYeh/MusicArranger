@@ -37,6 +37,10 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	protected EventListenerList _listeners = new EventListenerList();
 	
+	//--------------------state information--------------------
+	
+	
+	
 	public MainPanel(Piece piece) {
 		Toolbar.init("images/gui/toolbarHorizontal.png", "images/gui/toolbarVertical.png");
 		ToolbarButton.init("images/gui/button.png", "images/gui/button_over.png");
@@ -78,6 +82,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	public void updateScore() {
 		_scoreWindow.updateScore();
+		repaint();
 	}
 	
 	/* Handle a mouse press on a toolbar or the score window
@@ -151,6 +156,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		}
 		
 		sendInstruction(instr);
+		
+		repaint();
 	}
 	
 	public void mouseDragged(MouseEvent e) {

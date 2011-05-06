@@ -37,7 +37,6 @@ public class LogicManager {
 	}
 	
 	protected ArrangerXMLParser makeArrangerXMLParser() {
-
 		return new ArrangerXMLParser(_editor);
 	}
 	protected ArrangerXMLWriter makeArrangerXMLWriter() {
@@ -89,7 +88,8 @@ public class LogicManager {
 	public void interpretFileInstrNew(FileInstructionNew fileInstrNew) {
 		System.out.println("start new file");
 		
-		int numStaffs = fileInstrNew.getNumStaffs();
+		List<Clef> clefs = fileInstrNew.getClefs();
+		int numStaffs = clefs.size();
 		int numMeasures = fileInstrNew.getNumMeasures();
 		int timeSigNumer = fileInstrNew.getTimeSigNumer();
 		int timeSigDenom = fileInstrNew.getTimeSigDenom();
@@ -112,6 +112,11 @@ public class LogicManager {
 				KeySignature keySig = new KeySignature(duration, accidentals, isMajor);
 				_editor.insertKeySig(keySig);
 				_editor.insertTimeSig(timeSig);
+				// Instantiate clef
+				ClefName clefName = clefs.get(stfnm).getClefName();
+				int centerLine = clefs.get(stfnm).getCenterLine();
+				Clef clef = new Clef(duration, clefName, centerLine);
+				_editor.insertClef(clef);
 				// Instantiate single voice with a rest;
 				Voice voice = new Voice();
 				MultiNote rest = new MultiNote(duration);
@@ -126,7 +131,25 @@ public class LogicManager {
 		System.out.println("created new piece");
 	}
 	public void interpretFileInstrIO(FileInstructionIO fileInstrIO) {
+		FileInstructionType fileInstrType = fileInstrIO.getType();
+		String fileName = fileInstrIO.getFileName();
 		
+		switch (fileInstrType) {
+		case OPEN:
+			try {
+				_arrangerXMLParser.parse(fileName);
+			} catch (Exception e) {
+				System.out.println("Load failed");
+			}
+			break;
+		case SAVE:
+			try {
+				_arrangerXMLWriter.write(_piece, fileName);
+			} catch (Exception e) {
+				System.out.println("Save failed");
+			}
+			break;
+		}
 	}
 	
 	public void interpretEditInstr(EditInstruction editInstr) {
@@ -191,6 +214,51 @@ public class LogicManager {
 		
 	}
 	private void editChordSymbol(EditInstruction editInstr) {
+		List<InstructionIndex> indices = editInstr.getIndices();
+		for (InstructionIndex index : indices) {
+			
+			int staffNumber = index.getStaffNumber();
+			int measureNumber = index.getMeasureNumber();
+			Rational measureOffset = index.getMeasureOffset();
+			Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
+			List<ChordSymbol> chordSymbolList = measure.getChordSymbols();
+			
+			// calculate iterator and offset
+			IteratorAndOffset iterAndOffset = calcIterAndOffset(chordSymbolList, measureOffset);
+			ListIterator<ChordSymbol> iter = (ListIterator<ChordSymbol>) iterAndOffset.getIter();
+			Rational offset = iterAndOffset.getOffset();
+			
+			ChordSymbol chordSymbol;
+			
+			// set the iterator in the editor
+			_editor.setChordSymbolIter(iter);
+			
+			EditInstructionType instrType = editInstr.getType();
+			switch (instrType) {
+			// offset SHOULD be 0 for insertion and removal functions
+				case INSERT:
+					chordSymbol = (ChordSymbol) editInstr.getElement();
+					_editor.insertChordSymbol(chordSymbol);
+					break;
+				case REMOVE:
+					_editor.removeChordSymbol();
+					break;
+				case REPLACE:
+					// check if replacement note runs over end of measure
+					Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
+					chordSymbol = (ChordSymbol) editInstr.getElement();
+					if (measureOffset.compareTo(measureLength) > 0) {
+						// Error, measureOffset is longer than the actual measure
+						return;
+					}
+					else {
+						_editor.replaceChordSymbol(chordSymbol);
+					}
+					break;
+				default:
+					throw new RuntimeException("Instruction of unrecognized EditInstructionType");
+			}
+		}
 	}
 	private void editMeasure(EditInstruction editInstr) {
 	}
@@ -308,19 +376,25 @@ public class LogicManager {
 	
 	public static void main(String[] args) {
 		// testing FileInstructionNew
-		/*
+		
 		LogicManager logicManager = new LogicManager(new Piece());
-		FileInstruction testInstruction = new FileInstructionNew(logicManager, 2, 9, 3, 4, 0, true);
+		// TODO: THIS IS STILL ALL CONSTANTS
+		Clef trebleClef = new Clef(ClefName.GCLEF, -2);
+		Clef bassClef = new Clef(ClefName.FCLEF, 2);
+		List<Clef> clefList = new ArrayList<Clef>();
+		clefList.add(trebleClef);
+		clefList.add(bassClef);
+		FileInstruction testInstruction = new FileInstructionNew(logicManager, clefList, 9, 3, 4, 0, true);
 		logicManager.interpretInstr(testInstruction);
 		try {
 			logicManager._arrangerXMLWriter.write(logicManager._piece, "tests/testNew.xml");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		*/
+		
 		
 		// testing EditMultiNote
+		/*
 		LogicManager logicManager = new LogicManager(new Piece());
 		FileInstruction testInstruction = new FileInstructionNew(logicManager, 2, 9, 3, 4, 0, true);
 		logicManager.interpretInstr(testInstruction);
@@ -349,8 +423,29 @@ public class LogicManager {
 		try {
 			logicManager._arrangerXMLWriter.write(logicManager._piece, "tests/testNew.xml");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
+		
+		// testing FileInstructionIO
+		/*
+		LogicManager logicManager = new LogicManager(new Piece());
+		FileInstructionIO fileOpen = new FileInstructionIO(logicManager,
+				FileInstructionType.OPEN,
+				"tests/testLoad.xml");
+		FileInstructionIO fileSave = new FileInstructionIO(logicManager,
+				FileInstructionType.SAVE,
+				"tests/testSave.xml");
+		List<InstructionIndex> indices1 = new ArrayList<InstructionIndex>();
+		indices1.add(new InstructionIndex(0, 0, 0, new Rational(0, 1)));
+		EditInstruction editInstruction1 = new EditInstruction(logicManager, 
+				indices1,
+				EditInstructionType.REPLACE,
+				EditType.MULTINOTE,
+				new MultiNote(new Rational(1, 8)));
+		logicManager.interpretInstr(fileOpen);
+		logicManager.interpretInstr(editInstruction1);
+		logicManager.interpretInstr(fileSave);
+		*/
 	}
 }

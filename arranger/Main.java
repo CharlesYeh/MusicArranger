@@ -2,6 +2,8 @@ package arranger;
 
 import gui.MainPanel;
 
+import java.util.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -11,11 +13,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import logic.ArrangerXMLParser;
-import logic.ArrangerXMLWriter;
 import logic.LogicManager;
 import logic.MidiAPI;
 import logic.Editor;
+import music.Clef;
+import music.ClefName;
 import music.Piece;
 import instructions.*;
 
@@ -27,10 +29,6 @@ public class Main extends JFrame implements InstructionListener {
 	MidiAPI _api;
 	MainPanel _mainPanel;
 	
-	ArrangerXMLParser _parser;
-	ArrangerXMLWriter _writer;
-
-	//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 	Editor _editor;
 	LogicManager _logicManager;
 
@@ -40,9 +38,6 @@ public class Main extends JFrame implements InstructionListener {
 		super("Music Arranger");
 		
 		_api = new MidiAPI(30);
-
-		//#$#$#_parser = new ArrangerXMLParser();
-		_writer = new ArrangerXMLWriter();
 
 
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
@@ -54,7 +49,6 @@ public class Main extends JFrame implements InstructionListener {
 		_logicManager = new LogicManager(_piece);
 		_editor = _logicManager.getEditor();
 		
-		_parser = new ArrangerXMLParser(_editor);
 		
 		ArrangerConstants.WINDOW_WIDTH = 800;
 		ArrangerConstants.WINDOW_HEIGHT = 600;
@@ -85,7 +79,15 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemNew.setToolTipText("New song");
 		menuItemNew.addActionListener(
 			new ActionListener() {
-				Instruction myInstr = new FileInstructionNew(this, 2, 30, 4, 4, 0, true);
+				private List<Clef> clefList = new ArrayList<Clef>();
+				{
+					// TODO: THIS IS STILL ALL CONSTANTS
+					Clef trebleClef = new Clef(ClefName.GCLEF, -2);
+					Clef bassClef = new Clef(ClefName.FCLEF, 2);
+					clefList.add(trebleClef);
+					clefList.add(bassClef);
+				}
+				Instruction myInstr = new FileInstructionNew(this, clefList, 30, 4, 4, 0, true);
 				public void actionPerformed(ActionEvent event) {
 					receiveInstruction(myInstr);
 				}
@@ -147,44 +149,10 @@ public class Main extends JFrame implements InstructionListener {
 	}
 	
 	public void receiveInstruction(Instruction instr) {
-		// delegate instruction
-		if (instr instanceof EditInstruction) {
-			EditInstruction editInstr = (EditInstruction) instr;
-			_logicManager.interpretEditInstr(editInstr);
-			_mainPanel.updateScore();
-		}
-		else if (instr instanceof FileInstructionNew) {
-			_logicManager.interpretFileInstrNew((FileInstructionNew) instr);
-		}
-		else if (instr instanceof FileInstructionIO) {
-			FileInstructionIO fileInstr = (FileInstructionIO) instr;
-			System.out.println("File isntr: " + fileInstr.getType());
-			switch(fileInstr.getType()) {
-			case SAVE:
-				System.out.println("SAVE FILE");
-				try {
-					_writer.write(_piece, "saved.xml");
-				}
-				catch (Exception e) {
-					System.out.println("Error saving: " + e);
-				}
-				break;
-			case OPEN:
-				
-				break;
-			case PRINT:
-				
-				break;
-			case EXIT:
-				System.exit(1);
-			}
-			
-			_mainPanel.updateScore();
-		}
-		else if (instr instanceof PlaybackInstruction) {
+		if (instr instanceof PlaybackInstruction) {
 			PlaybackInstruction playInstr = (PlaybackInstruction) instr;
 			
-			switch (playInstr.getPlaybackType()) {
+			switch (playInstr.getType()) {
 			case START:
 				_api.playPiece(_piece);
 				break;
@@ -194,8 +162,8 @@ public class Main extends JFrame implements InstructionListener {
 			}
 		}
 		else {
-			System.out.println("Instruction unrecognized: " + instr);
-			System.exit(1);
+			_logicManager.interpretInstr(instr);
+			_mainPanel.updateScore();
 		}
 	}
 	
