@@ -87,7 +87,8 @@ public abstract class Toolbar extends Drawable {
 			_width = 30;
 			_height = length;
 		}
-
+		
+		drawBuffer();
 	}
 	
 	public void drawBuffer() {
