@@ -2,15 +2,19 @@ package instructions;
 
 public class FileInstructionIO extends FileInstruction {
 	FileInstructionType _type;
-	String _filename;
+	String _fileName;
 	
-	public FileInstructionIO(Object src, FileInstructionType type, String filename) {
+	public FileInstructionIO(Object src, FileInstructionType type, String fileName) {
 		super(src);
 		_type = type;
-		_filename = filename;
+		_fileName = fileName;
 	}
 	
 	public FileInstructionType getType() {
 		return _type;
+	}
+	
+	public String getFileName() {
+		return _fileName;
 	}
 }

@@ -28,7 +28,8 @@ public class Editor{
 	}
 	
 	public Editor clearScore() {
-		setPiece(new Piece());
+		_piece.getStaffs().clear();
+		_staffIter = _piece.getStaffs().listIterator();
 		return this;
 	}
 	

@@ -15,7 +15,7 @@ public class PlaybackInstruction extends Instruction {
 		_type = type;
 	}
 	
-	public PlaybackInstructionType getPlaybackType() {
+	public PlaybackInstructionType getType() {
 		return _type;
 	}
 }

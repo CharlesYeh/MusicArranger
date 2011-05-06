@@ -184,7 +184,7 @@ public class Main extends JFrame implements InstructionListener {
 		else if (instr instanceof PlaybackInstruction) {
 			PlaybackInstruction playInstr = (PlaybackInstruction) instr;
 			
-			switch (playInstr.getPlaybackType()) {
+			switch (playInstr.getType()) {
 			case START:
 				_api.playPiece(_piece);
 				break;

@@ -37,7 +37,6 @@ public class LogicManager {
 	}
 	
 	protected ArrangerXMLParser makeArrangerXMLParser() {
-
 		return new ArrangerXMLParser(_editor);
 	}
 	protected ArrangerXMLWriter makeArrangerXMLWriter() {
@@ -126,7 +125,25 @@ public class LogicManager {
 		System.out.println("created new piece");
 	}
 	public void interpretFileInstrIO(FileInstructionIO fileInstrIO) {
+		FileInstructionType fileInstrType = fileInstrIO.getType();
+		String fileName = fileInstrIO.getFileName();
 		
+		switch (fileInstrType) {
+		case OPEN:
+			try {
+				_arrangerXMLParser.parse(fileName);
+			} catch (Exception e) {
+				System.out.println("Load failed");
+			}
+			break;
+		case SAVE:
+			try {
+				_arrangerXMLWriter.write(_piece, fileName);
+			} catch (Exception e) {
+				System.out.println("Save failed");
+			}
+			break;
+		}
 	}
 	
 	public void interpretEditInstr(EditInstruction editInstr) {
@@ -315,12 +332,12 @@ public class LogicManager {
 		try {
 			logicManager._arrangerXMLWriter.write(logicManager._piece, "tests/testNew.xml");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		*/
 		
 		// testing EditMultiNote
+		/*
 		LogicManager logicManager = new LogicManager(new Piece());
 		FileInstruction testInstruction = new FileInstructionNew(logicManager, 2, 9, 3, 4, 0, true);
 		logicManager.interpretInstr(testInstruction);
@@ -349,8 +366,28 @@ public class LogicManager {
 		try {
 			logicManager._arrangerXMLWriter.write(logicManager._piece, "tests/testNew.xml");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
+		
+		// testing FileInstructionIO
+		LogicManager logicManager = new LogicManager(new Piece());
+		FileInstructionIO fileOpen = new FileInstructionIO(logicManager,
+				FileInstructionType.OPEN,
+				"tests/testLoad.xml");
+		FileInstructionIO fileSave = new FileInstructionIO(logicManager,
+				FileInstructionType.SAVE,
+				"tests/testSave.xml");
+		List<InstructionIndex> indices1 = new ArrayList<InstructionIndex>();
+		indices1.add(new InstructionIndex(0, 0, 0, new Rational(0, 1)));
+		EditInstruction editInstruction1 = new EditInstruction(logicManager, 
+				indices1,
+				EditInstructionType.REPLACE,
+				EditType.MULTINOTE,
+				new MultiNote(new Rational(1, 8)));
+		logicManager.interpretInstr(fileOpen);
+		logicManager.interpretInstr(editInstruction1);
+		logicManager.interpretInstr(fileSave);
+		
 	}
 }
