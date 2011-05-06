@@ -11,8 +11,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import logic.ArrangerXMLParser;
-import logic.ArrangerXMLWriter;
 import logic.LogicManager;
 import logic.MidiAPI;
 import logic.Editor;
@@ -27,10 +25,6 @@ public class Main extends JFrame implements InstructionListener {
 	MidiAPI _api;
 	MainPanel _mainPanel;
 	
-	ArrangerXMLParser _parser;
-	ArrangerXMLWriter _writer;
-
-	//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 	Editor _editor;
 	LogicManager _logicManager;
 
@@ -40,9 +34,6 @@ public class Main extends JFrame implements InstructionListener {
 		super("Music Arranger");
 		
 		_api = new MidiAPI(30);
-
-		//#$#$#_parser = new ArrangerXMLParser();
-		_writer = new ArrangerXMLWriter();
 
 
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
@@ -54,7 +45,6 @@ public class Main extends JFrame implements InstructionListener {
 		_logicManager = new LogicManager(_piece);
 		_editor = _logicManager.getEditor();
 		
-		_parser = new ArrangerXMLParser(_editor);
 		
 		ArrangerConstants.WINDOW_WIDTH = 800;
 		ArrangerConstants.WINDOW_HEIGHT = 600;
@@ -162,12 +152,7 @@ public class Main extends JFrame implements InstructionListener {
 			switch(fileInstr.getType()) {
 			case SAVE:
 				System.out.println("SAVE FILE");
-				try {
-					_writer.write(_piece, "saved.xml");
-				}
-				catch (Exception e) {
-					System.out.println("Error saving: " + e);
-				}
+				_logicManager.interpretInstr(fileInstr);
 				break;
 			case OPEN:
 				
