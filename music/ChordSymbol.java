@@ -56,8 +56,8 @@ public class ChordSymbol extends Timestep {
 			return "vi";
 		case 7:
 			return "vii";
-		case 8:
-			return "I";
+//		case 8:
+//			return "I";
 		}
 
 		return "";
