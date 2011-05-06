@@ -197,6 +197,8 @@ public class Analyzer extends Thread{
 		int halfStepsFromC = pitch % 12;
 		int key = keysig.halfStepsFromC();
 		int pitchDegree = halfStepsFromC - key; //pitch degree is the number of half steps above the tonic 0-11
+		if (pitchDegree < 0)
+			pitchDegree = pitchDegree + 12;
 		System.out.println("pitchDegree = " + pitchDegree);
 
 		if(keysig.getIsMajor())
@@ -208,7 +210,7 @@ public class Analyzer extends Thread{
 		for(Node node : _chordgraph.getNodes()){
 
 			ChordSymbol chordsym = (ChordSymbol) node.getValue();
-			System.out.println("=========Current chord is: " + chordsym.getSymbolText() + "==========");
+//			System.out.println("=========Current chord is: " + chordsym.getSymbolText() + "==========");
 
 			//Assigns the a pitch degree to the chord
 			int	chordNotePitchDegree;
@@ -236,7 +238,7 @@ public class Analyzer extends Thread{
 				for(int halfStepsFromRoot : nonRootNotes){
 
 					int nonrootChordPitchDegree = ((chordNotePitchDegree + halfStepsFromRoot) % 12);
-					System.out.println("nonrootChordPitchDegree = " + nonrootChordPitchDegree);
+//					System.out.println("nonrootChordPitchDegree = " + nonrootChordPitchDegree);
 					if(nonrootChordPitchDegree == pitchDegree){
 
 						matchingChords.add(chordsym);
