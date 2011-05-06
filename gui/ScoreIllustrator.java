@@ -84,6 +84,8 @@ public class ScoreIllustrator {
 	}
 
 	public void drawPiece(Graphics g, Piece piece) {
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, ArrangerConstants.PAGE_WIDTH, ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT);
 		
 		// used to draw things from left to right
 		TreeMap<Timestamp, ListIterator<? extends Timestep>> timeline = new TreeMap<Timestamp, ListIterator<? extends Timestep>>();
@@ -678,9 +680,9 @@ public class ScoreIllustrator {
 		int staffY = systemOffset % totalSystemHeight;
 		int indexStaff = staffY / STAFF_SPACING;
 		
-		int lineY = staffY % STAFF_SPACING;
+		int lineY = staffY % STAFF_SPACING + SYSTEM_LINE_SPACING / 4;
 		// actually represents the line/spaces
-		int indexLine = lineY / (SYSTEM_LINE_SPACING / 2);
+		int indexLine = 5 - lineY / (SYSTEM_LINE_SPACING / 2);
 		
 		//------------------X COORDINATE PARSE------------------
 		// which measure
@@ -710,6 +712,7 @@ public class ScoreIllustrator {
 		// current voice being edited
 		System.out.println("Voice: " + 0);
 		
-		return new InstructionIndex(indexStaff, indexMeasure, 0, new Rational(0, 1));
+		Rational measurePosition = new Rational(0, 1);
+		return new InstructionIndex(indexStaff, indexMeasure, 0, measurePosition);
 	}
 }
