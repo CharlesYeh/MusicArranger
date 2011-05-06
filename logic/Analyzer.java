@@ -7,6 +7,7 @@ import music.Piece;
 import music.KeySignature;
 import java.util.ArrayList;
 import util.*;
+import java.util.List;
 
 public class Analyzer extends Thread{
 
@@ -40,10 +41,10 @@ public class Analyzer extends Thread{
 		Node<ChordSymbol> chordV43		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 2));
 		Node<ChordSymbol> chordV42		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 3));
 
-		Node<ChordSymbol> chordN		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.NEAPOLITAN));
-		Node<ChordSymbol> chordIt6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.ITAUG6));
-		Node<ChordSymbol> chordFr6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.FRAUG6));
-		Node<ChordSymbol> chordGer6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.GERAUG6));
+		Node<ChordSymbol> chordN		= new Node<ChordSymbol>(new ChordSymbol(2, ChordType.NEAPOLITAN));
+		Node<ChordSymbol> chordIt6		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.ITAUG6));
+		Node<ChordSymbol> chordFr6		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.FRAUG6));
+		Node<ChordSymbol> chordGer6		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.GERAUG6));
 
 		// I -> I ii III iv V VI VIio N It6 Fr6 Ger6
 		// ii -> V VIio N It6 Fr6 Ger6
@@ -196,6 +197,7 @@ public class Analyzer extends Thread{
 		int halfStepsFromC = pitch % 12;
 		int key = keysig.halfStepsFromC();
 		int pitchDegree = halfStepsFromC - key; //pitch degree is the number of half steps above the tonic 0-11
+		System.out.println("pitchDegree = " + pitchDegree);
 
 		if(keysig.getIsMajor())
 			initMajorKeyGraph();
@@ -206,17 +208,36 @@ public class Analyzer extends Thread{
 		for(Node node : _chordgraph.getNodes()){
 
 			ChordSymbol chordsym = (ChordSymbol) node.getValue();
-			int	chordNotePitchDegree = scaleDegreeToPitchDegree(chordsym.getScaleDegree());
+			System.out.println("=========Current chord is: " + chordsym.getSymbolText() + "==========");
+
+			//Assigns the a pitch degree to the chord
+			int	chordNotePitchDegree;
+			if(chordsym.getChordType() == ChordType.NEAPOLITAN){
+
+				chordNotePitchDegree = 1;
+			}
+			else if(chordsym.getChordType() == ChordType.ITAUG6 || chordsym.getChordType() == ChordType.FRAUG6 || chordsym.getChordType() == ChordType.GERAUG6){
+
+				chordNotePitchDegree = 8;
+			}
+			else{
+
+				chordNotePitchDegree = scaleDegreeToPitchDegree(chordsym.getScaleDegree());
+			}
 
 			//checking if the root of the chord matces the given pitch
-			if(pitchDegree == chordNotePitchDegree)
+			if(pitchDegree == chordNotePitchDegree){
+
 				matchingChords.add(chordsym);
+			}
 			else{
 				//checking if the non-root notes of the chord match the given pitch
-				for(int halfStepsFromRoot : chordsym.getNonRootNotes()){
+				List<Integer> nonRootNotes = chordsym.getNonRootNotes();
+				for(int halfStepsFromRoot : nonRootNotes){
 
-					//checking to see
-					if(((chordNotePitchDegree + halfStepsFromRoot) % 12) == pitchDegree){
+					int nonrootChordPitchDegree = ((chordNotePitchDegree + halfStepsFromRoot) % 12);
+					System.out.println("nonrootChordPitchDegree = " + nonrootChordPitchDegree);
+					if(nonrootChordPitchDegree == pitchDegree){
 
 						matchingChords.add(chordsym);
 						break;
@@ -233,8 +254,8 @@ public class Analyzer extends Thread{
 
 		if(scaleDegree < 1 || scaleDegree > 7){
 
-			System.out.println("erroroneous scaleDegree input");
-			return -1;
+//			System.out.println("erroroneous scaleDegree input");
+			return 0;
 		}
 		else if(scaleDegree < 4)
 			return ((scaleDegree - 1) * 2);
