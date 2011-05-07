@@ -2,7 +2,7 @@ package gui;
 
 import java.awt.Graphics;
 import java.awt.Color;
-import java.awt.event.MouseEvent;
+import java.awt.Point;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -65,7 +65,11 @@ public class ScoreWindow extends Drawable {
 		_slider.drawSelf(g);
 	}
 	
-	public Instruction mouseClicked(MouseEvent e) {
+	public int getSlideY() {
+		return _slider.getY();
+	}
+	
+	public Instruction mouseClicked(Point e) {
 		InstructionIndex index = _illustrator.getEventIndex(e);
 		if (index == null)
 			return null;
@@ -79,11 +83,11 @@ public class ScoreWindow extends Drawable {
 		return instr;
 	}
 	
-	public Instruction mousePressed(MouseEvent e) {
+	public Instruction mousePressed(Point e) {
 		if (_slider.hitTestPoint(e.getX(), e.getY())) {
 			// clicked on slider
 			_sliding = true;
-			dragY = e.getY() - _slider.getY();
+			dragY = (int) e.getY() - _slider.getY();
 		}
 		else {
 			// clicked on score sheet
@@ -92,15 +96,15 @@ public class ScoreWindow extends Drawable {
 		return null;
 	}
 	
-	public Instruction mouseReleased(MouseEvent e) {
+	public Instruction mouseReleased(Point e) {
 		_sliding = false;
 		return null;
 	}
 	
-	public Instruction mouseDragged(MouseEvent e) {
+	public Instruction mouseDragged(Point e) {
 		// drag slider?
 		if (_sliding) {
-			_slider.setY(e.getY() - dragY);
+			_slider.setY((int) e.getY() - dragY);
 		}
 		else {
 			//InstructionIndex index = _illustrator.getEventIndex(e);

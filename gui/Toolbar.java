@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 
 import java.awt.Graphics;
 import java.awt.Color;
-import java.awt.event.MouseEvent;
+import java.awt.Point;
 import instructions.Instruction;
 
 public abstract class Toolbar extends Drawable {
@@ -116,13 +116,11 @@ public abstract class Toolbar extends Drawable {
 		g.drawImage(_buffer, _x, _y, null);
 	}
 
-	public Instruction mouseClicked(MouseEvent e) {
-		int ex = e.getX();
-		int ey = e.getY();
-
+	public Instruction mouseClicked(Point e) {
+		
 		// test button clicks
 		for (ToolbarButton btn : _buttons) {
-			if (btn.hitTestPoint(ex, ey)) {
+			if (btn.hitTestPoint(e)) {
 				return btn.getInstruction();
 			}
 		}
@@ -132,11 +130,11 @@ public abstract class Toolbar extends Drawable {
 	/* Begin dragging and undock
 	 *
 	 */
-	public Instruction mousePressed(MouseEvent e) {
+	public Instruction mousePressed(Point e) {
 		_drag = true;
 
-		_dragX = e.getX() - _x;
-		_dragY = e.getY() - _y;
+		_dragX = (int) e.getX() - _x;
+		_dragY = (int) e.getY() - _y;
 
 		_dockControl.unDock(this);
 		return null;
@@ -145,7 +143,7 @@ public abstract class Toolbar extends Drawable {
 	/* Stop dragging and check dockings
 	 *
 	 */
-	public Instruction mouseReleased(MouseEvent e) {
+	public Instruction mouseReleased(Point e) {
 		_drag = false;
 
 		// check docking to a side
@@ -162,12 +160,12 @@ public abstract class Toolbar extends Drawable {
 	/* Drag this toolbar
 	 *
 	 */
-	public Instruction mouseDragged(MouseEvent e) {
+	public Instruction mouseDragged(Point e) {
 		if (!_drag) return null;
 
 		// if being dragged, move toolbar
-		_x = e.getX() - _dragX;
-		_y = e.getY() - _dragY;
+		_x = (int) e.getX() - _dragX;
+		_y = (int) e.getY() - _dragY;
 		
 		return null;
 	}

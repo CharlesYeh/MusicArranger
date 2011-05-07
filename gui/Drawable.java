@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Point;
 import java.awt.Graphics;
 
 public abstract class Drawable{
@@ -39,4 +40,14 @@ public abstract class Drawable{
 				 _y < cy && cy < _y + _height;
 	}
 	
+	/*
+	 * Returns whether a given point is within the toolbar
+	 */
+	public boolean hitTestPoint(double cx, double cy) {
+		return hitTestPoint((int) cx, (int) cy);
+	}
+	
+	public boolean hitTestPoint(Point p) {
+		return hitTestPoint((int) p.getX(), (int) p.getY());
+	}
 }

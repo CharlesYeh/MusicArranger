@@ -4,6 +4,7 @@ package gui;
 import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Point;
 
 // data struct
 import java.util.LinkedList;
@@ -62,6 +63,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);
+		addComponentListener(this);
 		
 		setBackground(Color.WHITE);
 		
@@ -85,6 +87,12 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		repaint();
 	}
 	
+	public Point getEventPoint(MouseEvent e) {
+		Point pt = e.getPoint();
+		pt.setLocation(pt.getX(), pt.getY() + _scoreWindow.getSlideY());
+		return pt;
+	}
+	
 	/* Handle a mouse press on a toolbar or the score window
 	 * 
 	 */
@@ -92,15 +100,17 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		if (_disabled)
 			return;
 		
+		Point evtPoint = getEventPoint(e);
+		
 		// clicked on which toolbar?
-    	_activeToolbar = mouseEventToolbar(e);
+    		_activeToolbar = mouseEventToolbar(evtPoint);
 		if (_activeToolbar == null) {
 			// clicked on score window
-			_scoreWindow.mousePressed(e);
+			_scoreWindow.mousePressed(evtPoint);
 		}
 		else {
 			// clicked on a toolbar
-			_activeToolbar.mousePressed(e);
+			_activeToolbar.mousePressed(evtPoint);
 		}
 	}
 
@@ -111,17 +121,20 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		if (_disabled)
 			return;
 		
+		// factor in offset
+		Point evtPoint = getEventPoint(e);
+		
 		// clicked on which toolbar?
 		_activeToolbar = null;
-		Toolbar tbar = mouseEventToolbar(e);
+		Toolbar tbar = mouseEventToolbar(evtPoint);
 		Instruction instr;
 		if (tbar == null) {
 			// clicked on score window
-			instr = _scoreWindow.mouseReleased(e);
+			instr = _scoreWindow.mouseReleased(evtPoint);
 		}
 		else {
 			// clicked on a toolbar
-			instr = tbar.mouseReleased(e);
+			instr = tbar.mouseReleased(evtPoint);
 		}
 		sendInstruction(instr);
 		
@@ -130,9 +143,13 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 
 	public void mouseEntered(MouseEvent e) {
 		
+		
+		Point evtPoint = getEventPoint(e);
 	}
 	
 	public void mouseExited(MouseEvent e) {
+		
+		Point evtPoint = getEventPoint(e);
 		
 	}
 
@@ -143,16 +160,18 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		if (_disabled)
 			return;
 		
+		Point evtPoint = getEventPoint(e);
+		
 		// clicked on which toolbar?
-		Toolbar tbar = mouseEventToolbar(e);
+		Toolbar tbar = mouseEventToolbar(evtPoint);
 		Instruction instr;
 		if (tbar == null) {
 			// clicked on score window
-			instr = _scoreWindow.mouseClicked(e);
+			instr = _scoreWindow.mouseClicked(evtPoint);
 		}
 		else {
 			// clicked on a toolbar
-			instr = tbar.mouseClicked(e);
+			instr = tbar.mouseClicked(evtPoint);
 		}
 		
 		sendInstruction(instr);
@@ -164,15 +183,17 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		if (_disabled)
 			return;
 		
+		Point evtPoint = getEventPoint(e);
+		
 		// clicked on which toolbar?
 		Instruction instr;
 		if (_activeToolbar == null) {
 			// clicked on score window
-			instr = _scoreWindow.mouseDragged(e);
+			instr = _scoreWindow.mouseDragged(evtPoint);
 		}
 		else {
 			// dragging a toolbar
-			instr = _activeToolbar.mouseDragged(e);
+			instr = _activeToolbar.mouseDragged(evtPoint);
 		}
 		sendInstruction(instr);
 		
@@ -186,7 +207,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	/*
 	 * Returns: the toolbar on which the mouse event occurred
 	 */
-	private Toolbar mouseEventToolbar(MouseEvent e) {
+	private Toolbar mouseEventToolbar(Point e) {
 		Iterator<Toolbar> iter = _toolbars.iterator();
 		while (iter.hasNext()) {
 			Toolbar drawer = iter.next();
@@ -211,6 +232,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		Component comp = e.getComponent();
 		ArrangerConstants.WINDOW_WIDTH = comp.getWidth();
 		ArrangerConstants.WINDOW_HEIGHT = comp.getHeight();
+		
+		repaint();
 	}
 	public void componentHidden(ComponentEvent e) {
 		

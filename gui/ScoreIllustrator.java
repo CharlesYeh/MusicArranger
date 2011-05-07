@@ -151,6 +151,8 @@ public class ScoreIllustrator {
 		
 		while (!measureLists.isEmpty()) {
 			// set up lists within each list of measures
+			
+			
 			for (int i = 0; i < measureLists.size(); i++) {
 				ListIterator<Measure> measureIter = measureLists.get(i);
 				Measure m = measureIter.next();
@@ -278,6 +280,9 @@ public class ScoreIllustrator {
 					finalVoiceX = 0;
 					
 					_systemPositions.add(systemY);
+					Map<Integer, TreeMap<Integer, Rational>> systemMeasures = new HashMap<Integer, TreeMap<Integer, Rational>>();
+					systemMeasures.put(measureCount, new TreeMap<Integer, Rational>());
+					_mNotePositions.add(systemMeasures);
 					
 					g.setColor(Color.BLACK);
 					for (int i = 0; i < numStaffs; i++){
@@ -304,6 +309,11 @@ public class ScoreIllustrator {
 					
 					voiceX.put(currVoice, voiceX.get(currVoice) + noteWidth);
 					finalVoiceX += noteWidth / voiceX.size();
+					
+					Map<Integer, TreeMap<Integer, Rational>> systemMeasures = _mNotePositions.get(_mNotePositions.size() - 1);
+					TreeMap<Integer, Rational> measureMNotes = systemMeasures.get(measureCount);
+					measureMNotes.put(noteX, currTime);
+					
 				}
 				else if (currDur instanceof ChordSymbol && (currChord == null || !currDur.equals(currChord))) {
 					//---------------------CHORD SYMBOL----------------------
@@ -369,9 +379,15 @@ public class ScoreIllustrator {
 			voiceX.clear();
 			finalVoiceX = 0;
 			
+			// store end of measure position
 			Map<Integer, Integer> lastPositions = _measurePositions.get(_measurePositions.size() - 1);
 			lastPositions.put(measureX, measureCount);
+			
 			measureCount++;
+			
+			// start new map for measure multinotes
+			Map<Integer, TreeMap<Integer, Rational>> systemMeasures = _mNotePositions.get(_mNotePositions.size() - 1);
+			systemMeasures.put(measureCount, new TreeMap<Integer, Rational>());
 		}
 	}
 	
@@ -667,12 +683,12 @@ public class ScoreIllustrator {
 		return -(line - 4) * SYSTEM_LINE_SPACING / 2;
 	}
 	
-	public InstructionIndex getEventIndex(MouseEvent e) {
+	public InstructionIndex getEventIndex(Point e) {
 		
 		//------------------Y COORDINATE PARSE------------------
 		// determine system index
 		int totalSystemHeight = (_staffPositions.size() - 1) * STAFF_SPACING + SYSTEM_SPACING;
-		int systemOffset = e.getY() - TOP_MARGIN;
+		int systemOffset = (int) e.getY() - TOP_MARGIN;
 		
 		if (systemOffset < 0) {
 			// clicked above systems
@@ -691,7 +707,7 @@ public class ScoreIllustrator {
 		//------------------X COORDINATE PARSE------------------
 		// which measure
 		int staffFromTop = indexSystem;
-		int staffX = e.getX();
+		int staffX = (int) e.getX();
 		
 		Map<Integer, Integer> staffMeasures = _measurePositions.get(staffFromTop);
 		int indexMeasure = 0;
@@ -716,7 +732,24 @@ public class ScoreIllustrator {
 		// current voice being edited
 		System.out.println("Voice: " + 0);
 		
+		Map<Integer, TreeMap<Integer, Rational>> measureMNotes = _mNotePositions.get(indexSystem);
+		TreeMap<Integer, Rational> multiNotePositions = measureMNotes.get(indexMeasure);
+		
+		// get the measure offset by traversing through the part of the measure on the staff
+		int prevNoteX = 0;
+		for (int mNoteX: multiNotePositions.keySet()) {
+			if (staffX < mNoteX) {
+				break;
+			}
+			
+			prevNoteX = mNoteX;
+		}
+		
 		Rational measurePosition = new Rational(0, 1);
+		if (prevNoteX != 0) {
+			measurePosition = multiNotePositions.get(prevNoteX);
+		}
+		
 		return new InstructionIndex(indexStaff, indexMeasure, 0, measurePosition);
 	}
 }
