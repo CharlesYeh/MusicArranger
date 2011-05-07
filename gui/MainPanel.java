@@ -89,7 +89,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	public Point getEventPoint(MouseEvent e) {
 		Point pt = e.getPoint();
-		pt.setLocation(pt.getX(), pt.getY() + _scoreWindow.getSlideY());
+		//pt.setLocation(pt.getX(), pt.getY() + _scoreWindow.getSlideY());
 		return pt;
 	}
 	

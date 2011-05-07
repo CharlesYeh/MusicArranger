@@ -70,6 +70,9 @@ public class ScoreWindow extends Drawable {
 	}
 	
 	public Instruction mouseClicked(Point e) {
+		// account for sliding offset
+		e.setLocation(e.getX(), e.getY() + _slider.getY());
+		
 		InstructionIndex index = _illustrator.getEventIndex(e);
 		if (index == null)
 			return null;
@@ -90,6 +93,7 @@ public class ScoreWindow extends Drawable {
 			dragY = (int) e.getY() - _slider.getY();
 		}
 		else {
+			e.setLocation(e.getX(), e.getY() + _slider.getY());
 			// clicked on score sheet
 			//InstructionIndex index = _illustrator.getEventIndex(e);
 		}
@@ -107,6 +111,7 @@ public class ScoreWindow extends Drawable {
 			_slider.setY((int) e.getY() - dragY);
 		}
 		else {
+			e.setLocation(e.getX(), e.getY() + _slider.getY());
 			//InstructionIndex index = _illustrator.getEventIndex(e);
 			
 		}

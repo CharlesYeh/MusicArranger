@@ -684,6 +684,7 @@ public class ScoreIllustrator {
 	}
 	
 	public InstructionIndex getEventIndex(Point e) {
+		// check x bounds
 		
 		//------------------Y COORDINATE PARSE------------------
 		// determine system index
@@ -734,6 +735,7 @@ public class ScoreIllustrator {
 		
 		Map<Integer, TreeMap<Integer, Rational>> measureMNotes = _mNotePositions.get(indexSystem);
 		TreeMap<Integer, Rational> multiNotePositions = measureMNotes.get(indexMeasure);
+		System.out.println(_mNotePositions);
 		
 		// get the measure offset by traversing through the part of the measure on the staff
 		int prevNoteX = 0;
