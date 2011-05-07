@@ -281,6 +281,7 @@ public class Analyzer extends Thread {
 //		return matchingChordProgressions;
 //	}
 
+
 	/*
 	 *Helper function for matchPitchesToChordProgressions() that implements recursion
 	 *
