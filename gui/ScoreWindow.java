@@ -58,7 +58,7 @@ public class ScoreWindow extends Drawable {
 	public void drawSelf(Graphics g) {
 		// draw with offset from slider
 		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
-		int offset = (int) (f);
+		int offset = (int) (_slider.getSlidePercent() * scrollHeight);
 		g.drawImage(_buffer, 0, -offset, null);
 		
 		// draw slider on top
@@ -92,7 +92,7 @@ public class ScoreWindow extends Drawable {
 			dragY = (int) e.getY() - _slider.getY();
 		}
 		else {
-			e = adjustScorePoint(e);
+			adjustScorePoint(e);
 			// clicked on score sheet
 			//InstructionIndex index = _illustrator.getEventIndex(e);
 		}
@@ -101,7 +101,7 @@ public class ScoreWindow extends Drawable {
 	
 	public List<InstructionIndex> mouseReleased(Point e) {
 		// account for sliding offset
-		e = adjustScorePoint(e);
+		adjustScorePoint(e);
 		
 		InstructionIndex index = _illustrator.getEventIndex(e);
 		if (index == null)
@@ -127,7 +127,8 @@ public class ScoreWindow extends Drawable {
 		return null;
 	}
 	
-	public Point getScorePoint(Point p) {
+	public void adjustScorePoint(Point p) {
+		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
 		p.setLocation(p.getX(), p.getY() + _slider.getSlidePercent() * scrollHeight);
 	}
 }
