@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import logic.LogicManager;
 import logic.MidiAPI;
@@ -98,8 +99,15 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemOpen.setToolTipText("Open XML file");
 		menuItemOpen.addActionListener(
 			new ActionListener() {
-				Instruction myInstr = new FileInstructionIO(this, FileInstructionType.OPEN, "open.xml");
 				public void actionPerformed(ActionEvent event) {
+					String path = JOptionPane.showInputDialog("Open from what path?");
+					
+					// error checking
+					if (path == null && path.length() == 0) {
+						System.out.println("Open path cannot be empty");
+					}
+					
+					Instruction myInstr = new FileInstructionIO(this, FileInstructionType.OPEN, path);
 					receiveInstruction(myInstr);
 				}
 			});
@@ -109,8 +117,15 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemSave.setToolTipText("Save current song");
 		menuItemSave.addActionListener(
 			new ActionListener() {
-				Instruction myInstr = new FileInstructionIO(this, FileInstructionType.SAVE, "saved.xml");
 				public void actionPerformed(ActionEvent event) {
+					String path = JOptionPane.showInputDialog("Save to what path?");
+					
+					// error checking
+					if (path == null && path.length() == 0) {
+						System.out.println("Save path cannot be empty");
+					}
+					
+					Instruction myInstr = new FileInstructionIO(this, FileInstructionType.SAVE, path);
 					receiveInstruction(myInstr);
 				}
 			});
@@ -122,6 +137,7 @@ public class Main extends JFrame implements InstructionListener {
 			new ActionListener() {
 				Instruction myInstr = new FileInstructionIO(this, FileInstructionType.PRINT, "");
 				public void actionPerformed(ActionEvent event) {
+					
 					receiveInstruction(myInstr);
 				}
 			});
