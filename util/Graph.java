@@ -49,6 +49,24 @@ public class Graph<T> {
 		return _nodes;
 	}
 
+	/*
+	 * Finds a Node object by a ChordSymbol
+	 *
+	 */
+	public Node findNode(ChordSymbol chordsym){
+
+		Node returnNode = null;
+		for(Node node : _nodes) {
+
+			if(((ChordSymbol) node.getValue()).equals(chordsym)) {
+
+				returnNode = node;
+			}
+		}
+
+		return returnNode;
+	}
+
 //	//returns true if node1 connects to node2 in a certain number of steps, using bidirectional search
 //	public boolean isConnectedBidirectional(Node node1, Node node2, int steps){
 //
