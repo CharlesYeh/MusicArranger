@@ -35,6 +35,16 @@ public class Graph<T> {
 		node2.addPrecedingEdge(edge);
 	}
 
+	//removes an edge within the graph, and removes that edge from the adjacency lists of the nodes it connects
+	public void removeEdge(Edge<T> edge) {
+
+		Node front = edge._front;
+		front.removeFollowingEdge(edge);
+
+		Node back = edge._back;
+		back.removePrecedingEdge(edge);
+	}
+
 	//returns true is node1 is adjacent to node2, else return false
 	public boolean isAdjacent(Node<T> node1, Node<T> node2){
 
