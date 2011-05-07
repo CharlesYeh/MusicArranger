@@ -8,13 +8,14 @@ import music.KeySignature;
 import java.util.ArrayList;
 import util.*;
 import java.util.List;
+import java.util.ListIterator;
 
-public class Analyzer extends Thread{
+public class Analyzer extends Thread {
 
 	Graph<ChordSymbol> _chordgraph;
 
 
-	public Analyzer(){
+	public Analyzer() {
 		initMajorKeyGraph();
 	}
 
@@ -190,9 +191,12 @@ public class Analyzer extends Thread{
 //
 //	}
 
-	//this function takes a pitch, and a key signature, so that it could compare the pitch with the chords within the _chordgraph,
-	//and return a list of ChordSymbols which correspond to chords that contain that pitch.
-	public ArrayList<ChordSymbol> findMatchingChords(int pitch, KeySignature keysig){
+	/*
+	 *this function takes a pitch, and a key signature, so that it could compare the pitch with the chords within the _chordgraph,
+	 *and return a list of ChordSymbols which correspond to chords that contain that pitch.
+	 *
+	 */
+	public ArrayList<ChordSymbol> findMatchingChords(int pitch, KeySignature keysig) {
 
 		int halfStepsFromC = pitch % 12;
 		int key = keysig.halfStepsFromC();
@@ -207,39 +211,39 @@ public class Analyzer extends Thread{
 			initMinorKeyGraph();
 
 		ArrayList<ChordSymbol> matchingChords = new ArrayList<ChordSymbol>();
-		for(Node node : _chordgraph.getNodes()){
+		for(Node node : _chordgraph.getNodes()) {
 
 			ChordSymbol chordsym = (ChordSymbol) node.getValue();
 //			System.out.println("=========Current chord is: " + chordsym.getSymbolText() + "==========");
 
 			//Assigns the a pitch degree to the chord
 			int	chordNotePitchDegree;
-			if(chordsym.getChordType() == ChordType.NEAPOLITAN){
+			if(chordsym.getChordType() == ChordType.NEAPOLITAN) {
 
 				chordNotePitchDegree = 1;
 			}
-			else if(chordsym.getChordType() == ChordType.ITAUG6 || chordsym.getChordType() == ChordType.FRAUG6 || chordsym.getChordType() == ChordType.GERAUG6){
+			else if(chordsym.getChordType() == ChordType.ITAUG6 || chordsym.getChordType() == ChordType.FRAUG6 || chordsym.getChordType() == ChordType.GERAUG6) {
 
 				chordNotePitchDegree = 8;
 			}
-			else{
+			else {
 
 				chordNotePitchDegree = scaleDegreeToPitchDegree(chordsym.getScaleDegree());
 			}
 
 			//checking if the root of the chord matces the given pitch
-			if(pitchDegree == chordNotePitchDegree){
+			if(pitchDegree == chordNotePitchDegree) {
 
 				matchingChords.add(chordsym);
 			}
-			else{
+			else {
 				//checking if the non-root notes of the chord match the given pitch
 				List<Integer> nonRootNotes = chordsym.getNonRootNotes();
-				for(int halfStepsFromRoot : nonRootNotes){
+				for(int halfStepsFromRoot : nonRootNotes) {
 
 					int nonrootChordPitchDegree = ((chordNotePitchDegree + halfStepsFromRoot) % 12);
 //					System.out.println("nonrootChordPitchDegree = " + nonrootChordPitchDegree);
-					if(nonrootChordPitchDegree == pitchDegree){
+					if(nonrootChordPitchDegree == pitchDegree) {
 
 						matchingChords.add(chordsym);
 						break;
@@ -251,8 +255,36 @@ public class Analyzer extends Thread{
 		return matchingChords;
 	}
 
-	//Takes a integer which indicates the scale degree of a note (1-7), and converts that to the pitch degree (0-11, one half step for each pitch degree).
-	public int scaleDegreeToPitchDegree(int scaleDegree){
+
+	/*
+	 * Takes a list of pitches and finds chord progressions that match that list of pitches. Each chord progression will be returned as a list of pitches.
+	 * The more commonly used chord progressions will be considered, depending on the weight of the edges that link the chords in the chord graph.
+	 * A list of best progressions will be returned, in the form of an ArrayList<Arraylist<ChordSymbol>>
+	 *
+	 */
+//	public ArrayList<ArrayList<ChordSymbol>> matchPitchesToChordProgressions(ArrayList<Integer> pitchList) {
+//
+//		ArrayList<ArrayList<ChordSymbol>> matchingChordProgressions = new ArrayList<ArrayList<ChordSymbol>>();
+//		ListIterator pitchItr = pitchList.listIterator();
+//
+//		matchingChordProgressions = matchPitchesToChordProgressionsHelper(pitchItr, matchingChordProgressions);
+//
+//		return matchingChordProgressions;
+//	}
+
+	/*
+	 *Helper function for matchPitchesToChordProgressions() that implements recursion
+	 *
+	 */
+//	public ArrayList<ArrayList<ChordSymbol>> matchPitchesToChordProgressionsHelper(ArrayList<Integer> pitchList, ArrayList<ArrayList<ChordSymbol>> chordProgressionList) {
+//
+//
+//	}
+
+	/*
+	 * Takes a integer which indicates the scale degree of a note (1-7), and converts that to the pitch degree (0-11, one half step for each pitch degree).
+	 */
+	public int scaleDegreeToPitchDegree(int scaleDegree) {
 
 		if(scaleDegree < 1 || scaleDegree > 7){
 
