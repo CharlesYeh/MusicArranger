@@ -27,7 +27,7 @@ public class PageSlider extends Drawable {
 	
 	public void setY(int oy) {
 		// bound checking
-		oy = Math.min(Math.max(oy, 0), ArrangerConstants.WINDOW_HEIGHT);
+		oy = Math.min(Math.max(oy, 0), ArrangerConstants.WINDOW_HEIGHT - _height);
 		
 		super.setY(oy);
 	}
