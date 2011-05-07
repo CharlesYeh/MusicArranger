@@ -7,25 +7,29 @@ import java.util.ArrayList;
  */
 public class ChordSymbol extends Timestep {
 	int _scaleDegree;			// which scale degree the chord starts on (I, ii, V, etc.) represented as an integer from 1-7
+								// set to 0 if scale degree is inapplicable
 	ChordType _chordType;		// quality of the chord (major, minor, etc.)
 
-	int _inversion;
+	int _inversion;				// 0 signifies no inversion or unspecified
 
 
 	public ChordSymbol(int scaleDegree, ChordType chordType) {
-		this(new Rational(), scaleDegree, chordType);
+		this(new Rational(), scaleDegree, chordType, 0);
 	}
 
 	public ChordSymbol(int scaleDegree, ChordType chordType, int inv) {
-		this(new Rational(), scaleDegree, chordType);
-
-		_inversion = inv;
+		this(new Rational(), scaleDegree, chordType, inv);
 	}
 
 	public ChordSymbol(Rational duration, int scaleDegree, ChordType chordType){
+		this(duration, scaleDegree, chordType, 0);
+	}
+
+	public ChordSymbol(Rational duration, int scaleDegree, ChordType chordType, int inv){
 		super(duration);
 		_scaleDegree = scaleDegree;
 		_chordType = chordType;
+		_inversion = inv;
 	}
 
 	public int getScaleDegree() {
@@ -225,5 +229,9 @@ public class ChordSymbol extends Timestep {
 			return true;
 		else
 			return false;
+	}
+	
+	public ChordSymbol copy() {
+		return new ChordSymbol(_duration, _scaleDegree, _chordType, _inversion);
 	}
 }

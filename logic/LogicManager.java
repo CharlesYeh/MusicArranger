@@ -342,7 +342,6 @@ public class LogicManager {
 			return this.offset;
 		}
 	}
-	
 	private IteratorAndOffset calcIterAndOffset(List<? extends Timestep> list, Rational offset) {
 		ListIterator<? extends Timestep> iter;
 		Rational offsetFromIter;
