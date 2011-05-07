@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Point;
 
 // data struct
+import java.util.List;
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -25,7 +26,7 @@ import javax.swing.event.EventListenerList;
 import java.awt.Component;
 
 import arranger.ArrangerConstants;
-import music.Piece;
+import music.*;
 
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
 	
@@ -34,15 +35,16 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	// the last toolbar which was used
 	Toolbar _activeToolbar;
 	
-	LinkedList<Toolbar> _toolbars;
+	List<Toolbar> _toolbars;
 	Toolbar _modeToolbar, _noteToolbar, _playToolbar;
 	ScoreWindow _scoreWindow;
 	
 	protected EventListenerList _listeners = new EventListenerList();
 	
 	//--------------------state information--------------------
-	
-	
+	EditMode _currMode = EditMode.NOTE;
+	EditDuration _currDuration = EditDuration.QUARTER;
+	EditModifier _currModifier = null;
 	
 	public MainPanel(Piece piece) {
 		Toolbar.init("images/gui/toolbarHorizontal.png", "images/gui/toolbarVertical.png");
@@ -129,30 +131,21 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		// clicked on which toolbar?
 		_activeToolbar = null;
 		Toolbar tbar = mouseEventToolbar(evtPoint);
+		
 		Instruction instr;
 		if (tbar == null) {
 			// clicked on score window
-			instr = _scoreWindow.mouseReleased(evtPoint);
+			List<InstructionIndex> listIndex = _scoreWindow.mouseReleased(evtPoint);
+			instr = new EditInstruction(this, listIndex, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(new Rational(1, 2)));
 		}
 		else {
 			// clicked on a toolbar
 			instr = tbar.mouseReleased(evtPoint);
 		}
+		
 		sendInstruction(instr);
 		
 		repaint();
-	}
-
-	public void mouseEntered(MouseEvent e) {
-		
-		
-		Point evtPoint = getEventPoint(e);
-	}
-	
-	public void mouseExited(MouseEvent e) {
-		
-		Point evtPoint = getEventPoint(e);
-		
 	}
 
 	/* Handle a mouse click on a toolbar or the score window
@@ -166,10 +159,12 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		// clicked on which toolbar?
 		Toolbar tbar = mouseEventToolbar(evtPoint);
+		
 		Instruction instr;
 		if (tbar == null) {
 			// clicked on score window
-			instr = _scoreWindow.mouseClicked(evtPoint);
+			List<InstructionIndex> listIndex = _scoreWindow.mouseClicked(evtPoint);
+			instr = new EditInstruction(this, listIndex, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
 		}
 		else {
 			// clicked on a toolbar
@@ -191,15 +186,29 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		Instruction instr;
 		if (_activeToolbar == null) {
 			// clicked on score window
-			instr = _scoreWindow.mouseDragged(evtPoint);
+			List<InstructionIndex> listIndex = _scoreWindow.mouseDragged(evtPoint);
+			instr = new EditInstruction(this, listIndex, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(new Rational(1, 2)));
 		}
 		else {
 			// dragging a toolbar
 			instr = _activeToolbar.mouseDragged(evtPoint);
 		}
+		
 		sendInstruction(instr);
 		
 		repaint();
+	}
+	
+	public void mouseEntered(MouseEvent e) {
+		
+		
+		Point evtPoint = getEventPoint(e);
+	}
+	
+	public void mouseExited(MouseEvent e) {
+		
+		Point evtPoint = getEventPoint(e);
+		
 	}
 	
 	public void mouseMoved(MouseEvent e) {
@@ -209,6 +218,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		// slide 50 pixels for every mouse wheel notch
 		_scoreWindow.slide(50 * e.getWheelRotation());
+		repaint();
 	}
 	
 	/*
@@ -224,7 +234,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				
 				// move this toolbar to the front (higher priority for future events)
 				iter.remove();
-				_toolbars.addFirst(drawer);
+				_toolbars.add(drawer);
 				
 				return drawer;
 			}
@@ -263,6 +273,24 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	// call this method whenever you want to notify
 	//the event listeners of the particular event
 	private synchronized void sendInstruction(Instruction instr) {
+		
+		// intercept GUI instructions
+		if (instr instanceof ModeInstruction) {
+			ModeInstruction modeInstr = (ModeInstruction) instr;
+			switch (modeInstr.getType()) {
+			case MODE:
+				_currMode = (EditMode) modeInstr.getValue();
+				break;
+			case DURATION:
+				_currDuration = (EditDuration) modeInstr.getValue();
+				break;
+			case MODIFIER:
+				_currModifier = (EditModifier) modeInstr.getValue();
+				break;
+			}
+			return;
+		}
+		
 		if (instr == null)
 			return;
 		

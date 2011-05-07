@@ -97,8 +97,9 @@ public abstract class Toolbar extends Drawable {
 		_bufferGraphics.fillRect(0, 0, _width, _height);
 
 		// draw buttons
-		int buttonX = _x, buttonY = _y;
-
+		//int buttonX = _x, buttonY = _y;
+		int buttonX = 0, buttonY = 0;
+		
 		for (ToolbarButton btn : _buttons) {
 			btn.setX(buttonX);
 			btn.setY(buttonY);

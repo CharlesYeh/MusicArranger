@@ -69,7 +69,7 @@ public class ScoreWindow extends Drawable {
 		_slider.setY(_slider.getY() + dy);
 	}
 	
-	public Instruction mouseClicked(Point e) {
+	public List<InstructionIndex> mouseClicked(Point e) {
 		// account for sliding offset
 		e.setLocation(e.getX(), e.getY() + _slider.getY());
 		
@@ -81,12 +81,10 @@ public class ScoreWindow extends Drawable {
 		List<InstructionIndex> listIndex = new ArrayList<InstructionIndex>();
 		listIndex.add(index);
 		
-		Instruction instr = new EditInstruction(this, listIndex, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(new Rational(1, 2)));
-		
-		return instr;
+		return listIndex;
 	}
 	
-	public Instruction mousePressed(Point e) {
+	public List<InstructionIndex> mousePressed(Point e) {
 		if (_slider.hitTestPoint(e.getX(), e.getY())) {
 			// clicked on slider
 			_sliding = true;
@@ -100,12 +98,12 @@ public class ScoreWindow extends Drawable {
 		return null;
 	}
 	
-	public Instruction mouseReleased(Point e) {
+	public List<InstructionIndex> mouseReleased(Point e) {
 		_sliding = false;
 		return null;
 	}
 	
-	public Instruction mouseDragged(Point e) {
+	public List<InstructionIndex> mouseDragged(Point e) {
 		// drag slider?
 		if (_sliding) {
 			_slider.setY((int) e.getY() - dragY);
