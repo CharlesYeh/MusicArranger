@@ -33,6 +33,6 @@ public class ModeToolbar extends Toolbar {
 		genChords.setInstruction(new GenerateInstruction(this, GenerateInstructionType.CHORDS));
 		genVoices.setInstruction(new GenerateInstruction(this, GenerateInstructionType.VOICES));
 
-		_buttons = new ToolbarButton[]{modeNote, modeSelection, modeZoom};
+		_buttons = new ToolbarButton[]{modeNote, modeSelection, modeZoom, genChords, genVoices};
 	}
 }

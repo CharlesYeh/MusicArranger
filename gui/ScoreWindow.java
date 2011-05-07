@@ -58,7 +58,7 @@ public class ScoreWindow extends Drawable {
 	public void drawSelf(Graphics g) {
 		// draw with offset from slider
 		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
-		int offset = (int) (_slider.getSlidePercent() * scrollHeight);
+		int offset = (int) (f);
 		g.drawImage(_buffer, 0, -offset, null);
 		
 		// draw slider on top
@@ -71,7 +71,37 @@ public class ScoreWindow extends Drawable {
 	
 	public List<InstructionIndex> mouseClicked(Point e) {
 		// account for sliding offset
-		e.setLocation(e.getX(), e.getY() + _slider.getY());
+		/*e.setLocation(e.getX(), e.getY() + _slider.getY());
+		
+		InstructionIndex index = _illustrator.getEventIndex(e);
+		if (index == null)
+			return null;
+		
+		// determine which instruction to send
+		List<InstructionIndex> listIndex = new ArrayList<InstructionIndex>();
+		listIndex.add(index);
+		
+		return listIndex;*/
+		return null;
+	}
+	
+	public List<InstructionIndex> mousePressed(Point e) {
+		if (_slider.hitTestPoint(e.getX(), e.getY())) {
+			// clicked on slider
+			_sliding = true;
+			dragY = (int) e.getY() - _slider.getY();
+		}
+		else {
+			e = adjustScorePoint(e);
+			// clicked on score sheet
+			//InstructionIndex index = _illustrator.getEventIndex(e);
+		}
+		return null;
+	}
+	
+	public List<InstructionIndex> mouseReleased(Point e) {
+		// account for sliding offset
+		e = adjustScorePoint(e);
 		
 		InstructionIndex index = _illustrator.getEventIndex(e);
 		if (index == null)
@@ -82,25 +112,6 @@ public class ScoreWindow extends Drawable {
 		listIndex.add(index);
 		
 		return listIndex;
-	}
-	
-	public List<InstructionIndex> mousePressed(Point e) {
-		if (_slider.hitTestPoint(e.getX(), e.getY())) {
-			// clicked on slider
-			_sliding = true;
-			dragY = (int) e.getY() - _slider.getY();
-		}
-		else {
-			e.setLocation(e.getX(), e.getY() + _slider.getY());
-			// clicked on score sheet
-			//InstructionIndex index = _illustrator.getEventIndex(e);
-		}
-		return null;
-	}
-	
-	public List<InstructionIndex> mouseReleased(Point e) {
-		_sliding = false;
-		return null;
 	}
 	
 	public List<InstructionIndex> mouseDragged(Point e) {
@@ -114,5 +125,9 @@ public class ScoreWindow extends Drawable {
 			
 		}
 		return null;
+	}
+	
+	public Point getScorePoint(Point p) {
+		p.setLocation(p.getX(), p.getY() + _slider.getSlidePercent() * scrollHeight);
 	}
 }

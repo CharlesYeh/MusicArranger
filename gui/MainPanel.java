@@ -136,6 +136,10 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		if (tbar == null) {
 			// clicked on score window
 			List<InstructionIndex> listIndex = _scoreWindow.mouseReleased(evtPoint);
+			if (listIndex == null) {
+				return;
+			}
+			
 			instr = new EditInstruction(this, listIndex, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(new Rational(1, 2)));
 		}
 		else {
@@ -152,6 +156,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	 * 
 	 */
 	public void mouseClicked(MouseEvent e) {
+		/*System.out.println("click");
+		
 		if (_disabled)
 			return;
 		
@@ -164,6 +170,10 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		if (tbar == null) {
 			// clicked on score window
 			List<InstructionIndex> listIndex = _scoreWindow.mouseClicked(evtPoint);
+			if (listIndex == null) {
+				return;
+			}
+			
 			instr = new EditInstruction(this, listIndex, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
 		}
 		else {
@@ -173,7 +183,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		sendInstruction(instr);
 		
-		repaint();
+		repaint();*/
 	}
 	
 	public void mouseDragged(MouseEvent e) {
