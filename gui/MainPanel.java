@@ -187,14 +187,11 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		if (_activeToolbar == null) {
 			// clicked on score window
 			List<InstructionIndex> listIndex = _scoreWindow.mouseDragged(evtPoint);
-			instr = new EditInstruction(this, listIndex, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(new Rational(1, 2)));
 		}
 		else {
 			// dragging a toolbar
-			instr = _activeToolbar.mouseDragged(evtPoint);
+			_activeToolbar.mouseDragged(evtPoint);
 		}
-		
-		sendInstruction(instr);
 		
 		repaint();
 	}

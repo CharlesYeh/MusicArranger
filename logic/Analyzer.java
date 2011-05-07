@@ -273,12 +273,11 @@ public class Analyzer extends Thread {
 		ArrayList<ArrayList<ChordSymbol>> matchingChordProgressions;
 //		ListIterator pitchItr = pitchList.listIterator();
 
-		if(pitchList.size() != 0)
-			matchingChordProgressions = matchPitchesToChordProgressionsHelper(pitchList, 0
-
-				, allPossibleChords, matchingChordProgressions);
-
-		return matchingChordProgressions;
+		//if(pitchList.size() != 0)
+			//matchingChordProgressions = matchPitchesToChordProgressionsHelper(pitchList, 0, allPossibleChords, matchingChordProgressions);
+		
+		//return matchingChordProgressions;
+		return null;
 	}
 
 	/*
@@ -295,6 +294,7 @@ public class Analyzer extends Thread {
 
 
 		}
+		return null;
 	}
 
 	/*
