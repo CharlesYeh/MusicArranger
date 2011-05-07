@@ -41,23 +41,34 @@ public class ChordSymbol extends Timestep {
 	}
 
 	public String getSymbolText() {
+		switch (_chordType){
+			case NEAPOLITAN:
+				return "N";
+			case ITAUG6:
+				return "It";
+			case FRAUG6:
+				return "Fr";
+			case GERAUG6:
+				return "Ger";
+		}
+
 		switch (_scaleDegree) {
-		case 1:
-			return "I";
-		case 2:
-			return "ii";
-		case 3:
-			return "iii";
-		case 4:
-			return "IV";
-		case 5:
-			return "V";
-		case 6:
-			return "vi";
-		case 7:
-			return "vii";
-//		case 8:
-//			return "I";
+			case 1:
+				return "I";
+			case 2:
+				return "ii";
+			case 3:
+				return "iii";
+			case 4:
+				return "IV";
+			case 5:
+				return "V";
+			case 6:
+				return "vi";
+			case 7:
+				return "vii";
+	//		case 8:
+	//			return "I";
 		}
 
 		return "";
@@ -68,6 +79,7 @@ public class ChordSymbol extends Timestep {
 			case MAJOR:
 			case MINOR:
 			case DIMIN:
+			case NEAPOLITAN:
 				// not a 7th chord
 				switch (_inversion) {
 					case 0: return "";
@@ -105,6 +117,7 @@ public class ChordSymbol extends Timestep {
 			case MAJOR:
 			case MINOR:
 			case DIMIN:
+			case NEAPOLITAN:
 				// not a 7th chord
 				switch (_inversion) {
 					case 0: return "";
@@ -140,54 +153,64 @@ public class ChordSymbol extends Timestep {
 			case MAJOR:
 				nonRootNotes.add(4);
 				nonRootNotes.add(7);
+				break;
 
 			case MINOR:
 				nonRootNotes.add(3);
 				nonRootNotes.add(7);
+				break;
 
 			case DIMIN:
 				nonRootNotes.add(3);
 				nonRootNotes.add(6);
+				break;
 
 			case MAJOR7:
 				nonRootNotes.add(4);
 				nonRootNotes.add(7);
 				nonRootNotes.add(11);
+				break;
 
 			case MAJORMINOR7:
 				nonRootNotes.add(4);
 				nonRootNotes.add(7);
 				nonRootNotes.add(10);
+				break;
 
 			case MINOR7:
 				nonRootNotes.add(3);
 				nonRootNotes.add(7);
 				nonRootNotes.add(10);
+				break;
 
 			case DIMIN7:
 				nonRootNotes.add(3);
 				nonRootNotes.add(6);
 				nonRootNotes.add(9);
+				break;
 
 			case HDIMIN7:
 				nonRootNotes.add(3);
 				nonRootNotes.add(6);
 				nonRootNotes.add(10);
-//
-//			case ITAUG6:
-//				nonRootNotes.add();
-//				nonRootNotes.add();
-//				nonRootNotes.add();
-//
-//			case FRAUG6:
-//				nonRootNotes.add();
-//				nonRootNotes.add();
-//				nonRootNotes.add();
-//
-//			case GERAUG6:
-//				nonRootNotes.add();
-//				nonRootNotes.add();
-//				nonRootNotes.add();
+				break;
+
+			case ITAUG6:
+				nonRootNotes.add(4);
+				nonRootNotes.add(10);
+				break;
+
+			case FRAUG6:
+				nonRootNotes.add(4);
+				nonRootNotes.add(6);
+				nonRootNotes.add(10);
+				break;
+
+			case GERAUG6:
+				nonRootNotes.add(4);
+				nonRootNotes.add(7);
+				nonRootNotes.add(10);
+				break;
 
 		}
 
