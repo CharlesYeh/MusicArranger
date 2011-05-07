@@ -18,6 +18,12 @@ public class Graph<T> {
 		_nodes = new ArrayList<Node<T>>();
 	}
 
+	//Adds a Node to the Graph
+	public void addNode(Node node) {
+
+		_nodes.add(node);
+	}
+
 	//makes a connection between node1 and node2 with the specified weight.
 	//An Edge is created for each node and added to the other node's adjacency list.
 	//The shorter the weight, the more likely that edge (chord progression) will be used
