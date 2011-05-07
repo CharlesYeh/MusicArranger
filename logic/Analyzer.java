@@ -262,40 +262,40 @@ public class Analyzer extends Thread {
 	 * A list of best progressions will be returned, in the form of an ArrayList<Arraylist<ChordSymbol>>
 	 *
 	 */
-	public ArrayList<ArrayList<ChordSymbol>> matchPitchesToChordProgressions(ArrayList<Integer> pitchList, KeySignature keysig) {
-
-		ArrayList<ArrayList<ChordSymbol>> allPossibleChords = new ArrayList<ArrayList<ChordSymbol>>();
-		for(int pitch : pitchList) {
-
-			allPossibleChords.add(findMatchingChords(pitch, keysig));
-		}
-
-		ArrayList<ArrayList<ChordSymbol>> matchingChordProgressions;
-//		ListIterator pitchItr = pitchList.listIterator();
-
-		if(pitchList.size() != 0)
-			matchingChordProgressions = matchPitchesToChordProgressionsHelper(pitchList, 0
-
-				, allPossibleChords, matchingChordProgressions);
-
-		return matchingChordProgressions;
-	}
+//	public ArrayList<ArrayList<ChordSymbol>> matchPitchesToChordProgressions(ArrayList<Integer> pitchList, KeySignature keysig) {
+//
+//		ArrayList<ArrayList<ChordSymbol>> allPossibleChords = new ArrayList<ArrayList<ChordSymbol>>();
+//		for(int pitch : pitchList) {
+//
+//			allPossibleChords.add(findMatchingChords(pitch, keysig));
+//		}
+//
+//		ArrayList<ArrayList<ChordSymbol>> matchingChordProgressions;
+////		ListIterator pitchItr = pitchList.listIterator();
+//
+//		if(pitchList.size() != 0)
+//			matchingChordProgressions = matchPitchesToChordProgressionsHelper(pitchList, 0
+//
+//				, allPossibleChords, matchingChordProgressions);
+//
+//		return matchingChordProgressions;
+//	}
 
 	/*
 	 *Helper function for matchPitchesToChordProgressions() that implements recursion
 	 *
 	 */
-	public ArrayList<ArrayList<ChordSymbol>> matchPitchesToChordProgressionsHelper(ListIterator<ArrayList<ChordSymbol>> allPossibleChordsItr, Node currentChord, ArrayList<ArrayList<ChordSymbol>> matchingChordProgressions) {
-
-		if(!allPossibleChordsItr.hasNext()) {
-
-
-		}
-		else {
-
-
-		}
-	}
+//	public ArrayList<ArrayList<ChordSymbol>> matchPitchesToChordProgressionsHelper(ListIterator<ArrayList<ChordSymbol>> allPossibleChordsItr, Node currentChord, ArrayList<ArrayList<ChordSymbol>> matchingChordProgressions) {
+//
+//		if(!allPossibleChordsItr.hasNext()) {
+//
+//
+//		}
+//		else {
+//
+//
+//		}
+//	}
 
 	/*
 	 * Takes a integer which indicates the scale degree of a note (1-7), and converts that to the pitch degree (0-11, one half step for each pitch degree).
