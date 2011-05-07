@@ -12,9 +12,11 @@ import java.util.Iterator;
 import java.util.ListIterator;
 
 // for events
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 
@@ -25,7 +27,7 @@ import java.awt.Component;
 import arranger.ArrangerConstants;
 import music.Piece;
 
-public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
+public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
 	
 	boolean _disabled;
 	
@@ -204,6 +206,11 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 	}
 	
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		// slide 50 pixels for every mouse wheel notch
+		_scoreWindow.slide(50 * e.getWheelRotation());
+	}
+	
 	/*
 	 * Returns: the toolbar on which the mouse event occurred
 	 */
@@ -256,11 +263,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	// call this method whenever you want to notify
 	//the event listeners of the particular event
 	private synchronized void sendInstruction(Instruction instr) {
-		System.out.println("about to send: " + instr);
 		if (instr == null)
 			return;
 		
-		System.out.println("sending instruction");
 		InstructionListener[] listeners = _listeners.getListeners(InstructionListener.class);
 		
 		for (int i = 0; i < listeners.length; i++) {

@@ -65,8 +65,8 @@ public class ScoreWindow extends Drawable {
 		_slider.drawSelf(g);
 	}
 	
-	public int getSlideY() {
-		return _slider.getY();
+	public void slide(int dy) {
+		_slider.setY(_slider.getY() + dy);
 	}
 	
 	public Instruction mouseClicked(Point e) {
