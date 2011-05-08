@@ -1,13 +1,17 @@
 package instructions;
 
 import music.Rational;
+import music.Accidental;
 
 public class InstructionIndex {
 	int _staffNumber;		// which staff to modify, not specified if irrelevant
 	int _measureNumber;		// which measure to modify, not specified if irrelevant
 	int _voiceNumber;		// which voice to modify, not specified if irrelevant
 	Rational _measureOffset;// rhythmic position of element, relative to start of measure
-	int _pitchNumber;		// which pitch to modify in the multinote, not specified if irrelevant
+	
+	//int _pitchNumber;		// which pitch to modify in the multinote, not specified if irrelevant
+	int _lineNumber;
+	Accidental _accidental;
 	
 	// constructors
 	
@@ -49,9 +53,10 @@ public class InstructionIndex {
 	 * index of pitch in the MultiNote
 	 */
 	public InstructionIndex(int staffNumber, int measureNumber, int voiceNumber, 
-			Rational measureOffset, int pitchNumber) {
+			Rational measureOffset, int lineNumber) {
 		this(staffNumber, measureNumber, voiceNumber, measureOffset);
-		_pitchNumber = pitchNumber;
+		//_pitchNumber = pitchNumber;
+		_lineNumber = lineNumber;
 	}
 	
 	// getters and setters
@@ -87,12 +92,12 @@ public class InstructionIndex {
 		this._measureOffset = measureOffset;
 	}
 
-	public int getPitchNumber() {
-		return _pitchNumber;
+	public int getLineNumber() {
+		return _lineNumber;
 	}
 
-	public void setPitchNumber(int pitchNumber) {
-		this._pitchNumber = pitchNumber;
+	public void setLineNumber(int lineNumber) {
+		this._lineNumber = lineNumber;
 	}
 	
 }
