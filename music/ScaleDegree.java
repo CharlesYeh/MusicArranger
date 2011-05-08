@@ -120,4 +120,8 @@ public class ScaleDegree {
 		interval = new Interval(intervalType, intervalSize);
 		return interval;
 	}
+	
+	public String toString() {
+		return " " + _degreeNumber + _accidental;
+	}
 }
