@@ -20,7 +20,7 @@ public class Graph<T> {
 	}
 
 	//Adds a Node to the Graph
-	public void addStartingNode(Node node, int weight) {
+	public void addStartingNode(Node<T> node, int weight) {
 
 		addEdge(startingNode, node, weight);
 	}
@@ -45,10 +45,10 @@ public class Graph<T> {
 	//removes an edge within the graph, and removes that edge from the adjacency lists of the nodes it connects
 	public void removeEdge(Edge<T> edge) {
 
-		Node front = edge.getFront();
+		Node<T> front = edge.getFront();
 		front.removeFollowingEdge(edge);
 
-		Node back = edge.getBack();
+		Node<T> back = edge.getBack();
 		back.removePrecedingEdge(edge);
 	}
 
@@ -90,10 +90,10 @@ public class Graph<T> {
 	 * Finds a Node object by a ChordSymbol
 	 *
 	 */
-	public Node findNode(T chordsym){
+	public Node<T> findNode(T chordsym){
 
-		Node returnNode = null;
-		for(Node node : _nodes) {
+		Node<T> returnNode = null;
+		for(Node<T> node : _nodes) {
 
 			if(( node.getValue()).equals(chordsym)) {
 

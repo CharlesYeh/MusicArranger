@@ -19,8 +19,8 @@ public class Node<T>{
 	public Node(T v){
 
 		_value = v;
-		_preceding = new ArrayList();
-		_following = new ArrayList();
+		_preceding = new ArrayList<Edge<T>>();
+		_following = new ArrayList<Edge<T>>();
 	}
 
 	public List<Edge<T>> getPreceding(){
@@ -38,7 +38,7 @@ public class Node<T>{
 	}
 
 	//adds an Edge to the list _followingChords
-	public void addFollowingEdge(Edge edge){
+	public void addFollowingEdge(Edge<T> edge){
 
 		if(!_following.contains(edge))
 			_following.add(edge);
@@ -48,7 +48,7 @@ public class Node<T>{
 	}
 
 	//adds an Edge to the list _precedingChords
-	public void addPrecedingEdge(Edge edge){
+	public void addPrecedingEdge(Edge<T> edge){
 
 		if(!_preceding.contains(edge))
 		_preceding.add(edge);
@@ -58,7 +58,7 @@ public class Node<T>{
 	}
 
 	//returns true if current node leads to the given node, else return false
-	public boolean canLeadTo(Node node){
+	public boolean canLeadTo(Node<T> node){
 
 		if(_following.contains(node))
 			return true;
@@ -67,7 +67,7 @@ public class Node<T>{
 	}
 
 	//returns true if current node can be preceded by the given node, else return false
-	public boolean canComeFrom(Node node){
+	public boolean canComeFrom(Node<T> node){
 
 		if(_preceding.contains(node))
 			return true;
@@ -76,14 +76,14 @@ public class Node<T>{
 	}
 
 	//adds an Edge to the list _followingChords
-	public void removeFollowingEdge(Edge edge){
+	public void removeFollowingEdge(Edge<T> edge){
 
 		if(_following.contains(edge))
 			_following.remove(edge);
 	}
 
 	//removes an Edge from the list _precedingChords
-	public void removePrecedingEdge(Edge edge) {
+	public void removePrecedingEdge(Edge<T> edge) {
 
 		if(_preceding.contains(edge))
 			_preceding.remove(edge);

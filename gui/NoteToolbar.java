@@ -35,13 +35,13 @@ public class NoteToolbar extends Toolbar {
 		noteEighth.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.EIGHTH));
 		noteSixth.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.SIXTEENTH));
 		
-		noteModHalf.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.HALF));
-		noteModThird.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.THIRD));
+		/*noteModHalf.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.HALF));
+		noteModThird.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.THIRD));*/
 		noteModFlat.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.FLAT));
 		noteModSharp.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.SHARP));
 		noteModRest.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.REST));
 		
-		_buttons = new ToolbarButton[]{noteQuar, noteHalf, noteWhole, noteEighth, noteSixth, noteModHalf,
-								noteModThird, noteModDot, noteModFlat, noteModSharp, noteModRest};
+		_buttons = new ToolbarButton[]{noteQuar, noteHalf, noteWhole, noteEighth, noteSixth, /*noteModHalf,
+								noteModThird, */noteModDot, noteModFlat, noteModSharp, noteModRest};
 	}
 }

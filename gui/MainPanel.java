@@ -130,7 +130,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void mouseReleased(MouseEvent e) {
 	   if (_disabled)
 			return;
-	
+		
 		// factor in offset
 	   Point evtPoint = getEventPoint(e);
 	

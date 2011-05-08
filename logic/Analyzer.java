@@ -311,10 +311,10 @@ public class Analyzer extends Thread {
 		}
 
 		//convert matchingChordList to a list of equal dimension with each ChordSymbol encased in a Node structure
-		List<List<Node>> matchingNodesList = new ArrayList<List<Node>>();
+		List<List<Node<ChordSymbol>>> matchingNodesList = new ArrayList<List<Node<ChordSymbol>>>();
 		for(List<ChordSymbol> matchingChords : matchingChordsList) {
 
-			List<Node> matchingNodes = new ArrayList<Node>();
+			List<Node<ChordSymbol>> matchingNodes = new ArrayList<Node<ChordSymbol>>();
 			for(ChordSymbol chordsym : matchingChords) {
 
 				Node<ChordSymbol> node = new Node(chordsym);
@@ -331,15 +331,15 @@ public class Analyzer extends Thread {
 		//first add the nodes of the list of chords that match the first note into the Graph.
 		//These are the beggining chords for all of the chord progressions that can be potentially generated.
 
-		List<Node> firstChordNodes = matchingNodesList.get(0);
-		for(Node node : firstChordNodes) {
+		List<Node<ChordSymbol>> firstChordNodes = matchingNodesList.get(0);
+		for(Node<ChordSymbol> node : firstChordNodes) {
 
 			matchingProgressionsGraph.addStartingNode(node, 1);
 		}
 
 		if(matchingNodesList.size() > 0) {
 
-			for(Node node : firstChordNodes) {
+			for(Node<ChordSymbol> node : firstChordNodes) {
 
 				createPossibleProgressionsGraphHelper(node, matchingNodesList, 0, matchingProgressionsGraph);
 			}
@@ -349,21 +349,22 @@ public class Analyzer extends Thread {
 	}
 
 	//helper function for createPossibleProgressionsGraph that implements recursion to add the edges that complete the chord progression graph
-	private void createPossibleProgressionsGraphHelper(Node currentNode, List<List<Node>> matchingNodesList, int nextNodesListIdx, Graph progressionsGraph) {
+	private void createPossibleProgressionsGraphHelper(Node<ChordSymbol> currentNode,
+								List<List<Node<ChordSymbol>>> matchingNodesList, int nextNodesListIdx, Graph<ChordSymbol> progressionsGraph) {
 
 		//if the currentNode does not belong to the last set of Node objects in the nextNodesList
 		if(nextNodesListIdx < matchingNodesList.size()) {
 
-			List<Node> nextNodes = matchingNodesList.get(nextNodesListIdx);
+			List<Node<ChordSymbol>> nextNodes = matchingNodesList.get(nextNodesListIdx);
 
 			//get the Node in the chordPreferencesGraph that contains currentNode's ChordSymbol, so as to know what chords can follow the current one
-			Node chordGraphNode = _chordPreferencesGraph.findNode((ChordSymbol) currentNode.getValue());
+			Node<ChordSymbol> chordGraphNode = _chordPreferencesGraph.findNode((ChordSymbol) currentNode.getValue());
 
 			//generate list of ChordSymbols that the current chord can conventionally go to
-			List<Edge> followingEdges = chordGraphNode.getFollowing();
+			List<Edge<ChordSymbol>> followingEdges = chordGraphNode.getFollowing();
 			List<ChordSymbol> followingChords = new ArrayList<ChordSymbol>();
 
-			for(Edge edge : followingEdges) {
+			for(Edge<ChordSymbol> edge : followingEdges) {
 
 				followingChords.add((ChordSymbol) edge.getBack().getValue());
 			}
@@ -371,7 +372,7 @@ public class Analyzer extends Thread {
 			boolean hasNext = false; //boolean determining if the current node leads to any other node at all
 
 			//for each of the nodes following the current one one
-			for(Node nextNode : nextNodes) {
+			for(Node<ChordSymbol> nextNode : nextNodes) {
 
 
 				if(followingChords.contains(nextNode)) { //determine if the chord progression from the current chord to the next is conventional
@@ -391,19 +392,20 @@ public class Analyzer extends Thread {
 
 	//removes the Node toRemove from the Graph and removes the relevant Edges,
 	//if the node that is removed is the only node that one of its previous nodes lead to, then that previous node is removed as well
-	private void removeFromProgression(Node toRemove, List<List<Node>> matchingNodesList, int matchingNodesListIdx, Graph progressionsGraph) {
+	private void removeFromProgression(Node<ChordSymbol> toRemove, List<List<Node<ChordSymbol>>> matchingNodesList,
+															int matchingNodesListIdx, Graph progressionsGraph) {
 
 		//get the list of Nodes from which to remove the Node toRemove
-		List<Node> currentNodesList = matchingNodesList.get(matchingNodesListIdx);
+		List<Node<ChordSymbol>> currentNodesList = matchingNodesList.get(matchingNodesListIdx);
 		currentNodesList.remove(toRemove);
 
 		if(matchingNodesListIdx > 0) {
 
 
-			List<Node> previousNodes = toRemove.getPreceding();
+			List<Node<ChordSymbol>> previousNodes = toRemove.getPreceding();
 
 			//check to see if the any previous Nodes only leads to the current Node that was just deleted
-			for(Node previousNode : previousNodes) {
+			for(Node<ChordSymbol> previousNode : previousNodes) {
 
 				if(previousNode.getFollowing().isEmpty()) {//if the previous node only leads to the current node, it will be deleted as well
 
