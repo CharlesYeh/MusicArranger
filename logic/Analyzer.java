@@ -402,13 +402,14 @@ public class Analyzer extends Thread {
 		if(matchingNodesListIdx > 0) {
 
 
-			List<Edge<ChordSymbol>> previousNodes = toRemove.getPreceding();
+			List<Edge<ChordSymbol>> previousEdges = toRemove.getPreceding();
 
 			//check to see if the any previous Nodes only leads to the current Node that was just deleted
-			for(Edge<ChordSymbol> previousNode : previousNodes) {
-				
+			for(Edge<ChordSymbol> previousEdge : previousEdges) {
+
+				Node<ChordSymbol> previousNode = previousEdge.getFront();
 				if(previousNode.getFollowing().isEmpty()) {//if the previous node only leads to the current node, it will be deleted as well
-					
+
 					removeFromProgression(previousNode, matchingNodesList, matchingNodesListIdx - 1, progressionsGraph);
 					progressionsGraph.removeEdge(previousNode, toRemove);
 				}
