@@ -17,6 +17,10 @@ public class Pitch {
 		this(noteLetter, octave, accidental, false);
 	}
 	
+	public Pitch copy() {
+		return new Pitch(_noteLetter, _octave, _accidental, false);
+	}
+	
 	public NoteLetter getNoteLetter() {
 		return _noteLetter;
 	}

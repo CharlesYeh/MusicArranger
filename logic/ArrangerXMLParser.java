@@ -107,9 +107,10 @@ public class ArrangerXMLParser {
 
 	private void parseChordSymbol(Element elemChordSymbol) {
 		Rational dur = parseRationalAttribute(elemChordSymbol, "duration");
-		int scaleDegree = parseIntAttribute(elemChordSymbol, "scaleDegree");
+		int scaleDegree = parseIntAttribute(elemChordSymbol, "scaleDegreeNumber");
+		Accidental accid = getAccidental(parseStringAttribute(elemChordSymbol, "scaleDegreeAccidental"));
 		ChordType chordType = getChordType(parseStringAttribute(elemChordSymbol, "chordType"));
-		ChordSymbol chordSymbol = new ChordSymbol(dur, scaleDegree, chordType);
+		ChordSymbol chordSymbol = new ChordSymbol(dur, new ScaleDegree(scaleDegree, accid), chordType);
 		_editor.insertChordSymbol(chordSymbol);
 	}
 

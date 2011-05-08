@@ -102,7 +102,8 @@ public class ArrangerXMLWriter {
 
 			Rational duration = chordSymbol.getDuration();
 			elemChordSymbol.addAttribute("duration", duration.toString());
-			elemChordSymbol.addAttribute("scaleDegree", "" + chordSymbol.getScaleDegree());
+			elemChordSymbol.addAttribute("scaleDegreeNumber", "" + chordSymbol.getScaleDegree().getDegreeNumber());
+			elemChordSymbol.addAttribute("scaleDegreeAccidental", "" + chordSymbol.getScaleDegree().getAccidental());
 			elemChordSymbol.addAttribute("chordType", "" + chordSymbol.getChordType());
 		}
 	}
