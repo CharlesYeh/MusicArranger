@@ -11,10 +11,21 @@ public class Edge<T>{
 	Node<T> _front;
 	Node<T> _back;
 	int _weight;
-	
+
 	public Edge(Node<T> f, Node<T> b, int weight){
 		_front	= f;
 		_back	= b;
 		_weight	= weight;
 	}
+
+	public Node<T> getFront() {
+
+		return _front;
+	}
+
+	public Node<T> getBack() {
+
+		return _back;
+	}
+
 }
