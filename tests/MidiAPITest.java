@@ -33,7 +33,7 @@ public class MidiAPITest {
 		voice2.add(mary_had_a_little_lamb);
 		voice2.add(mary_had_a_little_lamb2);
 
-		MidiAPI api = new MidiAPI(30);
+		MidiAPI api = new MidiAPI();
 
 		//choose which voice to play!
 		Voice v = MidiAPITest.createVoiceFromMidiPitches(voice1);

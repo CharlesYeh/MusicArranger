@@ -4,8 +4,7 @@ package instructions;
  * Use FileInstructionNew for creating new scores and FileInstructionIO
  * for loading and saving scores.
  */
-public class FileInstruction extends Instruction {
-	public FileInstruction(Object src) {
-		super(src);
+public abstract class FileInstruction extends Instruction {
+	public FileInstruction() {
 	}
 }

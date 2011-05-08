@@ -6,9 +6,7 @@ public class ModeInstruction extends Instruction {
 	ModeInstructionType _type;
 	Object _value;
 	
-	public ModeInstruction(Object src, ModeInstructionType type, Object value) {
-		super(src);
-		
+	public ModeInstruction(ModeInstructionType type, Object value) {
 		_type = type;
 		_value = value;
 	}

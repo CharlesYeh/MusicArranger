@@ -12,11 +12,8 @@ public class MidiAPI{
 	ArrayList<ListIterator<MultiNote>> _voices;
 	Synthesizer _synth;
 	Receiver _receiver;
-
-	int _wholeNotesPerMinute;
-
-	public MidiAPI(int wholeNotesPerMinute){
-		_wholeNotesPerMinute = wholeNotesPerMinute;
+	
+	public MidiAPI(){
 		try{
 			_synth = MidiSystem.getSynthesizer();
 			_synth.open();
@@ -145,7 +142,7 @@ public class MidiAPI{
 
 		Piece p = new Piece();
 		p.getStaffs().add(s);
-
+		
 		_mp = new MidiPlayer(this, p);
 		_mp.start();
 	}
@@ -187,7 +184,7 @@ public class MidiAPI{
 			//send the wanted note message
 			for (Pitch p : _pitches) {
 				MidiMessage noteMessage = getMessage(msg, computeMidiPitch(p));
-				tests.MidiAPITest.printPitch(p);
+				//tests.MidiAPITest.printPitch(p);
 
 				// 0 means execute immediately
 				_receiver.send(noteMessage, 0);
@@ -205,15 +202,10 @@ public class MidiAPI{
 	        // no error checking
 
 	        ShortMessage msg = new ShortMessage();
-
+			  
 	        // command (on/off), channel, note pitch, volume
-
-	        	msg.setMessage(cmd, 0, note, 100);
+	        msg.setMessage(cmd, 0, note, 100);
 
 	        return (MidiMessage) msg;
-	}
-
-	public int getWholeNotesPerMinute(){
-		return _wholeNotesPerMinute;
 	}
 }

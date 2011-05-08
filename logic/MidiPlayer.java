@@ -1,5 +1,6 @@
 package logic;
 
+import arranger.ArrangerConstants;
 import music.*;
 import java.lang.Thread;
 import java.util.ListIterator;
@@ -145,7 +146,7 @@ public class MidiPlayer extends Thread {
 					}
 				}
 
-				int sleepMilli = 60 * 1000 * sleepDuration.getNumerator() / _midi.getWholeNotesPerMinute() / sleepDuration.getDenominator();
+				int sleepMilli = 60 * 1000 * sleepDuration.getNumerator() / ArrangerConstants.WHOLE_NOTES_PER_MINUTE / sleepDuration.getDenominator();
 				System.out.println("currentTime is :" + currentTime);
 				System.out.println("sleepMilli is: " + sleepMilli);
 

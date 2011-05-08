@@ -18,12 +18,16 @@ public class LogicManager {
 	Editor _editor;
 	ArrangerXMLParser _arrangerXMLParser;
 	ArrangerXMLWriter _arrangerXMLWriter;
-
+	
+	MidiAPI _api;
+	
 	public LogicManager(Piece piece) {
 		_piece = piece;
 		_editor = makeEditor();
 		_arrangerXMLParser = makeArrangerXMLParser();
 		_arrangerXMLWriter = makeArrangerXMLWriter();
+		
+		_api = new MidiAPI();
 	}
 	
 	public Editor getEditor() {
@@ -42,11 +46,19 @@ public class LogicManager {
 	protected ArrangerXMLWriter makeArrangerXMLWriter() {
 		return new ArrangerXMLWriter();
 	}
+	
+	public void interpretInstrBlock(InstructionBlock instrBlock) {
+		List<Instruction> allInstructions = instrBlock.getInstructions();
+		for (Instruction instr : allInstructions) {
+			interpretInstr(instr);
+		}
+	}
+	
 	/*
 	 * Finds the Instruction's class type and calls the cooresponding method to interpret
 	 * the Instruction, after casting it appropriately.
 	 */
-	public void interpretInstr(Instruction instr) {
+	private void interpretInstr(Instruction instr) {
 		System.out.println(instr);
 		Class<?> instructionClass = instr.getClass();
 		
@@ -67,7 +79,7 @@ public class LogicManager {
 		}
 	}
 	
-	public void interpretFileInstr(FileInstruction fileInstr) {
+	private void interpretFileInstr(FileInstruction fileInstr) {
 		Class<?> fileInstructionClass = fileInstr.getClass();
 		if (FileInstructionNew.class.isAssignableFrom(fileInstructionClass)) {
 			FileInstructionNew fileInstrNew = (FileInstructionNew) fileInstr;
@@ -85,7 +97,7 @@ public class LogicManager {
 		// TODO: SEND NEw PIECE BACK TO MAIN, THEN TO GUI
 	}
 	
-	public void interpretFileInstrNew(FileInstructionNew fileInstrNew) {
+	private void interpretFileInstrNew(FileInstructionNew fileInstrNew) {
 		System.out.println("start new file");
 		
 		List<Clef> clefs = fileInstrNew.getClefs();
@@ -130,7 +142,7 @@ public class LogicManager {
 		
 		System.out.println("created new piece");
 	}
-	public void interpretFileInstrIO(FileInstructionIO fileInstrIO) {
+	private void interpretFileInstrIO(FileInstructionIO fileInstrIO) {
 		FileInstructionType fileInstrType = fileInstrIO.getType();
 		String fileName = fileInstrIO.getFileName();
 		
@@ -152,7 +164,7 @@ public class LogicManager {
 		}
 	}
 	
-	public void interpretEditInstr(EditInstruction editInstr) {
+	private void interpretEditInstr(EditInstruction editInstr) {
 		EditType editType = editInstr.getElemType();
 		
 		switch (editType) {
@@ -186,6 +198,7 @@ public class LogicManager {
 		default:
 		}
 	}
+	
 	private void editStaff(EditInstruction editInstr) {
 		List<InstructionIndex> indices = editInstr.getIndices();
 		
@@ -213,6 +226,7 @@ public class LogicManager {
 		}
 		
 	}
+	
 	private void editChordSymbol(EditInstruction editInstr) {
 		List<InstructionIndex> indices = editInstr.getIndices();
 		for (InstructionIndex index : indices) {
@@ -260,16 +274,22 @@ public class LogicManager {
 			}
 		}
 	}
+	
 	private void editMeasure(EditInstruction editInstr) {
 	}
+	
 	private void editKeySignature(EditInstruction editInstr) {
 	}
+	
 	private void editTimeSignature(EditInstruction editInstr) {
 	}
+	
 	private void editClef(EditInstruction editInstr) {
 	}
+	
 	private void editVoice(EditInstruction editInstr) {
 	}
+	
 	private void editMultiNote(EditInstruction editInstr) {
 		List<InstructionIndex> indices = editInstr.getIndices();
 		for (InstructionIndex index : indices) {
@@ -321,10 +341,12 @@ public class LogicManager {
 			}
 		}
 	}
+	
 	private void editPitch(EditInstruction editInstr) {
 	}
 	
-	public void interpretPlaybackInstr(PlaybackInstruction playbackInstr) {
+	private void interpretPlaybackInstr(PlaybackInstruction playbackInstr) {
+		
 	}
 	
 	// Used for finding the location of an edit, given a measure and an offset into that measure.
@@ -375,7 +397,7 @@ public class LogicManager {
 		List<Clef> clefList = new ArrayList<Clef>();
 		clefList.add(trebleClef);
 		clefList.add(bassClef);
-		FileInstruction testInstruction = new FileInstructionNew(logicManager, clefList, 9, 3, 4, 0, true);
+		FileInstruction testInstruction = new FileInstructionNew(clefList, 9, 3, 4, 0, true);
 		logicManager.interpretInstr(testInstruction);
 		try {
 			logicManager._arrangerXMLWriter.write(logicManager._piece, "tests/testNew.xml");

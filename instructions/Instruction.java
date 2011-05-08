@@ -1,18 +1,12 @@
 package instructions;
 
-import java.util.List;
-import java.util.EventObject;
-
 /*
  * An Instruction is an abstract class, extended by a number of different types of
  * Instruction classes, used for communication between the GUI and logic components
  * of the Arranger.
  */
-public abstract class Instruction extends EventObject {
+public abstract class Instruction {
 	
-	public Instruction(Object src) {
-		super(src);
-	}
 }
 
 /* POSSIBLE INSTRUCTIONS

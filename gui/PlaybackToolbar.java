@@ -16,8 +16,8 @@ public class PlaybackToolbar extends Toolbar {
 		ToolbarButton playPlay 	= new ToolbarButton("images/note/note_quarter.png");
 		ToolbarButton playStop 	= new ToolbarButton("images/note/note_whole.png");
 		
-		playPlay.setInstruction(new PlaybackInstruction(this, PlaybackInstructionType.START));
-		playStop.setInstruction(new PlaybackInstruction(this, PlaybackInstructionType.STOP));
+		playPlay.setInstruction(new PlaybackInstruction(PlaybackInstructionType.START));
+		playStop.setInstruction(new PlaybackInstruction(PlaybackInstructionType.STOP));
 		
 		_buttons = new ToolbarButton[]{playPlay, playStop};
 	}

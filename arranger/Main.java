@@ -38,9 +38,6 @@ public class Main extends JFrame implements InstructionListener {
 	public Main(){
 		super("Music Arranger");
 		
-		_api = new MidiAPI(30);
-
-
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 		// ######################################################
 		_piece = new tests.LongMelodyPiece();
@@ -88,7 +85,9 @@ public class Main extends JFrame implements InstructionListener {
 					clefList.add(trebleClef);
 					clefList.add(bassClef);
 				}
-				Instruction myInstr = new FileInstructionNew(this, clefList, 30, 4, 4, 0, true);
+				
+				InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionNew(clefList, 30, 4, 4, 0, true));
+				
 				public void actionPerformed(ActionEvent event) {
 					receiveInstruction(myInstr);
 				}
@@ -107,7 +106,7 @@ public class Main extends JFrame implements InstructionListener {
 						System.out.println("Open path cannot be empty");
 					}
 					
-					Instruction myInstr = new FileInstructionIO(this, FileInstructionType.OPEN, path);
+					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.OPEN, path));
 					receiveInstruction(myInstr);
 				}
 			});
@@ -125,7 +124,7 @@ public class Main extends JFrame implements InstructionListener {
 						System.out.println("Save path cannot be empty");
 					}
 					
-					Instruction myInstr = new FileInstructionIO(this, FileInstructionType.SAVE, path);
+					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.SAVE, path));
 					receiveInstruction(myInstr);
 				}
 			});
@@ -135,7 +134,7 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemPrint.setToolTipText("Print song");
 		menuItemPrint.addActionListener(
 			new ActionListener() {
-				Instruction myInstr = new FileInstructionIO(this, FileInstructionType.PRINT, "");
+				InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.PRINT, ""));
 				public void actionPerformed(ActionEvent event) {
 					
 					receiveInstruction(myInstr);
@@ -147,7 +146,7 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemExit.setToolTipText("Exit application");
 		menuItemExit.addActionListener(
 			new ActionListener() {
-				Instruction myInstr = new FileInstructionIO(this, FileInstructionType.EXIT, "");
+				InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.EXIT, ""));
 				public void actionPerformed(ActionEvent event) {
 					receiveInstruction(myInstr);
 				}
@@ -164,23 +163,9 @@ public class Main extends JFrame implements InstructionListener {
 		setJMenuBar(menuBar);
 	}
 	
-	public void receiveInstruction(Instruction instr) {
-		if (instr instanceof PlaybackInstruction) {
-			PlaybackInstruction playInstr = (PlaybackInstruction) instr;
-			
-			switch (playInstr.getType()) {
-			case START:
-				_api.playPiece(_piece);
-				break;
-			case STOP:
-				_api.stopPlayback();
-				break;
-			}
-		}
-		else {
-			_logicManager.interpretInstr(instr);
-			_mainPanel.updateScore();
-		}
+	public void receiveInstruction(InstructionBlock instr) {
+		_logicManager.interpretInstrBlock(instr);
+		_mainPanel.updateScore();
 	}
 	
 	public static void main(String[] args){
