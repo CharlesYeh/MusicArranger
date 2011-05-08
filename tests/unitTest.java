@@ -14,11 +14,11 @@ public class unitTest{
                 int bA = 56;
 
                 Analyzer analyzer = new Analyzer();
-                List<ChordSymbol> matchingchords = analyzer.findMatchingChords(C, CMajor);
+//                List<ChordSymbol> matchingchords = analyzer.findMatchingChords(C, CMajor);
 
-                for(ChordSymbol cs : matchingchords){
-
-                	System.out.println(cs.getSymbolText() + cs.getTopInversionText() + cs.getBotInversionText());
-        		}
+//                for(ChordSymbol cs : matchingchords){
+//
+//                	System.out.println(cs.getSymbolText() + cs.getTopInversionText() + cs.getBotInversionText());
+//        		}
         }
 }

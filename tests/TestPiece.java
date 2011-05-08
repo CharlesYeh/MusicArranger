@@ -18,7 +18,7 @@ public class TestPiece extends Piece {
 		Pitch bf2 = new Pitch(NoteLetter.B, 2, Accidental.FLAT, false);
 		Pitch bn2 = new Pitch(NoteLetter.B, 3, Accidental.NATURAL, false);
 		Pitch cn3 = new Pitch(NoteLetter.C, 3, Accidental.NATURAL, false);
-		
+
 		// multinotes
 		MultiNote treble1 = new MultiNote(new Rational(1, 2));
 			treble1.getPitches().add(cn4);
@@ -40,7 +40,7 @@ public class TestPiece extends Piece {
 		MultiNote bass4 = new MultiNote(new Rational(1, 4));
 			bass4.getPitches().add(bn2);
 		MultiNote bass5 = new MultiNote(new Rational(1, 2)); // rest
-		
+
 		// voices
 		Voice voice1_1_1 = new Voice();				// staff 1, measure 1, voice 1
 			voice1_1_1.getMultiNotes().add(treble1);
@@ -74,9 +74,9 @@ public class TestPiece extends Piece {
 		KeySignature keysig1 = new KeySignature(new Rational(3, 4), 0, true);
 
 		// chord symbols
-		ChordSymbol chordsymbol1 = new ChordSymbol(new Rational(3, 4), 1, ChordType.MAJOR);
-		ChordSymbol chordsymbol2 = new ChordSymbol(new Rational(3, 4), 4, ChordType.MINOR);
-		ChordSymbol chordsymbol3 = new ChordSymbol(new Rational(3, 4), 5, ChordType.HDIMIN7);
+		ChordSymbol chordsymbol1 = new ChordSymbol(new Rational(3, 4), new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR);
+		ChordSymbol chordsymbol2 = new ChordSymbol(new Rational(3, 4), new ScaleDegree(4, Accidental.NATURAL), ChordType.MINOR);
+		ChordSymbol chordsymbol3 = new ChordSymbol(new Rational(3, 4), new ScaleDegree(5, Accidental.NATURAL), ChordType.HDIMIN7);
 
 		// measures
 		Measure measure1_1 = new Measure();

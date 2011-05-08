@@ -5,10 +5,12 @@ import music.ChordSymbol;
 import music.ChordType;
 import music.Piece;
 import music.KeySignature;
+import music.ScaleDegree;
 import java.util.ArrayList;
 import util.*;
 import java.util.List;
 import java.util.ListIterator;
+import music.Accidental;
 
 public class Analyzer extends Thread {
 
@@ -28,24 +30,24 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph = new Graph<ChordSymbol>();
 
 		// create chords
-		Node<ChordSymbol> chordI		= new Node<ChordSymbol>(new ChordSymbol(1, ChordType.MAJOR));
-		Node<ChordSymbol> chordii		= new Node<ChordSymbol>(new ChordSymbol(2, ChordType.MINOR));
-		Node<ChordSymbol> chordiii		= new Node<ChordSymbol>(new ChordSymbol(3, ChordType.MINOR));
-		Node<ChordSymbol> chordIV		= new Node<ChordSymbol>(new ChordSymbol(4, ChordType.MAJOR));
-		Node<ChordSymbol> chordV		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR));
-		Node<ChordSymbol> chordvi		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.MINOR));
-		Node<ChordSymbol> chordviio		= new Node<ChordSymbol>(new ChordSymbol(7, ChordType.DIMIN));
+		Node<ChordSymbol> chordI		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR));
+		Node<ChordSymbol> chordii		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(2, Accidental.NATURAL), ChordType.MINOR));
+		Node<ChordSymbol> chordiii		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(3, Accidental.NATURAL), ChordType.MINOR));
+		Node<ChordSymbol> chordIV		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(4, Accidental.NATURAL), ChordType.MAJOR));
+		Node<ChordSymbol> chordV		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR));
+		Node<ChordSymbol> chordvi		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.MINOR));
+		Node<ChordSymbol> chordviio		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(7, Accidental.NATURAL), ChordType.DIMIN));
 
 		// V seven chords
-		Node<ChordSymbol> chordV7		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 0));
-		Node<ChordSymbol> chordV65		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 1));
-		Node<ChordSymbol> chordV43		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 2));
-		Node<ChordSymbol> chordV42		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 3));
+		Node<ChordSymbol> chordV7		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR7, 0));
+		Node<ChordSymbol> chordV65		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR7, 1));
+		Node<ChordSymbol> chordV43		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR7, 2));
+		Node<ChordSymbol> chordV42		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR7, 3));
 
-		Node<ChordSymbol> chordN		= new Node<ChordSymbol>(new ChordSymbol(2, ChordType.NEAPOLITAN));
-		Node<ChordSymbol> chordIt6		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.ITAUG6));
-		Node<ChordSymbol> chordFr6		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.FRAUG6));
-		Node<ChordSymbol> chordGer6		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.GERAUG6));
+		Node<ChordSymbol> chordN		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(2, Accidental.NATURAL), ChordType.NEAPOLITAN));
+		Node<ChordSymbol> chordIt6		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.ITAUG6));
+		Node<ChordSymbol> chordFr6		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.FRAUG6));
+		Node<ChordSymbol> chordGer6		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.GERAUG6));
 
 		// I -> I ii III iv V VI VIio N It6 Fr6 Ger6
 		// ii -> V VIio N It6 Fr6 Ger6
@@ -109,24 +111,24 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph = new Graph<ChordSymbol>();
 
 		// create chords
-		Node<ChordSymbol> chordi		= new Node<ChordSymbol>(new ChordSymbol(1, ChordType.MINOR));
-		Node<ChordSymbol> chordiio		= new Node<ChordSymbol>(new ChordSymbol(2, ChordType.DIMIN));
-		Node<ChordSymbol> chordIII		= new Node<ChordSymbol>(new ChordSymbol(3, ChordType.MAJOR));
-		Node<ChordSymbol> chordiv		= new Node<ChordSymbol>(new ChordSymbol(4, ChordType.MINOR));
-		Node<ChordSymbol> chordV		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR));
-		Node<ChordSymbol> chordVI		= new Node<ChordSymbol>(new ChordSymbol(6, ChordType.MAJOR));
-		Node<ChordSymbol> chordviio		= new Node<ChordSymbol>(new ChordSymbol(7, ChordType.DIMIN));
+		Node<ChordSymbol> chordi		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MINOR));
+		Node<ChordSymbol> chordiio		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(2, Accidental.NATURAL), ChordType.DIMIN));
+		Node<ChordSymbol> chordIII		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(3, Accidental.NATURAL), ChordType.MAJOR));
+		Node<ChordSymbol> chordiv		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(4, Accidental.NATURAL), ChordType.MINOR));
+		Node<ChordSymbol> chordV		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR));
+		Node<ChordSymbol> chordVI		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.MAJOR));
+		Node<ChordSymbol> chordviio		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(7, Accidental.NATURAL), ChordType.DIMIN));
 
 		// V seven chords
-		Node<ChordSymbol> chordV7		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 0));
-		Node<ChordSymbol> chordV65		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 1));
-		Node<ChordSymbol> chordV43		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 2));
-		Node<ChordSymbol> chordV42		= new Node<ChordSymbol>(new ChordSymbol(5, ChordType.MAJOR7, 3));
+		Node<ChordSymbol> chordV7		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR7, 0));
+		Node<ChordSymbol> chordV65		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR7, 1));
+		Node<ChordSymbol> chordV43		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR7, 2));
+		Node<ChordSymbol> chordV42		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR7, 3));
 
-		Node<ChordSymbol> chordN		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.NEAPOLITAN));
-		Node<ChordSymbol> chordIt6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.ITAUG6));
-		Node<ChordSymbol> chordFr6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.FRAUG6));
-		Node<ChordSymbol> chordGer6		= new Node<ChordSymbol>(new ChordSymbol(0, ChordType.GERAUG6));
+		Node<ChordSymbol> chordN		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(2, Accidental.NATURAL), ChordType.NEAPOLITAN));
+		Node<ChordSymbol> chordIt6		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.ITAUG6));
+		Node<ChordSymbol> chordFr6		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.FRAUG6));
+		Node<ChordSymbol> chordGer6		= new Node<ChordSymbol>(new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.GERAUG6));
 
 		// i -> iio III iv V VI viio N It6 Fr6 Ger6
 		// iio -> V viio N It6 Fr6 Ger6
@@ -196,7 +198,7 @@ public class Analyzer extends Thread {
 	 *and return a list of ChordSymbols which correspond to chords that contain that pitch.
 	 *
 	 */
-	public ArrayList<ChordSymbol> findMatchingChords(int pitch, KeySignature keysig) {
+	/*public ArrayList<ChordSymbol> findMatchingChords(int pitch, KeySignature keysig) {
 
 		int halfStepsFromC = pitch % 12;
 		int key = keysig.halfStepsFromC();
@@ -254,7 +256,7 @@ public class Analyzer extends Thread {
 
 		return matchingChords;
 	}
-
+*/
 
 	/*
 	 * Takes a list of pitches and finds chord progressions that match that list of pitches. Each chord progression will be returned as a list of pitches.
@@ -297,6 +299,103 @@ public class Analyzer extends Thread {
 //
 //		}
 //	}
+
+
+	public Graph createPossibleProgressionsGraph(List<List<ChordSymbol>> matchingChordsList){
+
+		Graph<ChordSymbol> matchingProgressionsGraph = new Graph<ChordSymbol>();
+
+		if(matchingChordsList.size() == 0) {
+
+			return null;
+		}
+
+		//convert matchingChordList to a list of equal dimension with each ChordSymbol encased in a Node structure
+		List<List<Node>> matchingNodesList = new ArrayList<List<Node>>();
+		for(List<ChordSymbol> matchingChords : matchingChordsList) {
+
+			List<Node> matchingNodes = new ArrayList<Node>();
+			for(ChordSymbol chordsym : matchingChords) {
+
+				Node<ChordSymbol> node = new Node(chordsym);
+				matchingNodes.add(node);
+
+			}
+
+			matchingNodesList.add(matchingNodes);
+		}
+
+
+		//use the new list of possible chord nodes to create the the matchingProgressions graph
+
+		//first add the nodes of the list of chords that match the first note into the Graph.
+		//These are the beggining chords for all of the chord progressions that can be potentially generated.
+
+		List<Node> firstChordNodes = matchingNodesList.get(0);
+		for(Node node : firstChordNodes) {
+
+			matchingProgressionsGraph.addStartingNode(node, 1);
+		}
+
+		if(matchingNodesList.size() > 0) {
+
+			for(Node node : firstChordNodes) {
+
+				createPossibleProgressionsGraphHelper(node, matchingNodesList, 0, matchingProgressionsGraph);
+			}
+		}
+
+		return matchingProgressionsGraph;
+	}
+
+	//helper function for createPossibleProgressionsGraph that implements recursion to add the edges that complete the chord progression graph
+	private void createPossibleProgressionsGraphHelper(Node currentNode, List<List<Node>> matchingNodesList, int nextNodesListIdx, Graph progressionsGraph) {
+
+		//if the currentNode does not belong to the last set of Node objects in the nextNodesList
+		if(nextNodesListIdx < matchingNodesList.size()) {
+
+			List<Node> nextNodes = matchingNodesList.get(nextNodesListIdx);
+
+			//get the Node in the chordPreferencesGraph that contains currentNode's ChordSymbol, so as to know what chords can follow the current one
+			Node chordGraphNode = _chordPreferencesGraph.findNode((ChordSymbol) currentNode.getValue());
+
+			//generate list of ChordSymbols that the current chord can conventionally go to
+			List<Edge> followingEdges = chordGraphNode.getFollowing();
+			List<ChordSymbol> followingChords = new ArrayList<ChordSymbol>();
+
+			for(Edge edge : followingEdges) {
+
+				followingChords.add((ChordSymbol) edge.getBack().getValue());
+			}
+
+			boolean hasNext = false; //boolean determining if the current node leads to any other node at all
+
+			//for each of the nodes following the current one one
+			for(Node nextNode : nextNodes) {
+
+
+				if(followingChords.contains(nextNode)) { //determine if the chord progression from the current chord to the next is conventional
+
+					progressionsGraph.addEdge(currentNode, nextNode, 1); //valid progression, add edge to the return graph
+					hasNext = true;
+					createPossibleProgressionsGraphHelper(nextNode, matchingNodesList, nextNodesListIdx, progressionsGraph); //recur
+				}
+			}
+
+			if(!hasNext) {
+
+				removeFromProgression(currentNode, matchingNodesList, nextNodesListIdx - 1, progressionsGraph);
+			}
+		}
+	}
+
+	//removes the Node toRemove from the Graph and removes the relevant Edges,
+	//if the node that is removed is the only node that one of its previous nodes lead to, then that previous node is removed as well
+	private void removeFromProgression(Node toRemove, List<List<Node>> nextNodesList, int nextNodesListIdx, Graph progressionsGraph) {
+
+
+	}
+
 
 	/*
 	 * Takes a integer which indicates the scale degree of a note (1-7), and converts that to the pitch degree (0-11, one half step for each pitch degree).
