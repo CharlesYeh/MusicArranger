@@ -135,7 +135,7 @@ public class LogicManager {
 				_editor.insertVoice(voice);
 				_editor.insertMultiNote(rest);
 				// Add blank placeholder chordsymbols
-				ChordSymbol chordSymbol = new ChordSymbol(duration, 0, ChordType.BLANK);
+				ChordSymbol chordSymbol = new ChordSymbol(duration, new ScaleDegree(0, Accidental.NATURAL), ChordType.BLANK);
 				_editor.insertChordSymbol(chordSymbol);
 			}
 		}
