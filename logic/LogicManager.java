@@ -60,17 +60,16 @@ public class LogicManager {
 	 */
 	private void interpretInstr(Instruction instr) {
 		System.out.println(instr);
-		Class<?> instructionClass = instr.getClass();
 		
-		if (FileInstruction.class.isAssignableFrom(instructionClass)){
+		if (instr instanceof FileInstruction){
 			FileInstruction fileInstr = (FileInstruction) instr;
 			interpretFileInstr(fileInstr);
 		}
-		else if (EditInstruction.class.isAssignableFrom(instructionClass)) {
+		else if (instr instanceof EditInstruction) {
 			EditInstruction editInstr = (EditInstruction) instr;
 			interpretEditInstr(editInstr);
 		}
-		else if (PlaybackInstruction.class.isAssignableFrom(instructionClass)) {
+		else if (instr instanceof PlaybackInstruction) {
 			PlaybackInstruction playbackInstr = (PlaybackInstruction) instr;
 			interpretPlaybackInstr(playbackInstr);
 		}
@@ -80,12 +79,11 @@ public class LogicManager {
 	}
 	
 	private void interpretFileInstr(FileInstruction fileInstr) {
-		Class<?> fileInstructionClass = fileInstr.getClass();
-		if (FileInstructionNew.class.isAssignableFrom(fileInstructionClass)) {
+		if (fileInstr instanceof FileInstructionNew) {
 			FileInstructionNew fileInstrNew = (FileInstructionNew) fileInstr;
 			interpretFileInstrNew(fileInstrNew);
 		}
-		else if (FileInstructionIO.class.isAssignableFrom(fileInstructionClass)) {
+		else if (fileInstr instanceof FileInstructionIO) {
 			FileInstructionIO fileInstrIO = (FileInstructionIO) fileInstr;
 			interpretFileInstrIO(fileInstrIO);
 		}
@@ -109,14 +107,17 @@ public class LogicManager {
 		boolean isMajor = fileInstrNew.getIsMajor();
 		
 		_editor.clearScore();
+		
 		// loop through staffs
 		for (int stfnm = 0; stfnm < numStaffs; stfnm++) {
 			Staff staff = new Staff();
 			_editor.insertStaff(staff);
+			
 			// loop through measures
 			for (int msrnm = 0; msrnm < numMeasures; msrnm++) {
 				Measure measure = new Measure();
 				_editor.insertMeasure(measure);
+				
 				// Instantiate key signature, time signature
 				Rational duration = new Rational(timeSigNumer, timeSigDenom);
 				TimeSignature timeSig = new TimeSignature(duration,
@@ -124,16 +125,19 @@ public class LogicManager {
 				KeySignature keySig = new KeySignature(duration, accidentals, isMajor);
 				_editor.insertKeySig(keySig);
 				_editor.insertTimeSig(timeSig);
+				
 				// Instantiate clef
 				ClefName clefName = clefs.get(stfnm).getClefName();
 				int centerLine = clefs.get(stfnm).getCenterLine();
 				Clef clef = new Clef(duration, clefName, centerLine);
 				_editor.insertClef(clef);
+				
 				// Instantiate single voice with a rest;
 				Voice voice = new Voice();
 				MultiNote rest = new MultiNote(duration);
 				_editor.insertVoice(voice);
 				_editor.insertMultiNote(rest);
+				
 				// Add blank placeholder chordsymbols
 				ChordSymbol chordSymbol = new ChordSymbol(duration, new ScaleDegree(0, Accidental.NATURAL), ChordType.BLANK);
 				_editor.insertChordSymbol(chordSymbol);
@@ -346,7 +350,14 @@ public class LogicManager {
 	}
 	
 	private void interpretPlaybackInstr(PlaybackInstruction playbackInstr) {
-		
+		switch (playbackInstr.getType()) {
+		case START:
+			_api.playPiece(_piece);
+			break;
+		case STOP:
+			_api.stopPlayback();
+			break;
+		}
 	}
 	
 	// Used for finding the location of an edit, given a measure and an offset into that measure.

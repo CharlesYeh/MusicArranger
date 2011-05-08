@@ -183,9 +183,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	}
    
 	public void mouseEntered(MouseEvent e) {
-	
-	
-	   Point evtPoint = getEventPoint(e);
+		
+		
+		Point evtPoint = getEventPoint(e);
 	}
    
 	public void mouseExited(MouseEvent e) {
