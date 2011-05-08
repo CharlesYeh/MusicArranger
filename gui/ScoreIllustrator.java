@@ -737,7 +737,6 @@ public class ScoreIllustrator {
 		
 		Map<Integer, TreeMap<Integer, Rational>> measureMNotes = _mNotePositions.get(indexSystem);
 		TreeMap<Integer, Rational> multiNotePositions = measureMNotes.get(indexMeasure);
-		System.out.println(_mNotePositions);
 		
 		if (multiNotePositions == null) {
 			// indexSystem doesn't have the measure indexMeasure -> UH OH
@@ -754,8 +753,6 @@ public class ScoreIllustrator {
 			prevNoteX = mNoteX;
 		}
 		
-		System.out.println(prevNoteX);
-		System.out.println(multiNotePositions.get(prevNoteX));
 		Rational measurePosition = new Rational(0, 1);
 		if (prevNoteX != 0) {
 			measurePosition = multiNotePositions.get(prevNoteX);

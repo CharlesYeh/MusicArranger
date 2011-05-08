@@ -73,6 +73,10 @@ public class LogicManager {
 			PlaybackInstruction playbackInstr = (PlaybackInstruction) instr;
 			interpretPlaybackInstr(playbackInstr);
 		}
+		else if (instr instanceof GenerateInstruction) {
+			GenerateInstruction genInstr = (GenerateInstruction) instr;
+			interpretGenerateInstr(genInstr);
+		}
 		else {
 			throw new RuntimeException("Instruction of unrecognized InstructionType");
 		}
@@ -164,6 +168,19 @@ public class LogicManager {
 			} catch (Exception e) {
 				System.out.println("Save failed");
 			}
+			break;
+		}
+	}
+	
+	private void interpretGenerateInstr(GenerateInstruction genInstr) {
+		GenerateInstructionType genType = genInstr.getType();
+		
+		switch (genType) {
+		case CHORDS:
+			
+			break;
+		case VOICES:
+			
 			break;
 		}
 	}

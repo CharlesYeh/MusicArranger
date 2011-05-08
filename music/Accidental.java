@@ -7,7 +7,8 @@ public enum Accidental {
 	FLAT (-1),
 	NATURAL (0),
 	SHARP (1),
-	DOUBLESHARP (2);
+	DOUBLESHARP (2),
+	DEFAULT;
 	
 	int _accid;
 	Accidental(int accid) {
@@ -20,6 +21,6 @@ public enum Accidental {
 	
 	public static Accidental getAccidental(int v) {
 		// v must be from -2 to 2
-		return Accidental.values()[v-2];
+		return Accidental.values()[v + 2];
 	}
 }
