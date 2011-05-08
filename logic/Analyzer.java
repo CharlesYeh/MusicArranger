@@ -317,7 +317,7 @@ public class Analyzer extends Thread {
 			List<Node<ChordSymbol>> matchingNodes = new ArrayList<Node<ChordSymbol>>();
 			for(ChordSymbol chordsym : matchingChords) {
 
-				Node<ChordSymbol> node = new Node(chordsym);
+				Node<ChordSymbol> node = new Node<ChordSymbol>(chordsym);
 				matchingNodes.add(node);
 
 			}
@@ -402,13 +402,13 @@ public class Analyzer extends Thread {
 		if(matchingNodesListIdx > 0) {
 
 
-			List<Node<ChordSymbol>> previousNodes = toRemove.getPreceding();
+			List<Edge<ChordSymbol>> previousNodes = toRemove.getPreceding();
 
 			//check to see if the any previous Nodes only leads to the current Node that was just deleted
-			for(Node<ChordSymbol> previousNode : previousNodes) {
-
+			for(Edge<ChordSymbol> previousNode : previousNodes) {
+				
 				if(previousNode.getFollowing().isEmpty()) {//if the previous node only leads to the current node, it will be deleted as well
-
+					
 					removeFromProgression(previousNode, matchingNodesList, matchingNodesListIdx - 1, progressionsGraph);
 					progressionsGraph.removeEdge(previousNode, toRemove);
 				}
