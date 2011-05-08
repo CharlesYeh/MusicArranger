@@ -12,10 +12,17 @@ import music.*;
 public class Graph<T> {
 
 	List<Node<T>> _nodes;
+	Node<T> startingNode;
 
 	public Graph(){
 
 		_nodes = new ArrayList<Node<T>>();
+	}
+
+	//Adds a Node to the Graph
+	public void addStartingNode(Node node, int weight) {
+
+		addEdge(startingNode, node, weight);
 	}
 
 	//makes a connection between node1 and node2 with the specified weight.
@@ -33,6 +40,16 @@ public class Graph<T> {
 		Edge<T> edge = new Edge<T>(node1, node2, weight);
 		node1.addFollowingEdge(edge);
 		node2.addPrecedingEdge(edge);
+	}
+
+	//removes an edge within the graph, and removes that edge from the adjacency lists of the nodes it connects
+	public void removeEdge(Edge<T> edge) {
+
+		Node front = edge.getFront();
+		front.removeFollowingEdge(edge);
+
+		Node back = edge.getBack();
+		back.removePrecedingEdge(edge);
 	}
 
 	//returns true is node1 is adjacent to node2, else return false

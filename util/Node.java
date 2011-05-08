@@ -74,4 +74,18 @@ public class Node<T>{
 		else
 			return false;
 	}
+
+	//adds an Edge to the list _followingChords
+	public void removeFollowingEdge(Edge edge){
+
+		if(_following.contains(edge))
+			_following.remove(edge);
+	}
+
+	//removes an Edge from the list _precedingChords
+	public void removePrecedingEdge(Edge edge) {
+
+		if(_preceding.contains(edge))
+			_preceding.remove(edge);
+	}
 }
