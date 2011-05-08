@@ -1,15 +1,15 @@
 package instructions;
 
-import java.awt.image.BufferedImage;
+import java.awt.Image;
 
 public class FileInstructionPrint extends FileInstruction{
-	BufferedImage _buffer;
-	
-	public FileInstructionPrint(BufferedImage img) {
+	Image _buffer;
+
+	public FileInstructionPrint(Image img) {
 		_buffer = img;
 	}
-	
-	public BufferedImage getImage() {
+
+	public Image getImage() {
 		return _buffer;
 	}
 }

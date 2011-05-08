@@ -5,6 +5,9 @@ import instructions.*;
 
 import java.util.*;
 import java.awt.print.*;
+import java.awt.Graphics;
+import java.awt.Image;
+import javax.print.attribute.*;
 
 /*
  * LogicManager is the highest level class in the logic package, which is instantiated
@@ -13,54 +16,56 @@ import java.awt.print.*;
  * Instructions to the classes contained within the package.
  */
 
-public class LogicManager implement Printable {
+public class LogicManager implements Printable {
 	Piece _piece;
 	Editor _editor;
 	ArrangerXMLParser _arrangerXMLParser;
 	ArrangerXMLWriter _arrangerXMLWriter;
-	
+
 	MidiAPI _api;
-	
+
+	Image _toPrint;
+
 	public LogicManager(Piece piece) {
 		_piece = piece;
 		_editor = makeEditor();
 		_arrangerXMLParser = makeArrangerXMLParser();
 		_arrangerXMLWriter = makeArrangerXMLWriter();
-		
+
 		_api = new MidiAPI();
 	}
-	
+
 	public Editor getEditor() {
 		return _editor;
 	}
-	
+
 	protected Editor makeEditor() {
 		Editor editor = new Editor();
 		editor.setPiece(_piece);
 		return editor;
 	}
-	
+
 	protected ArrangerXMLParser makeArrangerXMLParser() {
 		return new ArrangerXMLParser(_editor);
 	}
 	protected ArrangerXMLWriter makeArrangerXMLWriter() {
 		return new ArrangerXMLWriter();
 	}
-	
+
 	public void interpretInstrBlock(InstructionBlock instrBlock) {
 		List<Instruction> allInstructions = instrBlock.getInstructions();
 		for (Instruction instr : allInstructions) {
 			interpretInstr(instr);
 		}
 	}
-	
+
 	/*
 	 * Finds the Instruction's class type and calls the cooresponding method to interpret
 	 * the Instruction, after casting it appropriately.
 	 */
 	private void interpretInstr(Instruction instr) {
 		System.out.println(instr);
-		
+
 		if (instr instanceof FileInstruction){
 			FileInstruction fileInstr = (FileInstruction) instr;
 			interpretFileInstr(fileInstr);
@@ -81,7 +86,7 @@ public class LogicManager implement Printable {
 			throw new RuntimeException("Instruction of unrecognized InstructionType");
 		}
 	}
-	
+
 	private void interpretFileInstr(FileInstruction fileInstr) {
 		if (fileInstr instanceof FileInstructionIO) {
 			FileInstructionIO fileInstrIO = (FileInstructionIO) fileInstr;
@@ -95,23 +100,41 @@ public class LogicManager implement Printable {
 			FileInstructionPrint fileInstrPrint = (FileInstructionPrint) fileInstr;
 			interpretFileInstrPrint(fileInstrPrint);
 		}
-		
+
 		// Since file instructions instantiate a new piece, rather than mutating the old one, the
 		// the new piece must be updated in Logic and passed back.
 		Piece piece = _editor.getPiece();
 		this._piece = piece;
 		// TODO: SEND NEW PIECE BACK TO MAIN, THEN TO GUI
 	}
-	
+
 	public int print(Graphics g, PageFormat pf, int page) throws PrinterException {
 		//FileInstructionPrint
+		g.drawImage(_toPrint, 0, 0, null);
+
+		return PAGE_EXISTS;
 	}
 	private void interpretFileInstrPrint(FileInstructionPrint fileInstrPrint) {
 		//fileInstrPrint
+		_toPrint = fileInstrPrint.getImage();
+		PrinterJob job = PrinterJob.getPrinterJob();
+		PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
+		PageFormat pf = job.pageDialog(aset);
+		job.setPrintable(this, pf);
+		boolean ok = job.printDialog(aset);
+		if (ok) {
+			try {
+				job.print(aset);
+			}
+			catch (PrinterException ex) {
+				System.out.println("Print failed");
+			}
+		}
+
 	}
 	private void interpretFileInstrNew(FileInstructionNew fileInstrNew) {
 		System.out.println("start new file");
-		
+
 		List<Clef> clefs = fileInstrNew.getClefs();
 		int numStaffs = clefs.size();
 		int numMeasures = fileInstrNew.getNumMeasures();
@@ -119,50 +142,50 @@ public class LogicManager implement Printable {
 		int timeSigDenom = fileInstrNew.getTimeSigDenom();
 		int accidentals = fileInstrNew.getAccidentals();
 		boolean isMajor = fileInstrNew.getIsMajor();
-		
+
 		_editor.clearScore();
-		
+
 		// loop through staffs
 		for (int stfnm = 0; stfnm < numStaffs; stfnm++) {
 			Staff staff = new Staff();
 			_editor.insertStaff(staff);
-			
+
 			// loop through measures
 			for (int msrnm = 0; msrnm < numMeasures; msrnm++) {
 				Measure measure = new Measure();
 				_editor.insertMeasure(measure);
-				
+
 				// Instantiate key signature, time signature
 				Rational duration = new Rational(timeSigNumer, timeSigDenom);
 				TimeSignature timeSig = new TimeSignature(duration, timeSigNumer, timeSigDenom);
 				KeySignature keySig = new KeySignature(duration, accidentals, isMajor);
 				_editor.insertKeySig(keySig);
 				_editor.insertTimeSig(timeSig);
-				
+
 				// Instantiate clef
 				ClefName clefName = clefs.get(stfnm).getClefName();
 				int centerLine = clefs.get(stfnm).getCenterLine();
 				Clef clef = new Clef(duration, clefName, centerLine);
 				_editor.insertClef(clef);
-				
+
 				// Instantiate single voice with a rest;
 				Voice voice = new Voice();
 				MultiNote rest = new MultiNote(duration);
 				_editor.insertVoice(voice);
 				_editor.insertMultiNote(rest);
-				
+
 				// Add blank placeholder chordsymbols
 				ChordSymbol chordSymbol = new ChordSymbol(duration, new ScaleDegree(0, Accidental.NATURAL), ChordType.BLANK);
 				_editor.insertChordSymbol(chordSymbol);
 			}
 		}
-		
+
 		System.out.println("created new piece");
 	}
 	private void interpretFileInstrIO(FileInstructionIO fileInstrIO) {
 		FileInstructionType fileInstrType = fileInstrIO.getType();
 		String fileName = fileInstrIO.getFileName();
-		
+
 		switch (fileInstrType) {
 		case OPEN:
 			try {
@@ -180,23 +203,23 @@ public class LogicManager implement Printable {
 			break;
 		}
 	}
-	
+
 	private void interpretGenerateInstr(GenerateInstruction genInstr) {
 		GenerateInstructionType genType = genInstr.getType();
-		
+
 		switch (genType) {
 		case CHORDS:
-			
+
 			break;
 		case VOICES:
-			
+
 			break;
 		}
 	}
-	
+
 	private void interpretEditInstr(EditInstruction editInstr) {
 		EditType editType = editInstr.getElemType();
-		
+
 		switch (editType) {
 		case STAFF:
 			editStaff(editInstr);
@@ -228,14 +251,14 @@ public class LogicManager implement Printable {
 		default:
 		}
 	}
-	
+
 	private void editStaff(EditInstruction editInstr) {
 		InstructionIndex index = editInstr.getIndex();
-		
+
 		int staffNumber = index.getStaffNumber();
 		ListIterator<Staff> iterator = _piece.getStaffs().listIterator(staffNumber);
 		_editor.setStaffIter(iterator);
-		
+
 		EditInstructionType instrType = editInstr.getType();
 		switch (instrType) {
 		// TODO: THESE STAFF INSERTION/REMOVAL FUNCTIONS ARE DUMMIES, HAVE TO CHECK FOR STAFF LENGTH, MAKING KEY SIGNATURES/TIME SIGNATURES CONSISTENT, ETC.
@@ -252,28 +275,28 @@ public class LogicManager implement Printable {
 			default:
 				throw new RuntimeException("Instruction of unrecognized EditInstructionType");
 		}
-		
+
 	}
-	
+
 	private void editChordSymbol(EditInstruction editInstr) {
 		InstructionIndex index = editInstr.getIndex();
-		
+
 		int staffNumber = index.getStaffNumber();
 		int measureNumber = index.getMeasureNumber();
 		Rational measureOffset = index.getMeasureOffset();
 		Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
 		List<ChordSymbol> chordSymbolList = measure.getChordSymbols();
-		
+
 		// calculate iterator and offset
 		IteratorAndOffset iterAndOffset = calcIterAndOffset(chordSymbolList, measureOffset);
 		ListIterator<ChordSymbol> iter = (ListIterator<ChordSymbol>) iterAndOffset.getIter();
 		Rational offset = iterAndOffset.getOffset();
-		
+
 		ChordSymbol chordSymbol;
-		
+
 		// set the iterator in the editor
 		_editor.setChordSymbolIter(iter);
-		
+
 		EditInstructionType instrType = editInstr.getType();
 		switch (instrType) {
 		// offset SHOULD be 0 for insertion and removal functions
@@ -300,42 +323,42 @@ public class LogicManager implement Printable {
 				throw new RuntimeException("Instruction of unrecognized EditInstructionType");
 		}
 	}
-	
+
 	private void editMeasure(EditInstruction editInstr) {
 	}
-	
+
 	private void editKeySignature(EditInstruction editInstr) {
 	}
-	
+
 	private void editTimeSignature(EditInstruction editInstr) {
 	}
-	
+
 	private void editClef(EditInstruction editInstr) {
 	}
-	
+
 	private void editVoice(EditInstruction editInstr) {
 	}
-	
+
 	private void editMultiNote(EditInstruction editInstr) {
 		InstructionIndex index = editInstr.getIndex();
-		
+
 		int staffNumber = index.getStaffNumber();
 		int measureNumber = index.getMeasureNumber();
 		int voiceNumber = index.getVoiceNumber();
 		Rational measureOffset = index.getMeasureOffset();
 		Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
 		List<MultiNote> multiNoteList = measure.getVoices().get(voiceNumber).getMultiNotes();
-		
+
 		// calculate iterator and offset
 		IteratorAndOffset iterAndOffset = calcIterAndOffset(multiNoteList, measureOffset);
 		ListIterator<MultiNote> iter = (ListIterator<MultiNote>) iterAndOffset.getIter();
 		Rational offset = iterAndOffset.getOffset();
-		
+
 		MultiNote multiNote;
-		
+
 		// set the iterator in the editor
 		_editor.setMultiNoteIter(iter);
-		
+
 		EditInstructionType instrType = editInstr.getType();
 		switch (instrType) {
 		// offset SHOULD be 0 for insertion and removal functions
@@ -364,10 +387,10 @@ public class LogicManager implement Printable {
 				throw new RuntimeException("Instruction of unrecognized EditInstructionType");
 		}
 	}
-	
+
 	private void editPitch(EditInstruction editInstr) {
 	}
-	
+
 	private void interpretPlaybackInstr(PlaybackInstruction playbackInstr) {
 		switch (playbackInstr.getType()) {
 		case START:
@@ -378,7 +401,7 @@ public class LogicManager implement Printable {
 			break;
 		}
 	}
-	
+
 	// Used for finding the location of an edit, given a measure and an offset into that measure.
 	class IteratorAndOffset {
 		ListIterator<? extends Timestep> iter;
@@ -397,10 +420,10 @@ public class LogicManager implement Printable {
 	private IteratorAndOffset calcIterAndOffset(List<? extends Timestep> list, Rational offset) {
 		ListIterator<? extends Timestep> iter;
 		Rational offsetFromIter;
-		
+
 		iter = list.listIterator();
 		offsetFromIter = offset;
-		
+
 		Rational rationalZero = new Rational(0,1);
 		while (iter.hasNext()) {
 			// subtract duration of next element from the current offset
@@ -416,10 +439,10 @@ public class LogicManager implement Printable {
 		}
 		return new IteratorAndOffset(iter, offsetFromIter);
 	}
-	
+
 	public static void main(String[] args) {
 		// testing FileInstructionNew
-		
+
 		LogicManager logicManager = new LogicManager(new Piece());
 		// TODO: THIS IS STILL ALL CONSTANTS
 		Clef trebleClef = new Clef(ClefName.GCLEF, -2);
@@ -434,8 +457,8 @@ public class LogicManager implement Printable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
+
 		// testing EditMultiNote
 		/*
 		LogicManager logicManager = new LogicManager(new Piece());
@@ -445,17 +468,17 @@ public class LogicManager implement Printable {
 		List<InstructionIndex> indices2 = new ArrayList<InstructionIndex>();
 		indices1.add(new InstructionIndex(0, 0, 0, new Rational(0, 1)));
 		indices2.add(new InstructionIndex(0, 0, 0, new Rational(1, 8)));
-		EditInstruction editInstruction1 = new EditInstruction(logicManager, 
+		EditInstruction editInstruction1 = new EditInstruction(logicManager,
 				indices1,
 				EditInstructionType.REPLACE,
 				EditType.MULTINOTE,
 				new MultiNote(new Rational(1, 8)));
-		EditInstruction editInstruction2 = new EditInstruction(logicManager, 
+		EditInstruction editInstruction2 = new EditInstruction(logicManager,
 				indices2,
 				EditInstructionType.REPLACE,
 				EditType.MULTINOTE,
 				new MultiNote(new Rational(1, 4)));
-		EditInstruction editInstruction3 = new EditInstruction(logicManager, 
+		EditInstruction editInstruction3 = new EditInstruction(logicManager,
 				indices2,
 				EditInstructionType.REPLACE,
 				EditType.MULTINOTE,
@@ -469,7 +492,7 @@ public class LogicManager implement Printable {
 			e.printStackTrace();
 		}
 		*/
-		
+
 		// testing FileInstructionIO
 		/*
 		LogicManager logicManager = new LogicManager(new Piece());
@@ -481,7 +504,7 @@ public class LogicManager implement Printable {
 				"tests/testSave.xml");
 		List<InstructionIndex> indices1 = new ArrayList<InstructionIndex>();
 		indices1.add(new InstructionIndex(0, 0, 0, new Rational(0, 1)));
-		EditInstruction editInstruction1 = new EditInstruction(logicManager, 
+		EditInstruction editInstruction1 = new EditInstruction(logicManager,
 				indices1,
 				EditInstructionType.REPLACE,
 				EditType.MULTINOTE,

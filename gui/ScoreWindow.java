@@ -24,67 +24,71 @@ import java.io.IOException;
 public class ScoreWindow extends Drawable {
 	Image _buffer;
 	Graphics _bufferGraphics;
-	
+
 	// reference to song
 	Piece _piece;
 	ScoreIllustrator _illustrator;
-	
+
 	PageSlider _slider;
 	boolean _sliding;
 	int dragY;
-	
+
 	// measure positions within each system
-	
+
 	public ScoreWindow(Piece piece) {
 		_piece = piece;
 		_illustrator = new ScoreIllustrator();
-		
+
 		_buffer = new BufferedImage(ArrangerConstants.PAGE_WIDTH,
 						ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT,
 						BufferedImage.TYPE_INT_ARGB);
 		_bufferGraphics = _buffer.getGraphics();
-		
+
 		_slider = new PageSlider();
 		_sliding = false;
-		
+
 		updateScore();
 	}
-	
+
+	public Image getScoreImage() {
+		return _buffer;
+	}
+
 	public void updateScore() {
 		// buffer self-image
 		_illustrator.drawPiece(_bufferGraphics, _piece);
 	}
-	
+
 	public void drawSelf(Graphics g) {
 		// draw with offset from slider
 		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
 		int offset = (int) (_slider.getSlidePercent() * scrollHeight);
 		g.drawImage(_buffer, 0, -offset, null);
-		
+
 		// draw slider on top
 		_slider.drawSelf(g);
 	}
-	
+
 	public void slide(int dy) {
 		_slider.setY(_slider.getY() + dy);
 	}
-	
+
 	public List<InstructionIndex> mouseClicked(Point e) {
 		// account for sliding offset
 		/*e.setLocation(e.getX(), e.getY() + _slider.getY());
-		
+
 		InstructionIndex index = _illustrator.getEventIndex(e);
 		if (index == null)
 			return null;
-		
+
 		// determine which instruction to send
 		List<InstructionIndex> listIndex = new ArrayList<InstructionIndex>();
 		listIndex.add(index);
-		
+
 		return listIndex;*/
 		return null;
 	}
-	
+
 	public List<InstructionIndex> mousePressed(Point e) {
 		if (_slider.hitTestPoint(e.getX(), e.getY())) {
 			// clicked on slider
@@ -98,23 +102,23 @@ public class ScoreWindow extends Drawable {
 		}
 		return null;
 	}
-	
+
 	public List<InstructionIndex> mouseReleased(Point e) {
 		// account for sliding offset
 		_sliding = false;
 		adjustScorePoint(e);
-		
+
 		InstructionIndex index = _illustrator.getEventIndex(e);
 		if (index == null)
 			return null;
-		
+
 		// determine which instruction to send
 		List<InstructionIndex> listIndex = new ArrayList<InstructionIndex>();
 		listIndex.add(index);
-		
+
 		return listIndex;
 	}
-	
+
 	public List<InstructionIndex> mouseDragged(Point e) {
 		// drag slider?
 		if (_sliding) {
@@ -123,11 +127,11 @@ public class ScoreWindow extends Drawable {
 		else {
 			e.setLocation(e.getX(), e.getY() + _slider.getY());
 			//InstructionIndex index = _illustrator.getEventIndex(e);
-			
+
 		}
 		return null;
 	}
-	
+
 	public void adjustScorePoint(Point p) {
 		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
 		p.setLocation(p.getX(), p.getY() + _slider.getSlidePercent() * scrollHeight);

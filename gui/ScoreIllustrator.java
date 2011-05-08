@@ -34,14 +34,14 @@ public class ScoreIllustrator {
 
 	final static int SYSTEM_SPACING = 90;
 	final static int SYSTEM_LINE_SPACING = 10;
-	
+
 	final static int STAFF_SPACING = 70;
-	
+
 	final static int TIMESIG_WIDTH = 30;
 	final static int KEYSIG_WIDTH = 30;
 	final static int CLEF_WIDTH = 50;
 	final static int CHORD_SPACING = 10;
-	
+
 	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
 	final static int NOTE_HEIGHT = SYSTEM_LINE_SPACING;
 
@@ -62,7 +62,7 @@ public class ScoreIllustrator {
 	// staff to measure > multinote position > timestamp value of this mnote
 	List<Map<Integer, TreeMap<Integer, Rational>>> _mNotePositions;
 	Map<MultiNote, Clef> _mNoteClefs;
-	
+
 	public ScoreIllustrator() {
 		// load images
 		try {
@@ -89,89 +89,89 @@ public class ScoreIllustrator {
 	public void drawPiece(Graphics g, Piece piece) {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, ArrangerConstants.PAGE_WIDTH, ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT);
-		
+
 		// used to draw things from left to right
 		TreeMap<Timestamp, ListIterator<? extends Timestep>> timeline = new TreeMap<Timestamp, ListIterator<? extends Timestep>>();
-		
+
 		// positions
 		_systemPositions = new ArrayList<Integer>();
 		_staffPositions = new HashMap<Staff, Integer>();
 		_measurePositions = new ArrayList<TreeMap<Integer, Integer>>();
 		_mNotePositions = new ArrayList<Map<Integer, TreeMap<Integer, Rational>>>();
-		
+
 		// add first system to mNotePositions
 		Map<Integer, TreeMap<Integer, Rational>> firstSys = new HashMap<Integer, TreeMap<Integer, Rational>>();
 		_mNotePositions.add(firstSys);
-		
+
 		// the staff each object is in
 		Map<ListIterator<Measure>, Staff> measureStaffs = new HashMap<ListIterator<Measure>, Staff>();
 		Map<ListIterator<? extends Timestep>, Staff> timestepStaff = new HashMap<ListIterator<? extends Timestep>, Staff>();
 		Map<ListIterator<? extends Timestep>, Voice> timestepVoice = new HashMap<ListIterator<? extends Timestep>, Voice>();
-		
+
 		List<Clef> clefs;
 		List<KeySignature> keySigs;
 		List<TimeSignature> timeSigs;
 		List<ChordSymbol> chords;
-		
+
 		ListIterator<Clef> clefIter;
 		ListIterator<KeySignature> keyIter;
 		ListIterator<TimeSignature> timeIter;
 		ListIterator<ChordSymbol> chordIter;
-		
+
 		// use map to find which clef each staff is currently using
 		ChordSymbol currChord = null;
 		Map<Staff, Clef> currClefs = new HashMap<Staff, Clef>();
 		Map<Staff, KeySignature> currKeySigs 	= new HashMap<Staff, KeySignature>();
 		Map<Staff, TimeSignature> currTimeSigs 	= new HashMap<Staff, TimeSignature>();
 		Map<Staff, List<MultiNote>> stemGroups = new HashMap<Staff, List<MultiNote>>();
-		
+
 		// list of measures in each staff
 		List<ListIterator<Measure>> measureLists = new ArrayList<ListIterator<Measure>>();
 		// current horizontal positions within each staff
 		Map<Staff, Integer> staffX = new HashMap<Staff, Integer>();
 		Map<Voice, Integer> voiceX = new HashMap<Voice, Integer>();
 		int finalVoiceX = 0;
-		
+
 		boolean startDrawing = true;
-		
+
 		//Map<ListIterator<? extends Timestep>, Boolean> nextSystem = new HashMap<ListIterator<? extends Timestep>, Boolean>();
 		int systemY	= TOP_MARGIN;
 		int numStaffs	= piece.getStaffs().size();
-		
+
 		for (Staff staff : piece.getStaffs()) {
 			List<Measure> staffMeasures = staff.getMeasures();
 			ListIterator<Measure> measureIterator = staffMeasures.listIterator();
-			
+
 			measureLists.add(measureIterator);
 			measureStaffs.put(measureIterator, staff);
-			
+
 			_staffPositions.put(staff, _staffPositions.size());
 			staffX.put(staff, LEFT_MARGIN);
-			
+
 			stemGroups.put(staff, new ArrayList<MultiNote>());
 		}
-		
+
 		int measureCount = 0;
-		
+
 		while (!measureLists.isEmpty()) {
-			
+
 			// start new map for measure multinotes
 			Map<Integer, TreeMap<Integer, Rational>> currSysMeasures = _mNotePositions.get(_mNotePositions.size() - 1);
 			currSysMeasures.put(measureCount, new TreeMap<Integer, Rational>());
-			
+
 			// set up lists within each list of measures
 			for (int i = 0; i < measureLists.size(); i++) {
 				ListIterator<Measure> measureIter = measureLists.get(i);
 				Measure m = measureIter.next();
-				
+
 				Staff staff = measureStaffs.get(measureIter);
-				
+
 				// if measure list is empty, don't add back to list
 				if (!measureIter.hasNext()) {
 					measureLists.remove(i);
 					i--;
 				}
-				
+
 				// get all the lists within each measure
 				//-------------------------listiters-----------------------
 				// load structure
@@ -179,55 +179,55 @@ public class ScoreIllustrator {
 				keySigs 	= m.getKeySignatures();
 				timeSigs	= m.getTimeSignatures();
 				chords		= m.getChordSymbols();
-				
+
 				clefIter	= clefs.listIterator();
 				keyIter 	= keySigs.listIterator();
 				timeIter	= timeSigs.listIterator();
 				chordIter	= chords.listIterator();
-				
+
 				timeline.put(new Timestamp(Clef.class), clefIter);
 				timeline.put(new Timestamp(KeySignature.class), keyIter);
 				timeline.put(new Timestamp(TimeSignature.class), timeIter);
 				timeline.put(new Timestamp(ChordSymbol.class), chordIter);
-				
+
 				// keep track of which staff each list is on
 				timestepStaff.put(clefIter, staff);
 				timestepStaff.put(keyIter, staff);
 				timestepStaff.put(timeIter, staff);
 				timestepStaff.put(chordIter, staff);
-				
+
 				//-----------------------end listiters----------------------
 				List<Voice> voices = m.getVoices();
-				
+
 				for (Voice v : voices) {
 					List<MultiNote> multis = v.getMultiNotes();
 					ListIterator<MultiNote> multisList = multis.listIterator();
-					
+
 					voiceX.put(v, 0);
 					finalVoiceX = 0;
-					
+
 					timeline.put(new Timestamp(MultiNote.class), multisList);
 					timestepStaff.put(multisList, staff);
 					timestepVoice.put(multisList, v);
 				}
-				
+
 			}
-			
+
 			while (timeline.size() > 0) {
 				Timestamp timestamp = timeline.firstKey();
 				ListIterator<? extends Timestep> currList = timeline.get(timestamp);
-				
+
 				if (currList == null) {
 					System.out.println("There was an empty list of class: " + timestamp.getAssocClass());
 					System.exit(1);
 				}
-				
+
 				Rational currTime = null;
 				Timestep currDur = null;
 				if (currList.hasNext()) {
 					currTime = timestamp.getDuration();
 					currDur = currList.next();
-					
+
 					timeline.remove(timestamp);
 					timestamp.addDuration(currDur);
 					timeline.put(timestamp, currList);
@@ -237,15 +237,15 @@ public class ScoreIllustrator {
 					timeline.remove(timestamp);
 					continue;
 				}
-				
+
 				// get data related to this timestep
 				Staff currStaff = timestepStaff.get(currList);
 				Voice currVoice = timestepVoice.get(currList);
-				
+
 				Clef currClef = currClefs.get(currStaff);
 				KeySignature currKeySig = currKeySigs.get(currStaff);
 				TimeSignature currTimeSig = currTimeSigs.get(currStaff);
-				
+
 				int nextX = staffX.get(currStaff);
 				if (currDur instanceof MultiNote) {
 					nextX += voiceX.get(currVoice);
@@ -253,145 +253,145 @@ public class ScoreIllustrator {
 				else {
 					nextX += finalVoiceX;
 				}
-				
+
 				//int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
 				// if extending into the margin, make a new line
 				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN || startDrawing) {
 					// draw system lines
 					if (!startDrawing){
 						systemY += SYSTEM_SPACING + (numStaffs - 1) * STAFF_SPACING;
-						
+
 						Map<Integer, TreeMap<Integer, Rational>> systemMeasures = new HashMap<Integer, TreeMap<Integer, Rational>>();
 						systemMeasures.put(measureCount, new TreeMap<Integer, Rational>());
 						_mNotePositions.add(systemMeasures);
 					}
-					
+
 					startDrawing = false;
-					
+
 					// if new line, set left position
 					nextX = LEFT_MARGIN;
-					
+
 					// reset x for all staffs
 					Set<Staff> staffs = staffX.keySet();
 					for (Staff stf : staffs) {
 						staffX.put(stf, nextX);
 					}
-					
+
 					// reset x for all voices
 					Set<Voice> voices = voiceX.keySet();
 					for (Voice v : voices) {
 						voiceX.put(v, 0);
 					}
-					
+
 					finalVoiceX = 0;
-					
+
 					_systemPositions.add(systemY);
-					
+
 					g.setColor(Color.BLACK);
 					for (int i = 0; i < numStaffs; i++){
 						drawSystem(g, systemY + i * STAFF_SPACING);
 					}
-					
+
 					_measurePositions.add(new TreeMap<Integer, Integer>());
 				}
 				int nextY = systemY + _staffPositions.get(currStaff) * STAFF_SPACING;
-				
+
 				// draw duration object
 				if (currDur instanceof MultiNote) {
 					//-----------------------MULTINOTE-----------------------
 					MultiNote mnote = (MultiNote) currDur;
-					
+
 					int noteX = nextX;
 					int noteY = nextY;
-					
+
 					drawMultiNote(g, stemGroups.get(currStaff), currClef, mnote, noteX, noteY);
 					Rational dur = mnote.getDuration();
-					
+
 					// nextX should increase proportional to note length
 					int noteWidth = (int) (((double) dur.getNumerator()) / dur.getDenominator() * MEASURE_WIDTH);
-					
+
 					voiceX.put(currVoice, voiceX.get(currVoice) + noteWidth);
 					finalVoiceX += noteWidth / voiceX.size();
-					
+
 					Map<Integer, TreeMap<Integer, Rational>> systemMeasures = _mNotePositions.get(_mNotePositions.size() - 1);
 					TreeMap<Integer, Rational> measureMNotes = systemMeasures.get(measureCount);
 					measureMNotes.put(noteX, currTime);
-					
+
 				}
 				else if (currDur instanceof ChordSymbol && (currChord == null || !currDur.equals(currChord))) {
 					//---------------------CHORD SYMBOL----------------------
 					ChordSymbol cSymbol = (ChordSymbol) currDur;
-					
+
 					int chordX = nextX;
 					int chordY = nextY + 5 * SYSTEM_LINE_SPACING + (numStaffs - 1) * STAFF_SPACING + CHORD_SPACING;
 					drawChordSymbol(g, cSymbol, chordX, chordY);
-					
+
 					currChord = cSymbol;
 				}
 				else if (currDur instanceof KeySignature && (currKeySig == null || !currDur.equals(currKeySig))) {
 					//-----------------------KEY SIG-----------------------
 					KeySignature keySig = (KeySignature) currDur;
-					
+
 					// draw key sig
 					drawAccidental(g, Accidental.SHARP, nextX, nextY);
 					staffX.put(currStaff, nextX + KEYSIG_WIDTH);
-					
+
 					currKeySigs.put(currStaff, keySig);
 				}
 				else if (currDur instanceof TimeSignature && (currTimeSig == null || !currDur.equals(currTimeSig))) {
 					//-----------------------TIME SIG-----------------------
 					TimeSignature timeSig = (TimeSignature) currDur;
-					
+
 					// draw time sig
 					g.setFont(new Font("Arial", 0, 24));
 					g.drawString("" + timeSig.getNumerator(), nextX, nextY + 1 * SYSTEM_LINE_SPACING);
 					g.drawString("" + timeSig.getDenominator(), nextX, nextY + 3 * SYSTEM_LINE_SPACING);
 					staffX.put(currStaff, nextX + TIMESIG_WIDTH);
-					
+
 					currTimeSigs.put(currStaff, timeSig);
 				}
 				else if (currDur instanceof Clef && (currClef == null || !currDur.equals(currClef))) {
 					//-------------------------CLEF-------------------------
 					Clef clef = (Clef) currDur;
-					
+
 					drawClef(g, clef, nextX, nextY);
 					staffX.put(currStaff, nextX + CLEF_WIDTH);
-					
+
 					currClefs.put(currStaff, clef);
 				}
 				else {
 				}
 			}
-			
+
 			int measureX = 0;
 			// draw barline
 			for (Staff stf : _staffPositions.keySet()) {
 				int pos = _staffPositions.get(stf);
-				
+
 				Measure m = stf.getMeasures().get(0);
-				
+
 				int stfX = staffX.get(stf) + finalVoiceX;
 				measureX = stfX;
-				
+
 				int startY = systemY + pos * STAFF_SPACING;
 				int endY = systemY + pos * STAFF_SPACING + 4 * SYSTEM_LINE_SPACING;
-				
+
 				g.drawLine(stfX, startY, stfX, endY);
 				staffX.put(stf, stfX + 15);
 			}
 			voiceX.clear();
 			finalVoiceX = 0;
-			
+
 			// store end of measure position
 			Map<Integer, Integer> lastPositions = _measurePositions.get(_measurePositions.size() - 1);
 			lastPositions.put(measureX, measureCount);
-			
+
 			measureCount++;
 		}
 	}
-	
+
 	//------------------specific drawing calculations------------------
-	
+
 	/* Draws all pitches within the multinote
 	 *
 	 */
@@ -403,41 +403,41 @@ public class ScoreIllustrator {
 
 		int numerValue = (int) (Math.log(numer) / LOG_2);
 		int denomValue = (int) (Math.log(denom) / LOG_2);
-		
+
 		int minLine = 0, maxLine = 0;
-		
+
 		List<Pitch> pitches = mn.getPitches();
 		if (pitches.size() == 0) {
 			// draw rest
 			drawRest(g, numerValue, denomValue, nextX, nextY);
-			
+
 			// render previous group
 			renderStemGroup(stemGroup);
-			
+
 			// don't render stem
 			return;
 		}
 		else {
 			// determine stem direction
 			minLine = maxLine = getLineNumber(currClef, pitches.get(0));
-			
+
 			for (Pitch p : pitches) {
 				// add 4 since the third line is "number 0"
 				int line = getLineNumber(currClef, p);
 				minLine = Math.min(minLine, line);
 				maxLine = Math.max(maxLine, line);
-				
+
 				int noteX = nextX;
 				int noteY = getLineOffset(currClef, line) + nextY;
-	
+
 				// if too low or too high, draw ledger line
 				if (line < -5 || line > 5)
 					drawLedgerLine(g, noteX, noteY);
-				
+
 				drawPitch(g, numerValue, denomValue, noteX, noteY);
 			}
 		}
-		
+
 		// draw stem or add to stem group
 		if (denomValue >= 3) {
 			stemGroup.add(mn);
@@ -459,28 +459,28 @@ public class ScoreIllustrator {
 					minOffset += STEM_LENGTH;
 					stemX -= NOTE_WIDTH / 2;
 				}
-				
+
 				drawStem(g, stemX, nextY, minOffset, maxOffset);
 			}
-			
+
 			// render previous group
 			renderStemGroup(stemGroup);
 		}
 	}
-	
+
 	private void drawChordSymbol(Graphics g, ChordSymbol symb, int xc, int yc) {
 		g.setFont(new Font("Arial", 0, 24));
-		
+
 		g.drawString(symb.getSymbolText(), xc, yc);
 		g.drawString(symb.getTopInversionText(), xc + 10, yc);
 		g.drawString(symb.getBotInversionText(), xc + 10, yc + 10);
 	}
-	
+
 	private void drawRest(Graphics g, int numerValue, int denomValue, int xc, int yc) {
 		// draw rest
 		g.drawImage(_imgRest, xc, yc, null);
 	}
-	
+
 	private void drawStem(Graphics g, int xc, int yc, int minOffset, int maxOffset) {
 		g.drawLine(xc, yc + minOffset, xc, yc + maxOffset);
 	}
@@ -491,10 +491,10 @@ public class ScoreIllustrator {
 		}
 		else if (stemGroup.size() == 1) {
 			// draw single stem
-			
-			
-			
-			
+
+
+
+
 			stemGroup.clear();
 			return;
 		}
@@ -568,9 +568,9 @@ public class ScoreIllustrator {
 
 		}
 	}
-	
+
 	//-----------------------actual drawing methods-----------------------
-	
+
 	/*	Draws the note head for a base value (numerator is 1)
 	 *
 	 */
@@ -666,7 +666,7 @@ public class ScoreIllustrator {
 				System.exit(1);
 				break;
 		}
-		
+
 		g.drawImage(accidImage, xc, yc, null);
 	}
 
@@ -681,51 +681,51 @@ public class ScoreIllustrator {
 		// - 4 since
 		return -(line - 4) * SYSTEM_LINE_SPACING / 2;
 	}
-	
+
 	public InstructionIndex getEventIndex(Point e) {
 		// check x bounds
 		if (e.getX() < LEFT_MARGIN || e.getX() > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN)
 			return null;
-		
+
 		//------------------Y COORDINATE PARSE------------------
 		// determine system index
 		int totalSystemHeight = (_staffPositions.size() - 1) * STAFF_SPACING + SYSTEM_SPACING;
 		int systemOffset = (int) e.getY() - TOP_MARGIN;
-		
+
 		if (systemOffset < 0) {
 			// clicked above systems
 			return null;
 		}
-		
+
 		int indexSystem = systemOffset / totalSystemHeight;
-		
+
 		int staffY = systemOffset % totalSystemHeight;
 		// min to account for the extra space between systems
 		int indexStaff = Math.min(staffY / STAFF_SPACING, _staffPositions.size() - 1);
-		
+
 		int lineY = staffY % STAFF_SPACING + SYSTEM_LINE_SPACING / 4;
 		// actually represents the line/spaces
 		int indexLine = 5 - lineY / (SYSTEM_LINE_SPACING / 2);
-		
+
 		//------------------X COORDINATE PARSE------------------
 		// which measure
 		int staffFromTop = indexSystem;
 		int staffX = (int) e.getX();
-		
+
 		Map<Integer, Integer> staffMeasures = _measurePositions.get(staffFromTop);
 		int indexMeasure = 0;
-		
+
 		// get index of measure right after the x position: staffX
 		for (int measureX : staffMeasures.keySet()) {
 			indexMeasure = staffMeasures.get(measureX);
-			
+
 			if (staffX < measureX) {
 				indexMeasure--;
 				break;
 			}
 		}
 		indexMeasure++;
-		
+
 		System.out.println("----------------------");
 		System.out.println("System: " + indexSystem);
 		System.out.println("Staff: " + indexStaff);
@@ -734,30 +734,30 @@ public class ScoreIllustrator {
 		System.out.println("----------------------");
 		// current voice being edited
 		/*System.out.println("Voice: " + 0);*/
-		
+
 		Map<Integer, TreeMap<Integer, Rational>> measureMNotes = _mNotePositions.get(indexSystem);
 		TreeMap<Integer, Rational> multiNotePositions = measureMNotes.get(indexMeasure);
-		
+
 		if (multiNotePositions == null) {
 			// indexSystem doesn't have the measure indexMeasure -> UH OH
-			
+
 		}
-		
+
 		// get the measure offset by traversing through the part of the measure on the staff
 		int prevNoteX = 0;
 		for (int mNoteX: multiNotePositions.keySet()) {
 			if (staffX < mNoteX) {
 				break;
 			}
-			
+
 			prevNoteX = mNoteX;
 		}
-		
+
 		Rational measurePosition = new Rational(0, 1);
 		if (prevNoteX != 0) {
 			measurePosition = multiNotePositions.get(prevNoteX);
 		}
-		
+
 		return new InstructionIndex(indexStaff, indexMeasure, 0, measurePosition);
 	}
 }
