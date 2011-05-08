@@ -28,16 +28,16 @@ public class NoteToolbar extends Toolbar {
 		ToolbarButton noteModSharp = new ToolbarButton("images/note/note_sharp.png");
 		ToolbarButton noteModRest 	= new ToolbarButton("images/note/note_rest.png");
 		
-		noteQuar.setInstruction(new ModeInstruction(this, ModeInstructionType.DURATION, EditDuration.QUARTER));
-		noteHalf.setInstruction(new ModeInstruction(this, ModeInstructionType.DURATION, EditDuration.HALF));
-		noteEighth.setInstruction(new ModeInstruction(this, ModeInstructionType.DURATION, EditDuration.EIGHTH));
-		noteSixth.setInstruction(new ModeInstruction(this, ModeInstructionType.DURATION, EditDuration.SIXTEENTH));
+		noteQuar.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.QUARTER));
+		noteHalf.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.HALF));
+		noteEighth.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.EIGHTH));
+		noteSixth.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.SIXTEENTH));
 		
-		noteModHalf.setInstruction(new ModeInstruction(this, ModeInstructionType.MODIFIER, EditModifier.HALF));
-		noteModThird.setInstruction(new ModeInstruction(this, ModeInstructionType.MODIFIER, EditModifier.THIRD));
-		noteModFlat.setInstruction(new ModeInstruction(this, ModeInstructionType.MODIFIER, EditModifier.FLAT));
-		noteModSharp.setInstruction(new ModeInstruction(this, ModeInstructionType.MODIFIER, EditModifier.SHARP));
-		noteModRest.setInstruction(new ModeInstruction(this, ModeInstructionType.MODIFIER, EditModifier.REST));
+		noteModHalf.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.HALF));
+		noteModThird.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.THIRD));
+		noteModFlat.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.FLAT));
+		noteModSharp.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.SHARP));
+		noteModRest.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.REST));
 		
 		_buttons = new ToolbarButton[]{noteQuar, noteHalf, noteEighth, noteSixth, noteModHalf,
 								noteModThird, noteModDot, noteModFlat, noteModSharp, noteModRest};

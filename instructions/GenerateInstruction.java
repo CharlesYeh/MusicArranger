@@ -4,9 +4,7 @@ public class GenerateInstruction extends Instruction {
 	GenerateInstructionType _type;
 	Object _value;
 	
-	public GenerateInstruction(Object src, GenerateInstructionType type) {
-		super(src);
-		
+	public GenerateInstruction(GenerateInstructionType type) {
 		_type = type;
 	}
 	

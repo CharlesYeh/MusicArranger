@@ -16,18 +16,15 @@ public class EditInstruction extends Instruction {
 	Timestep _element;				// element to insert/add, left blank if EditInstruction is a removal
 	
 	
-	public EditInstruction(Object src, List<InstructionIndex> indices, EditInstructionType type, 
+	public EditInstruction(List<InstructionIndex> indices, EditInstructionType type, 
 			EditType elemType) {
-		super(src);
-		
 		_indices = indices;
 		_type = type;
 		_elemType = elemType;
 	}
 	
-	public EditInstruction(Object src, List<InstructionIndex> index, EditInstructionType type, 
-			EditType elemType, Timestep element) {
-		this(src, index, type, elemType);
+	public EditInstruction(List<InstructionIndex> index, EditInstructionType type, EditType elemType, Timestep element) {
+		this(index, type, elemType);
 		_element = element;
 	}
 	

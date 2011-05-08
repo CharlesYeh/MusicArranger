@@ -17,4 +17,9 @@ public enum Accidental {
 	public int intValue() {
 		return _accid;
 	}
+	
+	public static Accidental getAccidental(int v) {
+		// v must be from -2 to 2
+		return Accidental.values()[v-2];
+	}
 }

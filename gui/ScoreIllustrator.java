@@ -35,12 +35,12 @@ public class ScoreIllustrator {
 	final static int SYSTEM_SPACING = 90;
 	final static int SYSTEM_LINE_SPACING = 10;
 	
+	final static int STAFF_SPACING = 70;
+	
 	final static int TIMESIG_WIDTH = 30;
 	final static int KEYSIG_WIDTH = 30;
 	final static int CLEF_WIDTH = 50;
 	final static int CHORD_SPACING = 10;
-	
-	final static int STAFF_SPACING = 70;
 	
 	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
 	final static int NOTE_HEIGHT = SYSTEM_LINE_SPACING;
@@ -620,7 +620,7 @@ public class ScoreIllustrator {
 	private void drawSystem(Graphics g, int yc) {
 		for (int i = 0; i < 5; i++) {
 			int yp = yc + i * SYSTEM_LINE_SPACING;
-			g.drawLine(LEFT_MARGIN, yp, ArrangerConstants.WINDOW_WIDTH - RIGHT_MARGIN, yp);
+			g.drawLine(LEFT_MARGIN, yp, ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN, yp);
 		}
 	}
 
@@ -700,7 +700,8 @@ public class ScoreIllustrator {
 		int indexSystem = systemOffset / totalSystemHeight;
 		
 		int staffY = systemOffset % totalSystemHeight;
-		int indexStaff = staffY / STAFF_SPACING;
+		// min to account for the extra space between systems
+		int indexStaff = Math.min(staffY / STAFF_SPACING, _staffPositions.size() - 1);
 		
 		int lineY = staffY % STAFF_SPACING + SYSTEM_LINE_SPACING / 4;
 		// actually represents the line/spaces

@@ -6,33 +6,33 @@ import java.util.ArrayList;
  * within the piece.
  */
 public class ChordSymbol extends Timestep {
-	int _scaleDegree;			// which scale degree the chord starts on (I, ii, V, etc.) represented as an integer from 1-7
+	ScaleDegree _scaleDegree;			// which scale degree the chord starts on (I, ii, V, etc.) represented as an integer from 1-7
 								// set to 0 if scale degree is inapplicable
 	ChordType _chordType;		// quality of the chord (major, minor, etc.)
 
 	int _inversion;				// 0 signifies no inversion or unspecified
 
 
-	public ChordSymbol(int scaleDegree, ChordType chordType) {
+	public ChordSymbol(ScaleDegree scaleDegree, ChordType chordType) {
 		this(new Rational(), scaleDegree, chordType, 0);
 	}
 
-	public ChordSymbol(int scaleDegree, ChordType chordType, int inv) {
+	public ChordSymbol(ScaleDegree scaleDegree, ChordType chordType, int inv) {
 		this(new Rational(), scaleDegree, chordType, inv);
 	}
 
-	public ChordSymbol(Rational duration, int scaleDegree, ChordType chordType){
+	public ChordSymbol(Rational duration, ScaleDegree scaleDegree, ChordType chordType){
 		this(duration, scaleDegree, chordType, 0);
 	}
 
-	public ChordSymbol(Rational duration, int scaleDegree, ChordType chordType, int inv){
+	public ChordSymbol(Rational duration, ScaleDegree scaleDegree, ChordType chordType, int inv){
 		super(duration);
 		_scaleDegree = scaleDegree;
 		_chordType = chordType;
 		_inversion = inv;
 	}
 
-	public int getScaleDegree() {
+	public ScaleDegree getScaleDegree() {
 		return _scaleDegree;
 	}
 
@@ -56,7 +56,7 @@ public class ChordSymbol extends Timestep {
 				return "Ger";
 		}
 
-		switch (_scaleDegree) {
+		switch (_scaleDegree.getDegreeNumber()) {
 			case 1:
 				return "I";
 			case 2:
@@ -147,78 +147,6 @@ public class ChordSymbol extends Timestep {
 		}
 
 		return "";
-	}
-
-	//returns a list of integers that each represent one of the current chord's non-root notes as a certain pitches (half steps) above the root.
-	public ArrayList<Integer> getNonRootNotes(){
-
-		ArrayList<Integer> nonRootNotes = new ArrayList<Integer>();
-		switch (_chordType) {
-			case MAJOR:
-				nonRootNotes.add(4);
-				nonRootNotes.add(7);
-				break;
-
-			case MINOR:
-				nonRootNotes.add(3);
-				nonRootNotes.add(7);
-				break;
-
-			case DIMIN:
-				nonRootNotes.add(3);
-				nonRootNotes.add(6);
-				break;
-
-			case MAJOR7:
-				nonRootNotes.add(4);
-				nonRootNotes.add(7);
-				nonRootNotes.add(11);
-				break;
-
-			case MAJORMINOR7:
-				nonRootNotes.add(4);
-				nonRootNotes.add(7);
-				nonRootNotes.add(10);
-				break;
-
-			case MINOR7:
-				nonRootNotes.add(3);
-				nonRootNotes.add(7);
-				nonRootNotes.add(10);
-				break;
-
-			case DIMIN7:
-				nonRootNotes.add(3);
-				nonRootNotes.add(6);
-				nonRootNotes.add(9);
-				break;
-
-			case HDIMIN7:
-				nonRootNotes.add(3);
-				nonRootNotes.add(6);
-				nonRootNotes.add(10);
-				break;
-
-			case ITAUG6:
-				nonRootNotes.add(4);
-				nonRootNotes.add(10);
-				break;
-
-			case FRAUG6:
-				nonRootNotes.add(4);
-				nonRootNotes.add(6);
-				nonRootNotes.add(10);
-				break;
-
-			case GERAUG6:
-				nonRootNotes.add(4);
-				nonRootNotes.add(7);
-				nonRootNotes.add(10);
-				break;
-
-		}
-
-		return nonRootNotes;
 	}
 
 	//returns true if current ChordSymbol is equal to the given ChordSymbol, otherwise false

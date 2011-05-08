@@ -17,9 +17,8 @@ public class FileInstructionNew extends FileInstruction {
 	 * 		- key signature, represented by numerator and denominator
 	 * 		- time signature, represented by the number of accidentals
 	 */
-	public FileInstructionNew(Object src, List<Clef> clefs, int numMeasures,
+	public FileInstructionNew(List<Clef> clefs, int numMeasures,
 			int timeSigNumer, int timeSigDenom, int accidentals, boolean isMajor) {
-		super(src);
 		_clefs = clefs;
 		_numMeasures = numMeasures;
 		_timeSigNumer = timeSigNumer;
