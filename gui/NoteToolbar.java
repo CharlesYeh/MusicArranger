@@ -17,7 +17,8 @@ public class NoteToolbar extends Toolbar {
 	protected void createButtons(){
 		// add mode buttons (note, selection, zoom)
 		ToolbarButton noteQuar 	= new ToolbarButton("images/note/note_quarter.png");
-		ToolbarButton noteHalf 	= new ToolbarButton("images/note/note_whole.png");
+		ToolbarButton noteHalf 	= new ToolbarButton("images/note/note_half.png");
+		ToolbarButton noteWhole	= new ToolbarButton("images/note/note_whole.png");
 		ToolbarButton noteEighth = new ToolbarButton("images/note/note_eighth.png");
 		ToolbarButton noteSixth	= new ToolbarButton("images/note/note_sixteenth.png");
 		
@@ -30,6 +31,7 @@ public class NoteToolbar extends Toolbar {
 		
 		noteQuar.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.QUARTER));
 		noteHalf.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.HALF));
+		noteWhole.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.WHOLE));
 		noteEighth.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.EIGHTH));
 		noteSixth.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.SIXTEENTH));
 		
@@ -39,7 +41,7 @@ public class NoteToolbar extends Toolbar {
 		noteModSharp.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.SHARP));
 		noteModRest.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.REST));
 		
-		_buttons = new ToolbarButton[]{noteQuar, noteHalf, noteEighth, noteSixth, noteModHalf,
+		_buttons = new ToolbarButton[]{noteQuar, noteHalf, noteWhole, noteEighth, noteSixth, noteModHalf,
 								noteModThird, noteModDot, noteModFlat, noteModSharp, noteModRest};
 	}
 }

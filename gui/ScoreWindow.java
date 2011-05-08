@@ -101,6 +101,7 @@ public class ScoreWindow extends Drawable {
 	
 	public List<InstructionIndex> mouseReleased(Point e) {
 		// account for sliding offset
+		_sliding = false;
 		adjustScorePoint(e);
 		
 		InstructionIndex index = _illustrator.getEventIndex(e);

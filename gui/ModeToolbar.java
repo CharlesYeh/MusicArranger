@@ -24,12 +24,14 @@ public class ModeToolbar extends Toolbar {
 		ToolbarButton modeNote = new ToolbarButton("images/mode/mode_note.png");
 		ToolbarButton modeSelection = new ToolbarButton("images/mode/mode_chord.png");
 		ToolbarButton modeZoom = new ToolbarButton("images/mode/mode_zoom.png");
+		
 		ToolbarButton genChords = new ToolbarButton("images/mode/mode_note.png");
 		ToolbarButton genVoices = new ToolbarButton("images/mode/mode_note.png");
 
 		modeNote.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.NOTE));
 		modeSelection.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.SELECTION));
 		modeZoom.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.ZOOM));
+		
 		genChords.setInstruction(new GenerateInstruction(GenerateInstructionType.CHORDS));
 		genVoices.setInstruction(new GenerateInstruction(GenerateInstructionType.VOICES));
 

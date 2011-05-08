@@ -53,10 +53,7 @@
          _snapDrag = false;
          _drag = false;
          _dragX = _dragY = 0;
-      
-      // JUST FOR TESTING
-         myColor = new Color((int)(Math.random() * 0xFFFFFF));
-      
+      	      
          createButtons();
          setOrientation(orient);
       }
@@ -88,25 +85,22 @@
       
          _buffer = new BufferedImage(_width, _height, BufferedImage.TYPE_INT_ARGB);
          _bufferGraphics = _buffer.getGraphics();
-      
-         _bufferGraphics.drawImage((_orientation == Orientation.HORIZONTAL) ? IMG_HORIZ : IMG_VERT, 0, 0, null);
+      	
+         _bufferGraphics.drawImage((_orientation == Orientation.HORIZONTAL) ? IMG_HORIZ : IMG_HORIZ, 0, 0, null);
       
          drawBuffer();
       }
    
       public void drawBuffer() {
-         _bufferGraphics.setColor(myColor);
-      
-      //_bufferGraphics.fillRect(0, 0, _width, _height);
-      
-      // draw buttons
-      //int buttonX = _x, buttonY = _y;
+      	
+      	// draw buttons
+      	//int buttonX = _x, buttonY = _y;
          int buttonX = 0, buttonY = 0;
       
          for (ToolbarButton btn : _buttons) {
             btn.setX(buttonX);
             btn.setY(buttonY);
-         
+         	
             if(_orientation == Orientation.HORIZONTAL)
                buttonX += btn.getWidth();
             else
@@ -150,6 +144,9 @@
     *
     */
       public Instruction mouseReleased(Point e) {
+			// make point e relative to toolbar
+			e.setLocation(e.getX() - _x, e.getY() - _y);
+			
          if (_snapDrag) {
          	// if didn't move enough to start dragging
             for (ToolbarButton btn : _buttons) {
@@ -166,7 +163,9 @@
             else if (_x < 0) {
                _dockControl.dockToLeft(this);
             }
+				
          }
+			
          _drag = false;
          _snapDrag = false;
       	
@@ -195,6 +194,7 @@
             _x = nx;
             _y = ny;
          }
+			
          return null;
       }
    }

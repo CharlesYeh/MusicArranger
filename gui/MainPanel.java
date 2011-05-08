@@ -38,13 +38,18 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	List<Toolbar> _toolbars;
 	Toolbar _modeToolbar, _noteToolbar, _playToolbar;
 	ScoreWindow _scoreWindow;
+	
+	EventListenerList _listeners = new EventListenerList();
    
-	protected EventListenerList _listeners = new EventListenerList();
-   
-   //--------------------state information--------------------
+	//--------------------state information--------------------
 	EditMode _currMode = EditMode.NOTE;
 	EditDuration _currDuration = EditDuration.QUARTER;
-	EditModifier _currModifier = null;
+	int _currAccidental = 0;
+	
+	// currently selected
+	List<MultiNote> selected;
+	
+	//------------------end state information------------------
    
 	public MainPanel(Piece piece) {
 	   Toolbar.init("images/gui/toolbarHorizontal.png", "images/gui/toolbarVertical.png");
@@ -124,7 +129,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
     */
 	public void mouseReleased(MouseEvent e) {
 	   if (_disabled)
-		return;
+			return;
 	
 		// factor in offset
 	   Point evtPoint = getEventPoint(e);
@@ -137,9 +142,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	   if (tbar == null) {
 		   // clicked on score window
 			List<InstructionIndex> listIndex = _scoreWindow.mouseReleased(evtPoint);
-			if (listIndex == null) {
+			if (listIndex == null)
 			   return;
-			}
 			
 			// TODO: take selections into account
 			
@@ -148,11 +152,15 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		}
 		else {
 			// clicked on a toolbar
-			instr = new InstructionBlock(this, tbar.mouseReleased(evtPoint));
+			Instruction ins = tbar.mouseReleased(evtPoint);
+			if (ins == null)
+				return;
+			
+			instr = new InstructionBlock(this, ins);
 	   }
 		
 	   sendInstruction(instr);
-	
+		
 	   repaint();
 	}
    
@@ -164,7 +172,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
    
 	public void mouseDragged(MouseEvent e) {
 		if (_disabled)
-		return;
+			return;
 		
 		Point evtPoint = getEventPoint(e);
 		
@@ -210,25 +218,25 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	private Toolbar mouseEventToolbar(Point e) {
 	   Iterator<Toolbar> iter = _toolbars.iterator();
 	   while (iter.hasNext()) {
-		Toolbar drawer = iter.next();
-	   
-		if (drawer.hitTestPoint(e.getX(), e.getY())) {
-		// mouse clicked on this toolbar
-		
-		// move this toolbar to the front (higher priority for future events)
-		   iter.remove();
-		   _toolbars.add(drawer);
-		
-		   return drawer;
+			Toolbar drawer = iter.next();
+		   
+			if (drawer.hitTestPoint(e.getX(), e.getY())) {
+			// mouse clicked on this toolbar
+			
+			// move this toolbar to the front (higher priority for future events)
+			   iter.remove();
+			   _toolbars.add(drawer);
+			
+			   return drawer;
+			}
 		}
-	   }
 	
-	// mouse event was not on a toolbar
+		// mouse event was not on a toolbar
 	   return null;
 	}
    
 	public void componentResized(ComponentEvent e) {
-	// redraw score sheet
+		// redraw score sheet
 	   Component comp = e.getComponent();
 	   ArrangerConstants.WINDOW_WIDTH = comp.getWidth();
 	   ArrangerConstants.WINDOW_HEIGHT = comp.getHeight();
@@ -266,13 +274,25 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			switch (modeInstr.getType()) {
 				case MODE:
 					_currMode = (EditMode) modeInstr.getValue();
-					System.out.println(_currMode);
-				break;
+					break;
+					
 				case DURATION:
 					_currDuration = (EditDuration) modeInstr.getValue();
 					break;
+					
 				case MODIFIER:
-					_currModifier = (EditModifier) modeInstr.getValue();
+					EditModifier currModifier = (EditModifier) modeInstr.getValue();
+					switch (currModifier) {
+					case FLAT:
+						
+						break;
+					case SHARP:
+						
+						break;
+					case REST:
+						
+						break;
+					}
 					break;
 			}
 			return;
