@@ -8,5 +8,8 @@ public enum ModeInstructionType {
 	DURATION,
 	
 	// change node modifier value
-	MODIFIER
+	MODIFIER,
+	
+	// change selection
+	SELECTION
 }

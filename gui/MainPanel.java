@@ -140,15 +140,16 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	   InstructionBlock instr;
 	   if (tbar == null) {
-		   // clicked on score window
+			// clicked on score window
 			List<InstructionIndex> listIndex = _scoreWindow.mouseReleased(evtPoint);
 			if (listIndex == null)
 			   return;
 			
-			// TODO: take selections into account
-			
-			Instruction editInstr = new EditInstruction(listIndex, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
-			instr = new InstructionBlock(this, editInstr);
+			instr = new InstructionBlock(this);
+			for (InstructionIndex index : listIndex) {
+				Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
+				instr.addInstruction(editInstr);
+			}
 		}
 		else {
 			// clicked on a toolbar

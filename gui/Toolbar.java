@@ -86,7 +86,7 @@
          _buffer = new BufferedImage(_width, _height, BufferedImage.TYPE_INT_ARGB);
          _bufferGraphics = _buffer.getGraphics();
       	
-         _bufferGraphics.drawImage((_orientation == Orientation.HORIZONTAL) ? IMG_HORIZ : IMG_HORIZ, 0, 0, null);
+         _bufferGraphics.drawImage((_orientation == Orientation.HORIZONTAL) ? IMG_HORIZ : IMG_VERT, 0, 0, null);
       
          drawBuffer();
       }

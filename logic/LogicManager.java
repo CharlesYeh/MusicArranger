@@ -1,10 +1,10 @@
 package logic;
 
 import music.*;
+import instructions.*;
 
 import java.util.*;
-
-import instructions.*;
+import java.awt.print.*;
 
 /*
  * LogicManager is the highest level class in the logic package, which is instantiated
@@ -13,7 +13,7 @@ import instructions.*;
  * Instructions to the classes contained within the package.
  */
 
-public class LogicManager {
+public class LogicManager implement Printable {
 	Piece _piece;
 	Editor _editor;
 	ArrangerXMLParser _arrangerXMLParser;
@@ -83,22 +83,32 @@ public class LogicManager {
 	}
 	
 	private void interpretFileInstr(FileInstruction fileInstr) {
-		if (fileInstr instanceof FileInstructionNew) {
+		if (fileInstr instanceof FileInstructionIO) {
+			FileInstructionIO fileInstrIO = (FileInstructionIO) fileInstr;
+			interpretFileInstrIO(fileInstrIO);
+		}
+		else if (fileInstr instanceof FileInstructionNew) {
 			FileInstructionNew fileInstrNew = (FileInstructionNew) fileInstr;
 			interpretFileInstrNew(fileInstrNew);
 		}
-		else if (fileInstr instanceof FileInstructionIO) {
-			FileInstructionIO fileInstrIO = (FileInstructionIO) fileInstr;
-			interpretFileInstrIO(fileInstrIO);
+		else if (fileInstr instanceof FileInstructionPrint) {
+			FileInstructionPrint fileInstrPrint = (FileInstructionPrint) fileInstr;
+			interpretFileInstrPrint(fileInstrPrint);
 		}
 		
 		// Since file instructions instantiate a new piece, rather than mutating the old one, the
 		// the new piece must be updated in Logic and passed back.
 		Piece piece = _editor.getPiece();
 		this._piece = piece;
-		// TODO: SEND NEw PIECE BACK TO MAIN, THEN TO GUI
+		// TODO: SEND NEW PIECE BACK TO MAIN, THEN TO GUI
 	}
 	
+	public int print(Graphics g, PageFormat pf, int page) throws PrinterException {
+		//FileInstructionPrint
+	}
+	private void interpretFileInstrPrint(FileInstructionPrint fileInstrPrint) {
+		//fileInstrPrint
+	}
 	private void interpretFileInstrNew(FileInstructionNew fileInstrNew) {
 		System.out.println("start new file");
 		
@@ -124,8 +134,7 @@ public class LogicManager {
 				
 				// Instantiate key signature, time signature
 				Rational duration = new Rational(timeSigNumer, timeSigDenom);
-				TimeSignature timeSig = new TimeSignature(duration,
-						timeSigNumer, timeSigDenom);
+				TimeSignature timeSig = new TimeSignature(duration, timeSigNumer, timeSigDenom);
 				KeySignature keySig = new KeySignature(duration, accidentals, isMajor);
 				_editor.insertKeySig(keySig);
 				_editor.insertTimeSig(timeSig);
@@ -221,78 +230,74 @@ public class LogicManager {
 	}
 	
 	private void editStaff(EditInstruction editInstr) {
-		List<InstructionIndex> indices = editInstr.getIndices();
+		InstructionIndex index = editInstr.getIndex();
 		
-		for (InstructionIndex index : indices) {
-			int staffNumber = index.getStaffNumber();
-			ListIterator<Staff> iterator = _piece.getStaffs().listIterator(staffNumber);
-			_editor.setStaffIter(iterator);
-			
-			EditInstructionType instrType = editInstr.getType();
-			switch (instrType) {
-			// TODO: THESE STAFF INSERTION/REMOVAL FUNCTIONS ARE DUMMIES, HAVE TO CHECK FOR STAFF LENGTH, MAKING KEY SIGNATURES/TIME SIGNATURES CONSISTENT, ETC.
-			// ALSO HAVE TO DECIDE WHAT KIND OF INFORMATION NEEDS TO BE PASSED WHEN CREATING A NEW STAFF.
-				case INSERT:
-					_editor.insertStaff(new Staff());
-					break;
-				case REMOVE:
-					_editor.removeStaff();
-					break;
-				case REPLACE:
-					_editor.replaceStaff(new Staff());
-					break;
-				default:
-					throw new RuntimeException("Instruction of unrecognized EditInstructionType");
-			}
+		int staffNumber = index.getStaffNumber();
+		ListIterator<Staff> iterator = _piece.getStaffs().listIterator(staffNumber);
+		_editor.setStaffIter(iterator);
+		
+		EditInstructionType instrType = editInstr.getType();
+		switch (instrType) {
+		// TODO: THESE STAFF INSERTION/REMOVAL FUNCTIONS ARE DUMMIES, HAVE TO CHECK FOR STAFF LENGTH, MAKING KEY SIGNATURES/TIME SIGNATURES CONSISTENT, ETC.
+		// ALSO HAVE TO DECIDE WHAT KIND OF INFORMATION NEEDS TO BE PASSED WHEN CREATING A NEW STAFF.
+			case INSERT:
+				_editor.insertStaff(new Staff());
+				break;
+			case REMOVE:
+				_editor.removeStaff();
+				break;
+			case REPLACE:
+				_editor.replaceStaff(new Staff());
+				break;
+			default:
+				throw new RuntimeException("Instruction of unrecognized EditInstructionType");
 		}
 		
 	}
 	
 	private void editChordSymbol(EditInstruction editInstr) {
-		List<InstructionIndex> indices = editInstr.getIndices();
-		for (InstructionIndex index : indices) {
-			
-			int staffNumber = index.getStaffNumber();
-			int measureNumber = index.getMeasureNumber();
-			Rational measureOffset = index.getMeasureOffset();
-			Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
-			List<ChordSymbol> chordSymbolList = measure.getChordSymbols();
-			
-			// calculate iterator and offset
-			IteratorAndOffset iterAndOffset = calcIterAndOffset(chordSymbolList, measureOffset);
-			ListIterator<ChordSymbol> iter = (ListIterator<ChordSymbol>) iterAndOffset.getIter();
-			Rational offset = iterAndOffset.getOffset();
-			
-			ChordSymbol chordSymbol;
-			
-			// set the iterator in the editor
-			_editor.setChordSymbolIter(iter);
-			
-			EditInstructionType instrType = editInstr.getType();
-			switch (instrType) {
-			// offset SHOULD be 0 for insertion and removal functions
-				case INSERT:
-					chordSymbol = (ChordSymbol) editInstr.getElement();
-					_editor.insertChordSymbol(chordSymbol);
-					break;
-				case REMOVE:
-					_editor.removeChordSymbol();
-					break;
-				case REPLACE:
-					// check if replacement note runs over end of measure
-					Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
-					chordSymbol = (ChordSymbol) editInstr.getElement();
-					if (measureOffset.compareTo(measureLength) > 0) {
-						// Error, measureOffset is longer than the actual measure
-						return;
-					}
-					else {
-						_editor.replaceChordSymbol(chordSymbol);
-					}
-					break;
-				default:
-					throw new RuntimeException("Instruction of unrecognized EditInstructionType");
-			}
+		InstructionIndex index = editInstr.getIndex();
+		
+		int staffNumber = index.getStaffNumber();
+		int measureNumber = index.getMeasureNumber();
+		Rational measureOffset = index.getMeasureOffset();
+		Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
+		List<ChordSymbol> chordSymbolList = measure.getChordSymbols();
+		
+		// calculate iterator and offset
+		IteratorAndOffset iterAndOffset = calcIterAndOffset(chordSymbolList, measureOffset);
+		ListIterator<ChordSymbol> iter = (ListIterator<ChordSymbol>) iterAndOffset.getIter();
+		Rational offset = iterAndOffset.getOffset();
+		
+		ChordSymbol chordSymbol;
+		
+		// set the iterator in the editor
+		_editor.setChordSymbolIter(iter);
+		
+		EditInstructionType instrType = editInstr.getType();
+		switch (instrType) {
+		// offset SHOULD be 0 for insertion and removal functions
+			case INSERT:
+				chordSymbol = (ChordSymbol) editInstr.getElement();
+				_editor.insertChordSymbol(chordSymbol);
+				break;
+			case REMOVE:
+				_editor.removeChordSymbol();
+				break;
+			case REPLACE:
+				// check if replacement note runs over end of measure
+				Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
+				chordSymbol = (ChordSymbol) editInstr.getElement();
+				if (measureOffset.compareTo(measureLength) > 0) {
+					// Error, measureOffset is longer than the actual measure
+					return;
+				}
+				else {
+					_editor.replaceChordSymbol(chordSymbol);
+				}
+				break;
+			default:
+				throw new RuntimeException("Instruction of unrecognized EditInstructionType");
 		}
 	}
 	
@@ -312,54 +317,51 @@ public class LogicManager {
 	}
 	
 	private void editMultiNote(EditInstruction editInstr) {
-		List<InstructionIndex> indices = editInstr.getIndices();
-		for (InstructionIndex index : indices) {
-			
-			System.out.println(index);
-			int staffNumber = index.getStaffNumber();
-			int measureNumber = index.getMeasureNumber();
-			int voiceNumber = index.getVoiceNumber();
-			Rational measureOffset = index.getMeasureOffset();
-			Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
-			List<MultiNote> multiNoteList = measure.getVoices().get(voiceNumber).getMultiNotes();
-			
-			// calculate iterator and offset
-			IteratorAndOffset iterAndOffset = calcIterAndOffset(multiNoteList, measureOffset);
-			ListIterator<MultiNote> iter = (ListIterator<MultiNote>) iterAndOffset.getIter();
-			Rational offset = iterAndOffset.getOffset();
-			
-			MultiNote multiNote;
-			
-			// set the iterator in the editor
-			_editor.setMultiNoteIter(iter);
-			
-			EditInstructionType instrType = editInstr.getType();
-			switch (instrType) {
-			// offset SHOULD be 0 for insertion and removal functions
-				case INSERT:
-					multiNote = (MultiNote) editInstr.getElement();
-					_editor.insertMultiNote(multiNote);
-					break;
-				case REMOVE:
-					_editor.removeMultiNote();
-					break;
-				case REPLACE:
-					// check if replacement note runs over end of measure
-					Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
-					Rational remainingSpace = measureLength.minus(measureOffset);
-					multiNote = (MultiNote) editInstr.getElement();
-					if (multiNote.getDuration().compareTo(remainingSpace) > 0) {
-						// if the replaced note is bigger than the remaining space in the measure
-						System.out.println("New note is too big");
-						return;
-					}
-					else {
-						_editor.replaceMultiNote(multiNote);
-					}
-					break;
-				default:
-					throw new RuntimeException("Instruction of unrecognized EditInstructionType");
-			}
+		InstructionIndex index = editInstr.getIndex();
+		
+		int staffNumber = index.getStaffNumber();
+		int measureNumber = index.getMeasureNumber();
+		int voiceNumber = index.getVoiceNumber();
+		Rational measureOffset = index.getMeasureOffset();
+		Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
+		List<MultiNote> multiNoteList = measure.getVoices().get(voiceNumber).getMultiNotes();
+		
+		// calculate iterator and offset
+		IteratorAndOffset iterAndOffset = calcIterAndOffset(multiNoteList, measureOffset);
+		ListIterator<MultiNote> iter = (ListIterator<MultiNote>) iterAndOffset.getIter();
+		Rational offset = iterAndOffset.getOffset();
+		
+		MultiNote multiNote;
+		
+		// set the iterator in the editor
+		_editor.setMultiNoteIter(iter);
+		
+		EditInstructionType instrType = editInstr.getType();
+		switch (instrType) {
+		// offset SHOULD be 0 for insertion and removal functions
+			case INSERT:
+				multiNote = (MultiNote) editInstr.getElement();
+				_editor.insertMultiNote(multiNote);
+				break;
+			case REMOVE:
+				_editor.removeMultiNote();
+				break;
+			case REPLACE:
+				// check if replacement note runs over end of measure
+				Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
+				Rational remainingSpace = measureLength.minus(measureOffset);
+				multiNote = (MultiNote) editInstr.getElement();
+				if (multiNote.getDuration().compareTo(remainingSpace) > 0) {
+					// if the replaced note is bigger than the remaining space in the measure
+					System.out.println("New note is too big");
+					return;
+				}
+				else {
+					_editor.replaceMultiNote(multiNote);
+				}
+				break;
+			default:
+				throw new RuntimeException("Instruction of unrecognized EditInstructionType");
 		}
 	}
 	

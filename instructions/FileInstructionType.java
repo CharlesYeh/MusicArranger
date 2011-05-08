@@ -1,5 +1,5 @@
 package instructions;
 
 public enum FileInstructionType {
-	SAVE, OPEN, PRINT, EXIT
+	SAVE, OPEN, EXIT
 }

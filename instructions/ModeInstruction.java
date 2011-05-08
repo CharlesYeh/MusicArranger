@@ -1,7 +1,5 @@
 package instructions;
 
-import gui.EditMode;
-
 public class ModeInstruction extends Instruction {
 	ModeInstructionType _type;
 	Object _value;

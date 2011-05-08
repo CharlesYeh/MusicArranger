@@ -7,8 +7,7 @@ public enum Accidental {
 	FLAT (-1),
 	NATURAL (0),
 	SHARP (1),
-	DOUBLESHARP (2),
-	DEFAULT;
+	DOUBLESHARP (2);
 	
 	int _accid;
 	Accidental(int accid) {

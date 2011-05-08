@@ -11,28 +11,28 @@ import java.util.List;
 public class EditInstruction extends Instruction {
 	EditInstructionType _type;		// insertion, addition, or removal
 	
-	List<InstructionIndex> _indices;		// where in the piece is being edited
+	InstructionIndex _indices;		// where in the piece is being edited
 	EditType _elemType;				// what type of element is being modified
 	Timestep _element;				// element to insert/add, left blank if EditInstruction is a removal
 	
 	
-	public EditInstruction(List<InstructionIndex> indices, EditInstructionType type, 
+	public EditInstruction(InstructionIndex indices, EditInstructionType type, 
 			EditType elemType) {
 		_indices = indices;
 		_type = type;
 		_elemType = elemType;
 	}
 	
-	public EditInstruction(List<InstructionIndex> index, EditInstructionType type, EditType elemType, Timestep element) {
+	public EditInstruction(InstructionIndex index, EditInstructionType type, EditType elemType, Timestep element) {
 		this(index, type, elemType);
 		_element = element;
 	}
 	
-	public List<InstructionIndex> getIndices() {
+	public InstructionIndex getIndex() {
 		return _indices;
 	}
 
-	public void setIndices(List<InstructionIndex> indices) {
+	public void setIndex(InstructionIndex indices) {
 		this._indices = indices;
 	}
 

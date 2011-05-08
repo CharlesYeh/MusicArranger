@@ -32,9 +32,9 @@ public class Main extends JFrame implements InstructionListener {
 	
 	Editor _editor;
 	LogicManager _logicManager;
-
+	
 	Piece _piece;
-
+	
 	public Main(){
 		super("Music Arranger");
 		
@@ -158,7 +158,34 @@ public class Main extends JFrame implements InstructionListener {
 		file.add(menuItemPrint);
 		file.add(menuItemExit);
 		//----------------EDIT----------------
-		menuBar.add(file);
+		JMenu edit = new JMenu("Edit");
+		edit.setMnemonic(KeyEvent.VK_E);
+		menuBar.add(edit);
+		
+		JMenuItem menuItemUndo = new JMenuItem("Undo");
+		menuItemUndo.setMnemonic(KeyEvent.VK_U);
+		menuItemUndo.setToolTipText("Undo last action");
+		menuItemUndo.addActionListener(
+			new ActionListener() {
+				InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.EXIT, ""));
+				public void actionPerformed(ActionEvent event) {
+					receiveInstruction(myInstr);
+				}
+			});
+		
+		JMenuItem menuItemRedo = new JMenuItem("Redo");
+		menuItemRedo.setMnemonic(KeyEvent.VK_U);
+		menuItemRedo.setToolTipText("Redo last action");
+		menuItemRedo.addActionListener(
+			new ActionListener() {
+				InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.EXIT, ""));
+				public void actionPerformed(ActionEvent event) {
+					receiveInstruction(myInstr);
+				}
+			});
+		
+		file.add(menuItemUndo);
+		file.add(menuItemRedo);
 		
 		setJMenuBar(menuBar);
 	}
