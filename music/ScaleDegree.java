@@ -66,4 +66,58 @@ public class ScaleDegree {
 		
 		return pitchOffset;
 	}
+	
+	public Interval getIntervalFromRoot(boolean isMajor) {
+		Interval interval;
+		IntervalType intervalType;
+		int intervalSize = _degreeNumber;
+		
+		if (intervalSize == 1 || intervalSize == 4 || intervalSize == 5) {
+			switch (_accidental) {
+				case FLAT:
+					intervalType = IntervalType.DIMINISHED;
+					break;
+				case NATURAL:
+					intervalType = IntervalType.PERFECT;
+					break;
+				case SHARP:
+					intervalType = IntervalType.AUGMENTED;
+					break;
+				default:
+					throw new RuntimeException("ScaleDegree accidental out of bounds.");
+			}
+		}
+		else {
+			switch (_accidental) {
+			case FLAT:
+				if (isMajor) {
+					intervalType = IntervalType.MINOR;
+				}
+				else {
+					intervalType = IntervalType.DIMINISHED;
+				}
+				break;
+			case NATURAL:
+				if (isMajor) {
+					intervalType = IntervalType.MAJOR;
+				}
+				else {
+					intervalType = IntervalType.MINOR;
+				}
+				break;
+			case SHARP:
+				if (isMajor) {
+					intervalType = IntervalType.AUGMENTED;
+				}
+				else {
+					intervalType = IntervalType.MAJOR;
+				}
+				break;
+			default:
+				throw new RuntimeException("ScaleDegree accidental out of bounds.");
+			}
+		}
+		interval = new Interval(intervalType, intervalSize);
+		return interval;
+	}
 }

@@ -17,6 +17,10 @@ public class Pitch {
 		this(noteLetter, octave, accidental, false);
 	}
 	
+	public Pitch(NoteLetter noteLetter, Accidental accidental) {
+		this(noteLetter, 0, accidental, false);
+	}
+	
 	public Pitch copy() {
 		return new Pitch(_noteLetter, _octave, _accidental, false);
 	}
@@ -35,6 +39,15 @@ public class Pitch {
 	
 	public boolean getIsTiedToNext() {
 		return _isTiedToNext;
+	}
+	
+	public boolean equals(Pitch pitch) {
+		return equalsName(pitch) && (_octave == pitch.getOctave());
+	}
+	
+	// Checks if two pitches are the same, EXCLUDING THE OCTAVE
+	public boolean equalsName(Pitch pitch) {
+		return (_noteLetter == pitch.getNoteLetter()) && (_accidental == pitch.getAccidental());
 	}
 	
 	public String toString() {

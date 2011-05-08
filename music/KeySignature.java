@@ -12,6 +12,10 @@ public class KeySignature extends Timestep {
 		_accidentalNumber = accidentalNumber;
 		_isMajor = isMajor;
 	}
+	
+	public KeySignature(int accidentalNumber, boolean isMajor) {
+		this(new Rational(), accidentalNumber, isMajor);
+	}
 
 	public int getAccidentalNumber() {
 		return _accidentalNumber;
@@ -33,20 +37,5 @@ public class KeySignature extends Timestep {
 			returnVal = 12 + returnVal;
 
 		return returnVal;
-	}
-	
-	// returns the Note associated with a key signature
-	public Pitch getKeySigPitch() {
-		int noteLetterValue = (_accidentalNumber * 4) % 7;
-		if (noteLetterValue < 0) noteLetterValue += 7;
-		NoteLetter noteLetter = NoteLetter.getNoteLetter(noteLetterValue);
-		
-		int pitchValue = (_accidentalNumber * 7) % 12;
-		if (pitchValue < 0) pitchValue += 12;
-		int noteLetterPitchValue = noteLetter.pitchValue();
-		int accidentalValue = noteLetterPitchValue - pitchValue;
-		Accidental accidental = Accidental.getAccidental(accidentalValue);
-		
-		return new Pitch(noteLetter, 0, accidental);
 	}
 }
