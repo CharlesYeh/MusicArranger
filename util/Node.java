@@ -13,8 +13,8 @@ import java.util.ArrayList;
 public class Node<T>{
 
 	T _value;
-	List<Edge> _preceding;//a list of edges of the chords that can precede the current one
-	List<Edge> _following;//a list of edges of the chords that the current one can lead to
+	List<Edge<T>> _preceding;//a list of edges of the chords that can precede the current one
+	List<Edge<T>> _following;//a list of edges of the chords that the current one can lead to
 
 	public Node(T v){
 
@@ -23,7 +23,7 @@ public class Node<T>{
 		_following = new ArrayList();
 	}
 
-	public List<Edge> getPreceding(){
+	public List<Edge<T>> getPreceding(){
 		return _preceding;
 	}
 
@@ -32,7 +32,7 @@ public class Node<T>{
 		return _value;
 	}
 
-	public List<Edge> getFollowing(){
+	public List<Edge<T>> getFollowing(){
 
 		return _following;
 	}

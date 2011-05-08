@@ -391,7 +391,31 @@ public class Analyzer extends Thread {
 
 	//removes the Node toRemove from the Graph and removes the relevant Edges,
 	//if the node that is removed is the only node that one of its previous nodes lead to, then that previous node is removed as well
-	private void removeFromProgression(Node toRemove, List<List<Node>> nextNodesList, int nextNodesListIdx, Graph progressionsGraph) {
+	private void removeFromProgression(Node toRemove, List<List<Node>> matchingNodesList, int matchingNodesListIdx, Graph progressionsGraph) {
+
+		//get the list of Nodes from which to remove the Node toRemove
+		List<Node> currentNodesList = matchingNodesList.get(matchingNodesListIdx);
+		currentNodesList.remove(toRemove);
+
+		if(matchingNodesListIdx > 0) {
+
+
+			List<Node> previousNodes = toRemove.getPreceding();
+
+			//check to see if the any previous Nodes only leads to the current Node that was just deleted
+			for(Node previousNode : previousNodes) {
+
+				if(previousNode.getFollowing().isEmpty()) {//if the previous node only leads to the current node, it will be deleted as well
+
+					removeFromProgression(previousNode, matchingNodesList, matchingNodesListIdx - 1, progressionsGraph);
+					progressionsGraph.removeEdge(previousNode, toRemove);
+				}
+			}
+		}
+		else if(matchingNodesListIdx == 0) {//if toRemove belongs to the first set of Nodes in matchingNodesList
+
+
+		}
 
 
 	}

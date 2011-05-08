@@ -52,6 +52,26 @@ public class Graph<T> {
 		back.removePrecedingEdge(edge);
 	}
 
+	//removes the edge that links two given nodes, and removes that edge from the adjacency lists of those nodes
+	public void removeEdge(Node<T> front, Node<T> back) {
+
+		for(Node<T> node : _nodes) {
+
+			//search all the nodes for the node front
+			if(node == front) {
+				//look for the wanted edge
+				for(Edge<T> edge : node.getFollowing()) {
+
+					if(edge._back == back) {
+
+						removeEdge(edge);
+					}
+
+				}
+			}
+		}
+	}
+
 	//returns true is node1 is adjacent to node2, else return false
 	public boolean isAdjacent(Node<T> node1, Node<T> node2){
 
@@ -70,12 +90,12 @@ public class Graph<T> {
 	 * Finds a Node object by a ChordSymbol
 	 *
 	 */
-	public Node findNode(ChordSymbol chordsym){
+	public Node findNode(T chordsym){
 
 		Node returnNode = null;
 		for(Node node : _nodes) {
 
-			if(((ChordSymbol) node.getValue()).equals(chordsym)) {
+			if(( node.getValue()).equals(chordsym)) {
 
 				returnNode = node;
 			}
