@@ -38,7 +38,7 @@ public class ScoreWindow extends Drawable {
 	public ScoreWindow(Piece piece) {
 		_piece = piece;
 		_illustrator = new ScoreIllustrator();
-
+		
 		_buffer = new BufferedImage(ArrangerConstants.PAGE_WIDTH,
 						ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT,
 						BufferedImage.TYPE_INT_ARGB);
@@ -133,7 +133,7 @@ public class ScoreWindow extends Drawable {
 
 	public void adjustScorePoint(Point p) {
 		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
-		int offsetX = (ArrangerConstants.WINDOW_WIDTH - ArrangerConstants.PAGE_WIDTH) / 2;
+		int offsetX = (ArrangerConstants.WINDOW_WIDTH - ArrangerConstants.PAGE_WIDTH) / 2 - 15;
 		
 		p.setLocation(p.getX() - offsetX,
 							p.getY() + _slider.getSlidePercent() * scrollHeight);

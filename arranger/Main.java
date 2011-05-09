@@ -21,6 +21,7 @@ import music.Clef;
 import music.ClefName;
 import music.Piece;
 import instructions.*;
+import gui.NewFileDialog;
 
 /*
  * Main handles delegations of tasks between
@@ -47,8 +48,8 @@ public class Main extends JFrame implements InstructionListener {
 		_logicManager = new LogicManager(_piece);
 		_editor = _logicManager.getEditor();
 		
-		ArrangerConstants.WINDOW_WIDTH = 800;
-		ArrangerConstants.WINDOW_HEIGHT = 600;
+		ArrangerConstants.WINDOW_WIDTH = 1000;
+		ArrangerConstants.WINDOW_HEIGHT = 800;
 		
 		_mainPanel = new MainPanel(_piece);
 		_mainPanel.addInstructionListener(this);
@@ -70,13 +71,14 @@ public class Main extends JFrame implements InstructionListener {
 
 		// new file
 		//Instruction instrNew = new FileInstruction();
-
+		final JFrame frame = this;
 		JMenuItem menuItemNew = new JMenuItem("New");
 		menuItemNew.setMnemonic(KeyEvent.VK_N);
 		menuItemNew.setToolTipText("New song");
 		menuItemNew.addActionListener(
 			new ActionListener() {
 				private List<Clef> clefList = new ArrayList<Clef>();
+				
 				{
 					// TODO: THIS IS STILL ALL CONSTANTS
 					Clef trebleClef = new Clef(ClefName.GCLEF, -2);
@@ -84,10 +86,16 @@ public class Main extends JFrame implements InstructionListener {
 					clefList.add(trebleClef);
 					clefList.add(bassClef);
 				}
-
-				InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionNew(clefList, 30, 4, 4, 0, true));
-
+				
 				public void actionPerformed(ActionEvent event) {
+					// prompt for new song data
+					NewFileDialog newFileDialog = new NewFileDialog(frame);
+					newFileDialog.setLocationRelativeTo(frame);
+					newFileDialog.pack();
+					newFileDialog.setVisible(true);
+					
+					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionNew(clefList, newFileDialog.getNumMeasures(), 4, 4, newFileDialog.getNumAccidentals(), true));
+					
 					receiveInstruction(myInstr);
 				}
 			});
@@ -104,7 +112,7 @@ public class Main extends JFrame implements InstructionListener {
 					if (path == null && path.length() == 0) {
 						System.out.println("Open path cannot be empty");
 					}
-
+					
 					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.OPEN, path));
 					receiveInstruction(myInstr);
 				}

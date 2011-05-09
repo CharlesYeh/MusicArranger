@@ -6,7 +6,7 @@ public class ArrangerConstants {
 	
 	// 72 pixels per inch
 	public static int PAGES = 2;
-	final public static int PAGE_WIDTH = (int) (8.5 * 72);
+	final public static int PAGE_WIDTH = 900;//(int) (8.5 * 72);
 	final public static int PAGE_HEIGHT = 11*72;
 	
 	// for playback
