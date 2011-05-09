@@ -55,7 +55,11 @@ public class LogicManager implements Printable {
 	public void interpretInstrBlock(InstructionBlock instrBlock) {
 		List<Instruction> allInstructions = instrBlock.getInstructions();
 		for (Instruction instr : allInstructions) {
-			interpretInstr(instr);
+			// instructions return true if they succeed, false if they do not (cancelling the
+			// instruction block)
+			if (!interpretInstr(instr)) {
+				break;
+			}
 		}
 	}
 
@@ -63,48 +67,46 @@ public class LogicManager implements Printable {
 	 * Finds the Instruction's class type and calls the cooresponding method to interpret
 	 * the Instruction, after casting it appropriately.
 	 */
-	private void interpretInstr(Instruction instr) {
+	private boolean interpretInstr(Instruction instr) {
 		
 		if (instr instanceof FileInstruction){
 			FileInstruction fileInstr = (FileInstruction) instr;
-			interpretFileInstr(fileInstr);
+			return interpretFileInstr(fileInstr);
 		}
 		else if (instr instanceof EditInstruction) {
 			EditInstruction editInstr = (EditInstruction) instr;
-			interpretEditInstr(editInstr);
+			return interpretEditInstr(editInstr);
 		}
 		else if (instr instanceof PlaybackInstruction) {
 			PlaybackInstruction playbackInstr = (PlaybackInstruction) instr;
-			interpretPlaybackInstr(playbackInstr);
+			return interpretPlaybackInstr(playbackInstr);
 		}
 		else if (instr instanceof GenerateInstruction) {
 			GenerateInstruction genInstr = (GenerateInstruction) instr;
-			interpretGenerateInstr(genInstr);
+			return interpretGenerateInstr(genInstr);
 		}
 		else {
 			throw new RuntimeException("Instruction of unrecognized InstructionType");
 		}
 	}
 
-	private void interpretFileInstr(FileInstruction fileInstr) {
+	private boolean interpretFileInstr(FileInstruction fileInstr) {
 		if (fileInstr instanceof FileInstructionIO) {
 			FileInstructionIO fileInstrIO = (FileInstructionIO) fileInstr;
-			interpretFileInstrIO(fileInstrIO);
+			return interpretFileInstrIO(fileInstrIO);
 		}
 		else if (fileInstr instanceof FileInstructionNew) {
 			FileInstructionNew fileInstrNew = (FileInstructionNew) fileInstr;
-			interpretFileInstrNew(fileInstrNew);
+			return interpretFileInstrNew(fileInstrNew);
 		}
 		else if (fileInstr instanceof FileInstructionPrint) {
 			FileInstructionPrint fileInstrPrint = (FileInstructionPrint) fileInstr;
-			interpretFileInstrPrint(fileInstrPrint);
+			return interpretFileInstrPrint(fileInstrPrint);
 		}
-
-		// Since file instructions instantiate a new piece, rather than mutating the old one, the
-		// the new piece must be updated in Logic and passed back.
-		Piece piece = _editor.getPiece();
-		this._piece = piece;
-		// TODO: SEND NEW PIECE BACK TO MAIN, THEN TO GUI
+		else {
+			System.out.println("FileInstruction not recognized.");
+			return false;
+		}
 	}
 
 	public int print(Graphics g, PageFormat pf, int page) throws PrinterException {
@@ -113,7 +115,7 @@ public class LogicManager implements Printable {
 
 		return PAGE_EXISTS;
 	}
-	private void interpretFileInstrPrint(FileInstructionPrint fileInstrPrint) {
+	private boolean interpretFileInstrPrint(FileInstructionPrint fileInstrPrint) {
 		//fileInstrPrint
 		_toPrint = fileInstrPrint.getImage();
 		PrinterJob job = PrinterJob.getPrinterJob();
@@ -129,9 +131,11 @@ public class LogicManager implements Printable {
 				System.out.println("Print failed");
 			}
 		}
+		// TODO: LEARN HOW PRINT WORKS
+		return true;
 
 	}
-	private void interpretFileInstrNew(FileInstructionNew fileInstrNew) {
+	private boolean interpretFileInstrNew(FileInstructionNew fileInstrNew) {
 		System.out.println("start new file");
 
 		List<Clef> clefs = fileInstrNew.getClefs();
@@ -180,8 +184,10 @@ public class LogicManager implements Printable {
 		}
 
 		System.out.println("created new piece");
+		
+		return true;
 	}
-	private void interpretFileInstrIO(FileInstructionIO fileInstrIO) {
+	private boolean interpretFileInstrIO(FileInstructionIO fileInstrIO) {
 		FileInstructionType fileInstrType = fileInstrIO.getType();
 		String fileName = fileInstrIO.getFileName();
 
@@ -191,6 +197,7 @@ public class LogicManager implements Printable {
 				_arrangerXMLParser.parse(fileName);
 			} catch (Exception e) {
 				System.out.println("Load failed");
+				return false;
 			}
 			break;
 		case SAVE:
@@ -198,12 +205,14 @@ public class LogicManager implements Printable {
 				_arrangerXMLWriter.write(_piece, fileName);
 			} catch (Exception e) {
 				System.out.println("Save failed");
+				return false;
 			}
 			break;
 		}
+		return true;
 	}
 
-	private void interpretGenerateInstr(GenerateInstruction genInstr) {
+	private boolean interpretGenerateInstr(GenerateInstruction genInstr) {
 		GenerateInstructionType genType = genInstr.getType();
 
 		switch (genType) {
@@ -214,44 +223,39 @@ public class LogicManager implements Printable {
 
 			break;
 		}
+		
+		return true;
 	}
 
-	private void interpretEditInstr(EditInstruction editInstr) {
+	private boolean interpretEditInstr(EditInstruction editInstr) {
 		EditType editType = editInstr.getElemType();
 
 		switch (editType) {
 		case STAFF:
-			editStaff(editInstr);
-			break;
+			return editStaff(editInstr);
 		case MEASURE:
-			editMeasure(editInstr);
-			break;
+			return editMeasure(editInstr);
 		case CHORD_SYMBOL:
-			editChordSymbol(editInstr);
-			break;
+			return editChordSymbol(editInstr);
 		case KEY_SIGNATURE:
-			editKeySignature(editInstr);
-			break;
+			return editKeySignature(editInstr);
 		case TIME_SIGNATURE:
-			editTimeSignature(editInstr);
-			break;
+			return editTimeSignature(editInstr);
 		case CLEF:
-			editClef(editInstr);
-			break;
+			return editClef(editInstr);
 		case VOICE:
-			editVoice(editInstr);
-			break;
+			return editVoice(editInstr);
 		case PITCH:
-			editPitch(editInstr);
-			break;
+			return editPitch(editInstr);
 		case MULTINOTE:
-			editMultiNote(editInstr);
-			break;
+			return editMultiNote(editInstr);
 		default:
+			System.out.println("Unrecognized EditType");
+			return false;
 		}
 	}
 
-	private void editStaff(EditInstruction editInstr) {
+	private boolean editStaff(EditInstruction editInstr) {
 		InstructionIndex index = editInstr.getIndex();
 
 		int staffNumber = index.getStaffNumber();
@@ -272,12 +276,13 @@ public class LogicManager implements Printable {
 				_editor.replaceStaff(new Staff());
 				break;
 			default:
-				throw new RuntimeException("Instruction of unrecognized EditInstructionType");
+				System.out.println("Instruction of unrecognized EditInstructionType");
+				return false;
 		}
-
+		return true;
 	}
 
-	private void editChordSymbol(EditInstruction editInstr) {
+	private boolean editChordSymbol(EditInstruction editInstr) {
 		InstructionIndex index = editInstr.getIndex();
 
 		for (Staff staff : _piece.getStaffs()) {
@@ -313,34 +318,41 @@ public class LogicManager implements Printable {
 					chordSymbol = (ChordSymbol) editInstr.getElement();
 					if (measureOffset.compareTo(measureLength) > 0) {
 						// Error, measureOffset is longer than the actual measure
-						return;
+						return false;
 					}
 					else {
 						_editor.replaceChordSymbol(chordSymbol, offset);
 					}
 					break;
 				default:
-					throw new RuntimeException("Instruction of unrecognized EditInstructionType");
+					System.out.println("Instruction of unrecognized EditInstructionType");
+					return false;
 			}
 		}
+		return true;
 	}
 
-	private void editMeasure(EditInstruction editInstr) {
+	private boolean editMeasure(EditInstruction editInstr) {
+		return true;
 	}
 
-	private void editKeySignature(EditInstruction editInstr) {
+	private boolean editKeySignature(EditInstruction editInstr) {
+		return true;
 	}
 
-	private void editTimeSignature(EditInstruction editInstr) {
+	private boolean editTimeSignature(EditInstruction editInstr) {
+		return true;
 	}
 
-	private void editClef(EditInstruction editInstr) {
+	private boolean editClef(EditInstruction editInstr) {
+		return true;
 	}
 
-	private void editVoice(EditInstruction editInstr) {
+	private boolean editVoice(EditInstruction editInstr) {
+		return true;
 	}
 
-	private void editMultiNote(EditInstruction editInstr) {
+	private boolean editMultiNote(EditInstruction editInstr) {
 		InstructionIndex index = editInstr.getIndex();
 
 		int staffNumber = index.getStaffNumber();
@@ -378,18 +390,19 @@ public class LogicManager implements Printable {
 				if (multiNote.getDuration().compareTo(remainingSpace) > 0) {
 					// if the replaced note is bigger than the remaining space in the measure
 					System.out.println("New note is too big");
-					return;
+					return false;
 				}
 				else {
 					_editor.replaceMultiNote(multiNote);
 				}
 				break;
 			default:
-				throw new RuntimeException("Instruction of unrecognized EditInstructionType");
+				System.out.println("Instruction of unrecognized EditInstructionType");
 		}
+		return true;
 	}
 
-	private void editPitch(EditInstruction editInstr) {
+	private boolean editPitch(EditInstruction editInstr) {
 		InstructionIndex index = editInstr.getIndex();
 		
 		// get Measure
@@ -434,12 +447,13 @@ public class LogicManager implements Printable {
 			_editor.removePitch();
 			break;
 		case REPLACE:
-			throw new RuntimeException("LogicManager does not support REPLACE for pitch edits.");
+			System.out.println("LogicManager does not support REPLACE for pitch edits.");
+			return false;
 		}
-		
+		return true;
 	}
 
-	private void interpretPlaybackInstr(PlaybackInstruction playbackInstr) {
+	private boolean interpretPlaybackInstr(PlaybackInstruction playbackInstr) {
 		switch (playbackInstr.getType()) {
 		case START:
 			_api.playPiece(_piece);
@@ -448,6 +462,7 @@ public class LogicManager implements Printable {
 			_api.stopPlayback();
 			break;
 		}
+		return true;
 	}
 
 	// Used for finding the location of an edit, given a measure and an offset into that measure.
@@ -490,6 +505,27 @@ public class LogicManager implements Printable {
 	private Timestep getElementAt(Rational offset, List<? extends Timestep> list) {
 		IteratorAndOffset iterAndOff = calcIterAndOffset(list, offset);
 		return iterAndOff.getIter().next();
+	}
+	
+	private List<Timestep> getElementsAtUntil(Rational start, Rational finish, List<? extends Timestep> list) {
+		IteratorAndOffset iterAndOff = calcIterAndOffset(list, start);
+		ListIterator<? extends Timestep> iterator = iterAndOff.iter;
+		Rational offset = iterAndOff.offset;
+		Rational timeLeft = finish.minus(start).minus(offset);
+		List<Timestep> output = new ArrayList<Timestep>();
+
+		Timestep firstElem = iterator.next();
+		output.add(firstElem);
+		timeLeft.minus(firstElem.getDuration());
+		
+		while (timeLeft.getNumerator() > 0) {
+			Timestep nextElem = iterator.next();
+			output.add(nextElem);
+			
+			timeLeft.minus(nextElem.getDuration());
+		}
+		
+		return output;
 	}
 	
 	// Calculates a pitch, given a line number, the clef, and the key signature
