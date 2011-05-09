@@ -466,7 +466,7 @@ public class ScoreIllustrator {
 			drawRest(g, numerValue, denomValue, nextX, nextY);
 			
 			// render previous group
-			renderStemGroup(stemGroup);
+			renderStemGroup(stemGroup, currClef);
 
 			// don't render stem
 			return;
@@ -522,7 +522,7 @@ public class ScoreIllustrator {
 			}
 
 			// render previous group
-			renderStemGroup(stemGroup);
+			renderStemGroup(stemGroup, currClef);
 		}
 	}
 
@@ -559,7 +559,7 @@ public class ScoreIllustrator {
 		g.drawLine(xc, yc + minOffset, xc, yc + maxOffset);
 	}
 
-	private void renderStemGroup(List<MultiNote> stemGroup) {
+	private void renderStemGroup(List<MultiNote> stemGroup, Clef currClef) {
 		if (stemGroup.size() == 0) {
 			return;
 		}
@@ -572,7 +572,7 @@ public class ScoreIllustrator {
 			stemGroup.clear();
 			return;
 		}
-		/*
+		
 		Rational totalDuration = new Rational(0, 1);
 		int totalLines = 0;
 
@@ -582,7 +582,7 @@ public class ScoreIllustrator {
 			// calc average (above center = stems downward, below center = stems upward)
 			List<Pitch> pitches = mnote.getPitches();
 			for (Pitch p : pitches) {
-				totalLines += getLineNumber(clef, p);
+				totalLines += getLineNumber(currClef, p);
 			}
 
 			// calc total duration
@@ -590,13 +590,13 @@ public class ScoreIllustrator {
 		}
 
 		// -1 = upwards, 1 = downwards
-		boolean stemDirection = (totalLines >= 0) ? -1 : 1;
+		int stemDirection = (totalLines >= 0) ? -1 : 1;
 
 		// calc slope of stem bar (last - first) / totalDuration
 		MultiNote first = stemGroup.get(0);
 		MultiNote last = stemGroup.get(stemGroup.size() - 1);
 
-		double slope = (last.getY() - first.getY()) / (last.getX() - first.getX())
+		double slope = (last.getY() - first.getY()) / (last.getX() - first.getX());
 		double maxBarOffset = 0;
 
 		// also calc how much to offset the bar vertically
@@ -606,7 +606,7 @@ public class ScoreIllustrator {
 			maxBarOffset = Math.max(maxBarOffset, expectedY);
 
 			int stemX = mn.getX();
-			g.drawLine(stemX, mn.getY(), );
+			//g.drawLine(stemX, mn.getY(), );
 		}
 
 		// draw stems and additional bars next to first bar (for 16th, etc)
@@ -619,7 +619,7 @@ public class ScoreIllustrator {
 		int barEX = last.getX();
 		int barEY = last.getX() + stemDirection * (stemLength + maxBarOffset);
 		g.drawLine(barSX, barSY, barEX, barEY);
-		*/
+		
 		//stemGroup = new ArrayList<MultiNote>();
 		stemGroup.clear();
 	}

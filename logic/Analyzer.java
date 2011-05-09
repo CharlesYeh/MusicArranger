@@ -29,7 +29,7 @@ public class Analyzer extends Thread {
 
 	public void addChordSymbols(Piece p) {
 		// go through piece matching notes to chords
-
+		
 	}
 	
 	public Graph<ChordSymbol> getChordPreferencesGraph() {
