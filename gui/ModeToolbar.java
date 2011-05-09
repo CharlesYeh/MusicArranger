@@ -11,7 +11,7 @@ public class ModeToolbar extends Toolbar {
 	final static int BUTTONS = 3;
 
 	ToolbarButton _activeButton;
-
+	
 	public ModeToolbar(DockController dockControl) {
 		super(dockControl, Orientation.VERTICAL);
 
@@ -37,4 +37,5 @@ public class ModeToolbar extends Toolbar {
 
 		_buttons = new ToolbarButton[]{modeNote, modeSelection, /*modeZoom, */genChords, genVoices};
 	}
+	
 }

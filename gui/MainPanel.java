@@ -161,21 +161,29 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			instr = new InstructionBlock(this);
 			for (InstructionIndex index : listIndex) {
 				
-				if (_selected.contains(index)) {
-					// don't replace this note
+				if (index.getIsChord()) {
+					// insert/replace chord symbol
+					Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.CHORD_SYMBOL, new ChordSymbol(new ScaleDegree(0, Accidental.NATURAL), ChordType.MAJOR));
+					instr.addInstruction(editInstr);
 				}
 				else {
-					// replace this note
-					Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
-					instr.addInstruction(editInstr);
+					// insert/replace multinote or pitch
+					if (_selected.contains(index)) {
+						// don't replace this note
+					}
+					else {
+						// replace this note
+						Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
+						instr.addInstruction(editInstr);
+						
+						_selected = new HashSet<InstructionIndex>(listIndex);
+					}
 					
-					_selected = new HashSet<InstructionIndex>(listIndex);
-				}
-				
-				if (!_currRest) {
-					// insert pitches
-					Instruction editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
-					instr.addInstruction(editInstr);
+					if (!_currRest) {
+						// insert pitches
+						Instruction editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
+						instr.addInstruction(editInstr);
+					}
 				}
 			}
 		}

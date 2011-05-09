@@ -41,7 +41,7 @@ public class ScoreIllustrator {
 	final static int KEYSIG_WIDTH = 7;
 	final static int CLEF_WIDTH = 38;
 	
-	final static int CHORD_SPACING = 50;
+	final static int CHORD_SPACING = 45;
 
 	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
 	final static int NOTE_HEIGHT = SYSTEM_LINE_SPACING;
@@ -73,10 +73,6 @@ public class ScoreIllustrator {
 	public ScoreIllustrator() {
 		// load images
 		try {
-			/*_imgQuarter		= ImageIO.read(new File("images/score/score_quarter.gif"));
-			_imgHalf			= ImageIO.read(new File("images/score/score_half.gif"));
-			_imgWhole	 	= ImageIO.read(new File("images/score/score_whole.gif"));*/
-			
 			_imgQuarterRest= ImageIO.read(new File("images/score/score_quarter_rest.png"));
 			_imgHalfRest	= ImageIO.read(new File("images/score/score_half_rest.png"));
 			_imgEighthRest	= ImageIO.read(new File("images/score/score_8_rest.png"));
@@ -323,12 +319,12 @@ public class ScoreIllustrator {
 					int noteX = nextX;
 					int noteY = nextY;
 
-					drawMultiNote(g, stemGroups.get(currStaff), currClef, mnote, noteX, noteY);
+					drawMultiNote(g, stemGroups.get(currStaff), currClef, currKeySig, mnote, noteX, noteY);
 					Rational dur = mnote.getDuration();
-
+					
 					// nextX should increase proportional to note length
 					int noteWidth = (int) (((double) dur.getNumerator()) / dur.getDenominator() * MEASURE_WIDTH);
-
+					
 					voiceX.put(currVoice, voiceX.get(currVoice) + noteWidth);
 					finalVoiceX += noteWidth / voiceX.size();
 
@@ -453,7 +449,7 @@ public class ScoreIllustrator {
 	/* Draws all pitches within the multinote
 	 *
 	 */
-	private void drawMultiNote(Graphics g, List<MultiNote> stemGroup, Clef currClef, MultiNote mn, int nextX, int nextY) {
+	private void drawMultiNote(Graphics g, List<MultiNote> stemGroup, Clef currClef, KeySignature currKeySig, MultiNote mn, int nextX, int nextY) {
 		Rational dur = mn.getDuration();
 
 		int numer = dur.getNumerator();
@@ -779,13 +775,18 @@ public class ScoreIllustrator {
 
 		int staffY = systemOffset % totalSystemHeight;
 		int indexStaff = (staffY) / STAFF_SPACING;
-		// check for clips in the extra space between systems
+		
+		// check for clicks in the extra space between systems (on chord symbols)
+		boolean isChord = false;
 		if (indexStaff >= _staffPositions.size()) {
-			return null;
+			// clicked on a chord symbol
+			isChord = true;
+			indexStaff = _staffPositions.size() - 1;
 		}
 		
-		int lineY = staffY % STAFF_SPACING + SYSTEM_LINE_SPACING / 2;
 		// actually represents the line/spaces
+		int lineY = staffY % STAFF_SPACING + SYSTEM_LINE_SPACING / 2;
+		
 		// add offset for better snapping then get line number
 		int indexLine = 5 - (lineY - SYSTEM_LINE_SPACING / 4) / (SYSTEM_LINE_SPACING / 2) + OFFSET_Y / SYSTEM_LINE_SPACING * 2;
 		
@@ -813,12 +814,12 @@ public class ScoreIllustrator {
 		}
 		indexMeasure++;
 
-		System.out.println("----------------------");
+		/*System.out.println("----------------------");
 		System.out.println("System: " + indexSystem);
 		System.out.println("Staff: " + indexStaff);
 		System.out.println("Measure: " + indexMeasure);
 		System.out.println("Line: " + indexLine);
-		System.out.println("----------------------");
+		System.out.println("----------------------");*/
 		// current voice being edited
 
 		Map<Integer, TreeMap<Integer, Rational>> measureMNotes = _mNotePositions.get(indexSystem);
@@ -841,7 +842,7 @@ public class ScoreIllustrator {
 		if (prevNoteX != 0) {
 			measurePosition = multiNotePositions.get(prevNoteX);
 		}
-
-		return new InstructionIndex(indexStaff, indexMeasure, 0, measurePosition, indexLine);
+		
+		return new InstructionIndex(indexStaff, indexMeasure, 0, measurePosition, indexLine, isChord);
 	}
 }

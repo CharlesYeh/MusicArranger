@@ -28,6 +28,7 @@ public class NoteToolbar extends Toolbar {
 		
 		ToolbarButton noteModFlat 	= new ToolbarButton("images/btns/note_flat.png", true);
 		ToolbarButton noteModSharp = new ToolbarButton("images/btns/note_sharp.png", true);
+		ToolbarButton noteModNatural = new ToolbarButton("images/btns/note_natural.png", true);
 		ToolbarButton noteModRest 	= new ToolbarButton("images/btns/note_rest.png", true);
 		
 		noteQuar.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.QUARTER));
@@ -43,6 +44,6 @@ public class NoteToolbar extends Toolbar {
 		noteModRest.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.REST));
 		
 		_buttons = new ToolbarButton[]{noteQuar, noteHalf, noteWhole, noteEighth, noteSixth, /*noteModHalf,
-								noteModThird, noteModDot, */noteModFlat, noteModSharp, noteModRest};
+								noteModThird, noteModDot, */noteModFlat, noteModNatural, noteModSharp, noteModRest};
 	}
 }

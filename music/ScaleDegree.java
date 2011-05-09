@@ -6,6 +6,11 @@ public class ScaleDegree {
 	int _degreeNumber;
 	Accidental _accidental;
 	
+	public ScaleDegree(int degreeNumber) {
+		_degreeNumber = degreeNumber;
+		_accidental = Accidental.NATURAL;
+	}
+	
 	public ScaleDegree(int degreeNumber, Accidental accidental) {
 		_degreeNumber = degreeNumber;
 		_accidental = accidental;
