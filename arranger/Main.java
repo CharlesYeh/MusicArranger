@@ -87,14 +87,14 @@ public class Main extends JFrame implements InstructionListener {
 					clefList.add(bassClef);
 				}
 				
-				InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionNew(clefList, 30, 4, 4, 0, true));
-				
 				public void actionPerformed(ActionEvent event) {
 					// prompt for new song data
 					NewFileDialog newFileDialog = new NewFileDialog(frame);
 					newFileDialog.setLocationRelativeTo(frame);
 					newFileDialog.pack();
 					newFileDialog.setVisible(true);
+					
+					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionNew(clefList, newFileDialog.getNumMeasures(), 4, 4, newFileDialog.getNumAccidentals(), true));
 					
 					receiveInstruction(myInstr);
 				}
