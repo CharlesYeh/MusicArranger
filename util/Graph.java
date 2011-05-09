@@ -12,17 +12,22 @@ import music.*;
 public class Graph<T> {
 
 	List<Node<T>> _nodes;
-	Node<T> startingNode;
+	Node<T> _startingNode;
 
 	public Graph(){
 
 		_nodes = new ArrayList<Node<T>>();
+		
 	}
 
 	//Adds a Node to the Graph
 	public void addStartingNode(Node<T> node, int weight) {
 
-		addEdge(startingNode, node, weight);
+		if(_startingNode == null) {
+			
+			_startingNode = new Node<T>(node.getValue());
+		}
+		addEdge(_startingNode, node, weight);
 	}
 
 	//makes a connection between node1 and node2 with the specified weight.
@@ -84,6 +89,11 @@ public class Graph<T> {
 	public List<Node<T>> getNodes(){
 
 		return _nodes;
+	}
+	
+	public Node<T> getStartingNode() {
+		
+		return _startingNode;
 	}
 
 	/*

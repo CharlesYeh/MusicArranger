@@ -121,6 +121,16 @@ public class ScaleDegree {
 		return interval;
 	}
 	
+	public boolean equals(ScaleDegree toCompare) {
+		
+		if(toCompare.getAccidental() == _accidental && toCompare.getDegreeNumber() == _degreeNumber) {
+			
+			return true;
+		}
+		else
+			return false;
+	}
+	
 	public String toString() {
 		return " " + _degreeNumber + _accidental;
 	}
