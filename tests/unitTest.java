@@ -5,6 +5,7 @@ import music.*;
 import logic.Analyzer;
 import logic.temporary.*;
 import tests.MidiAPITest;
+import util.Graph;
 
 public class unitTest{
         public static void main(String args[]) {
@@ -54,6 +55,12 @@ public class unitTest{
                 	melodyNo++;
                 }
                 
-                
+                Graph possibleProgressionsGraph = analyzer.createPossibleProgressionsGraph(allPossibleChords);
+                printGraph(possibleProgressionsGraph);
+        }
+        
+        public void printGraph(Graph toPrint) {
+        	
+        	
         }
 }
