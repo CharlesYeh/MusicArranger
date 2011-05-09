@@ -145,7 +145,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			if (index.getIsChord()) {
 				System.out.println("START INSERTING CHORD at: " + index.getMeasureOffset());
 				// insert/replace chord symbol
-				Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.CHORD_SYMBOL, new ChordSymbol(new ScaleDegree(0, Accidental.NATURAL), ChordType.MAJOR));
+				Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.CHORD_SYMBOL, new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR));
 				instr.addInstruction(editInstr);
 			}
 			else {

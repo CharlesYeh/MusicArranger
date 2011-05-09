@@ -280,46 +280,48 @@ public class LogicManager implements Printable {
 	private void editChordSymbol(EditInstruction editInstr) {
 		InstructionIndex index = editInstr.getIndex();
 
-		int staffNumber = index.getStaffNumber();
-		int measureNumber = index.getMeasureNumber();
-		Rational measureOffset = index.getMeasureOffset();
-		Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
-		List<ChordSymbol> chordSymbolList = measure.getChordSymbols();
-
-		// calculate iterator and offset
-		IteratorAndOffset iterAndOffset = calcIterAndOffset(chordSymbolList, measureOffset);
-		ListIterator<ChordSymbol> iter = (ListIterator<ChordSymbol>) iterAndOffset.getIter();
-		Rational offset = iterAndOffset.getOffset();
-
-		ChordSymbol chordSymbol;
-
-		// set the iterator in the editor
-		_editor.setChordSymbolIter(iter);
-
-		EditInstructionType instrType = editInstr.getType();
-		switch (instrType) {
-		// offset SHOULD be 0 for insertion and removal functions
-			case INSERT:
-				chordSymbol = (ChordSymbol) editInstr.getElement();
-				_editor.insertChordSymbol(chordSymbol);
-				break;
-			case REMOVE:
-				_editor.removeChordSymbol();
-				break;
-			case REPLACE:
-				// check if replacement note runs over end of measure
-				Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
-				chordSymbol = (ChordSymbol) editInstr.getElement();
-				if (measureOffset.compareTo(measureLength) > 0) {
-					// Error, measureOffset is longer than the actual measure
-					return;
-				}
-				else {
-					_editor.replaceChordSymbol(chordSymbol);
-				}
-				break;
-			default:
-				throw new RuntimeException("Instruction of unrecognized EditInstructionType");
+		for (Staff staff : _piece.getStaffs()) {
+				
+			int measureNumber = index.getMeasureNumber();
+			Rational measureOffset = index.getMeasureOffset();
+			Measure measure = staff.getMeasures().get(measureNumber);
+			List<ChordSymbol> chordSymbolList = measure.getChordSymbols();
+	
+			// calculate iterator and offset
+			IteratorAndOffset iterAndOffset = calcIterAndOffset(chordSymbolList, measureOffset);
+			ListIterator<ChordSymbol> iter = (ListIterator<ChordSymbol>) iterAndOffset.getIter();
+			Rational offset = iterAndOffset.getOffset();
+	
+			ChordSymbol chordSymbol;
+	
+			// set the iterator in the editor
+			_editor.setChordSymbolIter(iter);
+	
+			EditInstructionType instrType = editInstr.getType();
+			switch (instrType) {
+			// offset SHOULD be 0 for insertion and removal functions
+				case INSERT:
+					chordSymbol = (ChordSymbol) editInstr.getElement();
+					_editor.insertChordSymbol(chordSymbol);
+					break;
+				case REMOVE:
+					_editor.removeChordSymbol();
+					break;
+				case REPLACE:
+					// check if replacement note runs over end of measure
+					Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
+					chordSymbol = (ChordSymbol) editInstr.getElement();
+					if (measureOffset.compareTo(measureLength) > 0) {
+						// Error, measureOffset is longer than the actual measure
+						return;
+					}
+					else {
+						_editor.replaceChordSymbol(chordSymbol, offset);
+					}
+					break;
+				default:
+					throw new RuntimeException("Instruction of unrecognized EditInstructionType");
+			}
 		}
 	}
 
@@ -512,80 +514,5 @@ public class LogicManager implements Printable {
 		int octave = (clef.getCenterValue() + lineNum - clefLine) / 7;
 		Pitch pitch = new Pitch(pitchLetter.getNoteLetter(), octave, pitchLetter.getAccidental());
 		return pitch;
-	}
-
-	public static void main(String[] args) {
-		// testing FileInstructionNew
-
-		LogicManager logicManager = new LogicManager(new Piece());
-		// TODO: THIS IS STILL ALL CONSTANTS
-		Clef trebleClef = new Clef(ClefName.GCLEF, -2);
-		Clef bassClef = new Clef(ClefName.FCLEF, 2);
-		List<Clef> clefList = new ArrayList<Clef>();
-		clefList.add(trebleClef);
-		clefList.add(bassClef);
-		FileInstruction testInstruction = new FileInstructionNew(clefList, 9, 3, 4, 0, true);
-		logicManager.interpretInstr(testInstruction);
-		try {
-			logicManager._arrangerXMLWriter.write(logicManager._piece, "tests/testNew.xml");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-
-		// testing EditMultiNote
-		/*
-		LogicManager logicManager = new LogicManager(new Piece());
-		FileInstruction testInstruction = new FileInstructionNew(logicManager, 2, 9, 3, 4, 0, true);
-		logicManager.interpretInstr(testInstruction);
-		List<InstructionIndex> indices1 = new ArrayList<InstructionIndex>();
-		List<InstructionIndex> indices2 = new ArrayList<InstructionIndex>();
-		indices1.add(new InstructionIndex(0, 0, 0, new Rational(0, 1)));
-		indices2.add(new InstructionIndex(0, 0, 0, new Rational(1, 8)));
-		EditInstruction editInstruction1 = new EditInstruction(logicManager,
-				indices1,
-				EditInstructionType.REPLACE,
-				EditType.MULTINOTE,
-				new MultiNote(new Rational(1, 8)));
-		EditInstruction editInstruction2 = new EditInstruction(logicManager,
-				indices2,
-				EditInstructionType.REPLACE,
-				EditType.MULTINOTE,
-				new MultiNote(new Rational(1, 4)));
-		EditInstruction editInstruction3 = new EditInstruction(logicManager,
-				indices2,
-				EditInstructionType.REPLACE,
-				EditType.MULTINOTE,
-				new MultiNote(new Rational(3, 4)));
-		logicManager.interpretInstr(editInstruction1);
-		logicManager.interpretInstr(editInstruction2);
-		logicManager.interpretInstr(editInstruction3);
-		try {
-			logicManager._arrangerXMLWriter.write(logicManager._piece, "tests/testNew.xml");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		*/
-
-		// testing FileInstructionIO
-		/*
-		LogicManager logicManager = new LogicManager(new Piece());
-		FileInstructionIO fileOpen = new FileInstructionIO(logicManager,
-				FileInstructionType.OPEN,
-				"tests/testLoad.xml");
-		FileInstructionIO fileSave = new FileInstructionIO(logicManager,
-				FileInstructionType.SAVE,
-				"tests/testSave.xml");
-		List<InstructionIndex> indices1 = new ArrayList<InstructionIndex>();
-		indices1.add(new InstructionIndex(0, 0, 0, new Rational(0, 1)));
-		EditInstruction editInstruction1 = new EditInstruction(logicManager,
-				indices1,
-				EditInstructionType.REPLACE,
-				EditType.MULTINOTE,
-				new MultiNote(new Rational(1, 8)));
-		logicManager.interpretInstr(fileOpen);
-		logicManager.interpretInstr(editInstruction1);
-		logicManager.interpretInstr(fileSave);
-		*/
 	}
 }

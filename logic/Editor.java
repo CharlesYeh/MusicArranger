@@ -158,20 +158,68 @@ public class Editor{
 		_chordSymIter.add(chordSymbol);
 		return this;
 	}
-	public Editor removeChordSymbol() {
+	public ChordSymbol removeChordSymbol() {
+		ChordSymbol removed;
 		if (_chordSymIter.hasNext()) {
-			_chordSymIter.next();
+			removed = _chordSymIter.next();
 			_chordSymIter.remove();
 		} 
 		else {
 			throw new RuntimeException("Tried to remove from end of list");
 		}
-		return this;
+		return removed;
 	}
-	public Editor replaceChordSymbol(ChordSymbol chordSymbol) {
-		this.removeChordSymbol().insertChordSymbol(chordSymbol);
-		_chordSymIter.previous();
-		return this;
+	// Places a ChordSymbol at a certain offset to the iterator
+	public void replaceChordSymbol(ChordSymbol chordSymbol, Rational offset) {
+		ChordSymbol replaced = this.removeChordSymbol();
+		Rational replacedDuration = offset;
+		Rational replacementDuration = replaced.getDuration().minus(offset);
+		
+		ChordSymbol replacedNew = new ChordSymbol(replacedDuration,
+				replaced.getScaleDegree(),
+				replaced.getChordType());
+		
+		ChordSymbol replacement = new ChordSymbol(replacementDuration,
+				chordSymbol.getScaleDegree(),
+				chordSymbol.getChordType());
+		
+		if (replacedDuration.getNumerator() != 0) {
+			this.insertChordSymbol(replacedNew);
+			// if the offset is 0
+		}
+		this.insertChordSymbol(replacement);
+		mergeWithNextChord(replaced, replacement);
+	}
+
+	// merges newChord before the current chordSymIterator with all subsequent chords
+	// that have the same value as oldChord
+	// example: I | V V V V VI -> I           VI
+	private void mergeWithNextChord(ChordSymbol oldChord, ChordSymbol newChord) {
+		Rational newDuration = newChord.getDuration();
+		
+		if (_chordSymIter.hasNext()) {
+			ChordSymbol nextChord = this.removeChordSymbol();
+			if (nextChord.equals(oldChord)) {
+				// if the next chord is a duplicate of oldChord, add its duration
+				// to newChord and update newChord
+				newDuration = newDuration.plus(nextChord.getDuration());
+				_chordSymIter.previous();
+				
+				ChordSymbol newReplacement = new ChordSymbol(newDuration, 
+						newChord.getScaleDegree(),
+						newChord.getChordType(),
+						newChord.getInversion());
+				
+				this.removeChordSymbol();
+				this.insertChordSymbol(newReplacement);
+				
+				mergeWithNextChord(oldChord, newReplacement);
+			}
+			else {
+				// otherwise put it back
+				this.insertChordSymbol(nextChord);
+			}
+		}
 	}
 	
 // CLEFS
