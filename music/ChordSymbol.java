@@ -164,6 +164,6 @@ public class ChordSymbol extends Timestep {
 	}
 	
 	public String toString() {
-		return " " + _duration + " " + _scaleDegree + " " + _chordType + " " + _inversion;
+		return " Duration: " + _duration + " " + _scaleDegree + " " + _chordType + " Inversion:" + _inversion;
 	}
 }
