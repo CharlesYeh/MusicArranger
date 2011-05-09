@@ -62,9 +62,12 @@ public class ScoreWindow extends Drawable {
 	public void drawSelf(Graphics g) {
 		// draw with offset from slider
 		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
-		int offset = (int) (_slider.getSlidePercent() * scrollHeight);
-		g.drawImage(_buffer, 0, -offset, null);
-
+		int offsetY = (int) (_slider.getSlidePercent() * scrollHeight);
+		
+		int offsetX = (ArrangerConstants.WINDOW_WIDTH - ArrangerConstants.PAGE_WIDTH) / 2;
+		
+		g.drawImage(_buffer, offsetX, -offsetY, null);
+		
 		// draw slider on top
 		_slider.drawSelf(g);
 	}
@@ -134,6 +137,9 @@ public class ScoreWindow extends Drawable {
 
 	public void adjustScorePoint(Point p) {
 		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
-		p.setLocation(p.getX(), p.getY() + _slider.getSlidePercent() * scrollHeight);
+		int offsetX = (ArrangerConstants.WINDOW_WIDTH - ArrangerConstants.PAGE_WIDTH) / 2;
+		
+		p.setLocation(p.getX() - offsetX,
+							p.getY() + _slider.getSlidePercent() * scrollHeight);
 	}
 }

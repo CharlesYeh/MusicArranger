@@ -21,20 +21,20 @@ public class ModeToolbar extends Toolbar {
 
 	protected void createButtons(){
 		// add mode buttons (note, selection, zoom)
-		ToolbarButton modeNote = new ToolbarButton("images/mode/mode_note.png");
-		ToolbarButton modeSelection = new ToolbarButton("images/mode/mode_chord.png");
-		ToolbarButton modeZoom = new ToolbarButton("images/mode/mode_zoom.png");
+		ToolbarButton modeNote = new ToolbarButton("images/btns/note_quarter.png");
+		ToolbarButton modeSelection = new ToolbarButton("images/btns/mode_chord.png");
+		//ToolbarButton modeZoom = new ToolbarButton("images/btns/mode_zoom.png");
 		
-		ToolbarButton genChords = new ToolbarButton("images/mode/mode_note.png");
-		ToolbarButton genVoices = new ToolbarButton("images/mode/mode_note.png");
+		ToolbarButton genChords = new ToolbarButton("images/btns/gen_chords.png");
+		ToolbarButton genVoices = new ToolbarButton("images/btns/gen_voices.png");
 
 		modeNote.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.NOTE));
 		modeSelection.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.SELECTION));
-		modeZoom.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.ZOOM));
+		//modeZoom.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.ZOOM));
 		
 		genChords.setInstruction(new GenerateInstruction(GenerateInstructionType.CHORDS));
 		genVoices.setInstruction(new GenerateInstruction(GenerateInstructionType.VOICES));
 
-		_buttons = new ToolbarButton[]{modeNote, modeSelection, modeZoom, genChords, genVoices};
+		_buttons = new ToolbarButton[]{modeNote, modeSelection, /*modeZoom, */genChords, genVoices};
 	}
 }

@@ -45,6 +45,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	//--------------------state information--------------------
 	EditMode _currMode = EditMode.NOTE;
 	EditDuration _currDuration = EditDuration.QUARTER;
+	
 	int _currAccidental = 0;
 
 	// currently selected
@@ -159,6 +160,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		else {
 			// clicked on a toolbar
 			Instruction ins = tbar.mouseReleased(evtPoint);
+			repaint();
+			
 			if (ins == null)
 				return;
 

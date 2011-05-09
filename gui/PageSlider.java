@@ -1,14 +1,29 @@
 package gui;
 
+import java.io.File;
+import java.awt.Image;
+import javax.imageio.ImageIO;
+import java.io.IOException;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import arranger.ArrangerConstants;
 
 public class PageSlider extends Drawable {
-	final int SLIDER_WIDTH = 30;
+	final int SLIDER_WIDTH = 20;
 	final int SLIDER_HEIGHT = 40;
 	
+	final static String SLIDER_IMG = "images/gui/slider.png";
+	Image _icon;
+	
 	public PageSlider() {
+		try {
+			_icon = ImageIO.read(new File(SLIDER_IMG));
+		}
+		catch (IOException e) {
+			System.out.println("Error while loading icon for button: " + e);
+		}
+		
 		_x = ArrangerConstants.WINDOW_WIDTH - _width;
 		_y = 0;
 		_width = SLIDER_WIDTH;
@@ -19,10 +34,11 @@ public class PageSlider extends Drawable {
 		// draw slider on top
 		_x = ArrangerConstants.WINDOW_WIDTH - _width;
 		
-		g.setColor(Color.RED);
+		g.setColor(Color.GRAY);
 		g.fillRect(_x, 0, _width, ArrangerConstants.WINDOW_HEIGHT);
-		g.setColor(Color.BLUE);
-		g.fillRect(_x, _y, _width, _height);
+		//g.setColor(Color.BLUE);
+		//g.fillRect(_x, _y, _width, _height);
+		g.drawImage(_icon, _x, _y, null);
 	}
 	
 	public void setY(int oy) {

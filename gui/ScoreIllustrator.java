@@ -27,19 +27,19 @@ import java.awt.event.MouseEvent;
 public class ScoreIllustrator {
 
 	final static double LOG_2 = Math.log(2);
-
+	
 	final static int TOP_MARGIN	= 150;
 	final static int LEFT_MARGIN	= 50;
 	final static int RIGHT_MARGIN	= 50;
+	
+	final static int SYSTEM_SPACING = 110;
+	final static int SYSTEM_LINE_SPACING = 12;
+	
+	final static int STAFF_SPACING = 80;
 
-	final static int SYSTEM_SPACING = 90;
-	final static int SYSTEM_LINE_SPACING = 10;
-
-	final static int STAFF_SPACING = 70;
-
-	final static int TIMESIG_WIDTH = 30;
-	final static int KEYSIG_WIDTH = 30;
-	final static int CLEF_WIDTH = 50;
+	final static int TIMESIG_WIDTH = 25;
+	final static int KEYSIG_WIDTH = 10;
+	final static int CLEF_WIDTH = 35;
 	final static int CHORD_SPACING = 10;
 
 	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
@@ -49,8 +49,11 @@ public class ScoreIllustrator {
 
 	final static int MEASURE_WIDTH = 100;
 	final static int LEDGER_WIDTH = (int) (SYSTEM_LINE_SPACING * 1.5);
+	
+	final static int CLEF_IMG_OFFSET = 50;
+	final static int ACCID_IMG_OFFSET = 50;
 
-	Image _imgQuarter, _imgHalf, _imgWhole, _imgRest,
+	Image _imgQuarter, _imgHalf, _imgWhole, _imgQuarterRest, _imgHalfRest, _imgEighthRest, _imgSixteenthRest,
 			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp,
 			_imgClefG, _imgClefF, _imgClefC;
 
@@ -66,16 +69,20 @@ public class ScoreIllustrator {
 	public ScoreIllustrator() {
 		// load images
 		try {
-			_imgQuarter		= ImageIO.read(new File("images/score/score_quarter.gif"));
+			/*_imgQuarter		= ImageIO.read(new File("images/score/score_quarter.gif"));
 			_imgHalf			= ImageIO.read(new File("images/score/score_half.gif"));
-			_imgWhole	 	= ImageIO.read(new File("images/score/score_whole.gif"));
-			_imgRest			= ImageIO.read(new File("images/score/score_rest.gif"));
+			_imgWhole	 	= ImageIO.read(new File("images/score/score_whole.gif"));*/
+			
+			_imgQuarterRest= ImageIO.read(new File("images/score/score_quarter_rest.png"));
+			_imgHalfRest	= ImageIO.read(new File("images/score/score_half_rest.png"));
+			_imgEighthRest	= ImageIO.read(new File("images/score/score_8_rest.png"));
+			_imgSixteenthRest	= ImageIO.read(new File("images/score/score_16_rest.png"));
 
-			_imgDoubleFlat	= ImageIO.read(new File("images/score/score_dflat.gif"));
-			_imgFlat			= ImageIO.read(new File("images/score/score_flat.gif"));
-			_imgNatural	 	= ImageIO.read(new File("images/score/score_natural.gif"));
-			_imgSharp		= ImageIO.read(new File("images/score/score_sharp.gif"));
-			_imgDoubleSharp= ImageIO.read(new File("images/score/score_dsharp.gif"));
+			_imgDoubleFlat	= ImageIO.read(new File("images/score/score_dflat.png"));
+			_imgFlat			= ImageIO.read(new File("images/score/score_flat.png"));
+			_imgNatural	 	= ImageIO.read(new File("images/score/score_natural.png"));
+			_imgSharp		= ImageIO.read(new File("images/score/score_sharp.png"));
+			_imgDoubleSharp= ImageIO.read(new File("images/score/score_dsharp.png"));
 
 			_imgClefG		= ImageIO.read(new File("images/score/score_clef_g.png"));
 			_imgClefF		= ImageIO.read(new File("images/score/score_clef_f.png"));
@@ -97,6 +104,7 @@ public class ScoreIllustrator {
 		_systemPositions = new ArrayList<Integer>();
 		_staffPositions = new HashMap<Staff, Integer>();
 		_measurePositions = new ArrayList<TreeMap<Integer, Integer>>();
+		
 		_mNotePositions = new ArrayList<Map<Integer, TreeMap<Integer, Rational>>>();
 
 		// add first system to mNotePositions
@@ -210,9 +218,57 @@ public class ScoreIllustrator {
 					timestepStaff.put(multisList, staff);
 					timestepVoice.put(multisList, v);
 				}
-
 			}
+			
+			// TODO: GO ONTO NEXT LINE################################################
+			//int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
+			// if extending into the margin, make a new line
+			Integer measureX = staffX.values().iterator().next();
+			if (measureX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN || startDrawing) {
+				// draw system lines
+				if (!startDrawing){
+					systemY += SYSTEM_SPACING + (numStaffs - 1) * STAFF_SPACING;
+					
+					Map<Integer, TreeMap<Integer, Rational>> systemMeasures = new HashMap<Integer, TreeMap<Integer, Rational>>();
+					systemMeasures.put(measureCount, new TreeMap<Integer, Rational>());
+					_mNotePositions.add(systemMeasures);
+				}
 
+				startDrawing = false;
+
+				// if new line, set left position
+				//nextX = LEFT_MARGIN;
+
+				// reset x for all staffs
+				Set<Staff> staffs = staffX.keySet();
+				for (Staff stf : staffs) {
+					staffX.put(stf, LEFT_MARGIN);
+					
+					// redraw clefs and keysigs on each new line
+					currClefs.put(stf, null);
+					currKeySigs.put(stf, null);
+				}
+
+				// reset x for all voices
+				Set<Voice> voices = voiceX.keySet();
+				for (Voice v : voices) {
+					voiceX.put(v, 0);
+				}
+
+				finalVoiceX = 0;
+
+				_systemPositions.add(systemY);
+
+				g.setColor(Color.BLACK);
+				for (int i = 0; i < numStaffs; i++){
+					drawSystem(g, systemY + i * STAFF_SPACING);
+				}
+
+				_measurePositions.add(new TreeMap<Integer, Integer>());
+			}
+			//---------------------END NEW SYSTEM---------------------
+
+			
 			while (timeline.size() > 0) {
 				Timestamp timestamp = timeline.firstKey();
 				ListIterator<? extends Timestep> currList = timeline.get(timestamp);
@@ -253,47 +309,6 @@ public class ScoreIllustrator {
 				else {
 					nextX += finalVoiceX;
 				}
-
-				//int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
-				// if extending into the margin, make a new line
-				if (nextX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN || startDrawing) {
-					// draw system lines
-					if (!startDrawing){
-						systemY += SYSTEM_SPACING + (numStaffs - 1) * STAFF_SPACING;
-
-						Map<Integer, TreeMap<Integer, Rational>> systemMeasures = new HashMap<Integer, TreeMap<Integer, Rational>>();
-						systemMeasures.put(measureCount, new TreeMap<Integer, Rational>());
-						_mNotePositions.add(systemMeasures);
-					}
-
-					startDrawing = false;
-
-					// if new line, set left position
-					nextX = LEFT_MARGIN;
-
-					// reset x for all staffs
-					Set<Staff> staffs = staffX.keySet();
-					for (Staff stf : staffs) {
-						staffX.put(stf, nextX);
-					}
-
-					// reset x for all voices
-					Set<Voice> voices = voiceX.keySet();
-					for (Voice v : voices) {
-						voiceX.put(v, 0);
-					}
-
-					finalVoiceX = 0;
-
-					_systemPositions.add(systemY);
-
-					g.setColor(Color.BLACK);
-					for (int i = 0; i < numStaffs; i++){
-						drawSystem(g, systemY + i * STAFF_SPACING);
-					}
-
-					_measurePositions.add(new TreeMap<Integer, Integer>());
-				}
 				int nextY = systemY + _staffPositions.get(currStaff) * STAFF_SPACING;
 
 				// draw duration object
@@ -331,11 +346,48 @@ public class ScoreIllustrator {
 				else if (currDur instanceof KeySignature && (currKeySig == null || !currDur.equals(currKeySig))) {
 					//-----------------------KEY SIG-----------------------
 					KeySignature keySig = (KeySignature) currDur;
-
+					
 					// draw key sig
-					drawAccidental(g, Accidental.SHARP, nextX, nextY);
-					staffX.put(currStaff, nextX + KEYSIG_WIDTH);
-
+					int accids = keySig.getAccidentalNumber();
+					if (accids > 0) {
+						// sharps
+						for (int a = 0; a < accids; a++){
+							int accidY = (3 * a + 1) % 7 - currClef.getCenterLine();
+							switch (currClef.getClefName()) {
+								case GCLEF:
+									accidY += - 4;
+									break;
+								case FCLEF:
+									accidY += - 2;
+									break;
+								case CCLEF:
+									accidY += - 3;
+									break;
+							}
+							drawAccidental(g, Accidental.SHARP, nextX + KEYSIG_WIDTH * a, nextY + accidY * SYSTEM_LINE_SPACING / 2);
+						}
+					}
+					else {
+						// flats
+						for (int a = 0; a < -accids; a++){
+							int accidY = -(3 + 3 * a) % 7 - currClef.getCenterLine();
+							switch (currClef.getClefName()) {
+								case GCLEF:
+									accidY += 2;
+									break;
+								case FCLEF:
+									accidY += 8;
+									break;
+								case CCLEF:
+									accidY += 5;
+									break;
+							}
+							drawAccidental(g, Accidental.FLAT, nextX + KEYSIG_WIDTH * a, nextY + accidY * SYSTEM_LINE_SPACING / 2);
+						}
+					}
+					
+					staffX.put(currStaff, nextX + KEYSIG_WIDTH * Math.abs(accids));
+					
 					currKeySigs.put(currStaff, keySig);
 				}
 				else if (currDur instanceof TimeSignature && (currTimeSig == null || !currDur.equals(currTimeSig))) {
@@ -344,8 +396,8 @@ public class ScoreIllustrator {
 
 					// draw time sig
 					g.setFont(new Font("Arial", 0, 24));
-					g.drawString("" + timeSig.getNumerator(), nextX, nextY + 1 * SYSTEM_LINE_SPACING);
-					g.drawString("" + timeSig.getDenominator(), nextX, nextY + 3 * SYSTEM_LINE_SPACING);
+					g.drawString("" + timeSig.getNumerator(), nextX, (int) (nextY + 1.5 * SYSTEM_LINE_SPACING));
+					g.drawString("" + timeSig.getDenominator(), nextX, (int) (nextY + 3.5 * SYSTEM_LINE_SPACING));
 					staffX.put(currStaff, nextX + TIMESIG_WIDTH);
 
 					currTimeSigs.put(currStaff, timeSig);
@@ -354,16 +406,17 @@ public class ScoreIllustrator {
 					//-------------------------CLEF-------------------------
 					Clef clef = (Clef) currDur;
 
-					drawClef(g, clef, nextX, nextY);
+					drawClef(g, clef, nextX, nextY - (clef.getCenterLine() - 4) * SYSTEM_LINE_SPACING / 2);
 					staffX.put(currStaff, nextX + CLEF_WIDTH);
-
+					
 					currClefs.put(currStaff, clef);
 				}
 				else {
 				}
 			}
-
-			int measureX = 0;
+			
+			//-----------------------FINISH MEASURE-----------------------
+			measureX = 0;
 			// draw barline
 			for (Staff stf : _staffPositions.keySet()) {
 				int pos = _staffPositions.get(stf);
@@ -385,8 +438,9 @@ public class ScoreIllustrator {
 			// store end of measure position
 			Map<Integer, Integer> lastPositions = _measurePositions.get(_measurePositions.size() - 1);
 			lastPositions.put(measureX, measureCount);
-
+			
 			measureCount++;
+			//---------------------END FINISH MEASURE---------------------
 		}
 	}
 
@@ -478,7 +532,20 @@ public class ScoreIllustrator {
 
 	private void drawRest(Graphics g, int numerValue, int denomValue, int xc, int yc) {
 		// draw rest
-		g.drawImage(_imgRest, xc, yc, null);
+		switch (denomValue) {
+		case 1:
+			g.drawImage(_imgHalfRest, xc, yc, null);
+			break;
+		case 2:
+			g.drawImage(_imgQuarterRest, xc, yc, null);
+			break;
+		case 3:
+			g.drawImage(_imgEighthRest, xc, yc, null);
+			break;
+		case 4:
+			g.drawImage(_imgSixteenthRest, xc, yc, null);
+			break;
+		}
 	}
 
 	private void drawStem(Graphics g, int xc, int yc, int minOffset, int maxOffset) {
@@ -627,13 +694,13 @@ public class ScoreIllustrator {
 	private void drawClef(Graphics g, Clef c, int xc, int yc) {
 		switch (c.getClefName()) {
 		case GCLEF:
-			g.drawImage(_imgClefG, xc, yc, null);
+			g.drawImage(_imgClefG, xc - CLEF_IMG_OFFSET, yc - CLEF_IMG_OFFSET, null);
 			break;
 		case FCLEF:
-			g.drawImage(_imgClefF, xc, yc, null);
+			g.drawImage(_imgClefF, xc - CLEF_IMG_OFFSET, yc - CLEF_IMG_OFFSET, null);
 			break;
 		case CCLEF:
-			g.drawImage(_imgClefC, xc, yc, null);
+			g.drawImage(_imgClefC, xc - CLEF_IMG_OFFSET, yc - CLEF_IMG_OFFSET, null);
 			break;
 		}
 	}
@@ -711,7 +778,11 @@ public class ScoreIllustrator {
 		// which measure
 		int staffFromTop = indexSystem;
 		int staffX = (int) e.getX();
-
+		
+		// if clicked past all the systems, return null
+		if (staffFromTop >= _measurePositions.size())
+			return null;
+		
 		Map<Integer, Integer> staffMeasures = _measurePositions.get(staffFromTop);
 		int indexMeasure = 0;
 
@@ -737,11 +808,10 @@ public class ScoreIllustrator {
 
 		Map<Integer, TreeMap<Integer, Rational>> measureMNotes = _mNotePositions.get(indexSystem);
 		TreeMap<Integer, Rational> multiNotePositions = measureMNotes.get(indexMeasure);
-
-		if (multiNotePositions == null) {
-			// indexSystem doesn't have the measure indexMeasure -> UH OH
-
-		}
+		
+		// if clicked past last measure in last system
+		if (multiNotePositions == null)
+			return null;
 
 		// get the measure offset by traversing through the part of the measure on the staff
 		int prevNoteX = 0;
@@ -752,7 +822,6 @@ public class ScoreIllustrator {
 
 			prevNoteX = mNoteX;
 		}
-
 		Rational measurePosition = new Rational(0, 1);
 		if (prevNoteX != 0) {
 			measurePosition = multiNotePositions.get(prevNoteX);
