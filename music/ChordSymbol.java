@@ -150,8 +150,9 @@ public class ChordSymbol extends Timestep {
 	}
 
 	//returns true if current ChordSymbol is equal to the given ChordSymbol, otherwise false
-	public boolean equals(ChordSymbol toCompare){
+	public boolean equals(Object chordsym){
 		
+		ChordSymbol toCompare = (ChordSymbol) chordsym;
 		if(toCompare.getInversion() == _inversion && toCompare.getScaleDegree().equals(_scaleDegree) && toCompare.getChordType() == _chordType)
 			return true;
 		else

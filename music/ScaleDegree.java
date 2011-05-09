@@ -121,8 +121,9 @@ public class ScaleDegree {
 		return interval;
 	}
 	
-	public boolean equals(ScaleDegree toCompare) {
+	public boolean equals(Object scaleDegree) {
 		
+		ScaleDegree toCompare = (ScaleDegree) scaleDegree;
 		if(toCompare.getAccidental() == _accidental && toCompare.getDegreeNumber() == _degreeNumber) {
 			
 			return true;

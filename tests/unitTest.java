@@ -11,11 +11,6 @@ import util.Node;
 
 public class unitTest{
         public static void main(String args[]) {
-
-        	ChordSymbol c1 = new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR);
-        	ChordSymbol c2 = new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR);
-        	System.out.println(c1.equals(c2));
-        	
         	
                 KeySignature CMajor = new KeySignature(new Rational(4, 4), 0, true);
                 KeySignature DMajor = new KeySignature(new Rational(4, 4), 2, true);
@@ -45,9 +40,18 @@ public class unitTest{
                 melody.add(melodyInstance4);
                 melodyInstance4.add(C);
                 melodyInstance4.add(E);
-                
-                
+               
                 List<List<ChordSymbol>> allPossibleChords = analyzer.analyzeMelody(melody, CMajor);
+                
+                
+                //testing testing
+
+            	ChordSymbol c1 = new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR);
+            	ChordSymbol c2 = new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.GERAUG6);
+            	System.out.println(c1.equals(c2));
+            	
+            	System.out.println(analyzer.getChordPreferencesGraph().findNode(c1).getValue());
+            	//testing testing
                 
                 System.out.println("ChordProgressions Graph contains the following ChordSymbols: ");
                 for(Node<ChordSymbol> toPrint : analyzer.getChordPreferencesGraph().getNodes()) {
@@ -55,7 +59,6 @@ public class unitTest{
                 	System.out.println(toPrint.getValue().getSymbolText());
                 }
                 System.out.println("graph is " + analyzer.getChordPreferencesGraph());
-//                printGraph(analyzer.getChordPreferencesGraph());
                 
                 //print out all possible chords
                 int melodyNo = 0;

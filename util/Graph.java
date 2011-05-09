@@ -105,7 +105,7 @@ public class Graph<T> {
 		Node<T> returnNode = null;
 		for(Node<T> node : _nodes) {
 
-			if(( node.getValue()).equals(chordsym)) {
+			if(node.getValue().equals(chordsym)) {
 
 				returnNode = node;
 			}

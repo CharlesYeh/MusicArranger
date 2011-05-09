@@ -67,9 +67,6 @@ public class Analyzer extends Thread {
 		// V -> I VI
 		// VI -> ii iv
 		// VIi -> I V ii N It6 Fr6 Ger6
-
-		//Default startingNode to be ChordI (only for testing purposes)
-		_chordPreferencesGraph.addStartingNode(chordI, 1);
 		
 		///Adding edges for chordI
 		_chordPreferencesGraph.addEdge(chordI, chordii, 	1);
@@ -151,9 +148,6 @@ public class Analyzer extends Thread {
 		// V -> I VI
 		// VI -> iio iv
 		// VIi -> I V iio N It6 Fr6 Ger6
-
-		//Default startingNode to be ChordI (only for testing purposes)
-		_chordPreferencesGraph.addStartingNode(chordi, 1);
 		
 		///Adding edges for chordi
 		_chordPreferencesGraph.addEdge(chordi, chordiio, 	1);
@@ -610,8 +604,8 @@ public class Analyzer extends Thread {
 	private void createPossibleProgressionsGraphHelper(Node<ChordSymbol> currentNode,
 								List<List<Node<ChordSymbol>>> matchingNodesList, int nextNodesListIdx, Graph<ChordSymbol> progressionsGraph) {
 
-		//if the currentNode does not belong to the last set of Node objects in the nextNodesList
-		if(nextNodesListIdx < matchingNodesList.size()) {
+		//if the currentNode does not belong to the last set of Node objects in the matchingNodesList
+		if(nextNodesListIdx < matchingNodesList.size() - 1) {
 
 			List<Node<ChordSymbol>> nextNodes = matchingNodesList.get(nextNodesListIdx);
 
