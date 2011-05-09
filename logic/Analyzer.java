@@ -605,7 +605,7 @@ public class Analyzer extends Thread {
 								List<List<Node<ChordSymbol>>> matchingNodesList, int nextNodesListIdx, Graph<ChordSymbol> progressionsGraph) {
 
 		//if the currentNode does not belong to the last set of Node objects in the matchingNodesList
-		if(nextNodesListIdx < matchingNodesList.size() - 1) {
+		if(nextNodesListIdx < matchingNodesList.size()) {
 
 			List<Node<ChordSymbol>> nextNodes = matchingNodesList.get(nextNodesListIdx);
 
@@ -651,7 +651,7 @@ public class Analyzer extends Thread {
 	//removes the Node toRemove from the Graph and removes the relevant Edges,
 	//if the node that is removed is the only node that one of its previous nodes lead to, then that previous node is removed as well
 	private void removeFromProgression(Node<ChordSymbol> toRemove, List<List<Node<ChordSymbol>>> matchingNodesList,
-															int matchingNodesListIdx, Graph progressionsGraph) {
+															int matchingNodesListIdx, Graph<ChordSymbol> progressionsGraph) {
 
 		//get the list of Nodes from which to remove the Node toRemove
 		List<Node<ChordSymbol>> currentNodesList = matchingNodesList.get(matchingNodesListIdx);
@@ -667,15 +667,16 @@ public class Analyzer extends Thread {
 
 				Node<ChordSymbol> previousNode = previousEdge.getFront();
 				if(previousNode.getFollowing().isEmpty()) {//if the previous node only leads to the current node, it will be deleted as well
-
-					removeFromProgression(previousNode, matchingNodesList, matchingNodesListIdx - 1, progressionsGraph);
+					
 					progressionsGraph.removeEdge(previousNode, toRemove);
+					removeFromProgression(previousNode, matchingNodesList, matchingNodesListIdx - 1, progressionsGraph);
 				}
 			}
 		}
 		else if(matchingNodesListIdx == 0) {//if toRemove belongs to the first set of Nodes in matchingNodesList
 
-
+			//remove from the starting node
+			progressionsGraph.removeEdge(progressionsGraph.getStartingNode(), toRemove);
 		}
 
 

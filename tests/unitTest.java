@@ -24,23 +24,23 @@ public class unitTest{
                 List<List<Pitch>> melody = new ArrayList<List<Pitch>>();
                 
                 ArrayList<Pitch> melodyInstance1 = new ArrayList<Pitch>();
-                melody.add(melodyInstance1);
                 melodyInstance1.add(C);
                 melodyInstance1.add(E);
+                melody.add(melodyInstance1);
                 
                 ArrayList<Pitch> melodyInstance2 = new ArrayList<Pitch>();
-                melody.add(melodyInstance2);
                 melodyInstance2.add(F);
+                melody.add(melodyInstance2);
                 
                 ArrayList<Pitch> melodyInstance3 = new ArrayList<Pitch>();
-                melody.add(melodyInstance3);
                 melodyInstance3.add(G);
+                melody.add(melodyInstance3);
                 
                 ArrayList<Pitch> melodyInstance4 = new ArrayList<Pitch>();
-                melody.add(melodyInstance4);
                 melodyInstance4.add(C);
                 melodyInstance4.add(E);
-               
+                melody.add(melodyInstance4);
+                
                 List<List<ChordSymbol>> allPossibleChords = analyzer.analyzeMelody(melody, CMajor);
                 
                 
@@ -114,23 +114,13 @@ public class unitTest{
         			
         			
         			Node<ChordSymbol> nextNode = followingEdges.get(i).getBack();
-        			if(i > 0) {//not first element in the list
 
-        				//clone the toPrint List
-        				ArrayList<ChordSymbol> toPrintClone = (ArrayList<ChordSymbol>) toPrint.clone();
-        				toPrintClone.add(nextNode.getValue());
-        				
-        				//recur
-        				printGraphHelper(nextNode, toPrintClone);
-        				
-        			}
-        			else {//first element in the list
-        				
-        				toPrint.add(nextNode.getValue());
-        				
-        				//recur
-        				printGraphHelper(nextNode, toPrint);
-        			}
+    				//clone the toPrint List
+    				ArrayList<ChordSymbol> toPrintClone = (ArrayList<ChordSymbol>) toPrint.clone();
+    				toPrintClone.add(nextNode.getValue());
+    				
+    				//recur
+    				printGraphHelper(nextNode, toPrintClone);
         		}
         	}
         }
