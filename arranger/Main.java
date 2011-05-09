@@ -94,6 +94,7 @@ public class Main extends JFrame implements InstructionListener {
 					newFileDialog.pack();
 					newFileDialog.setVisible(true);
 					
+					System.out.println(newFileDialog.getNumMeasures());
 					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionNew(clefList, newFileDialog.getNumMeasures(), 4, 4, newFileDialog.getNumAccidentals(), true));
 					
 					receiveInstruction(myInstr);
@@ -107,7 +108,7 @@ public class Main extends JFrame implements InstructionListener {
 			new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
 					String path = JOptionPane.showInputDialog("Open from what path?");
-
+					
 					// error checking
 					if (path == null && path.length() == 0) {
 						System.out.println("Open path cannot be empty");
@@ -143,7 +144,6 @@ public class Main extends JFrame implements InstructionListener {
 			new ActionListener() {
 				InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionPrint(_mainPanel.getScoreImage()));
 				public void actionPerformed(ActionEvent event) {
-
 					receiveInstruction(myInstr);
 				}
 			});

@@ -417,21 +417,30 @@ public class ScoreIllustrator {
 			
 			//-----------------------FINISH MEASURE-----------------------
 			measureX = 0;
+			
 			// draw barline
+			Staff stff = _staffPositions.keySet().iterator().next();
+			int barX = staffX.get(stff) + finalVoiceX;
+			
 			for (Staff stf : _staffPositions.keySet()) {
 				int pos = _staffPositions.get(stf);
 
 				Measure m = stf.getMeasures().get(0);
-
+				
 				int stfX = staffX.get(stf) + finalVoiceX;
 				measureX = stfX;
 
-				int startY = systemY + pos * STAFF_SPACING;
-				int endY = systemY + pos * STAFF_SPACING + 4 * SYSTEM_LINE_SPACING;
-
-				g.drawLine(stfX, startY, stfX, endY);
+				/*int startY = systemY + pos * STAFF_SPACING;
+				int endY = systemY + pos * STAFF_SPACING + 4 * SYSTEM_LINE_SPACING;*/
+				
+				//g.drawLine(stfX, startY, stfX, endY);
 				staffX.put(stf, stfX + 15);
 			}
+			
+			int startY = systemY;
+			int endY = systemY + (numStaffs - 1) * STAFF_SPACING + 4 * SYSTEM_LINE_SPACING;
+			
+			g.drawLine(barX, startY, barX, endY);
 			voiceX.clear();
 			finalVoiceX = 0;
 
@@ -527,9 +536,9 @@ public class ScoreIllustrator {
 	}
 
 	private void drawChordSymbol(Graphics g, ChordSymbol symb, int xc, int yc) {
-		g.setFont(new Font("Arial", 0, 24));
+		g.setFont(new Font("Cambria", 0, 24));
 
-		g.drawString(symb.getSymbolText(), xc, yc);
+		g.drawString(symb.getSymbolText(), xc - 10, yc);
 		g.drawString(symb.getTopInversionText(), xc + 10, yc);
 		g.drawString(symb.getBotInversionText(), xc + 10, yc + 10);
 	}
@@ -803,7 +812,7 @@ public class ScoreIllustrator {
 		
 		Map<Integer, Integer> staffMeasures = _measurePositions.get(staffFromTop);
 		int indexMeasure = 0;
-
+		
 		// get index of measure right after the x position: staffX
 		for (int measureX : staffMeasures.keySet()) {
 			indexMeasure = staffMeasures.get(measureX);
@@ -836,7 +845,7 @@ public class ScoreIllustrator {
 			if (staffX + SYSTEM_LINE_SPACING < mNoteX) {
 				break;
 			}
-
+			
 			prevNoteX = mNoteX;
 		}
 		Rational measurePosition = new Rational(0, 1);
