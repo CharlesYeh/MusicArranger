@@ -389,6 +389,53 @@ public class LogicManager implements Printable {
 	}
 
 	private void editPitch(EditInstruction editInstr) {
+		InstructionIndex index = editInstr.getIndex();
+		
+		// get Measure
+		int staffNumber = index.getStaffNumber();
+		int measureNumber = index.getMeasureNumber();
+		int voiceNumber = index.getVoiceNumber();
+		int lineNumber = index.getLineNumber();
+		Rational measureOffset = index.getMeasureOffset();
+		Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
+		List<MultiNote> multiNoteList = measure.getVoices().get(voiceNumber).getMultiNotes();
+
+		// find clef and keysig
+		Clef clef = (Clef) getElementAt(measureOffset, measure.getClefs());
+		KeySignature keySig = (KeySignature) getElementAt(measureOffset, measure.getKeySignatures());
+		
+		// find MultiNote
+		MultiNote multiNote = (MultiNote) getElementAt(measureOffset, multiNoteList);
+		
+		Pitch pitch = calcPitch(lineNumber, clef, keySig);
+		// IF AN ACCIDENTAL IS SPECIFIED
+		if (index.getAccidental() != null) {
+			pitch = new Pitch(pitch.getNoteLetter(), pitch.getOctave(), index.getAccidental());
+		}
+		
+		EditInstructionType editInstrType = editInstr.getType();
+		ListIterator<Pitch> iter = multiNote.getPitches().listIterator();
+		
+		switch (editInstrType) {
+		case INSERT:
+			_editor.setPitchIter(iter);
+			_editor.insertPitch(pitch);
+			break;
+		case REMOVE:
+			// search pitches for a pitch that matches the pitch sent by the instruction
+			while (iter.hasNext()) {
+				if (iter.next().equals(pitch)) {
+					iter.previous();
+					break;
+				}
+			}
+			_editor.setPitchIter(iter);
+			_editor.removePitch();
+			break;
+		case REPLACE:
+			throw new RuntimeException("LogicManager does not support REPLACE for pitch edits.");
+		}
+		
 	}
 
 	private void interpretPlaybackInstr(PlaybackInstruction playbackInstr) {
@@ -438,6 +485,28 @@ public class LogicManager implements Printable {
 			}
 		}
 		return new IteratorAndOffset(iter, offsetFromIter);
+	}
+	private Timestep getElementAt(Rational offset, List<? extends Timestep> list) {
+		IteratorAndOffset iterAndOff = calcIterAndOffset(list, offset);
+		return iterAndOff.getIter().next();
+	}
+	
+	// Calculates a pitch, given a line number, the clef, and the key signature
+	public Pitch calcPitch(int lineNum, Clef clef, KeySignature keySig) {
+		Pitch clefPitch = clef.getClefName().centerPitch();
+		Pitch keySigPitch = keySig.getKeySigPitch();
+		int clefLine = clef.getCenterLine();
+		boolean isMajor = keySig.getIsMajor();
+		int clefSclDgr = (clefPitch.getNoteLetter().intValue() - keySigPitch.getNoteLetter().intValue() + 1) % 7;
+		if (clefSclDgr < 0) clefSclDgr += 7;
+		int lineNumSclDgr = (lineNum + (clefSclDgr - clefLine)) % 7;
+		if (lineNumSclDgr < 0) lineNumSclDgr += 7;
+		ScaleDegree sclDgr = new ScaleDegree(lineNumSclDgr, Accidental.NATURAL);
+		Interval sclDgrInterval = sclDgr.getIntervalFromRoot(isMajor);
+		Pitch pitchLetter = keySigPitch.addInterval(sclDgrInterval);
+		int octave = (clef.getCenterValue() + lineNum - clefLine) / 7;
+		Pitch pitch = new Pitch(pitchLetter.getNoteLetter(), octave, pitchLetter.getAccidental());
+		return pitch;
 	}
 
 	public static void main(String[] args) {
