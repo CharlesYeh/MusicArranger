@@ -100,4 +100,11 @@ public class InstructionIndex {
 		this._lineNumber = lineNumber;
 	}
 	
+	public Accidental getAccidental() {
+		return _accidental;
+	}
+	
+	public void setAccidental(Accidental accid) {
+		_accidental = accid;
+	}
 }

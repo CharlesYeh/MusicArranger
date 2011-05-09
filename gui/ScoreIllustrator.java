@@ -831,6 +831,6 @@ public class ScoreIllustrator {
 			measurePosition = multiNotePositions.get(prevNoteX);
 		}
 
-		return new InstructionIndex(indexStaff, indexMeasure, 0, measurePosition);
+		return new InstructionIndex(indexStaff, indexMeasure, 0, measurePosition, indexLine);
 	}
 }

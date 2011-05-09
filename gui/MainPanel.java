@@ -43,13 +43,17 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	EventListenerList _listeners = new EventListenerList();
 
 	//--------------------state information--------------------
-	EditMode _currMode = EditMode.NOTE;
+	EditMode _currMode		= EditMode.NOTE;
 	EditDuration _currDuration = EditDuration.QUARTER;
 	
-	int _currAccidental = 0;
-
+	boolean _currDefaultAccid = true;
+	int _currAccidental 		= 0;
+	
+	// whether each click inserts rests
+	boolean _currRest 		= false;
+	
 	// currently selected
-	List<MultiNote> selected;
+	List<MultiNote> _selected;
 
 	//------------------end state information------------------
 
@@ -150,11 +154,16 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			List<InstructionIndex> listIndex = _scoreWindow.mouseReleased(evtPoint);
 			if (listIndex == null)
 			   return;
-
+			
 			instr = new InstructionBlock(this);
 			for (InstructionIndex index : listIndex) {
 				Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
 				instr.addInstruction(editInstr);
+				
+				if (!_currRest) {
+					// insert pitches
+					editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
+				}
 			}
 		}
 		else {
@@ -293,13 +302,13 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 					EditModifier currModifier = (EditModifier) modeInstr.getValue();
 					switch (currModifier) {
 					case FLAT:
-
+						
 						break;
 					case SHARP:
-
+						
 						break;
 					case REST:
-
+						
 						break;
 					}
 					break;
