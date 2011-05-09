@@ -99,5 +99,12 @@ public class InstructionIndex {
 	public void setLineNumber(int lineNumber) {
 		this._lineNumber = lineNumber;
 	}
-	
+
+	public Accidental getAccidental() {
+		return _accidental;
+	}
+
+	public void setAccidental(Accidental accidental) {
+		this._accidental = accidental;
+	}
 }

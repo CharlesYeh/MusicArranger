@@ -29,17 +29,17 @@ public class ScoreIllustrator {
 	final static double LOG_2 = Math.log(2);
 	
 	final static int TOP_MARGIN	= 150;
-	final static int LEFT_MARGIN	= 50;
-	final static int RIGHT_MARGIN	= 50;
+	final static int LEFT_MARGIN	= 25;
+	final static int RIGHT_MARGIN	= 25;
 	
 	final static int SYSTEM_SPACING = 110;
-	final static int SYSTEM_LINE_SPACING = 12;
+	final static int SYSTEM_LINE_SPACING = 8;
 	
 	final static int STAFF_SPACING = 80;
 
 	final static int TIMESIG_WIDTH = 25;
-	final static int KEYSIG_WIDTH = 10;
-	final static int CLEF_WIDTH = 35;
+	final static int KEYSIG_WIDTH = 7;
+	final static int CLEF_WIDTH = 38;
 	final static int CHORD_SPACING = 10;
 
 	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
@@ -51,7 +51,8 @@ public class ScoreIllustrator {
 	final static int LEDGER_WIDTH = (int) (SYSTEM_LINE_SPACING * 1.5);
 	
 	final static int CLEF_IMG_OFFSET = 50;
-	final static int ACCID_IMG_OFFSET = 50;
+	final static int ACCID_IMG_OFFSET = 15;
+	final static int REST_IMG_OFFSET = 15;
 
 	Image _imgQuarter, _imgHalf, _imgWhole, _imgQuarterRest, _imgHalfRest, _imgEighthRest, _imgSixteenthRest,
 			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp,
@@ -531,6 +532,9 @@ public class ScoreIllustrator {
 	}
 
 	private void drawRest(Graphics g, int numerValue, int denomValue, int xc, int yc) {
+		xc -= REST_IMG_OFFSET;
+		yc -= REST_IMG_OFFSET - SYSTEM_LINE_SPACING * 2;
+		
 		// draw rest
 		switch (denomValue) {
 		case 1:
@@ -734,7 +738,7 @@ public class ScoreIllustrator {
 				break;
 		}
 
-		g.drawImage(accidImage, xc, yc, null);
+		g.drawImage(accidImage, xc - ACCID_IMG_OFFSET, yc - ACCID_IMG_OFFSET, null);
 	}
 
 	// getLineNumber takes in a pitch and returns an int representing the pitch's line number.
@@ -827,6 +831,6 @@ public class ScoreIllustrator {
 			measurePosition = multiNotePositions.get(prevNoteX);
 		}
 
-		return new InstructionIndex(indexStaff, indexMeasure, 0, measurePosition);
+		return new InstructionIndex(indexStaff, indexMeasure, 0, measurePosition, indexLine);
 	}
 }

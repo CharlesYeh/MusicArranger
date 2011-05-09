@@ -53,4 +53,22 @@ public class Pitch {
 	public String toString() {
 		return " " + _octave + _noteLetter + _accidental;
 	}
+	
+	// adds an Interval to a Pitch and returns that pitch, NOT CONSIDERING THE OCTAVE
+	public Pitch addInterval(Interval interval) {
+		int pitchLetterNumber = _noteLetter.intValue();
+		int newLetterNumber = (pitchLetterNumber + interval.getSize() - 1) % 7;
+		int pitchPitchNumber = _noteLetter.pitchValue() + _accidental.intValue();
+		int newPitchNumber = (pitchPitchNumber + interval.getHalfSteps()) % 12;
+		
+		int accidentalNumber = newPitchNumber - NoteLetter.getNoteLetter(newLetterNumber).pitchValue();
+		if (accidentalNumber < -6) accidentalNumber += 12;
+		if (accidentalNumber > 6) accidentalNumber -= 12;
+		
+		NoteLetter noteLetter = NoteLetter.getNoteLetter(newLetterNumber);
+		Accidental accidental = Accidental.getAccidental(accidentalNumber);
+		Pitch newPitch = new Pitch(noteLetter, 0, accidental);
+		
+		return newPitch;
+	}
 }
