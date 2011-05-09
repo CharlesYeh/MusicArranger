@@ -499,8 +499,9 @@ public class LogicManager implements Printable {
 		boolean isMajor = keySig.getIsMajor();
 		int clefSclDgr = (clefPitch.getNoteLetter().intValue() - keySigPitch.getNoteLetter().intValue() + 1) % 7;
 		if (clefSclDgr < 0) clefSclDgr += 7;
-		int lineNumSclDgr = (lineNum + (clefSclDgr - clefLine)) % 7;
+		int lineNumSclDgr = (lineNum + (clefSclDgr - 1 - clefLine)) % 7;
 		if (lineNumSclDgr < 0) lineNumSclDgr += 7;
+		lineNumSclDgr++;
 		ScaleDegree sclDgr = new ScaleDegree(lineNumSclDgr, Accidental.NATURAL);
 		Interval sclDgrInterval = sclDgr.getIntervalFromRoot(isMajor);
 		Pitch pitchLetter = keySigPitch.addInterval(sclDgrInterval);
