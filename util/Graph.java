@@ -102,16 +102,15 @@ public class Graph<T> {
 	 */
 	public Node<T> findNode(T chordsym){
 
-		Node<T> returnNode = null;
 		for(Node<T> node : _nodes) {
 
 			if(node.getValue().equals(chordsym)) {
 
-				returnNode = node;
+				return node;
 			}
 		}
-
-		return returnNode;
+		
+		return null;
 	}
 
 //	//returns true if node1 connects to node2 in a certain number of steps, using bidirectional search

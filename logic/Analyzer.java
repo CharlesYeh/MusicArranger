@@ -614,24 +614,30 @@ public class Analyzer extends Thread {
 
 			//generate list of ChordSymbols that the current chord can conventionally go to
 			List<Edge<ChordSymbol>> followingEdges = chordGraphNode.getFollowing();
-			List<ChordSymbol> followingChords = new ArrayList<ChordSymbol>();
-
-			for(Edge<ChordSymbol> edge : followingEdges) {
-
-				followingChords.add((ChordSymbol) edge.getBack().getValue());
-			}
-
+			
 			boolean hasNext = false; //boolean determining if the current node leads to any other node at all
+			
+			
 
 			//for each of the nodes following the current one one
+			boolean contains;
 			for(Node<ChordSymbol> nextNode : nextNodes) {
 
+				contains = false;
+				for(Edge<ChordSymbol> edge : followingEdges) {//determine whether the next chord is among the chords that the current one conventionally leads to
 
-				if(followingChords.contains(nextNode)) { //determine if the chord progression from the current chord to the next is conventional
+					if(edge.getBack().getValue().equals(nextNode.getValue())) {
+						
+						contains = true;
+						break;
+					}
+				}
+
+				if(contains) { 
 
 					progressionsGraph.addEdge(currentNode, nextNode, 1); //valid progression, add edge to the return graph
 					hasNext = true;
-					createPossibleProgressionsGraphHelper(nextNode, matchingNodesList, nextNodesListIdx, progressionsGraph); //recur
+					createPossibleProgressionsGraphHelper(nextNode, matchingNodesList, nextNodesListIdx + 1, progressionsGraph); //recur
 				}
 			}
 
