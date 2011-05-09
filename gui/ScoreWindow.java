@@ -97,25 +97,32 @@ public class ScoreWindow extends Drawable {
 			// clicked on slider
 			_sliding = true;
 			dragY = (int) e.getY() - _slider.getY();
+			return null;
 		}
 		else {
-			adjustScorePoint(e);
 			// clicked on score sheet
-			//InstructionIndex index = _illustrator.getEventIndex(e);
+			adjustScorePoint(e);
+			InstructionIndex index = _illustrator.getEventIndex(e);
+			if (index == null)
+				return null;
+			
+			List<InstructionIndex> listIndex = new ArrayList<InstructionIndex>();
+			listIndex.add(index);
+			
+			return listIndex;
 		}
-		return null;
 	}
 
 	public List<InstructionIndex> mouseReleased(Point e) {
 		// account for sliding offset
 		_sliding = false;
 		adjustScorePoint(e);
-
+		
+		// mouse release actions from score sheet
 		InstructionIndex index = _illustrator.getEventIndex(e);
 		if (index == null)
 			return null;
-
-		// determine which instruction to send
+		
 		List<InstructionIndex> listIndex = new ArrayList<InstructionIndex>();
 		listIndex.add(index);
 
@@ -123,14 +130,15 @@ public class ScoreWindow extends Drawable {
 	}
 
 	public List<InstructionIndex> mouseDragged(Point e) {
-		// drag slider?
 		if (_sliding) {
+			// drag slider
 			_slider.setY((int) e.getY() - dragY);
 		}
 		else {
+			// dragging on score sheet
 			e.setLocation(e.getX(), e.getY() + _slider.getY());
-			//InstructionIndex index = _illustrator.getEventIndex(e);
-
+			InstructionIndex index = _illustrator.getEventIndex(e);
+			
 		}
 		return null;
 	}

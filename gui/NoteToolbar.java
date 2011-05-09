@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.awt.Graphics;
 
 import instructions.ModeInstruction;
@@ -29,7 +31,7 @@ public class NoteToolbar extends Toolbar {
 		ToolbarButton noteModFlat 	= new ToolbarButton("images/btns/note_flat.png", true);
 		ToolbarButton noteModSharp = new ToolbarButton("images/btns/note_sharp.png", true);
 		ToolbarButton noteModNatural = new ToolbarButton("images/btns/note_natural.png", true);
-		ToolbarButton noteModRest 	= new ToolbarButton("images/btns/note_rest.png", true);
+		ToolbarButton noteModRest 	= new ToolbarButton("images/btns/note_rest.png", false);
 		
 		noteQuar.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.QUARTER));
 		noteHalf.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.HALF));
@@ -43,7 +45,18 @@ public class NoteToolbar extends Toolbar {
 		noteModSharp.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.SHARP));
 		noteModRest.setInstruction(new ModeInstruction(ModeInstructionType.MODIFIER, EditModifier.REST));
 		
-		_buttons = new ToolbarButton[]{noteQuar, noteHalf, noteWhole, noteEighth, noteSixth, /*noteModHalf,
-								noteModThird, noteModDot, */noteModFlat, noteModNatural, noteModSharp, noteModRest};
+		_buttons = Arrays.asList(noteQuar, noteHalf, noteWhole, noteEighth, noteSixth, /*noteModHalf,
+								noteModThird, noteModDot, */noteModFlat, noteModNatural, noteModSharp, noteModRest);
+		
+		noteModFlat.setToToggle(true);
+		noteModNatural.setToToggle(true);
+		noteModSharp.setToToggle(true);
+		noteModRest.setToToggle(true);
+		
+		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(0, 1, 2, 3, 4)));
+		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(5, 6, 7)));
+		
+		// set initialized state
+		noteQuar.setPressed(true);
 	}
 }

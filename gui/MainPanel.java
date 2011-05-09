@@ -49,11 +49,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	EditMode _currMode		= EditMode.NOTE;
 	EditDuration _currDuration = EditDuration.QUARTER;
 	
-	boolean _currDefaultAccid = true;
-	int _currAccidental 		= 0;
-	
-	// whether each click inserts rests
-	boolean _currRest 		= false;
+	Accidental _currAccidental	= null;		// is the accidental modifier set?
+	boolean _insertChord 	= false;		// in the middle of choosing a chord symbol
+	boolean _currRest 		= false;		// whether each click inserts rests
 	
 	// currently selected
 	Set<InstructionIndex> _selected;
@@ -129,14 +127,50 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	   _activeToolbar = mouseEventToolbar(evtPoint);
 	   if (_activeToolbar == null) {
 		   // clicked on score window
-			_scoreWindow.mousePressed(evtPoint);
+			List<InstructionIndex> listIndex = _scoreWindow.mousePressed(evtPoint);
+			handleScoreMousePressed(listIndex);
 	   }
 	   else {
-		   // clicked on a toolbar
+		   // clicked on a toolbar, start drag?
 			_activeToolbar.mousePressed(evtPoint);
 	   }
 	}
-
+	
+	private void handleScoreMousePressed(List<InstructionIndex> listIndex) {
+		if (listIndex == null)
+			   return;
+		
+		InstructionBlock instr = new InstructionBlock(this);
+		for (InstructionIndex index : listIndex) {
+			if (index.getIsChord()) {
+				// insert/replace chord symbol
+				Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.CHORD_SYMBOL, new ChordSymbol(new ScaleDegree(0, Accidental.NATURAL), ChordType.MAJOR));
+				instr.addInstruction(editInstr);
+			}
+			else {
+				// insert/replace multinote or pitch
+				if (_selected.contains(index)) {
+					// don't replace this note
+				}
+				else {
+					// replace this note
+					Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
+					instr.addInstruction(editInstr);
+					
+					_selected = new HashSet<InstructionIndex>(listIndex);
+				}
+				
+				if (!_currRest) {
+					// insert pitches
+					Instruction editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
+					instr.addInstruction(editInstr);
+				}
+			}
+		}
+		
+		sendInstruction(instr);
+	}
+	
    /* Handle a mouse release on a toolbar or the score window
     *
     */
@@ -148,44 +182,12 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	   Point evtPoint = getEventPoint(e);
 
 		// clicked on which toolbar?
-	   _activeToolbar = null;
-	   Toolbar tbar = mouseEventToolbar(evtPoint);
-
-	   InstructionBlock instr;
-	   if (tbar == null) {
-			// clicked on score window
-			List<InstructionIndex> listIndex = _scoreWindow.mouseReleased(evtPoint);
-			if (listIndex == null)
-			   return;
+		_activeToolbar = null;
+		Toolbar tbar = mouseEventToolbar(evtPoint);
+		
+		if (tbar == null) {
+			// release on scorewindow
 			
-			instr = new InstructionBlock(this);
-			for (InstructionIndex index : listIndex) {
-				
-				if (index.getIsChord()) {
-					// insert/replace chord symbol
-					Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.CHORD_SYMBOL, new ChordSymbol(new ScaleDegree(0, Accidental.NATURAL), ChordType.MAJOR));
-					instr.addInstruction(editInstr);
-				}
-				else {
-					// insert/replace multinote or pitch
-					if (_selected.contains(index)) {
-						// don't replace this note
-					}
-					else {
-						// replace this note
-						Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
-						instr.addInstruction(editInstr);
-						
-						_selected = new HashSet<InstructionIndex>(listIndex);
-					}
-					
-					if (!_currRest) {
-						// insert pitches
-						Instruction editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
-						instr.addInstruction(editInstr);
-					}
-				}
-			}
 		}
 		else {
 			// clicked on a toolbar
@@ -195,10 +197,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			if (ins == null)
 				return;
 			
-			instr = new InstructionBlock(this, ins);
+			sendInstruction(new InstructionBlock(this, ins));
 		}
-		
-	   sendInstruction(instr);
 
 	   repaint();
 	}
@@ -212,7 +212,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		// clicked on which toolbar?
 		Instruction instr;
 		if (_activeToolbar == null) {
-			// clicked on score window
+			// dragging on score window
 			List<InstructionIndex> listIndex = _scoreWindow.mouseDragged(evtPoint);
 	   }
 	   else {
@@ -301,10 +301,13 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 					EditModifier currModifier = (EditModifier) modeInstr.getValue();
 					switch (currModifier) {
 					case FLAT:
-						_currAccidental = -1;
+						_currAccidental = (_currAccidental == null) ? Accidental.FLAT : null;
 						break;
 					case SHARP:
-						_currAccidental = 1;
+						_currAccidental = (_currAccidental == null) ? Accidental.SHARP : null;
+						break;
+					case NATURAL:
+						_currAccidental = (_currAccidental == null) ? Accidental.NATURAL : null;
 						break;
 					case REST:
 						_currRest = !_currRest;

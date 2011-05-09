@@ -1,6 +1,8 @@
 package gui;
 
+import java.util.Arrays;
 import java.awt.Graphics;
+
 import instructions.PlaybackInstruction;
 import instructions.PlaybackInstructionType;
 
@@ -19,7 +21,7 @@ public class PlaybackToolbar extends Toolbar {
 		playPlay.setInstruction(new PlaybackInstruction(PlaybackInstructionType.START));
 		playStop.setInstruction(new PlaybackInstruction(PlaybackInstructionType.STOP));
 		
-		_buttons = new ToolbarButton[]{playPlay, playStop};
+		_buttons = Arrays.asList(playPlay, playStop);
 	}
 	
 	public void drawSelf(Graphics g) {

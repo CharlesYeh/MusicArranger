@@ -37,7 +37,7 @@ public class Main extends JFrame implements InstructionListener {
 
 	public Main(){
 		super("Music Arranger");
-
+		
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 		// ######################################################
 		_piece = new tests.LongMelodyPiece();
@@ -46,20 +46,19 @@ public class Main extends JFrame implements InstructionListener {
 		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 		_logicManager = new LogicManager(_piece);
 		_editor = _logicManager.getEditor();
-
-
+		
 		ArrangerConstants.WINDOW_WIDTH = 800;
 		ArrangerConstants.WINDOW_HEIGHT = 600;
-
+		
 		_mainPanel = new MainPanel(_piece);
 		_mainPanel.addInstructionListener(this);
 		this.add(_mainPanel);
-
+		
+		addMenuBar();
+		
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(ArrangerConstants.WINDOW_WIDTH, ArrangerConstants.WINDOW_HEIGHT);
 		this.setVisible(true);
-
-		addMenuBar();
 	}
 
 	public void addMenuBar(){

@@ -1,5 +1,10 @@
    package gui;
 
+	import java.util.List;
+	import java.util.Arrays;
+	import java.util.Set;
+	import java.util.HashSet;
+	
    import java.io.File;
    import java.io.IOException;
    import java.awt.image.BufferedImage;
@@ -21,16 +26,15 @@
    
       DockController _dockControl;
       Orientation _orientation;
-   
-      ToolbarButton[] _buttons;
-   
-   // small drags should count as clicks, not drags
+		
+		List<ToolbarButton> _buttons;
+		Set<Set<Integer>> _buttonGroups;
+		
+		// small drags should count as clicks, not drags
       boolean _snapDrag;
       boolean _drag;
       int _dragX, _dragY;
-   
-      Color myColor;
-   
+		
       public static void init(String imgHoriz, String imgVert) {
          try{
             IMG_HORIZ = ImageIO.read(new File(imgHoriz));
@@ -53,38 +57,55 @@
          _snapDrag = false;
          _drag = false;
          _dragX = _dragY = 0;
-      	      
-         createButtons();
-         setOrientation(orient);
+			
+			_buttonGroups = new HashSet<Set<Integer>>();
+			createButtons();
+			setOrientation(orient);
       }
    
    /* Creates the buttons on this toolbar - subclasses will extend this
     *
     */
-      protected void createButtons(){
-         _buttons = new ToolbarButton[]{};
-      } 	
+		protected void createButtons(){
+			//_buttons = Arrays.asList<ToolbarButton>();
+			// create button groups
+		} 	
 		
-		public void setPressed(boolean p, int index) {
-			if (index < 0 || index >= _buttons.length) {
+		public void setPressed(int index, boolean p) {
+			if (index < 0 || index >= _buttons.size()) {
 				System.out.println("Setting pressed for out of bounds button");
 				return;
 			}
 			
-			refreshPresses();
-			_buttons[index].setPressed(p);
+			// find group of button
+			Set<Integer> btnGroup = null;
+			for (Set<Integer> group : _buttonGroups) {
+				if (group.contains(index)){
+					btnGroup = group;
+					break;
+				}
+			}
+			refreshPresses(btnGroup, index);
+			
+			_buttons.get(index).setPressed(p);
 			drawBuffer();
 		}
 		
-		public void refreshPresses() {
-			for (ToolbarButton btn : _buttons) {
-				btn.setPressed(false);
+		private void refreshPresses(Set<Integer> group, int btn) {
+			if (group == null)
+				return;
+			
+			for (Integer index : group) {
+				if (index == btn)
+					continue;
+				
+				_buttons.get(index).setPressed(false);
 			}
 		}
 		
 		public void setOrientation(Orientation or) {
-      
-      // calculate length
+			
+			// calculate length
          int length = 0;
          for (ToolbarButton btn : _buttons) {
             length += (or == Orientation.HORIZONTAL) ? btn.getWidth() : btn.getHeight();
@@ -166,15 +187,17 @@
 			
          if (_snapDrag) {
          	// if didn't move enough to start dragging
-            for (ToolbarButton btn : _buttons) {
-               if (btn.hitTestPoint(e)) {
-						refreshPresses();
-						btn.setPressed(true);
-						
-						drawBuffer();
-                  return btn.getInstruction();
-               }
-            }
+				for (int i = 0; i < _buttons.size(); i++) {
+					ToolbarButton btn = _buttons.get(i);
+					
+					if (!btn.hitTestPoint(e))
+						continue;
+					
+					setPressed(i, true);
+					
+					drawBuffer();
+					return btn.getInstruction();
+				}
          }
          else {
          	// check docking to a side

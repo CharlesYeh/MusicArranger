@@ -16,7 +16,7 @@ public class ToolbarButton extends Drawable {
 	BufferedImage _icon;
 	Instruction _instruction;
 	
-	boolean _showState, _pressed;
+	boolean _showState, _pressed, _isToggle;
 	
 	public static void init(String btnOut, String btnOver) {
 		try{
@@ -57,8 +57,19 @@ public class ToolbarButton extends Drawable {
 		return _instruction;
 	}
 	
+	public void setToToggle(boolean b) {
+		_isToggle = b;
+	}
+	
 	public void setPressed(boolean p) {
-		_pressed = p && _showState;
+		if (_isToggle && p) {
+			// if set on toggle, switch on press
+			_pressed = !_pressed;
+		}
+		else {
+			// if set to hide state, don't set pressed
+			_pressed = p && _showState;
+		}
 	}
 	
 	public void drawSelf(Graphics g) {

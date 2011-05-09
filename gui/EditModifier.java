@@ -1,5 +1,5 @@
 package gui;
 
 public enum EditModifier {
-	/*HALF, THIRD, DOT, */FLAT, SHARP, REST
+	/*HALF, THIRD, DOT, */FLAT, SHARP, NATURAL, REST
 }

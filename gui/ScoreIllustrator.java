@@ -464,7 +464,7 @@ public class ScoreIllustrator {
 		if (pitches.size() == 0) {
 			// draw rest
 			drawRest(g, numerValue, denomValue, nextX, nextY);
-
+			
 			// render previous group
 			renderStemGroup(stemGroup);
 
