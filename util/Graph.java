@@ -42,9 +42,11 @@ public class Graph<T> {
 		if(!_nodes.contains(node2))
 			_nodes.add(node2);
 
-		Edge<T> edge = new Edge<T>(node1, node2, weight);
-		node1.addFollowingEdge(edge);
-		node2.addPrecedingEdge(edge);
+		if(!edgeExists(node1, node2)) { //does add an edge if the current node already links to a node with the same value 
+			Edge<T> edge = new Edge<T>(node1, node2, weight);
+			node1.addFollowingEdge(edge);
+			node2.addPrecedingEdge(edge);
+		}
 	}
 
 	//removes an edge within the graph, and removes that edge from the adjacency lists of the nodes it connects
@@ -77,6 +79,22 @@ public class Graph<T> {
 		}
 	}
 
+	//returns true if there is already an edge that links the Node front with the same value of back, else return false
+	public boolean edgeExists(Node<T> front, Node<T> back) {
+		
+		boolean exists = false;
+		
+		for(Edge<T> edge : front.getFollowing()) {
+			
+			T val2 = edge.getBack().getValue();
+			if(val2.equals(back.getValue())) {
+				
+				exists = true;
+			}
+		}
+		
+		return exists;
+	}
 	//returns true is node1 is adjacent to node2, else return false
 	public boolean isAdjacent(Node<T> node1, Node<T> node2){
 

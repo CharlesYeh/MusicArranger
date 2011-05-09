@@ -624,18 +624,21 @@ public class Analyzer extends Thread {
 			for(Node<ChordSymbol> nextNode : nextNodes) {
 
 				contains = false;
+				int weight = 0;
 				for(Edge<ChordSymbol> edge : followingEdges) {//determine whether the next chord is among the chords that the current one conventionally leads to
 
 					if(edge.getBack().getValue().equals(nextNode.getValue())) {
 						
 						contains = true;
+						weight = edge.getWeight();
 						break;
 					}
 				}
 
 				if(contains) { 
 
-					progressionsGraph.addEdge(currentNode, nextNode, 1); //valid progression, add edge to the return graph
+					progressionsGraph.addEdge(currentNode, nextNode, weight); //valid progression, add edge to the return graph
+//					System.out.println("added edge " + currentNode.getValue().getSymbolText() + " - " + nextNode.getValue().getSymbolText());
 					hasNext = true;
 					createPossibleProgressionsGraphHelper(nextNode, matchingNodesList, nextNodesListIdx + 1, progressionsGraph); //recur
 				}

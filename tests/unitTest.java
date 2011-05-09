@@ -1,6 +1,7 @@
 package tests;
 
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 
 import music.*;
 import logic.Analyzer;
@@ -44,21 +45,21 @@ public class unitTest{
                 List<List<ChordSymbol>> allPossibleChords = analyzer.analyzeMelody(melody, CMajor);
                 
                 
-                //testing testing
-
-            	ChordSymbol c1 = new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR);
-            	ChordSymbol c2 = new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.GERAUG6);
-            	System.out.println(c1.equals(c2));
-            	
-            	System.out.println(analyzer.getChordPreferencesGraph().findNode(c1).getValue());
-            	//testing testing
+//                //testing testing
+//
+//            	ChordSymbol c1 = new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR);
+//            	ChordSymbol c2 = new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.GERAUG6);
+//            	System.out.println(c1.equals(c2));
+//            	
+//            	System.out.println(analyzer.getChordPreferencesGraph().findNode(c1).getValue());
+//            	//testing testing
                 
-                System.out.println("ChordProgressions Graph contains the following ChordSymbols: ");
-                for(Node<ChordSymbol> toPrint : analyzer.getChordPreferencesGraph().getNodes()) {
-                	
-                	System.out.println(toPrint.getValue().getSymbolText());
-                }
-                System.out.println("graph is " + analyzer.getChordPreferencesGraph());
+//                System.out.println("ChordProgressions Graph contains the following ChordSymbols: ");
+//                for(Node<ChordSymbol> toPrint : analyzer.getChordPreferencesGraph().getNodes()) {
+//                	
+//                	System.out.println(toPrint.getValue().getSymbolText());
+//                }
+//                System.out.println("graph is " + analyzer.getChordPreferencesGraph());
                 
                 //print out all possible chords
                 int melodyNo = 0;
@@ -79,7 +80,7 @@ public class unitTest{
         
         //Function that prints the all the possible traversals from the starting node of printGraph
         public static void printGraph(Graph<ChordSymbol> printGraph) {
-        	System.out.println("graph is " + printGraph);
+        	
         	Node<ChordSymbol> rootNode = printGraph.getStartingNode();
         	
         	List<Edge<ChordSymbol>> startingEdges = rootNode.getFollowing();
@@ -89,6 +90,7 @@ public class unitTest{
         		
         		Node<ChordSymbol> startingNode = edge.getBack();
         		chordSymbolPrintList.add(startingNode.getValue());
+        		System.out.println("startingNode.getValue = " + startingNode.getValue().getSymbolText());
         		printGraphHelper(startingNode, chordSymbolPrintList);
         	}
         	
@@ -105,20 +107,18 @@ public class unitTest{
         			
         			System.out.print(chordsym.getSymbolText() + " - ");
         		}
-        		
         		System.out.println("");
         	}
         	else {
         		
-        		for(int i = 0; i < followingEdges.size(); i++) {
+        		for(Edge<ChordSymbol> edge : followingEdges) {
         			
-        			
-        			Node<ChordSymbol> nextNode = followingEdges.get(i).getBack();
+        			Node<ChordSymbol> nextNode = edge.getBack();
 
     				//clone the toPrint List
     				ArrayList<ChordSymbol> toPrintClone = (ArrayList<ChordSymbol>) toPrint.clone();
     				toPrintClone.add(nextNode.getValue());
-    				
+//    				System.out.println("  nextNode.getValue = " + nextNode.getValue().getSymbolText());
     				//recur
     				printGraphHelper(nextNode, toPrintClone);
         		}

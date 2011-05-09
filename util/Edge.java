@@ -27,5 +27,10 @@ public class Edge<T>{
 
 		return _back;
 	}
+	
+	public int getWeight() {
+		
+		return _weight;
+	}
 
 }
