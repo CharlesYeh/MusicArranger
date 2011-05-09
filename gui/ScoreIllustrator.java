@@ -28,19 +28,20 @@ public class ScoreIllustrator {
 
 	final static double LOG_2 = Math.log(2);
 	
-	final static int TOP_MARGIN	= 150;
-	final static int LEFT_MARGIN	= 25;
-	final static int RIGHT_MARGIN	= 25;
+	final static int TOP_MARGIN	= 100;
+	final static int LEFT_MARGIN	= 15;
+	final static int RIGHT_MARGIN	= 15;
 	
-	final static int SYSTEM_SPACING = 110;
+	final static int SYSTEM_SPACING = 120;
+	final static int STAFF_SPACING = 100;
+	
 	final static int SYSTEM_LINE_SPACING = 10;
 	
-	final static int STAFF_SPACING = 80;
-
 	final static int TIMESIG_WIDTH = 25;
 	final static int KEYSIG_WIDTH = 7;
 	final static int CLEF_WIDTH = 38;
-	final static int CHORD_SPACING = 10;
+	
+	final static int CHORD_SPACING = 50;
 
 	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
 	final static int NOTE_HEIGHT = SYSTEM_LINE_SPACING;
@@ -53,6 +54,8 @@ public class ScoreIllustrator {
 	final static int CLEF_IMG_OFFSET = 50;
 	final static int ACCID_IMG_OFFSET = 15;
 	final static int REST_IMG_OFFSET = 15;
+	
+	final static int OFFSET_Y = 25;
 
 	Image _imgQuarter, _imgHalf, _imgWhole, _imgQuarterRest, _imgHalfRest, _imgEighthRest, _imgSixteenthRest,
 			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp,
@@ -78,7 +81,7 @@ public class ScoreIllustrator {
 			_imgHalfRest	= ImageIO.read(new File("images/score/score_half_rest.png"));
 			_imgEighthRest	= ImageIO.read(new File("images/score/score_8_rest.png"));
 			_imgSixteenthRest	= ImageIO.read(new File("images/score/score_16_rest.png"));
-
+			
 			_imgDoubleFlat	= ImageIO.read(new File("images/score/score_dflat.png"));
 			_imgFlat			= ImageIO.read(new File("images/score/score_flat.png"));
 			_imgNatural	 	= ImageIO.read(new File("images/score/score_natural.png"));
@@ -489,7 +492,6 @@ public class ScoreIllustrator {
 				if (line < -5 || line > 5) {
 					for (int i = line - (line % 2); Math.abs(i) > 5; i += (line < 0) ? 2 : -2) {
 						int lineY = nextY + getLineOffset(currClef, i);
-						System.out.println(i + " " + lineY);
 						drawLedgerLine(g, noteX, lineY);
 					}
 				}
@@ -766,8 +768,8 @@ public class ScoreIllustrator {
 		//------------------Y COORDINATE PARSE------------------
 		// determine system index
 		int totalSystemHeight = (_staffPositions.size() - 1) * STAFF_SPACING + SYSTEM_SPACING;
-		int systemOffset = (int) e.getY() - TOP_MARGIN;
-
+		int systemOffset = (int) e.getY() - TOP_MARGIN + OFFSET_Y;
+		
 		if (systemOffset < 0) {
 			// clicked above systems
 			return null;
@@ -776,16 +778,16 @@ public class ScoreIllustrator {
 		int indexSystem = systemOffset / totalSystemHeight;
 
 		int staffY = systemOffset % totalSystemHeight;
-		// min to account for the extra space between systems
-		// small offset so clicking above a staff still counts for that staff
-		//int indexStaff = Math.min((staffY + 30) / STAFF_SPACING, _staffPositions.size() - 1);
-		int indexStaff = Math.min((staffY) / STAFF_SPACING, _staffPositions.size() - 1);
+		int indexStaff = (staffY) / STAFF_SPACING;
+		// check for clips in the extra space between systems
+		if (indexStaff >= _staffPositions.size()) {
+			return null;
+		}
 		
 		int lineY = staffY % STAFF_SPACING + SYSTEM_LINE_SPACING / 2;
 		// actually represents the line/spaces
 		// add offset for better snapping then get line number
-		int indexLine = 5 - (lineY + SYSTEM_LINE_SPACING / 4) / (SYSTEM_LINE_SPACING / 2);
-		//System.out.println(indexLine);
+		int indexLine = 5 - (lineY - SYSTEM_LINE_SPACING / 4) / (SYSTEM_LINE_SPACING / 2) + OFFSET_Y / SYSTEM_LINE_SPACING * 2;
 		
 		//------------------X COORDINATE PARSE------------------
 		// which measure
@@ -818,7 +820,6 @@ public class ScoreIllustrator {
 		System.out.println("Line: " + indexLine);
 		System.out.println("----------------------");
 		// current voice being edited
-		/*System.out.println("Voice: " + 0);*/
 
 		Map<Integer, TreeMap<Integer, Rational>> measureMNotes = _mNotePositions.get(indexSystem);
 		TreeMap<Integer, Rational> multiNotePositions = measureMNotes.get(indexMeasure);
@@ -826,7 +827,7 @@ public class ScoreIllustrator {
 		// if clicked past last measure in last system
 		if (multiNotePositions == null)
 			return null;
-
+		
 		// get the measure offset by traversing through the part of the measure on the staff
 		int prevNoteX = 0;
 		for (int mNoteX: multiNotePositions.keySet()) {

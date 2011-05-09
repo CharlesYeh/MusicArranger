@@ -63,9 +63,26 @@
     */
       protected void createButtons(){
          _buttons = new ToolbarButton[]{};
-      }
-   
-      public void setOrientation(Orientation or) {
+      } 	
+		
+		public void setPressed(boolean p, int index) {
+			if (index < 0 || index >= _buttons.length) {
+				System.out.println("Setting pressed for out of bounds button");
+				return;
+			}
+			
+			refreshPresses();
+			_buttons[index].setPressed(p);
+			drawBuffer();
+		}
+		
+		public void refreshPresses() {
+			for (ToolbarButton btn : _buttons) {
+				btn.setPressed(false);
+			}
+		}
+		
+		public void setOrientation(Orientation or) {
       
       // calculate length
          int length = 0;
@@ -151,6 +168,10 @@
          	// if didn't move enough to start dragging
             for (ToolbarButton btn : _buttons) {
                if (btn.hitTestPoint(e)) {
+						refreshPresses();
+						btn.setPressed(true);
+						
+						drawBuffer();
                   return btn.getInstruction();
                }
             }

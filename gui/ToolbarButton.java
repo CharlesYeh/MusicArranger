@@ -16,6 +16,8 @@ public class ToolbarButton extends Drawable {
 	BufferedImage _icon;
 	Instruction _instruction;
 	
+	boolean _showState, _pressed;
+	
 	public static void init(String btnOut, String btnOver) {
 		try{
 			IMG_OUT = ImageIO.read(new File(btnOut));
@@ -27,10 +29,10 @@ public class ToolbarButton extends Drawable {
 		}
 	}
 	
-	public ToolbarButton(String iconFile) {
-		this(iconFile, 0, 0);
+	public ToolbarButton(String iconFile, boolean showState) {
+		this(iconFile, showState, 0, 0);
 	}
-	public ToolbarButton(String iconFile, int cx, int cy) {
+	public ToolbarButton(String iconFile, boolean showState, int cx, int cy) {
 		try {
 			_icon = ImageIO.read(new File(iconFile));
 		}
@@ -42,6 +44,9 @@ public class ToolbarButton extends Drawable {
 		_y = cy;
 		_width = _icon.getWidth();
 		_height = _icon.getHeight();
+		
+		_showState = showState;
+		_pressed = false;
 	}
 	
 	public void setInstruction(Instruction instr) {
@@ -52,8 +57,12 @@ public class ToolbarButton extends Drawable {
 		return _instruction;
 	}
 	
+	public void setPressed(boolean p) {
+		_pressed = p && _showState;
+	}
+	
 	public void drawSelf(Graphics g) {
-		g.drawImage(IMG_OUT, _x, _y, null);
+		g.drawImage(_pressed ? IMG_OVER : IMG_OUT, _x, _y, null);
 		g.drawImage(_icon, _x, _y, null);
 	}
 	

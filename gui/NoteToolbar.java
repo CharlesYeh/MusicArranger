@@ -16,19 +16,19 @@ public class NoteToolbar extends Toolbar {
 	
 	protected void createButtons(){
 		// add mode buttons (note, selection, zoom)
-		ToolbarButton noteQuar 	= new ToolbarButton("images/btns/note_quarter.png");
-		ToolbarButton noteHalf 	= new ToolbarButton("images/btns/note_half.png");
-		ToolbarButton noteWhole	= new ToolbarButton("images/btns/note_whole.png");
-		ToolbarButton noteEighth = new ToolbarButton("images/btns/note_eighth.png");
-		ToolbarButton noteSixth	= new ToolbarButton("images/btns/note_sixteenth.png");
+		ToolbarButton noteQuar 	= new ToolbarButton("images/btns/note_quarter.png", true);
+		ToolbarButton noteHalf 	= new ToolbarButton("images/btns/note_half.png", true);
+		ToolbarButton noteWhole	= new ToolbarButton("images/btns/note_whole.png", true);
+		ToolbarButton noteEighth = new ToolbarButton("images/btns/note_eighth.png", true);
+		ToolbarButton noteSixth	= new ToolbarButton("images/btns/note_sixteenth.png", true);
 		
-		ToolbarButton noteModHalf 	= new ToolbarButton("images/btns/note_onehalf.png");
-		ToolbarButton noteModThird = new ToolbarButton("images/btns/note_third.png");
-		ToolbarButton noteModDot 	= new ToolbarButton("images/btns/note_dot.png");
+		ToolbarButton noteModHalf 	= new ToolbarButton("images/btns/note_onehalf.png", true);
+		ToolbarButton noteModThird = new ToolbarButton("images/btns/note_third.png", true);
+		ToolbarButton noteModDot 	= new ToolbarButton("images/btns/note_dot.png", true);
 		
-		ToolbarButton noteModFlat 	= new ToolbarButton("images/btns/note_flat.png");
-		ToolbarButton noteModSharp = new ToolbarButton("images/btns/note_sharp.png");
-		ToolbarButton noteModRest 	= new ToolbarButton("images/btns/note_rest.png");
+		ToolbarButton noteModFlat 	= new ToolbarButton("images/btns/note_flat.png", true);
+		ToolbarButton noteModSharp = new ToolbarButton("images/btns/note_sharp.png", true);
+		ToolbarButton noteModRest 	= new ToolbarButton("images/btns/note_rest.png", true);
 		
 		noteQuar.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.QUARTER));
 		noteHalf.setInstruction(new ModeInstruction(ModeInstructionType.DURATION, EditDuration.HALF));

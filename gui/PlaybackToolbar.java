@@ -13,8 +13,8 @@ public class PlaybackToolbar extends Toolbar {
 	
 	protected void createButtons(){
 		// add mode buttons (note, selection, zoom)
-		ToolbarButton playPlay 	= new ToolbarButton("images/btns/play_play.png");
-		ToolbarButton playStop 	= new ToolbarButton("images/btns/play_stop.png");
+		ToolbarButton playPlay 	= new ToolbarButton("images/btns/play_play.png", false);
+		ToolbarButton playStop 	= new ToolbarButton("images/btns/play_stop.png", false);
 		
 		playPlay.setInstruction(new PlaybackInstruction(PlaybackInstructionType.START));
 		playStop.setInstruction(new PlaybackInstruction(PlaybackInstructionType.STOP));

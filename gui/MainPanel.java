@@ -32,18 +32,19 @@ import arranger.ArrangerConstants;
 import music.*;
 
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
-
+	
+	static final long serialVersionUID = 0;
 	boolean _disabled;
-
-   // the last toolbar which was used
+	
+	// the last toolbar which was used
 	Toolbar _activeToolbar;
-
+	
 	List<Toolbar> _toolbars;
 	Toolbar _modeToolbar, _noteToolbar, _playToolbar;
 	ScoreWindow _scoreWindow;
-
+	
 	EventListenerList _listeners = new EventListenerList();
-
+	
 	//--------------------state information--------------------
 	EditMode _currMode		= EditMode.NOTE;
 	EditDuration _currDuration = EditDuration.QUARTER;
@@ -56,7 +57,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	// currently selected
 	Set<InstructionIndex> _selected;
-
+	
 	//------------------end state information------------------
 
 	public MainPanel(Piece piece) {
@@ -112,9 +113,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	}
 
 	public Point getEventPoint(MouseEvent e) {
-	   Point pt = e.getPoint();
-		//pt.setLocation(pt.getX(), pt.getY() + _scoreWindow.getSlideY());
-	   return pt;
+	   return e.getPoint();
 	}
 
    /* Handle a mouse press on a toolbar or the score window
@@ -175,7 +174,6 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				
 				if (!_currRest) {
 					// insert pitches
-					System.out.println(index.getLineNumber());
 					Instruction editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
 					instr.addInstruction(editInstr);
 				}
@@ -188,19 +186,13 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			
 			if (ins == null)
 				return;
-
+			
 			instr = new InstructionBlock(this, ins);
-	   }
-
+		}
+		
 	   sendInstruction(instr);
 
 	   repaint();
-	}
-	
-   /* Handle a mouse click on a toolbar or the score window
-    *
-    */
-	public void mouseClicked(MouseEvent e) {
 	}
 
 	public void mouseDragged(MouseEvent e) {
@@ -222,26 +214,16 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 
 	   repaint();
 	}
-
-	public void mouseEntered(MouseEvent e) {
-
-
-		Point evtPoint = getEventPoint(e);
-	}
-
-	public void mouseExited(MouseEvent e) {
-
-	   Point evtPoint = getEventPoint(e);
-
-	}
-
-	public void mouseMoved(MouseEvent e) {
-
-	}
+	
+	public void mouseClicked(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+	public void mouseMoved(MouseEvent e) {}
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		// slide 50 pixels for every mouse wheel notch
 	   _scoreWindow.slide(50 * e.getWheelRotation());
+		
 	   repaint();
 	}
 
@@ -276,15 +258,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 
 	   repaint();
 	}
-	public void componentHidden(ComponentEvent e) {
-
-	}
-	public void componentMoved(ComponentEvent e) {
-
-	}
-	public void componentShown(ComponentEvent e) {
-
-	}
+	public void componentHidden(ComponentEvent e) {}
+	public void componentMoved(ComponentEvent e) {}
+	public void componentShown(ComponentEvent e) {}
 
 	public synchronized void addInstructionListener(InstructionListener listener)  {
 		_listeners.add(InstructionListener.class, listener);

@@ -58,20 +58,21 @@ public class MidiPlayer extends Thread {
 				// find whether start or end is next with timestamps (firstKey())
 				Timestamp startTime = _starts.isEmpty() ? null : _starts.firstKey();
 
-				if(startTime != null)
+				/*if(startTime != null)
 					System.out.println("startTime is : " + startTime.getDuration().toString());
 				else
-					System.out.println("startTime is null");
+					System.out.println("startTime is null");*/
 
 				Timestamp endTime = _ends.isEmpty() ? null : _ends.firstKey();
 
-				if(endTime != null)
+				/*if(endTime != null)
 					System.out.println("endTime is : " + endTime.getDuration().toString());
 				else
-					System.out.println("endTime is null");
+					System.out.println("endTime is null");*/
+				
 				// if start is empty, default to ends list
 				boolean nextIsStart = !_starts.isEmpty();
-				System.out.println(nextIsStart);
+				//System.out.println(nextIsStart);
 
 				// if starts isn't empty, make sure ends isn't empty, and compare end time
 				if (nextIsStart && !_ends.isEmpty() && startTime.compareTo(endTime) >= 0) {
@@ -90,7 +91,7 @@ public class MidiPlayer extends Thread {
 						// play multinote
 						MultiNote mn = itr.next();
 
-						System.out.println("Turning note ON at : " + startTime.getDuration().getNumerator() + "/" + startTime.getDuration().getDenominator());
+						//System.out.println("Turning note ON at : " + startTime.getDuration().getNumerator() + "/" + startTime.getDuration().getDenominator());
 						_midi.multiNoteOn(mn);
 
 						// get next timestamp
@@ -107,9 +108,9 @@ public class MidiPlayer extends Thread {
 				}
 				else {
 					// stop playing a multinote
-					System.out.println("endTime is " + endTime);
+					//System.out.println("endTime is " + endTime);
 
-					System.out.println("Turning note OFF at : " + endTime.getDuration().getNumerator() + "/" + endTime.getDuration().getDenominator());
+					//System.out.println("Turning note OFF at : " + endTime.getDuration().getNumerator() + "/" + endTime.getDuration().getDenominator());
 					MultiNote mn = _ends.get(endTime);
 					_midi.multiNoteOff(mn);
 					_ends.remove(endTime);
@@ -127,7 +128,7 @@ public class MidiPlayer extends Thread {
 				if (_starts.isEmpty()) {
 					// case 1 when all the notes have been turned on
 					sleepDuration = endTime.getDuration().minus(currentTime);
-					System.out.println("case 1: sleepDuration is: " + sleepDuration);
+					//System.out.println("case 1: sleepDuration is: " + sleepDuration);
 				}
 				else {
 					// starts is not empty so compare with ends list
@@ -136,19 +137,19 @@ public class MidiPlayer extends Thread {
 
 						// case 2 when there are still notes to turn on and notes to turn off, but a note should be turned off first.
 						sleepDuration = endTime.getDuration().minus(currentTime);
-						System.out.println("case 2: sleepDuration is: " + sleepDuration);
+						//System.out.println("case 2: sleepDuration is: " + sleepDuration);
 					}
 					else {
 
 						// case 3 when thre are notes to turn on and notes to turn off, but a note should be turned on first
 						sleepDuration = startTime.getDuration().minus(currentTime);
-						System.out.println("case 3: sleepDuration is: " + sleepDuration);
+						//System.out.println("case 3: sleepDuration is: " + sleepDuration);
 					}
 				}
 
 				int sleepMilli = 60 * 1000 * sleepDuration.getNumerator() / ArrangerConstants.WHOLE_NOTES_PER_MINUTE / sleepDuration.getDenominator();
-				System.out.println("currentTime is :" + currentTime);
-				System.out.println("sleepMilli is: " + sleepMilli);
+				/*System.out.println("currentTime is :" + currentTime);
+				System.out.println("sleepMilli is: " + sleepMilli);*/
 
 				try {
 					Thread.sleep(sleepMilli);
@@ -161,7 +162,6 @@ public class MidiPlayer extends Thread {
 							MultiNote mn = _ends.get(ts);
 							_ends.remove(ts);
 							_midi.multiNoteOff(mn);
-							System.out.println("Playback interrupted while asleep");
 					}
 					return;
 				}
