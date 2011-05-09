@@ -107,12 +107,4 @@ public class InstructionIndex {
 	public void setAccidental(Accidental accidental) {
 		this._accidental = accidental;
 	}
-	
-	public Accidental getAccidental() {
-		return _accidental;
-	}
-	
-	public void setAccidental(Accidental accid) {
-		_accidental = accid;
-	}
 }
