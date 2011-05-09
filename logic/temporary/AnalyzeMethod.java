@@ -73,16 +73,18 @@ public class AnalyzeMethod extends logic.Analyzer{
 	}
 	
 	// Given a pitch and the key it belongs to, returns the scale degree of that pitch.
-	public ScaleDegree calcScaleDegree(Pitch pitch, Pitch key, boolean isMajor) {
-		int letterDif = letterDifference(pitch, key);
-		int pitchDif = pitchDifference(pitch, key);
+	public ScaleDegree calcScaleDegree(Pitch pitch, KeySignature keySig) {
+		Pitch keyPitch = keySig.getKeySigPitch();
+		
+		int letterDif = letterDifference(pitch, keyPitch);
+		int pitchDif = pitchDifference(pitch, keyPitch);
 		
 		int scaleDegreeNumber = letterDif;
 		
 		int dfaultPitchDif;
 		// pitch difference if the letter difference were to have no accidental
 		
-		if (isMajor) {
+		if (keySig.getIsMajor()) {
 			dfaultPitchDif = NoteLetter.getNoteLetter(letterDif).pitchValue();
 		}
 		else { // if minor
