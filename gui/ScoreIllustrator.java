@@ -32,7 +32,7 @@ public class ScoreIllustrator {
 	final static int LEFT_MARGIN	= 15;
 	final static int RIGHT_MARGIN	= 15;
 	
-	final static int SYSTEM_SPACING = 120;
+	final static int SYSTEM_SPACING = 150;
 	final static int STAFF_SPACING = 100;
 	
 	final static int SYSTEM_LINE_SPACING = 10;
