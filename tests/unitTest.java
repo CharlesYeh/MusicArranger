@@ -63,18 +63,29 @@ public class unitTest{
                 
                 //print out all possible chords
                 int melodyNo = 0;
-                for(List<ChordSymbol> melodyInstance : allPossibleChords) {
+                for(List<ChordSymbol> chordInstance : allPossibleChords) {
                 	
-                	System.out.println("melodyInstance " + melodyNo);
-                	for(ChordSymbol chordsym : melodyInstance) {
+                	System.out.println("=====melodyInstance " + melodyNo + "=====");
+                	System.out.println("existing pitches are: ");
+                	List<Pitch> melodyInstance = melody.get(melodyNo);
+                	
+                	for(Pitch pitch : melodyInstance) {
                 		
-                		System.out.println(chordsym.toString());
+                		System.out.println(pitch);
+                	}
+                	
+                	System.out.println("chords that contain these pitches are:");
+                	for(ChordSymbol chordsym : chordInstance) {
+                		
+                		System.out.println(chordsym.getSymbolText());
                 	}
                 	
                 	melodyNo++;
                 }
+                System.out.println("");
                 
                 Graph<ChordSymbol> possibleProgressionsGraph = analyzer.createPossibleProgressionsGraph(allPossibleChords);
+                System.out.println("Possible chord progressions: ");
                 printGraph(possibleProgressionsGraph);
         }
         
@@ -90,7 +101,7 @@ public class unitTest{
         		
         		Node<ChordSymbol> startingNode = edge.getBack();
         		chordSymbolPrintList.add(startingNode.getValue());
-        		System.out.println("startingNode.getValue = " + startingNode.getValue().getSymbolText());
+//        		System.out.println("startingNode.getValue = " + startingNode.getValue().getSymbolText());
         		printGraphHelper(startingNode, chordSymbolPrintList);
         	}
         	
