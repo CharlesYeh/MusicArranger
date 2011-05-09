@@ -133,7 +133,7 @@ public class ScoreWindow extends Drawable {
 
 	public void adjustScorePoint(Point p) {
 		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
-		int offsetX = (ArrangerConstants.WINDOW_WIDTH - ArrangerConstants.PAGE_WIDTH) / 2 - 15;
+		int offsetX = (ArrangerConstants.WINDOW_WIDTH - ArrangerConstants.PAGE_WIDTH) / 2;
 		
 		p.setLocation(p.getX() - offsetX,
 							p.getY() + _slider.getSlidePercent() * scrollHeight);

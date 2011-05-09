@@ -189,7 +189,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		if (tbar == null) {
 			// release on scorewindow
-			
+			_scoreWindow.mouseReleased(evtPoint);
 		}
 		else {
 			// clicked on a toolbar
