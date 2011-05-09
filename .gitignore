@@ -4,4 +4,4 @@ images/psds/
 .settings/
 .project
 bin/
-*.classpath
+.classpath

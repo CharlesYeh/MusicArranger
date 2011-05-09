@@ -71,4 +71,24 @@ public class Pitch {
 		
 		return newPitch;
 	}
+	
+	// Calculates the interval from one pitch up to another, DOES NOT CONSIDER
+	// OCTAVES
+	public Interval calcIntervalTo(Pitch upperPitch) {
+		Pitch lowerPitch = this;
+
+		int pitchUpNoteValue = upperPitch.getNoteLetter().intValue();
+		int pitchLowNoteValue = lowerPitch.getNoteLetter().intValue();
+		int pitchUpPitchValue = upperPitch.getNoteLetter().pitchValue() + upperPitch.getAccidental().intValue();
+		int pitchLowPitchValue = lowerPitch.getNoteLetter().pitchValue() + lowerPitch.getAccidental().intValue();
+
+		int letterDif = (pitchUpNoteValue - pitchLowNoteValue) % 7;
+		if (letterDif < 0) letterDif += 7;
+		int pitchDif = (pitchUpPitchValue - pitchLowPitchValue) % 12;
+		if (pitchDif < 0) pitchDif += 12;
+		
+		int accidentalNum = pitchDif - NoteLetter.getNoteLetter(letterDif).pitchValue();
+		
+		return new Interval(accidentalNum, letterDif + 1);
+	}
 }

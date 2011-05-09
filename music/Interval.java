@@ -9,6 +9,44 @@ public class Interval {
 		_size = size;
 	}
 	
+	// Alternative constructor: accidental represents the offset from either
+	// the MAJOR or PERFECT variant of the interval.
+	public Interval(int accidental, int size) {
+		IntervalType type = null;
+		
+		if (size == 1 || size == 4 || size == 5) {
+			switch (accidental) {
+			case -1:
+				type = IntervalType.DIMINISHED;
+				break;
+			case 0:
+				type = IntervalType.PERFECT;
+				break;
+			case 1:
+				type = IntervalType.AUGMENTED;
+				break;
+			}
+		}
+		else {
+			switch (accidental) {
+			case -2:
+				type = IntervalType.DIMINISHED;
+				break;
+			case -1:
+				type = IntervalType.MINOR;
+				break;
+			case 0:
+				type = IntervalType.MAJOR;
+				break;
+			case 1:
+				type = IntervalType.AUGMENTED;
+				break;
+			}
+		}
+		_type = type;
+		_size = size;
+	}
+	
 	public IntervalType getIntervalType() {
 		return _type;
 	}
