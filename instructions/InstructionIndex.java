@@ -99,12 +99,30 @@ public class InstructionIndex {
 	public void setLineNumber(int lineNumber) {
 		this._lineNumber = lineNumber;
 	}
-
+	
 	public Accidental getAccidental() {
 		return _accidental;
 	}
-
+	
 	public void setAccidental(Accidental accidental) {
 		this._accidental = accidental;
+	}
+	
+	public boolean equals(Object obj) {
+		System.out.println("check equals");
+		if (obj instanceof InstructionIndex) {
+			InstructionIndex index = (InstructionIndex) obj;
+			
+			// only check if is in same place of measure
+			return _staffNumber == index.getStaffNumber() && _measureNumber == index.getMeasureNumber() &&
+					_voiceNumber == index.getVoiceNumber() && _measureOffset.equals(index.getMeasureOffset());
+		}
+		else
+			return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return _staffNumber + _voiceNumber + _measureNumber;
 	}
 }

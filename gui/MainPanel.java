@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.Point;
 
 // data struct
+import java.util.Set;
+import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -53,7 +55,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	boolean _currRest 		= false;
 	
 	// currently selected
-	List<MultiNote> _selected;
+	Set<InstructionIndex> _selected;
 
 	//------------------end state information------------------
 
@@ -75,14 +77,16 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	   _toolbars.add(_modeToolbar);
 	   _toolbars.add(_noteToolbar);
 	   _toolbars.add(_playToolbar);
-
+		
+		_selected = new HashSet<InstructionIndex>();
+		
 	   addMouseListener(this);
 	   addMouseMotionListener(this);
 	   addMouseWheelListener(this);
 	   addComponentListener(this);
-
+		
 	   setBackground(Color.WHITE);
-
+		
 	   repaint();
 	}
 
@@ -157,13 +161,22 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			
 			instr = new InstructionBlock(this);
 			for (InstructionIndex index : listIndex) {
-				Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
-				instr.addInstruction(editInstr);
+				
+				if (_selected.contains(index)) {
+					// don't replace this note
+				}
+				else {
+					// replace this note
+					Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
+					instr.addInstruction(editInstr);
+					
+					_selected = new HashSet<InstructionIndex>(listIndex);
+				}
 				
 				if (!_currRest) {
 					// insert pitches
 					System.out.println(index.getLineNumber());
-					editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
+					Instruction editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
 					instr.addInstruction(editInstr);
 				}
 			}
@@ -183,7 +196,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 
 	   repaint();
 	}
-
+	
    /* Handle a mouse click on a toolbar or the score window
     *
     */
