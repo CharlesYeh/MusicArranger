@@ -1,28 +1,24 @@
 package logic;
 
-import java.lang.Thread;
-import music.ChordSymbol;
-import music.ChordType;
-import music.Interval;
-import music.IntervalType;
-import music.NoteLetter;
-import music.Piece;
-import music.KeySignature;
-import music.Pitch;
-import music.ScaleDegree;
-import java.util.ArrayList;
 import util.*;
+import music.*;
+import instructions.GenerateInstructionType;
+import instructions.InstructionIndex;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import music.Accidental;
+import java.lang.Thread;
 
 public class Analyzer extends Thread {
-
+	
 	Graph<ChordSymbol> _chordPreferencesGraph;
-
-
+	GenerateInstructionType _generateType;
+	Piece _piece;
+	InstructionIndex _start;
+	InstructionIndex _end;
+	
 	public Analyzer() {
 		initMajorKeyGraph();
 	}
@@ -769,8 +765,7 @@ public class Analyzer extends Thread {
 	public int scaleDegreeToPitchDegree(int scaleDegree) {
 
 		if(scaleDegree < 1 || scaleDegree > 7){
-
-//			System.out.println("erroroneous scaleDegree input");
+			//	System.out.println("erroroneous scaleDegree input");
 			return 0;
 		}
 		else if(scaleDegree < 4)
@@ -778,9 +773,33 @@ public class Analyzer extends Thread {
 		else
 			return (5 + (scaleDegree - 4) *2);
 	}
-
+	
+	public void generate(GenerateInstructionType type, Piece piece, InstructionIndex start, InstructionIndex end) {
+		_generateType = type;
+		_piece 	= piece;
+		_start 	= start;
+		_end 		= end;
+		
+		start();
+	}
+	
 	public void run() {
 		// start analysis process here
-
+		switch (_generateType) {
+		case CHORDS:
+			generateChords();
+			break;
+		case VOICES:
+			generateVoices();
+			break;
+		}
+	}
+	
+	public void generateChords() {
+		
+	}
+	
+	public void generateVoices() {
+		
 	}
 }

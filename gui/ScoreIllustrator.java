@@ -572,7 +572,7 @@ public class ScoreIllustrator {
 			stemGroup.clear();
 			return;
 		}
-		
+		/*
 		Rational totalDuration = new Rational(0, 1);
 		int totalLines = 0;
 
@@ -619,6 +619,7 @@ public class ScoreIllustrator {
 		int barEX = last.getX();
 		int barEY = last.getX() + stemDirection * (stemLength + maxBarOffset);
 		g.drawLine(barSX, barSY, barEX, barEY);
+		*/
 		
 		//stemGroup = new ArrayList<MultiNote>();
 		stemGroup.clear();

@@ -109,7 +109,7 @@ public class Main extends JFrame implements InstructionListener {
 					receiveInstruction(myInstr);
 				}
 			});
-
+		
 		JMenuItem menuItemSave = new JMenuItem("Save");
 		menuItemSave.setMnemonic(KeyEvent.VK_S);
 		menuItemSave.setToolTipText("Save current song");
@@ -117,7 +117,7 @@ public class Main extends JFrame implements InstructionListener {
 			new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
 					String path = JOptionPane.showInputDialog("Save to what path?");
-
+					
 					// error checking
 					if (path == null && path.length() == 0) {
 						System.out.println("Save path cannot be empty");
