@@ -59,7 +59,7 @@ public class unitTest{
                 printGraph(possibleProgressionsGraph);
         }
         
-        public void printGraph(Graph toPrint) {
+        public static void printGraph(Graph toPrint) {
         	
         	
         }
