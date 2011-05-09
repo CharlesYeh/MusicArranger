@@ -77,18 +77,6 @@ public class ScoreWindow extends Drawable {
 	}
 
 	public List<InstructionIndex> mouseClicked(Point e) {
-		// account for sliding offset
-		/*e.setLocation(e.getX(), e.getY() + _slider.getY());
-
-		InstructionIndex index = _illustrator.getEventIndex(e);
-		if (index == null)
-			return null;
-
-		// determine which instruction to send
-		List<InstructionIndex> listIndex = new ArrayList<InstructionIndex>();
-		listIndex.add(index);
-
-		return listIndex;*/
 		return null;
 	}
 

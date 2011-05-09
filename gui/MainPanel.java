@@ -143,6 +143,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		InstructionBlock instr = new InstructionBlock(this);
 		for (InstructionIndex index : listIndex) {
 			if (index.getIsChord()) {
+				System.out.println("START INSERTING CHORD at: " + index.getMeasureOffset());
 				// insert/replace chord symbol
 				Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.CHORD_SYMBOL, new ChordSymbol(new ScaleDegree(0, Accidental.NATURAL), ChordType.MAJOR));
 				instr.addInstruction(editInstr);
@@ -151,6 +152,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				// insert/replace multinote or pitch
 				if (_selected.contains(index)) {
 					// don't replace this note
+					
 				}
 				else {
 					// replace this note

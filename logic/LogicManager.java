@@ -64,8 +64,7 @@ public class LogicManager implements Printable {
 	 * the Instruction, after casting it appropriately.
 	 */
 	private void interpretInstr(Instruction instr) {
-		System.out.println(instr);
-
+		
 		if (instr instanceof FileInstruction){
 			FileInstruction fileInstr = (FileInstruction) instr;
 			interpretFileInstr(fileInstr);
@@ -495,16 +494,21 @@ public class LogicManager implements Printable {
 	public Pitch calcPitch(int lineNum, Clef clef, KeySignature keySig) {
 		Pitch clefPitch = clef.getClefName().centerPitch();
 		Pitch keySigPitch = keySig.getKeySigPitch();
+		
 		int clefLine = clef.getCenterLine();
 		boolean isMajor = keySig.getIsMajor();
+		
 		int clefSclDgr = (clefPitch.getNoteLetter().intValue() - keySigPitch.getNoteLetter().intValue() + 1) % 7;
 		if (clefSclDgr < 0) clefSclDgr += 7;
+		
 		int lineNumSclDgr = (lineNum + (clefSclDgr - 1 - clefLine)) % 7;
 		if (lineNumSclDgr < 0) lineNumSclDgr += 7;
+		
 		lineNumSclDgr++;
 		ScaleDegree sclDgr = new ScaleDegree(lineNumSclDgr, Accidental.NATURAL);
 		Interval sclDgrInterval = sclDgr.getIntervalFromRoot(isMajor);
 		Pitch pitchLetter = keySigPitch.addInterval(sclDgrInterval);
+		
 		int octave = (clef.getCenterValue() + lineNum - clefLine) / 7;
 		Pitch pitch = new Pitch(pitchLetter.getNoteLetter(), octave, pitchLetter.getAccidental());
 		return pitch;
