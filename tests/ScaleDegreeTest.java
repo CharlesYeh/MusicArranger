@@ -1,13 +1,12 @@
 package tests;
 import logic.*;
-import logic.temporary.AnalyzeMethod;
 import music.*;
 import java.util.*;
 import util.*;
 
 public class ScaleDegreeTest {
 	public static void main(String[] args) {
-		AnalyzeMethod test = new AnalyzeMethod();
+		Analyzer test = new Analyzer();
 		Pitch pitch1 = new Pitch(NoteLetter.A, Accidental.FLAT);
 		Pitch pitch2 = new Pitch(NoteLetter.C, Accidental.NATURAL);
 		Pitch pitch3 = new Pitch(NoteLetter.E, Accidental.FLAT);
@@ -25,7 +24,7 @@ public class ScaleDegreeTest {
 		else {
 			test.initMinorKeyGraph();
 		}
-		List<Node<ChordSymbol>> chordNodes = test._chordPreferencesGraph.getNodes();
+		List<Node<ChordSymbol>> chordNodes = test.getChordPreferencesGraph().getNodes();
 		List<ChordSymbol> possibleChords = new LinkedList<ChordSymbol>();
 		for (Node<ChordSymbol> chordNode : chordNodes) {
 			possibleChords.add(chordNode.getValue());

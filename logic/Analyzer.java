@@ -68,6 +68,8 @@ public class Analyzer extends Thread {
 		// VI -> ii iv
 		// VIi -> I V ii N It6 Fr6 Ger6
 		
+		/*=====NOTE: to improve efficiency of finding optimal paths, 
+		 * the path finder is build in a way that requires more optimal edges to be added before less optimal ones=====*/
 		///Adding edges for chordI
 		_chordPreferencesGraph.addEdge(chordI, chordii, 	1);
 		_chordPreferencesGraph.addEdge(chordI, chordiii, 	1);
@@ -115,6 +117,18 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordviio, chordI, 	1); //Authentic cadence
 		_chordPreferencesGraph.addEdge(chordviio, chordii,	1);
 		_chordPreferencesGraph.addEdge(chordviio, chordN, 	2);
+		
+		//Adding edges for chordN
+		_chordPreferencesGraph.addEdge(chordN, chordV, 	1);
+		
+		//Adding edges for chordIt6
+		_chordPreferencesGraph.addEdge(chordIt6, chordV, 	1);
+		
+		//Adding edges for chordFr6
+		_chordPreferencesGraph.addEdge(chordFr6, chordV, 	1);
+		
+		//Adding edges for chordGer6
+		_chordPreferencesGraph.addEdge(chordGer6, chordV, 	1);
 
 	}
 
@@ -149,7 +163,9 @@ public class Analyzer extends Thread {
 		// VI -> iio iv
 		// VIi -> I V iio N It6 Fr6 Ger6
 		
-		///Adding edges for chordi
+		/*=====NOTE: to improve efficiency of finding optimal paths, 
+		 * the path finder is build in a way that requires more optimal edges to be added before less optimal ones=====*/
+		//Adding edges for chordi
 		_chordPreferencesGraph.addEdge(chordi, chordiio, 	1);
 		_chordPreferencesGraph.addEdge(chordi, chordIII, 	1);
 		_chordPreferencesGraph.addEdge(chordi, chordiv, 	1);
@@ -196,6 +212,18 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordviio, chordi, 	1); //Authentic cadence
 		_chordPreferencesGraph.addEdge(chordviio, chordiio,1);
 		_chordPreferencesGraph.addEdge(chordviio, chordN, 	2);
+		
+		//Adding edges for chordN
+		_chordPreferencesGraph.addEdge(chordN, chordV, 	1);
+		
+		//Adding edges for chordIt6
+		_chordPreferencesGraph.addEdge(chordIt6, chordV, 	1);
+		
+		//Adding edges for chordFr6
+		_chordPreferencesGraph.addEdge(chordFr6, chordV, 	1);
+		
+		//Adding edges for chordGer6
+		_chordPreferencesGraph.addEdge(chordGer6, chordV, 	1);
 
 	}
 
@@ -619,53 +647,69 @@ public class Analyzer extends Thread {
 				//generate list of ChordSymbols that the current chord can conventionally go to
 				List<Edge<ChordSymbol>> followingEdges = chordGraphNode.getFollowing();
 				
-				//for each of the nodes following the current one one
-				for(Node<ChordSymbol> nextNode : nextNodes) {
+				//for each of the nodes that can follow the current one
+				for(Edge<ChordSymbol> edge : followingEdges) {
 	
 					boolean validated = false;
-					boolean weightIncreased = false;
-					boolean contains = false;
-					int weight = 1;
-					for(Edge<ChordSymbol> edge : followingEdges) {//determine whether the next chord is among the chords that the current one conventionally leads to
+//					boolean weightIncreased = false;
+//					boolean contains = false;
+					boolean optimized = false;
+					int minimumValidWeight = 1;
+					int weight = 0;
+					for(Node<ChordSymbol> nextNode : nextNodes) {
 	
-						if(edge.getBack().getValue().equals(nextNode.getValue())) {
+						if(edge.getBack().getValue().equals(nextNode.getValue())) {//determine whether the next chord is among the chords that the current one conventionally leads to
 							
-							contains = true;
-							int edgeweight = edge.getWeight();
-							if(edgeweight > weight)
-								weightIncreased = true; //this edge has more weight than the previous one
-							else if(edgeweight == weight)
-								weightIncreased = false; //this edge has the same weight as the previous one
+//							contains = true;
+							weight = edge.getWeight();
+//							int edgeweight = edge.getWeight();
+//							if(edgeweight > weight)
+//								weightIncreased = true; //this edge has more weight than the previous one
+//							else if(edgeweight == weight)
+//								weightIncreased = false; //this edge has the same weight as the previous one
+							
+							
+//							if(contains) { 
+								
+			//					System.out.println("added edge " + currentNode.getValue().getSymbolText() + " - " + nextNode.getValue().getSymbolText());
+								
+								validated = createPossibleProgressionsGraphHelper(nextNode, matchingNodesList, nextNodesListIdx + 1, progressionsGraph, onlyOptimalPaths); //recur
+//							}
+							
+							if(onlyOptimalPaths) { //If only the optimal paths are wanted
+								
+								if(weight > minimumValidWeight) {
+									if(isValid) { //if the current chord already has a good progression and the current edge is not as optimal as existing ones
+										
+										//path is already optimized
+										optimized = true;
+										break;
+									}
+									else { //if the current chord does not yet link to a good progression
+										
+										//reset minimumValidWeight and continue looking
+										minimumValidWeight = weight;
+									}
+								}
+							}
+							
+							if(validated) { //this chord leads to a valid chord progression
+								
+								progressionsGraph.addEdge(currentNode, nextNode, weight); //valid progression, add edge to the return graph
+								isValid = true;
+							}
 							
 							break;
 						}
-					}
-	
-					if(contains) { 
-	
 						
-	//					System.out.println("added edge " + currentNode.getValue().getSymbolText() + " - " + nextNode.getValue().getSymbolText());
-						
-						validated = createPossibleProgressionsGraphHelper(nextNode, matchingNodesList, nextNodesListIdx + 1, progressionsGraph, onlyOptimalPaths); //recur
-						if(validated) {
+						if(optimized) { //all the optimal paths have already been created
 							
-							isValid = true;
+							//assuming that edges not yet traversed will only be less optimal, there is no need to traverse them
+							break;
 						}
 					}
 					
-					if(onlyOptimalPaths) { //If only the optimal paths are wanted
-						
-						if((validated && !weightIncreased)) { //this chord leads to a valid chord progression
 							
-							progressionsGraph.addEdge(currentNode, nextNode, weight); //valid progression, add edge to the return graph
-						}
-					}
-					else {
-						if(validated) { //this chord leads to a valid chord progression
-							
-							progressionsGraph.addEdge(currentNode, nextNode, weight); //valid progression, add edge to the return graph
-						}
-					}
 				}
 	
 //				if(!isValid) {

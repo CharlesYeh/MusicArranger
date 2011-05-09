@@ -42,7 +42,7 @@ public class unitTest{
                 melody.add(melodyInstance3);
                 
                 ArrayList<Pitch> melodyInstance4 = new ArrayList<Pitch>();
-                melodyInstance4.add(G);
+                melodyInstance4.add(C);
                 melodyInstance4.add(E);
 //                melodyInstance4.add(B);
                 melody.add(melodyInstance4);
@@ -89,7 +89,9 @@ public class unitTest{
                 }
                 System.out.println("");
                 
-                Graph<ChordSymbol> possibleProgressionsGraph = analyzer.createPossibleProgressionsGraph(allPossibleChords, true);
+                boolean onlyOptimalProgressions = false;
+                System.out.println("Only get optimal progressions: " + onlyOptimalProgressions);
+                Graph<ChordSymbol> possibleProgressionsGraph = analyzer.createPossibleProgressionsGraph(allPossibleChords, onlyOptimalProgressions);
                 System.out.println("Possible chord progressions: ");
                 printGraph(possibleProgressionsGraph);
         }
