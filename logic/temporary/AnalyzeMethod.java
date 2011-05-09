@@ -8,13 +8,14 @@ import music.*;
 
 // Takes in a melody (represented as a list of lists of pitches) and
 // returns the possible chords that could exist at each part of the melody
-public class AnalyzeMethod {
+public class AnalyzeMethod extends logic.Analyzer{
 	public Graph<ChordSymbol> _chordPreferencesGraph;
 	
 	public AnalyzeMethod() {}
 	
 	
-	
+	//Takes in a List of ChordSymbol objects, a Pitch object, and a KeySignature object,
+	//and removes all ChordSymbol objects in the list that represent chords that do not contain the given pitch
 	public void filterChords(List<ChordSymbol> chords, Pitch pitch,
 			KeySignature keySig) {
 		int numChords = chords.size();
@@ -39,13 +40,35 @@ public class AnalyzeMethod {
 	// chords it could belong to.
 	public List<List<ChordSymbol>> analyzeMelody(List<List<Pitch>> melodyLine,
 			KeySignature keySig) {
-		// TODO
 		
+		if (keySig.getIsMajor()) {
+			initMajorKeyGraph();
+		}
+		else {
+			initMinorKeyGraph();
+		}
 		
-		List<List<ChordSymbol>> output = new ArrayList<List<ChordSymbol>>();
+		ArrayList<List<ChordSymbol>> output = new ArrayList<List<ChordSymbol>>();
+		for(List<Pitch> melodyInstance : melodyLine) { //for each instance in the melody
+			
+			//get all the nodes that are possible within the _chordPreferencesGraph
+			List<Node<ChordSymbol>> chordNodes = _chordPreferencesGraph.getNodes();
+			List<ChordSymbol> possibleChords = new LinkedList<ChordSymbol>();
+			for (Node<ChordSymbol> chordNode : chordNodes) {
+				possibleChords.add(chordNode.getValue());
+			}
+			
+			//filter out the chords by going through each of the pitches in that melody instance 
+			for(Pitch pitch : melodyInstance) {
+				
+				filterChords(possibleChords, pitch, keySig);
+			}
+			
+			//add this List of ChordSymbol objects to the output list
+			output.add(possibleChords);
+		}
+		
 		return output;
-		
-
 
 	}
 	
