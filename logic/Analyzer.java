@@ -343,18 +343,7 @@ public class Analyzer extends Thread {
 		ArrayList<List<ChordSymbol>> output = new ArrayList<List<ChordSymbol>>();
 		for(List<Pitch> melodyInstance : melodyLine) { //for each instance in the melody
 			
-			//get all the nodes that are possible within the _chordPreferencesGraph
-			List<Node<ChordSymbol>> chordNodes = _chordPreferencesGraph.getNodes();
-			List<ChordSymbol> possibleChords = new LinkedList<ChordSymbol>();
-			for (Node<ChordSymbol> chordNode : chordNodes) {
-				possibleChords.add(chordNode.getValue());
-			}
-			
-			//filter out the chords by going through each of the pitches in that melody instance 
-			for(Pitch pitch : melodyInstance) {
-				
-				filterChords(possibleChords, pitch, keySig);
-			}
+			List<ChordSymbol> possibleChords = findMatchingChords(melodyInstance, keySig);
 			
 			//add this List of ChordSymbol objects to the output list
 			output.add(possibleChords);
@@ -362,6 +351,25 @@ public class Analyzer extends Thread {
 		
 		return output;
 
+	}
+	
+	//Takes in a list of pitches, and returns a list of chordSymbols that represent Chords that contain those pitches
+	public List<ChordSymbol> findMatchingChords(List<Pitch> pitches, KeySignature keySig) {
+		
+		//get all the nodes that are possible within the _chordPreferencesGraph
+		List<Node<ChordSymbol>> chordNodes = _chordPreferencesGraph.getNodes();
+		List<ChordSymbol> possibleChords = new LinkedList<ChordSymbol>();
+		for (Node<ChordSymbol> chordNode : chordNodes) {
+			possibleChords.add(chordNode.getValue());
+		}
+		
+		//filter out the chords by going through each of the pitches in that melody instance 
+		for(Pitch pitch : pitches) {
+			
+			filterChords(possibleChords, pitch, keySig);
+		}
+		
+		return possibleChords;
 	}
 	
 	// Given a pitch and the key it belongs to, returns the scale degree of that pitch.

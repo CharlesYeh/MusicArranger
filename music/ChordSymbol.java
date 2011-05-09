@@ -99,7 +99,7 @@ public class ChordSymbol extends Timestep {
 			case HDIMIN7:
 				// 7th chord
 				switch (_inversion) {
-					case 0: return "";
+					case 0: return "7";
 					case 1: return "6";
 					case 2: return "4";
 					case 3: return "4";

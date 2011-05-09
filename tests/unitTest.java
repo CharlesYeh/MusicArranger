@@ -89,7 +89,7 @@ public class unitTest{
                 }
                 System.out.println("");
                 
-                boolean onlyOptimalProgressions = false;
+                boolean onlyOptimalProgressions = true;
                 System.out.println("Only get optimal progressions: " + onlyOptimalProgressions);
                 Graph<ChordSymbol> possibleProgressionsGraph = analyzer.createPossibleProgressionsGraph(allPossibleChords, onlyOptimalProgressions);
                 System.out.println("Possible chord progressions: ");
@@ -124,7 +124,7 @@ public class unitTest{
         		//Graph is thoroughly traversed, print List toPrint;
         		for(ChordSymbol chordsym : toPrint) {
         			
-        			System.out.print(chordsym.getSymbolText() + " - ");
+        			System.out.print(chordsym.getSymbolText() + chordsym.getTopInversionText() + chordsym.getBotInversionText() + " - ");
         		}
         		System.out.println("");
         	}
