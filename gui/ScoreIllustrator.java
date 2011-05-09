@@ -33,7 +33,7 @@ public class ScoreIllustrator {
 	final static int RIGHT_MARGIN	= 25;
 	
 	final static int SYSTEM_SPACING = 110;
-	final static int SYSTEM_LINE_SPACING = 8;
+	final static int SYSTEM_LINE_SPACING = 10;
 	
 	final static int STAFF_SPACING = 80;
 
@@ -484,11 +484,16 @@ public class ScoreIllustrator {
 
 				int noteX = nextX;
 				int noteY = getLineOffset(currClef, line) + nextY;
-
+				
 				// if too low or too high, draw ledger line
-				if (line < -5 || line > 5)
-					drawLedgerLine(g, noteX, noteY);
-
+				if (line < -5 || line > 5) {
+					for (int i = line - (line % 2); Math.abs(i) > 5; i += (line < 0) ? 2 : -2) {
+						int lineY = nextY + getLineOffset(currClef, i);
+						System.out.println(i + " " + lineY);
+						drawLedgerLine(g, noteX, lineY);
+					}
+				}
+				
 				drawPitch(g, numerValue, denomValue, noteX, noteY);
 			}
 		}
@@ -772,15 +777,20 @@ public class ScoreIllustrator {
 
 		int staffY = systemOffset % totalSystemHeight;
 		// min to account for the extra space between systems
-		int indexStaff = Math.min(staffY / STAFF_SPACING, _staffPositions.size() - 1);
-
-		int lineY = staffY % STAFF_SPACING + SYSTEM_LINE_SPACING / 4;
+		// small offset so clicking above a staff still counts for that staff
+		//int indexStaff = Math.min((staffY + 30) / STAFF_SPACING, _staffPositions.size() - 1);
+		int indexStaff = Math.min((staffY) / STAFF_SPACING, _staffPositions.size() - 1);
+		
+		int lineY = staffY % STAFF_SPACING + SYSTEM_LINE_SPACING / 2;
 		// actually represents the line/spaces
-		int indexLine = 5 - lineY / (SYSTEM_LINE_SPACING / 2);
-
+		// add offset for better snapping then get line number
+		int indexLine = 5 - (lineY + SYSTEM_LINE_SPACING / 4) / (SYSTEM_LINE_SPACING / 2);
+		//System.out.println(indexLine);
+		
 		//------------------X COORDINATE PARSE------------------
 		// which measure
 		int staffFromTop = indexSystem;
+		// offset so clicking to the left of a note still counts as that note
 		int staffX = (int) e.getX();
 		
 		// if clicked past all the systems, return null
@@ -793,7 +803,7 @@ public class ScoreIllustrator {
 		// get index of measure right after the x position: staffX
 		for (int measureX : staffMeasures.keySet()) {
 			indexMeasure = staffMeasures.get(measureX);
-
+			
 			if (staffX < measureX) {
 				indexMeasure--;
 				break;
@@ -820,7 +830,7 @@ public class ScoreIllustrator {
 		// get the measure offset by traversing through the part of the measure on the staff
 		int prevNoteX = 0;
 		for (int mNoteX: multiNotePositions.keySet()) {
-			if (staffX < mNoteX) {
+			if (staffX + SYSTEM_LINE_SPACING < mNoteX) {
 				break;
 			}
 
