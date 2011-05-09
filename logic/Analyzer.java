@@ -553,7 +553,7 @@ public class Analyzer extends Thread {
 //	}
 
 
-	public Graph<ChordSymbol> createPossibleProgressionsGraph(List<List<ChordSymbol>> matchingChordsList){
+	public Graph<ChordSymbol> createPossibleProgressionsGraph(List<List<ChordSymbol>> matchingChordsList, boolean onlyOptimalPaths){
 
 		Graph<ChordSymbol> matchingProgressionsGraph = new Graph<ChordSymbol>();
 
@@ -589,68 +589,101 @@ public class Analyzer extends Thread {
 			matchingProgressionsGraph.addStartingNode(node, 1);
 		}
 
-		if(matchingNodesList.size() > 0) {
+		if(matchingNodesList.size() > 1) {
 
 			for(Node<ChordSymbol> node : firstChordNodes) {
 
-				createPossibleProgressionsGraphHelper(node, matchingNodesList, 1, matchingProgressionsGraph);
+				createPossibleProgressionsGraphHelper(node, matchingNodesList, 1, matchingProgressionsGraph, onlyOptimalPaths);
 			}
 		}
 
 		return matchingProgressionsGraph;
 	}
 
-	//helper function for createPossibleProgressionsGraph that implements recursion to add the edges that complete the chord progression graph
-	private void createPossibleProgressionsGraphHelper(Node<ChordSymbol> currentNode,
-								List<List<Node<ChordSymbol>>> matchingNodesList, int nextNodesListIdx, Graph<ChordSymbol> progressionsGraph) {
+	//Helper function for createPossibleProgressionsGraph that implements recursion to add the edges that complete the chord progression graph
+	//Returns true if the currentNode successfully leads to a complete chord progression
+	private boolean createPossibleProgressionsGraphHelper(Node<ChordSymbol> currentNode,
+								List<List<Node<ChordSymbol>>> matchingNodesList, int nextNodesListIdx, Graph<ChordSymbol> progressionsGraph, boolean onlyOptimalPaths) {
 
+		boolean isValid = false; //boolean determining if the current node leads to any successful chord progressions
+		
 		//if the currentNode does not belong to the last set of Node objects in the matchingNodesList
 		if(nextNodesListIdx < matchingNodesList.size()) {
 
 			List<Node<ChordSymbol>> nextNodes = matchingNodesList.get(nextNodesListIdx);
+			if(!nextNodes.isEmpty()) {
 
-			//get the Node in the chordPreferencesGraph that contains currentNode's ChordSymbol, so as to know what chords can follow the current one
-			Node<ChordSymbol> chordGraphNode = _chordPreferencesGraph.findNode(currentNode.getValue());
-
-			//generate list of ChordSymbols that the current chord can conventionally go to
-			List<Edge<ChordSymbol>> followingEdges = chordGraphNode.getFollowing();
-			
-			boolean hasNext = false; //boolean determining if the current node leads to any other node at all
-			
-			
-
-			//for each of the nodes following the current one one
-			boolean contains;
-			for(Node<ChordSymbol> nextNode : nextNodes) {
-
-				contains = false;
-				int weight = 0;
-				for(Edge<ChordSymbol> edge : followingEdges) {//determine whether the next chord is among the chords that the current one conventionally leads to
-
-					if(edge.getBack().getValue().equals(nextNode.getValue())) {
+				//get the Node in the chordPreferencesGraph that contains currentNode's ChordSymbol, so as to know what chords can follow the current one
+				Node<ChordSymbol> chordGraphNode = _chordPreferencesGraph.findNode(currentNode.getValue());
+	
+				//generate list of ChordSymbols that the current chord can conventionally go to
+				List<Edge<ChordSymbol>> followingEdges = chordGraphNode.getFollowing();
+				
+				//for each of the nodes following the current one one
+				for(Node<ChordSymbol> nextNode : nextNodes) {
+	
+					boolean validated = false;
+					boolean weightIncreased = false;
+					boolean contains = false;
+					int weight = 1;
+					for(Edge<ChordSymbol> edge : followingEdges) {//determine whether the next chord is among the chords that the current one conventionally leads to
+	
+						if(edge.getBack().getValue().equals(nextNode.getValue())) {
+							
+							contains = true;
+							int edgeweight = edge.getWeight();
+							if(edgeweight > weight)
+								weightIncreased = true; //this edge has more weight than the previous one
+							else if(edgeweight == weight)
+								weightIncreased = false; //this edge has the same weight as the previous one
+							
+							break;
+						}
+					}
+	
+					if(contains) { 
+	
 						
-						contains = true;
-						weight = edge.getWeight();
-						break;
+	//					System.out.println("added edge " + currentNode.getValue().getSymbolText() + " - " + nextNode.getValue().getSymbolText());
+						
+						validated = createPossibleProgressionsGraphHelper(nextNode, matchingNodesList, nextNodesListIdx + 1, progressionsGraph, onlyOptimalPaths); //recur
+						if(validated) {
+							
+							isValid = true;
+						}
+					}
+					
+					if(onlyOptimalPaths) { //If only the optimal paths are wanted
+						
+						if((validated && !weightIncreased)) { //this chord leads to a valid chord progression
+							
+							progressionsGraph.addEdge(currentNode, nextNode, weight); //valid progression, add edge to the return graph
+						}
+					}
+					else {
+						if(validated) { //this chord leads to a valid chord progression
+							
+							progressionsGraph.addEdge(currentNode, nextNode, weight); //valid progression, add edge to the return graph
+						}
 					}
 				}
-
-				if(contains) { 
-
-					progressionsGraph.addEdge(currentNode, nextNode, weight); //valid progression, add edge to the return graph
-//					System.out.println("added edge " + currentNode.getValue().getSymbolText() + " - " + nextNode.getValue().getSymbolText());
-					hasNext = true;
-					createPossibleProgressionsGraphHelper(nextNode, matchingNodesList, nextNodesListIdx + 1, progressionsGraph); //recur
-				}
-			}
-
-			if(!hasNext) {
-
-				removeFromProgression(currentNode, matchingNodesList, nextNodesListIdx - 1, progressionsGraph);
+	
+//				if(!isValid) {
+//	
+//					removeFromProgression(currentNode, matchingNodesList, nextNodesListIdx - 1, progressionsGraph);
+//					
+//				}
 			}
 		}
+		else {
+			
+			isValid = true;
+		}
+		
+		return isValid;
 	}
 
+	
 	//removes the Node toRemove from the Graph and removes the relevant Edges,
 	//if the node that is removed is the only node that one of its previous nodes lead to, then that previous node is removed as well
 	private void removeFromProgression(Node<ChordSymbol> toRemove, List<List<Node<ChordSymbol>>> matchingNodesList,

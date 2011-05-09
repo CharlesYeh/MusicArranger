@@ -20,6 +20,9 @@ public class unitTest{
                 Pitch E = MidiAPITest.createPitchFromMidiPitch(64);
                 Pitch F = MidiAPITest.createPitchFromMidiPitch(65);
                 Pitch G = MidiAPITest.createPitchFromMidiPitch(67);
+                Pitch Gs = MidiAPITest.createPitchFromMidiPitch(68);
+                Pitch A = MidiAPITest.createPitchFromMidiPitch(69);
+                Pitch B = MidiAPITest.createPitchFromMidiPitch(71);
                 
                 Analyzer analyzer = new Analyzer();
                 List<List<Pitch>> melody = new ArrayList<List<Pitch>>();
@@ -35,11 +38,13 @@ public class unitTest{
                 
                 ArrayList<Pitch> melodyInstance3 = new ArrayList<Pitch>();
                 melodyInstance3.add(G);
+//                melodyInstance3.add(D);
                 melody.add(melodyInstance3);
                 
                 ArrayList<Pitch> melodyInstance4 = new ArrayList<Pitch>();
-                melodyInstance4.add(C);
+                melodyInstance4.add(G);
                 melodyInstance4.add(E);
+//                melodyInstance4.add(B);
                 melody.add(melodyInstance4);
                 
                 List<List<ChordSymbol>> allPossibleChords = analyzer.analyzeMelody(melody, CMajor);
@@ -84,7 +89,7 @@ public class unitTest{
                 }
                 System.out.println("");
                 
-                Graph<ChordSymbol> possibleProgressionsGraph = analyzer.createPossibleProgressionsGraph(allPossibleChords);
+                Graph<ChordSymbol> possibleProgressionsGraph = analyzer.createPossibleProgressionsGraph(allPossibleChords, true);
                 System.out.println("Possible chord progressions: ");
                 printGraph(possibleProgressionsGraph);
         }
@@ -94,17 +99,18 @@ public class unitTest{
         	
         	Node<ChordSymbol> rootNode = printGraph.getStartingNode();
         	
-        	List<Edge<ChordSymbol>> startingEdges = rootNode.getFollowing();
-        	for(Edge<ChordSymbol> edge : startingEdges) {
-        		
-        		ArrayList<ChordSymbol> chordSymbolPrintList = new ArrayList<ChordSymbol>();
-        		
-        		Node<ChordSymbol> startingNode = edge.getBack();
-        		chordSymbolPrintList.add(startingNode.getValue());
-//        		System.out.println("startingNode.getValue = " + startingNode.getValue().getSymbolText());
-        		printGraphHelper(startingNode, chordSymbolPrintList);
+        	if(rootNode != null) {
+	        	List<Edge<ChordSymbol>> startingEdges = rootNode.getFollowing();
+	        	for(Edge<ChordSymbol> edge : startingEdges) {
+	        		
+	        		ArrayList<ChordSymbol> chordSymbolPrintList = new ArrayList<ChordSymbol>();
+	        		
+	        		Node<ChordSymbol> startingNode = edge.getBack();
+	        		chordSymbolPrintList.add(startingNode.getValue());
+	//        		System.out.println("startingNode.getValue = " + startingNode.getValue().getSymbolText());
+	        		printGraphHelper(startingNode, chordSymbolPrintList);
+	        	}
         	}
-        	
         }
         
         //Helper function for printGraph
