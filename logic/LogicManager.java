@@ -9,6 +9,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import javax.print.attribute.*;
 
+import util.Graph;
+
 /*
  * LogicManager is the highest level class in the logic package, which is instantiated
  * the arranger package.  Primarily, it receives Instructions from the arranger and gui
@@ -242,6 +244,12 @@ public class LogicManager implements Printable {
 		
 		List<InstructionIndex> indices = generateInstructionIndices(spacing, startIndex, endIndex);
 		List<List<Pitch>> melodyLine = getMelodyLine(indices, spacing);
+		
+		// TODO: VERY MESSY, NEED A PROPER WAY TO GET KEY SIGNATURES FROM THE PIECE, DOESNT
+		// ACCOUNT FOR CHANGING KEYSIGS EITHER
+		KeySignature keySig = _piece.getStaffs().get(0).getMeasures().get(startIndex.getMeasureNumber()).getKeySignatures().get(0);
+		
+		Graph<ChordSymbol> chordGraph = _analyzer.calculateAnalysisGraph(melodyLine, keySig);
 		
 		return true;
 	}
