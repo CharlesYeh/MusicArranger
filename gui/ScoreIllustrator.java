@@ -552,7 +552,7 @@ public class ScoreIllustrator {
 				
 				// draw accidental if not in key
 				if (!currKeySig.hasPitch(p))
-					drawAccidental(g, p.getAccidental(), noteX + adjust - 5, noteY);
+					drawAccidental(g, p.getAccidental(), noteX + adjust - 10, noteY);
 			}
 		}
 	}
@@ -755,7 +755,7 @@ public class ScoreIllustrator {
 
 	private void drawAccidental(Graphics g, Accidental accid, int xc, int yc) {
 		Image accidImage = _imgNatural;
-
+		
 		switch (accid) {
 			case DOUBLEFLAT:
 				accidImage = _imgDoubleFlat;

@@ -183,4 +183,24 @@ public class Interval {
 	public String toString() {
 		return _type.toString() + _size;
 	}
+	
+	public Interval invert() {
+		int invertedSize = 8 - _size;
+		IntervalType invertedType = IntervalType.PERFECT;
+		switch (_type) {
+		case MINOR:
+			invertedType = IntervalType.MAJOR;
+			break;
+		case MAJOR:
+			invertedType = IntervalType.MINOR;
+			break;
+		case AUGMENTED:
+			invertedType = IntervalType.DIMINISHED;
+			break;
+		case DIMINISHED:
+			invertedType = IntervalType.AUGMENTED;
+			break;
+		}
+		return new Interval(invertedType, invertedSize);
+	}
 }

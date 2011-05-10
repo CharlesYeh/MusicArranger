@@ -29,6 +29,11 @@ public class Analyzer extends Thread {
 		
 	}
 	
+	public Graph<ChordSymbol> calculateAnalysisGraph(List<List<Pitch>> melody,
+			KeySignature keySig) {
+		return createPossibleProgressionsGraph(analyzeMelody(melody, keySig), false);
+	}
+	
 	public Graph<ChordSymbol> getChordPreferencesGraph() {
 		
 		return _chordPreferencesGraph;
@@ -711,6 +716,7 @@ public class Analyzer extends Thread {
 
 	public Graph<ChordSymbol> createPossibleProgressionsGraph(List<List<ChordSymbol>> matchingChordsList, boolean onlyOptimalPaths){
 
+		// TODO: PROBABLY TAKING OUT onlyOptimalPaths
 		Graph<ChordSymbol> matchingProgressionsGraph = new Graph<ChordSymbol>();
 
 		if(matchingChordsList.size() == 0) {

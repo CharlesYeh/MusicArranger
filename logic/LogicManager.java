@@ -9,6 +9,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import javax.print.attribute.*;
 
+import util.Graph;
+
 /*
  * LogicManager is the highest level class in the logic package, which is instantiated
  * the arranger package.  Primarily, it receives Instructions from the arranger and gui
@@ -21,6 +23,7 @@ public class LogicManager implements Printable {
 	Editor _editor;
 	ArrangerXMLParser _arrangerXMLParser;
 	ArrangerXMLWriter _arrangerXMLWriter;
+	Analyzer _analyzer;
 
 	MidiAPI _api;
 
@@ -31,6 +34,7 @@ public class LogicManager implements Printable {
 		_editor = makeEditor();
 		_arrangerXMLParser = makeArrangerXMLParser();
 		_arrangerXMLWriter = makeArrangerXMLWriter();
+		_analyzer = makeAnalyzer();
 
 		_api = new MidiAPI();
 	}
@@ -50,6 +54,9 @@ public class LogicManager implements Printable {
 	}
 	protected ArrangerXMLWriter makeArrangerXMLWriter() {
 		return new ArrangerXMLWriter();
+	}
+	protected Analyzer makeAnalyzer() {
+		return new Analyzer();
 	}
 
 	public void interpretInstrBlock(InstructionBlock instrBlock) {
@@ -217,12 +224,32 @@ public class LogicManager implements Printable {
 
 		switch (genType) {
 		case CHORDS:
-
-			break;
+			GenerateInstructionAnalyzeChords genInstrAnalyzeChords = 
+				(GenerateInstructionAnalyzeChords) genInstr;
+			return interpretGenerateInstrAnalyzeChords(genInstrAnalyzeChords);
 		case VOICES:
 
 			break;
 		}
+		
+		return true;
+	}
+	
+	private boolean interpretGenerateInstrAnalyzeChords(GenerateInstructionAnalyzeChords genInstrAnalyzeChords) {
+		// TODO: ONLY ANALYZES BASED ON ONE VOICE, CURRENTLY
+		
+		InstructionIndex startIndex = genInstrAnalyzeChords.getStartIndex();
+		InstructionIndex endIndex = genInstrAnalyzeChords.getEndIndex();
+		Rational spacing = genInstrAnalyzeChords.getSpacing();
+		
+		List<InstructionIndex> indices = generateInstructionIndices(spacing, startIndex, endIndex);
+		List<List<Pitch>> melodyLine = getMelodyLine(indices, spacing);
+		
+		// TODO: VERY MESSY, NEED A PROPER WAY TO GET KEY SIGNATURES FROM THE PIECE, DOESNT
+		// ACCOUNT FOR CHANGING KEYSIGS EITHER
+		KeySignature keySig = _piece.getStaffs().get(0).getMeasures().get(startIndex.getMeasureNumber()).getKeySignatures().get(0);
+		
+		Graph<ChordSymbol> chordGraph = _analyzer.calculateAnalysisGraph(melodyLine, keySig);
 		
 		return true;
 	}
@@ -552,6 +579,8 @@ public class LogicManager implements Printable {
 		return pitch;
 	}
 
+	// Given a start, an end, and the spacing between indices, returns all indices pointing
+	// to the indices at those locations
 	public List<InstructionIndex> generateInstructionIndices(Rational spacing, InstructionIndex start,
 			InstructionIndex end) {
 		List<InstructionIndex> output = new ArrayList<InstructionIndex>();
@@ -574,6 +603,39 @@ public class LogicManager implements Printable {
 			}
 			currentOffset = new Rational(0, 1);
 			currentMeasure++;
+		}
+		
+		return output;
+	}
+	
+	// Returns the lists of pitch-lists corresponding to a "melody" based on the voices specified,
+	// the spacing between points, and start/end indices
+	public List<List<Pitch>> getMelodyLine(List<InstructionIndex> indices, 
+			Rational spacing) {
+		List<List<Pitch>> output = new ArrayList<List<Pitch>>();
+		
+		for (InstructionIndex index : indices) {
+			List<Pitch> pitchList = new ArrayList<Pitch>();
+
+			// get the start and end indices
+			Rational start = index.getMeasureOffset();
+			Rational end = start.plus(spacing);
+			for (Staff staff : _piece.getStaffs()) {
+				int measureNumber = index.getMeasureNumber();
+				Measure measure = staff.getMeasures().get(measureNumber);
+				for (Voice voice : measure.getVoices()) {
+					List<Timestep> timesteps = getElementsAtUntil(start, end, voice.getMultiNotes());
+					for (Timestep timestep : timesteps) {
+						// get pitches from each note
+						MultiNote note = (MultiNote) timestep;
+						for (Pitch pitch : note.getPitches()) {
+							// add each pitch to pitchList
+							pitchList.add(pitch);
+						}
+					}
+				}
+			}
+		
 		}
 		
 		return output;
