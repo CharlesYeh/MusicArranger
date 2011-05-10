@@ -650,22 +650,6 @@ public class Analyzer extends Thread {
 	}
 	
 	public void deleteBranches(Graph<ChordSymbol> graph, Node<ChordSymbol> node) {
-		List<Edge<ChordSymbol>> followEdges = node.getFollowing();
-		List<Edge<ChordSymbol>> precEdges = node.getPreceding();
-		List<Node<ChordSymbol>> adjacencies = new ArrayList<Node<ChordSymbol>>();
-		for (Edge<ChordSymbol> edge : followEdges) {
-			adjacencies.add(edge.getBack());
-		}
-		for (Edge<ChordSymbol> edge : precEdges) {
-			adjacencies.add(edge.getFront());
-		}
-		graph.removeNode(node);
-		
-		for (Node<ChordSymbol> adjacency : adjacencies) {
-			if (adjacency.getFollowing().size() == 0 || adjacency.getPreceding().size() == 0) {
-				deleteBranches(graph, adjacency);
-			}
-		}
 	}
 
 	//Takes a Graph and an Index, and return all the Nodes at an index number of levels away from the starting Node. 
