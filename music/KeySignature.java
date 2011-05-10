@@ -60,4 +60,11 @@ public class KeySignature extends Timestep {
 		}
 	}
 	
+	public boolean hasPitch(Pitch pitch) {
+		Interval interval = this.getKeySigPitch().calcIntervalTo(pitch);
+		return (interval.getIntervalType() == IntervalType.PERFECT) ||
+			(interval.getIntervalType() == IntervalType.MAJOR && _isMajor) || 
+			(interval.getIntervalType() == IntervalType.MINOR && !_isMajor && interval.getSize() != 2) ||
+			(interval.getIntervalType() == IntervalType.MAJOR && !_isMajor && interval.getSize() == 2);
+	}
 }

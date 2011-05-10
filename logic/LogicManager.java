@@ -551,4 +551,31 @@ public class LogicManager implements Printable {
 		Pitch pitch = new Pitch(pitchLetter.getNoteLetter(), octave, pitchLetter.getAccidental());
 		return pitch;
 	}
+
+	public List<InstructionIndex> generateInstructionIndices(Rational spacing, InstructionIndex start,
+			InstructionIndex end) {
+		List<InstructionIndex> output = new ArrayList<InstructionIndex>();
+		
+		int currentMeasure = start.getMeasureNumber();
+		Rational currentOffset = start.getMeasureOffset();
+		
+		int endMeasure = end.getMeasureNumber();
+		Rational endOffset = end.getMeasureOffset();
+		
+		while (currentMeasure < endMeasure || 
+				currentMeasure == endMeasure && currentOffset.compareTo(endOffset) == -1) {
+			Rational measureLength = _piece.getStaffs().get(0).getMeasures().get(currentMeasure).getTimeSignatures().get(0).getMeasureDuration();
+			
+			while (currentOffset.compareTo(measureLength) == -1) {
+				// Make instruction indices for the measure
+				InstructionIndex nextIndex = new InstructionIndex(currentMeasure, currentOffset);
+				output.add(nextIndex);
+				currentOffset = currentOffset.plus(spacing);
+			}
+			currentOffset = new Rational(0, 1);
+			currentMeasure++;
+		}
+		
+		return output;
+	}
 }

@@ -70,6 +70,11 @@ public class Rational {
 		return new Rational(numerator, denominator);
 	}
 	
+	// return a / b
+	public Rational divide(Rational b) {
+		return null;
+	}
+	
 	// returns the greatest common divisor of two ints
 	private static int gcd(int m, int n) {
 		if (m < 0) m = -m;

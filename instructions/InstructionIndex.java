@@ -62,6 +62,10 @@ public class InstructionIndex {
 		_isChord = isChord;
 	}
 	
+	public InstructionIndex(int measureNumber, Rational measureOffset) {
+		this(0, measureNumber, 0, measureOffset, 0, false);
+	}
+	
 	// getters and setters
 	public int getStaffNumber() {
 		return _staffNumber;

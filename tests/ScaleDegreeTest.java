@@ -7,9 +7,14 @@ import util.*;
 public class ScaleDegreeTest {
 	public static void main(String[] args) {
 //		Analyzer test = new Analyzer();
-		Pitch pitch1 = new Pitch(NoteLetter.A, Accidental.FLAT);
-		Pitch pitch2 = new Pitch(NoteLetter.G, Accidental.NATURAL);
-		Pitch pitch3 = new Pitch(NoteLetter.E, Accidental.FLAT);
+		Pitch pitch1 = new Pitch(NoteLetter.A, Accidental.SHARP);
+		Pitch pitch2 = new Pitch(NoteLetter.B, Accidental.FLAT);
+		Pitch pitch3 = new Pitch(NoteLetter.E, Accidental.NATURAL);
+		
+		KeySignature keySig = new KeySignature(-2, false);
+		
+		System.out.println(keySig.hasPitch(pitch1) + " " + keySig.hasPitch(pitch2) 
+				+ " " + keySig.hasPitch(pitch3));
 //		Interval interval1 = new Interval(IntervalType.DIMINISHED, 6);
 //		ChordSymbol chordSymbol = new ChordSymbol(new ScaleDegree(6, Accidental.FLAT), ChordType.FRAUG6);
 //		KeySignature keySig = new KeySignature(-4, false);

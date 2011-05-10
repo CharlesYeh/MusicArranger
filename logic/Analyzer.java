@@ -18,6 +18,7 @@ public class Analyzer extends Thread {
 	Piece _piece;
 	InstructionIndex _start;
 	InstructionIndex _end;
+	Rational _spacing;
 	
 	public Analyzer() {
 		initMajorKeyGraph();
@@ -905,11 +906,13 @@ public class Analyzer extends Thread {
 			return (5 + (scaleDegree - 4) *2);
 	}
 	
-	public void generate(GenerateInstructionType type, Piece piece, InstructionIndex start, InstructionIndex end) {
+	public void generate(GenerateInstructionType type, Piece piece, InstructionIndex start, InstructionIndex end,
+			Rational spacing) {
 		_generateType = type;
 		_piece 	= piece;
 		_start 	= start;
 		_end 		= end;
+		_spacing = spacing;
 		
 		start();
 	}
@@ -925,8 +928,6 @@ public class Analyzer extends Thread {
 			break;
 		}
 	}
-	
-	
 	
 	public void generateChords() {
 		
