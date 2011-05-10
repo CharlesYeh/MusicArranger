@@ -59,7 +59,7 @@ public class ScoreIllustrator {
 	
 	final static int OFFSET_Y = 25;
 	
-	Image _imgQuarter, _imgHalf, _imgWhole, _imgQuarterRest, _imgHalfRest, _imgEighthRest, _imgSixteenthRest,
+	Image _imgQuarter, _imgHalf, _imgWhole, _imgWholeRest, _imgQuarterRest, _imgHalfRest, _imgEighthRest, _imgSixteenthRest,
 			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp,
 			_imgClefG, _imgClefF, _imgClefC,
 			_imgQuarterNote, _imgHalfNote, _imgWholeNote, _imgQuarterNoteS, _imgHalfNoteS, _imgWholeNoteS;
@@ -76,6 +76,7 @@ public class ScoreIllustrator {
 	public ScoreIllustrator() {
 		// load images
 		try {
+			_imgWholeRest	= ImageIO.read(new File("images/score/score_whole_rest.png"));
 			_imgQuarterRest= ImageIO.read(new File("images/score/score_quarter_rest.png"));
 			_imgHalfRest	= ImageIO.read(new File("images/score/score_half_rest.png"));
 			_imgEighthRest	= ImageIO.read(new File("images/score/score_8_rest.png"));
@@ -592,6 +593,9 @@ public class ScoreIllustrator {
 		
 		// draw rest
 		switch (denomValue) {
+		case 0:
+			g.drawImage(_imgWholeRest, xc, yc, null);
+			break;
 		case 1:
 			g.drawImage(_imgHalfRest, xc, yc, null);
 			break;
