@@ -24,10 +24,13 @@ import music.Piece;
 import instructions.*;
 import gui.NewFileDialog;
 
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
+
 /*
  * Main handles delegations of tasks between
  */
-public class Main extends JFrame implements InstructionListener {
+public class Main extends JFrame implements InstructionListener, KeyListener {
 
 	MidiAPI _api;
 	MainPanel _mainPanel;
@@ -45,7 +48,7 @@ public class Main extends JFrame implements InstructionListener {
 		_editor = _logicManager.getEditor();
 		
 		ArrangerConstants.WINDOW_WIDTH = 1000;
-		ArrangerConstants.WINDOW_HEIGHT = 800;
+		ArrangerConstants.WINDOW_HEIGHT = 700;
 		
 		_mainPanel = new MainPanel(_piece);
 		_mainPanel.addInstructionListener(this);
@@ -56,6 +59,8 @@ public class Main extends JFrame implements InstructionListener {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(ArrangerConstants.WINDOW_WIDTH, ArrangerConstants.WINDOW_HEIGHT);
 		this.setVisible(true);
+		
+		addKeyListener(this);
 	}
 
 	public void addMenuBar(){
@@ -73,15 +78,6 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemNew.setToolTipText("New song");
 		menuItemNew.addActionListener(
 			new ActionListener() {
-				private List<Clef> clefList = new ArrayList<Clef>();
-				
-				{
-					// TODO: THIS IS STILL ALL CONSTANTS
-					Clef trebleClef = new Clef(ClefName.GCLEF, -2);
-					Clef bassClef = new Clef(ClefName.FCLEF, 2);
-					clefList.add(trebleClef);
-					clefList.add(bassClef);
-				}
 				
 				public void actionPerformed(ActionEvent event) {
 					// prompt for new song data
@@ -166,9 +162,9 @@ public class Main extends JFrame implements InstructionListener {
 		file.add(menuItemPrint);
 		file.add(menuItemExit);
 		//----------------EDIT----------------
-		JMenu edit = new JMenu("Edit");
+		/*JMenu edit = new JMenu("Edit");
 		edit.setMnemonic(KeyEvent.VK_E);
-
+		
 		JMenuItem menuItemUndo = new JMenuItem("Undo");
 		menuItemUndo.setMnemonic(KeyEvent.VK_U);
 		menuItemUndo.setToolTipText("Undo last action");
@@ -193,10 +189,16 @@ public class Main extends JFrame implements InstructionListener {
 
 		edit.add(menuItemUndo);
 		edit.add(menuItemRedo);
-
+		*/
 		menuBar.add(file);
-		menuBar.add(edit);
+		//menuBar.add(edit);
 		setJMenuBar(menuBar);
+	}
+	
+	public void keyTyped(KeyEvent e) {}
+	public void keyPressed(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {
+		_mainPanel.keyReleased(e);
 	}
 
 	public void receiveInstruction(InstructionBlock instr) {

@@ -7,10 +7,11 @@ public class GenerateInstructionAnalyzeChords extends GenerateInstruction {
 	InstructionIndex _end;
 	Rational _spacing;
 	
-	public GenerateInstructionAnalyzeChords(GenerateInstructionType type,
-			InstructionIndex start, InstructionIndex end, Rational spacing,
-			InstructionIndex voice) {
-		super(type);
+	public GenerateInstructionAnalyzeChords(InstructionIndex start, InstructionIndex end,
+			Rational spacing) {
+		
+		super(GenerateInstructionType.CHORDS);
+		
 		_start = start;
 		_end = end;
 		_spacing = spacing;

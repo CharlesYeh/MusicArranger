@@ -23,6 +23,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 
 import instructions.*;
 import javax.swing.event.EventListenerList;
@@ -31,7 +32,8 @@ import java.awt.Component;
 import arranger.ArrangerConstants;
 import music.*;
 
-public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
+public class MainPanel extends JPanel implements MouseListener, MouseMotionListener,
+														MouseWheelListener, ComponentListener {
 	
 	static final long serialVersionUID = 0;
 	boolean _disabled;
@@ -59,11 +61,15 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	// currently selected
 	Set<InstructionIndex> _selected;
 	
+	Piece _piece;
+	
 	//------------------end state information------------------
 
 	public MainPanel(Piece piece) {
-	   Toolbar.init("images/gui/toolbarHorizontal.png", "images/gui/toolbarVertical.png");
-	   ToolbarButton.init("images/gui/button.png", "images/gui/button_over.png");
+		_piece = piece;
+		
+		Toolbar.init("images/gui/toolbarHorizontal.png", "images/gui/toolbarVertical.png");
+		ToolbarButton.init("images/gui/button.png", "images/gui/button_over.png");
 
 	   _toolbars = new LinkedList<Toolbar>();
 
@@ -293,9 +299,30 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void componentMoved(ComponentEvent e) {}
 	public void componentShown(ComponentEvent e) {}
 	
+	public void keyTyped(KeyEvent e) {}
+	public void keyPressed(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {
+		System.out.println(e);
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_DELETE:
+			InstructionBlock instrBlock = new InstructionBlock(this);
+			
+			for (InstructionIndex index : _selected) {
+				Instruction editInstr = new EditInstruction(index, EditInstructionType.CLEAR, EditType.MULTINOTE);
+				instrBlock.addInstruction(editInstr);
+			}
+			
+			sendInstruction(instrBlock);
+			break;
+			
+		}
+	}
+	
 	public void interpretInstrBlock(InstructionBlock instrBlock) {
 		List<Instruction> listInstr = instrBlock.getInstructions();
+		System.out.println("START INTERPRETING");
 		for (Instruction instr : listInstr) {
+			System.out.println(instr);
 			interpretInstr(instr);
 		}
 	}
@@ -320,7 +347,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 
 		// intercept GUI instructions (check first instruction)
 		Instruction instr = instrBlock.getInstructions().get(0);
-
+		
 		if (instr instanceof ModeInstruction) {
 			ModeInstruction modeInstr = (ModeInstruction) instr;
 			
@@ -350,7 +377,29 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 					break;
 				}
 				break;
+				
+			case GENERATE:
+				// translate to generation instruction
+				GenerateInstructionType genType = (GenerateInstructionType) modeInstr.getValue();
+				
+				switch (genType) {
+				case CHORDS:
+					InstructionIndex pieceStart	= new InstructionIndex(0, new Rational(0, 1));
+					InstructionIndex pieceEnd		= new InstructionIndex(_piece.getNumMeasures(), new Rational(0, 1));
+					
+					Instruction genInstr = new GenerateInstructionAnalyzeChords(pieceStart, pieceEnd, new Rational(1, 4));
+					InstructionBlock genBlock = new InstructionBlock(this, genInstr);
+					
+					sendInstruction(genBlock);
+					break;
+					
+				case VOICES:
+					
+					break;
+				}
+				break;
 			}
+			
 			return;
 		}
 
