@@ -91,7 +91,7 @@ public class MidiPlayer extends Thread {
 						// play multinote
 						MultiNote mn = itr.next();
 
-						//System.out.println("Turning note ON at : " + startTime.getDuration().getNumerator() + "/" + startTime.getDuration().getDenominator());
+//						System.out.println("Turning note ON at : " + startTime.getDuration().getNumerator() + "/" + startTime.getDuration().getDenominator());
 						_midi.multiNoteOn(mn);
 
 						// get next timestamp

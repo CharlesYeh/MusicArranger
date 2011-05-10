@@ -113,7 +113,7 @@ public class unitTest{
                 ChordSymbol chordV7 = new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJORMINOR7);
                 ChordSymbol chordvi = new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.MINOR);
                 
-                ChordSymbol toTest = chordV7;
+                ChordSymbol toTest = chordiii;
                 System.out.println("After setting index " + index + " to chord " + printChordSymbol(toTest));
                 printGraph(analyzer.setChordsAtIndex(toTest, possibleProgressionsGraph, index));
                 
