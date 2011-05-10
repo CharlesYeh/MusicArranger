@@ -41,6 +41,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	List<Toolbar> _toolbars;
 	Toolbar _modeToolbar, _noteToolbar, _playToolbar;
+	
+	ChordGrid _chordGrid;
+	
 	ScoreWindow _scoreWindow;
 	
 	EventListenerList _listeners = new EventListenerList();
@@ -49,7 +52,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	EditMode _currMode		= EditMode.NOTE;
 	EditDuration _currDuration = EditDuration.QUARTER;
 	
-	Accidental _currAccidental	= null;		// is the accidental modifier set?
+	Accidental _currAccidental	= null;	// is the accidental modifier set?
 	boolean _insertChord 	= false;		// in the middle of choosing a chord symbol
 	boolean _currRest 		= false;		// whether each click inserts rests
 	
@@ -77,6 +80,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	   _toolbars.add(_noteToolbar);
 	   _toolbars.add(_playToolbar);
 		
+		_chordGrid = new ChordGrid();
+		
 		_selected = new HashSet<InstructionIndex>();
 		
 	   addMouseListener(this);
@@ -95,6 +100,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 
 	public void paint(Graphics g) {
 	   super.paint(g);
+		
+		if (_insertChord)
+			_chordGrid.drawSelf(g);
 
 	   _scoreWindow.drawSelf(g);
 
@@ -106,7 +114,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	}
 
 	public void updateScore() {
-	   _scoreWindow.updateScore();
+	   _scoreWindow.updateScore(_selected);
 	   repaint();
 	}
 
@@ -120,9 +128,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void mousePressed(MouseEvent e) {
 	   if (_disabled)
 			return;
-
+		
 	   Point evtPoint = getEventPoint(e);
-
+		
 		// clicked on which toolbar?
 	   _activeToolbar = mouseEventToolbar(evtPoint);
 	   if (_activeToolbar == null) {
@@ -164,6 +172,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				
 				if (!_currRest) {
 					// insert pitches
+					index.setAccidental(_currAccidental);
 					Instruction editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
 					instr.addInstruction(editInstr);
 				}
@@ -187,6 +196,11 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		_activeToolbar = null;
 		Toolbar tbar = mouseEventToolbar(evtPoint);
 		
+		if (_insertChord) {
+			// insert chord is mouse was released within box
+			return;
+		}
+		
 		if (tbar == null) {
 			// release on scorewindow
 			_scoreWindow.mouseReleased(evtPoint);
@@ -208,19 +222,25 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void mouseDragged(MouseEvent e) {
 		if (_disabled)
 			return;
-
+		
 		Point evtPoint = getEventPoint(e);
-
-		// clicked on which toolbar?
-		Instruction instr;
-		if (_activeToolbar == null) {
-			// dragging on score window
-			List<InstructionIndex> listIndex = _scoreWindow.mouseDragged(evtPoint);
-	   }
-	   else {
-		   // dragging a toolbar
-			_activeToolbar.mouseDragged(evtPoint);
-	   }
+		
+		if (_insertChord) {
+			// inserting chord
+			
+		}
+		else {
+			// clicked on which toolbar?
+			Instruction instr;
+			if (_activeToolbar == null) {
+				// dragging on score window
+				List<InstructionIndex> listIndex = _scoreWindow.mouseDragged(evtPoint);
+		   }
+		   else {
+			   // dragging a toolbar
+				_activeToolbar.mouseDragged(evtPoint);
+		   }
+		}
 
 	   repaint();
 	}
@@ -244,14 +264,14 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	   Iterator<Toolbar> iter = _toolbars.iterator();
 	   while (iter.hasNext()) {
 			Toolbar drawer = iter.next();
-
+			
 			if (drawer.hitTestPoint(e.getX(), e.getY())) {
-			// mouse clicked on this toolbar
+				// mouse clicked on this toolbar
 
-			// move this toolbar to the front (higher priority for future events)
+				// move this toolbar to the front (higher priority for future events)
 			   iter.remove();
-			   _toolbars.add(drawer);
-
+			   _toolbars.add(0, drawer);
+				
 			   return drawer;
 			}
 		}
@@ -265,7 +285,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	   Component comp = e.getComponent();
 	   ArrangerConstants.WINDOW_WIDTH = comp.getWidth();
 	   ArrangerConstants.WINDOW_HEIGHT = comp.getHeight();
-
+		
 	   repaint();
 	}
 	public void componentHidden(ComponentEvent e) {}
@@ -289,33 +309,33 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 
 		if (instr instanceof ModeInstruction) {
 			ModeInstruction modeInstr = (ModeInstruction) instr;
-
+			
 			switch (modeInstr.getType()) {
-				case MODE:
-					_currMode = (EditMode) modeInstr.getValue();
-					break;
+			case MODE:
+				_currMode = (EditMode) modeInstr.getValue();
+				break;
 
-				case DURATION:
-					_currDuration = (EditDuration) modeInstr.getValue();
-					break;
+			case DURATION:
+				_currDuration = (EditDuration) modeInstr.getValue();
+				break;
 
-				case MODIFIER:
-					EditModifier currModifier = (EditModifier) modeInstr.getValue();
-					switch (currModifier) {
-					case FLAT:
-						_currAccidental = (_currAccidental == null) ? Accidental.FLAT : null;
-						break;
-					case SHARP:
-						_currAccidental = (_currAccidental == null) ? Accidental.SHARP : null;
-						break;
-					case NATURAL:
-						_currAccidental = (_currAccidental == null) ? Accidental.NATURAL : null;
-						break;
-					case REST:
-						_currRest = !_currRest;
-						break;
-					}
+			case MODIFIER:
+				EditModifier currModifier = (EditModifier) modeInstr.getValue();
+				switch (currModifier) {
+				case FLAT:
+					_currAccidental = (_currAccidental == null) ? Accidental.FLAT : null;
 					break;
+				case SHARP:
+					_currAccidental = (_currAccidental == null) ? Accidental.SHARP : null;
+					break;
+				case NATURAL:
+					_currAccidental = (_currAccidental == null) ? Accidental.NATURAL : null;
+					break;
+				case REST:
+					_currRest = !_currRest;
+					break;
+				}
+				break;
 			}
 			return;
 		}
