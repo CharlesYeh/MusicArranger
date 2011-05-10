@@ -31,7 +31,7 @@ public class Analyzer extends Thread {
 	
 	public Graph<ChordSymbol> calculateAnalysisGraph(List<List<Pitch>> melody,
 			KeySignature keySig) {
-		return createPossibleProgressionsGraph(analyzeMelody(melody, keySig), false);
+		return createPossibleProgressionsGraph(analyzeMelody(melody, keySig));
 	}
 	
 	public List<List<Node<ChordSymbol>>> calculateAnalysisIndices(List<List<Pitch>> melody,
@@ -456,28 +456,6 @@ public class Analyzer extends Thread {
 		return new ScaleDegree(scaleDegreeNumber, accidental);
 	}
 	
-	// returns the Note associated with a key signature
-	public Pitch getKeySigPitch(KeySignature keySig) {
-		int accidentalNumber = keySig.getAccidentalNumber();
-		
-		int noteLetterValue = (accidentalNumber * 4) % 7;
-		if (noteLetterValue < 0) noteLetterValue += 7;
-		NoteLetter noteLetter = NoteLetter.getNoteLetter(noteLetterValue);
-		
-		int pitchValue = (accidentalNumber * 7) % 12;
-		if (pitchValue < 0) pitchValue += 12;
-		int noteLetterPitchValue = noteLetter.pitchValue();
-		int accidentalValue = pitchValue - noteLetterPitchValue;
-		Accidental accidental = Accidental.getAccidental(accidentalValue);
-		
-		if (keySig.getIsMajor()) {
-			return new Pitch(noteLetter, accidental);
-		}
-		else {
-			return new Pitch(noteLetter, accidental).addInterval(new Interval(IntervalType.MAJOR, 6));
-		}
-	}
-	
 	// Returns the letter difference between two pitches
 	// For example, letterDifference between F# and Bb is 4 (four letters to get from F to B)
 	public int letterDifference(Pitch pitch1, Pitch pitch2) {
@@ -507,7 +485,7 @@ public class Analyzer extends Thread {
 		List<Pitch> chordPitches = new ArrayList<Pitch>();
 		
 		ChordType chordType = chordSymbol.getChordType();
-		Pitch keySigPitch = getKeySigPitch(keySig);
+		Pitch keySigPitch = keySig.getKeySigPitch();
 		Pitch rootNote = keySigPitch.addInterval(chordSymbol.getScaleDegree().getIntervalFromRoot(isMajor));
 		
 		
@@ -596,29 +574,21 @@ public class Analyzer extends Thread {
 		return chordPitches;
 	}
 
-	public Graph<ChordSymbol> createPossibleProgressionsGraph(List<List<ChordSymbol>> matchingChordsList, boolean onlyOptimalPaths){
+	public Graph<ChordSymbol> createPossibleProgressionsGraph(List<List<ChordSymbol>> chordListsList){
 
-		// TODO: PROBABLY TAKING OUT onlyOptimalPaths
-		Graph<ChordSymbol> matchingProgressionsGraph = new Graph<ChordSymbol>();
-
-		if(matchingChordsList.size() == 0) {
-
-			return null;
-		}
+		Graph<ChordSymbol> output = new Graph<ChordSymbol>();
 
 		//convert matchingChordList to a list of equal dimension with each ChordSymbol encased in a Node structure
-		List<List<Node<ChordSymbol>>> matchingNodesList = new ArrayList<List<Node<ChordSymbol>>>();
-		for(List<ChordSymbol> matchingChords : matchingChordsList) {
+		List<List<Node<ChordSymbol>>> chordNodeListList = new ArrayList<List<Node<ChordSymbol>>>();
+		for(List<ChordSymbol> matchingChords : chordListsList) {
 
 			List<Node<ChordSymbol>> matchingNodes = new ArrayList<Node<ChordSymbol>>();
 			for(ChordSymbol chordsym : matchingChords) {
 
 				Node<ChordSymbol> node = new Node<ChordSymbol>(chordsym);
 				matchingNodes.add(node);
-
 			}
-
-			matchingNodesList.add(matchingNodes);
+			chordNodeListList.add(matchingNodes);
 		}
 
 
@@ -626,123 +596,75 @@ public class Analyzer extends Thread {
 
 		//first add the nodes of the list of chords that match the first note into the Graph.
 		//These are the beggining chords for all of the chord progressions that can be potentially generated.
+		
+		ChordSymbol blank = new ChordSymbol(new ScaleDegree(0), ChordType.BLANK);
+		Node<ChordSymbol> blankNode = new Node<ChordSymbol>(blank);
+		
+		output.setStartingNode(blankNode);
 
-		List<Node<ChordSymbol>> firstChordNodes = matchingNodesList.get(0);
+		List<Node<ChordSymbol>> firstChordNodes = chordNodeListList.get(0);
 		for(Node<ChordSymbol> node : firstChordNodes) {
-
-			matchingProgressionsGraph.addStartingNode(node, 1);
+			output.addToStartingNode(node, 1);
 		}
+		
+		joinChordNodeLists(output, 0, 1, chordNodeListList);
 
-		if(matchingNodesList.size() > 1) {
-
-			for(Node<ChordSymbol> node : firstChordNodes) {
-
-				createPossibleProgressionsGraphHelper(node, matchingNodesList, 1, matchingProgressionsGraph, onlyOptimalPaths);
-			}
-		}
-
-		return matchingProgressionsGraph;
+		return output;
 	}
-
-	/*
-	 * Helper function for createPossibleProgressionsGraph that implements recursion to add the edges that complete the chord progression graph
-	 * Returns true if the currentNode successfully leads to a complete chord progression
-	 */
-	private boolean createPossibleProgressionsGraphHelper(Node<ChordSymbol> currentNode,
-								List<List<Node<ChordSymbol>>> matchingNodesList, int nextNodesListIdx, Graph<ChordSymbol> progressionsGraph, boolean onlyOptimalPaths) {
-
-		boolean isValid = false; //boolean determining if the current node leads to any successful chord progressions
+	
+	public void joinChordNodeLists(Graph<ChordSymbol> graph,
+			int prevIndex, int nextIndex, List<List<Node<ChordSymbol>>> chordNodeListList) {
+		List<Node<ChordSymbol>> prevNodes = chordNodeListList.get(0);
+		List<Node<ChordSymbol>> nextNodes = chordNodeListList.get(1);
 		
-		//if the currentNode does not belong to the last set of Node objects in the matchingNodesList
-		if(nextNodesListIdx < matchingNodesList.size()) {
-
-			List<Node<ChordSymbol>> nextNodes = matchingNodesList.get(nextNodesListIdx);
-			if(!nextNodes.isEmpty()) {
-
-				//get the Node in the chordPreferencesGraph that contains currentNode's ChordSymbol, so as to know what chords can follow the current one
-				Node<ChordSymbol> chordGraphNode = _chordPreferencesGraph.findNode(currentNode.getValue());
-	
-				//generate list of ChordSymbols that the current chord can conventionally go to
-				List<Edge<ChordSymbol>> followingEdges = chordGraphNode.getFollowing();
-				
-				//for each of the nodes that can follow the current one
-				for(Edge<ChordSymbol> edge : followingEdges) {
-	
-					boolean validated = false;
-//					boolean weightIncreased = false;
-//					boolean contains = false;
-					boolean optimized = false;
-					int minimumValidWeight = 1;
-					int weight = 0;
-					for(Node<ChordSymbol> nextNode : nextNodes) {
-	
-						if(edge.getBack().getValue().equals(nextNode.getValue())) {//determine whether the next chord is among the chords that the current one conventionally leads to
-							
-//							contains = true;
-							weight = edge.getWeight();
-//							int edgeweight = edge.getWeight();
-//							if(edgeweight > weight)
-//								weightIncreased = true; //this edge has more weight than the previous one
-//							else if(edgeweight == weight)
-//								weightIncreased = false; //this edge has the same weight as the previous one
-							
-							
-//							if(contains) { 
-								
-			//					System.out.println("added edge " + currentNode.getValue().getSymbolText() + " - " + nextNode.getValue().getSymbolText());
-								if(!validated)
-									validated = createPossibleProgressionsGraphHelper(nextNode, matchingNodesList, nextNodesListIdx + 1, progressionsGraph, onlyOptimalPaths); //recur
-//							}
-							
-							if(onlyOptimalPaths) { //If only the optimal paths are wanted
-								
-								if(weight > minimumValidWeight) {
-									if(isValid) { //if the current chord already has a good progression and the current edge is not as optimal as existing ones
-										
-										//path is already optimized
-										optimized = true;
-										break;
-									}
-									else { //if the current chord does not yet link to a good progression
-										
-										//reset minimumValidWeight and continue looking
-										minimumValidWeight = weight;
-									}
-								}
-							}
-							
-							if(validated) { //this chord leads to a valid chord progression
-								
-								progressionsGraph.addEdge(currentNode, nextNode, weight); //valid progression, add edge to the return graph
-								isValid = true;
-							}
-							
-							break;
-						}
-						
-						if(optimized) { //all the optimal paths have already been created
-							
-							//assuming that edges not yet traversed will only be less optimal, there is no need to traverse them
-							break;
-						}
+		for (Node<ChordSymbol> prevNode : prevNodes) {
+			Node<ChordSymbol> preferenceGraphNode = _chordPreferencesGraph.findNode(prevNode.getValue());
+			
+			List<Edge<ChordSymbol>> prefEdges = preferenceGraphNode.getFollowing();
+			List<ChordSymbol> possibleChords = new ArrayList<ChordSymbol>();
+			for (Edge<ChordSymbol> edge : prefEdges) {
+				possibleChords.add(edge.getBack().getValue());
+			}
+			boolean contains;
+			for(Node<ChordSymbol> nextNode : nextNodes) {
+				contains = false;
+				for(ChordSymbol possibleChord : possibleChords) {
+					if (possibleChord.equals(nextNode.getValue())) {
+						contains = true;
+						break;
 					}
-					
-					
 				}
-	
-//				if(!isValid) {
-//	
-//					removeFromProgression(currentNode, matchingNodesList, nextNodesListIdx - 1, progressionsGraph);
-//					
-//				}
+				if(contains) { 
+					graph.addEdge(prevNode, nextNode, 1); //valid progression, add edge to the return graph
+				}
+			}
+			if (prevNode.getFollowing().size() == 0 || prevNode.getPreceding().size() == 0) {
+				deleteBranches(graph, prevNode);
 			}
 		}
-		else {
-			
-			isValid = true;
-		}
 		
-		return isValid;
+		if (nextIndex < chordNodeListList.size()) {
+			joinChordNodeLists(graph, prevIndex + 1, nextIndex + 1, chordNodeListList);
+		}		
+	}
+	
+	public void deleteBranches(Graph<ChordSymbol> graph, Node<ChordSymbol> node) {
+		List<Edge<ChordSymbol>> followEdges = node.getFollowing();
+		List<Edge<ChordSymbol>> precEdges = node.getPreceding();
+		List<Node<ChordSymbol>> adjacencies = new ArrayList<Node<ChordSymbol>>();
+		for (Edge<ChordSymbol> edge : followEdges) {
+			adjacencies.add(edge.getBack());
+		}
+		for (Edge<ChordSymbol> edge : precEdges) {
+			adjacencies.add(edge.getFront());
+		}
+		graph.removeNode(node);
+		
+		for (Node<ChordSymbol> adjacency : adjacencies) {
+			if (adjacency.getFollowing().size() == 0 || adjacency.getPreceding().size() == 0) {
+				deleteBranches(graph, adjacency);
+			}
+		}
 	}
 
 	//Takes a Graph and an Index, and return all the Nodes at an index number of levels away from the starting Node. 
@@ -894,7 +816,7 @@ public class Analyzer extends Thread {
 			if(previousNode.getPreceding().isEmpty()) {// This node should be a starting Node
 				
 				// add this node to the starting Nodes of the Graph
-				newGraph.addStartingNode(currentNode, edge.getWeight());
+				newGraph.addToStartingNode(currentNode, edge.getWeight());
 				
 			}
 			else { // This node is not a starting Node

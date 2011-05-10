@@ -620,8 +620,8 @@ public class LogicManager implements Printable {
 		int endMeasure = end.getMeasureNumber();
 		Rational endOffset = end.getMeasureOffset();
 		
-		while (currentMeasure < endMeasure || 
-				currentMeasure == endMeasure && currentOffset.compareTo(endOffset) == -1) {
+		while (currentMeasure < endMeasure - 1 || 
+				currentMeasure == endMeasure - 1 && currentOffset.compareTo(endOffset) == -1) {
 			Rational measureLength = _piece.getStaffs().get(0).getMeasures().get(currentMeasure).getTimeSignatures().get(0).getMeasureDuration();
 			
 			while (currentOffset.compareTo(measureLength) == -1) {
