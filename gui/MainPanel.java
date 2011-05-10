@@ -172,7 +172,6 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				
 				if (!_currRest) {
 					// insert pitches
-					System.out.println(_currAccidental);
 					index.setAccidental(_currAccidental);
 					Instruction editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
 					instr.addInstruction(editInstr);
@@ -180,7 +179,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			}
 		}
 		
-		sendInstruction(instr);
+		if (!instr.isEmpty())
+			sendInstruction(instr);
 	}
 	
    /* Handle a mouse release on a toolbar or the score window
@@ -292,7 +292,20 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void componentHidden(ComponentEvent e) {}
 	public void componentMoved(ComponentEvent e) {}
 	public void componentShown(ComponentEvent e) {}
-
+	
+	public void interpretInstrBlock(InstructionBlock instrBlock) {
+		List<Instruction> listInstr = instrBlock.getInstructions();
+		for (Instruction instr : listInstr) {
+			interpretInstr(instr);
+		}
+	}
+	
+	public void interpretInstr(Instruction instr) {
+		if (instr instanceof GUIInstructionChordData) {
+			// score data in score window
+		}
+	}
+	
 	public synchronized void addInstructionListener(InstructionListener listener)  {
 		_listeners.add(InstructionListener.class, listener);
 	}

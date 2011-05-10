@@ -1,9 +1,8 @@
 package instructions;
 
-public class GUIInstruction {
+public class GUIInstruction extends Instruction {
 	
-	public GUIInstruction() {
-	}
+	public GUIInstruction() {}
 	
 
 }

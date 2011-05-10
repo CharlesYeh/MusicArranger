@@ -54,7 +54,7 @@ public class LongMelodyPiece extends Piece {
 		// chord symbols
 		ChordSymbol chordsymbol1 = new ChordSymbol(new Rational(2, 4), new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR);
 		ChordSymbol chordsymbol2 = new ChordSymbol(new Rational(1, 4), new ScaleDegree(4, Accidental.NATURAL), ChordType.MINOR);
-		ChordSymbol chordsymbol3 = new ChordSymbol(new Rational(1, 4), new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR7);
+		ChordSymbol chordsymbol3 = new ChordSymbol(new Rational(1, 4), new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJOR7, 1);
 
 		// staffs
 		Staff stafftreble = new Staff();

@@ -160,11 +160,11 @@ public class NewFileDialog extends JDialog implements PropertyChangeListener {
 			switch (clefIndex) {
 			case 0:
 				// treble
-				clefs.add(new Clef(ClefName.GCLEF, 2));
+				clefs.add(new Clef(ClefName.GCLEF, -2));
 				break;
 			case 1:
 				// bass
-				clefs.add(new Clef(ClefName.FCLEF, -2));
+				clefs.add(new Clef(ClefName.FCLEF, 2));
 				break;
 			case 2:
 				// alto

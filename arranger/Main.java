@@ -41,6 +41,7 @@ public class Main extends JFrame implements InstructionListener {
 		super("Music Arranger");
 		_piece = new tests.LongMelodyPiece();
 		_logicManager = new LogicManager(_piece);
+		_logicManager.addInstructionListener(this);
 		_editor = _logicManager.getEditor();
 		
 		ArrangerConstants.WINDOW_WIDTH = 1000;
@@ -105,11 +106,14 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemOpen.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
-					JFileChooser chooser = new JFileChooser();
+					String wd = System.getProperty("user.dir");
+					JFileChooser chooser = new JFileChooser(wd);
 					
 					int returnVal = chooser.showOpenDialog(frame);
 					if(returnVal == JFileChooser.APPROVE_OPTION) {
-						InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.OPEN, chooser.getSelectedFile().getName()));
+						InstructionBlock myInstr = new InstructionBlock(this, 
+								new FileInstructionIO(FileInstructionType.OPEN, 
+										chooser.getSelectedFile().getAbsolutePath()));
 						receiveInstruction(myInstr);
 					}
 				}
@@ -119,19 +123,20 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemSave.setMnemonic(KeyEvent.VK_S);
 		menuItemSave.setToolTipText("Save current song");
 		menuItemSave.addActionListener(
-			new ActionListener() {
-				public void actionPerformed(ActionEvent event) {
-					String path = JOptionPane.showInputDialog("Save to what path?");
-					
-					// error checking
-					if (path == null && path.length() == 0) {
-						System.out.println("Save path cannot be empty");
+				new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						String wd = System.getProperty("user.dir");
+						JFileChooser chooser = new JFileChooser(wd);
+						
+						int returnVal = chooser.showSaveDialog(frame);
+						if(returnVal == JFileChooser.APPROVE_OPTION) {
+							InstructionBlock myInstr = new InstructionBlock(this, 
+									new FileInstructionIO(FileInstructionType.SAVE, 
+											chooser.getSelectedFile().getAbsolutePath()));
+							receiveInstruction(myInstr);
+						}
 					}
-
-					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.SAVE, path));
-					receiveInstruction(myInstr);
-				}
-			});
+				});
 
 		JMenuItem menuItemPrint = new JMenuItem("Print");
 		menuItemPrint.setMnemonic(KeyEvent.VK_P);
@@ -195,8 +200,19 @@ public class Main extends JFrame implements InstructionListener {
 	}
 
 	public void receiveInstruction(InstructionBlock instr) {
-		_logicManager.interpretInstrBlock(instr);
-		_mainPanel.updateScore();
+		if (instr.isEmpty())
+			return;
+		
+		Instruction firstInstr = instr.getInstructions().iterator().next();
+		if (firstInstr instanceof GUIInstruction) {
+			// logic manager to GUI
+			_mainPanel.interpretInstrBlock(instr);
+		}
+		else {
+			// GUI to logic manager
+			_logicManager.interpretInstrBlock(instr);
+			_mainPanel.updateScore();
+		}
 	}
 
 	public static void main(String[] args){
