@@ -34,6 +34,18 @@ public class Analyzer extends Thread {
 		return createPossibleProgressionsGraph(analyzeMelody(melody, keySig), false);
 	}
 	
+	public List<List<Node<ChordSymbol>>> calculateAnalysisIndices(List<List<Pitch>> melody,
+			KeySignature keySig) {
+		Graph<ChordSymbol> analysisGraph = calculateAnalysisGraph(melody, keySig);
+		List<List<Node<ChordSymbol>>> output = new ArrayList<List<Node<ChordSymbol>>>();
+		
+		for (int i = 0; i < melody.size(); i++) {
+			output.add(getChordsAtIndex(analysisGraph, i));
+		}
+		
+		return output;
+	}
+	
 	public Graph<ChordSymbol> getChordPreferencesGraph() {
 		
 		return _chordPreferencesGraph;
