@@ -30,7 +30,7 @@ public class unitTest{
                 
                 ArrayList<Pitch> melodyInstance1 = new ArrayList<Pitch>();
 //                melodyInstance1.add(C);
-                melodyInstance1.add(E);
+                melodyInstance1.add(C);
                 melody.add(melodyInstance1);
                 
                 ArrayList<Pitch> melodyInstance2 = new ArrayList<Pitch>();
@@ -92,7 +92,7 @@ public class unitTest{
                 
                 boolean onlyOptimalProgressions = false;
                 System.out.println("Only get optimal progressions: " + onlyOptimalProgressions);
-                Graph<ChordSymbol> possibleProgressionsGraph = analyzer.createPossibleProgressionsGraph(allPossibleChords, onlyOptimalProgressions);
+                Graph<ChordSymbol> possibleProgressionsGraph = analyzer.createPossibleProgressionsGraph(allPossibleChords);
                 System.out.println("Possible chord progressions: ");
                 printGraph(possibleProgressionsGraph);
                 
@@ -111,6 +111,7 @@ public class unitTest{
                 ChordSymbol chordI = new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR); 
                 ChordSymbol chordiii = new ChordSymbol(new ScaleDegree(3, Accidental.NATURAL), ChordType.MINOR);
                 ChordSymbol chordV7 = new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJORMINOR7);
+                ChordSymbol chordvi = new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.MINOR);
                 
                 ChordSymbol toTest = chordV7;
                 System.out.println("After setting index " + index + " to chord " + printChordSymbol(toTest));
@@ -119,7 +120,7 @@ public class unitTest{
 //              
                 // testing harmonizeMelodyInstance
 //                List<Pitch> melodyInstance = new ArrayList<Pitch>();
-                ChordSymbol harmonizeChord = chordI;
+                ChordSymbol harmonizeChord = chordvi;
                 KeySignature chosenKeySig = CMajor;
                 List<Pitch> chosenMelodyInstance = melodyInstance1;
                 List<Pitch> harmonizedMelody = new Analyzer3().harmonizeMelodyInstance(chosenMelodyInstance, harmonizeChord, chosenKeySig);

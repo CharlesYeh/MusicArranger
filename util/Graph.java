@@ -107,11 +107,13 @@ public class Graph<T> {
 	}
 	
 	public void removeNode(Node<T> node) {
-		for (Edge<T> edge : node.getFollowing()) {
-			this.removeEdge(edge);
+		List<Edge<T>> followEdges = node.getFollowing();
+		for (int i = 0; i < followEdges.size(); i++) {
+			this.removeEdge(followEdges.get(i));
 		}
-		for (Edge<T> edge : node.getPreceding()) {
-			this.removeEdge(edge);
+		List<Edge<T>> precEdges = node.getFollowing();
+		for (int i = 0; i < precEdges.size(); i++) {
+			this.removeEdge(precEdges.get(i));
 		}
 		
 		_nodes.remove(node);
