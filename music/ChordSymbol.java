@@ -54,6 +54,8 @@ public class ChordSymbol extends Timestep {
 				return "Fr";
 			case GERAUG6:
 				return "Ger";
+			case UNSPECIFIED:
+				return "*";
 		}
 
 		switch (_scaleDegree.getDegreeNumber()) {
@@ -148,8 +150,7 @@ public class ChordSymbol extends Timestep {
 
 		return "";
 	}
-
-	//returns true if current ChordSymbol is equal to the given ChordSymbol, otherwise false
+	
 	public boolean equals(Object chordsym){
 		
 		ChordSymbol toCompare = (ChordSymbol) chordsym;

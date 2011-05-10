@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import music.*;
 import logic.Analyzer;
+import logic.Analyzer3;
 import tests.MidiAPITest;
 import util.Edge;
 import util.Graph;
@@ -28,7 +29,7 @@ public class unitTest{
                 List<List<Pitch>> melody = new ArrayList<List<Pitch>>();
                 
                 ArrayList<Pitch> melodyInstance1 = new ArrayList<Pitch>();
-                melodyInstance1.add(C);
+//                melodyInstance1.add(C);
                 melodyInstance1.add(E);
                 melody.add(melodyInstance1);
                 
@@ -115,8 +116,22 @@ public class unitTest{
                 System.out.println("After setting index " + index + " to chord " + printChordSymbol(toTest));
                 printGraph(analyzer.setChordsAtIndex(toTest, possibleProgressionsGraph, index));
                 
-//                System.out.println("Possible chord progressions: ");
-//                printGraph(possibleProgressionsGraph);
+//              
+                // testing harmonizeMelodyInstance
+//                List<Pitch> melodyInstance = new ArrayList<Pitch>();
+                ChordSymbol harmonizeChord = chordI;
+                KeySignature chosenKeySig = CMajor;
+                List<Pitch> chosenMelodyInstance = melodyInstance1;
+                List<Pitch> harmonizedMelody = new Analyzer3().harmonizeMelodyInstance(chosenMelodyInstance, harmonizeChord, chosenKeySig);
+                System.out.println("harmonizing:");
+                for(Pitch pitch : chosenMelodyInstance) {
+                	System.out.println(pitch);
+                }
+                System.out.println("with chord: " + printChordSymbol(harmonizeChord) + " in key: " + chosenKeySig.getKeySigPitch());
+                for(Pitch pitch : harmonizedMelody) {
+                	
+                	System.out.println(pitch);
+                }
         }
         
         //Function that prints the all the possible traversals from the starting node of printGraph

@@ -26,7 +26,7 @@ import instructions.*;
 import java.awt.event.MouseEvent;
 
 public class ScoreIllustrator {
-
+	
 	final static double LOG_2 = Math.log(2);
 	
 	final static int TOP_MARGIN	= 100;
@@ -43,12 +43,12 @@ public class ScoreIllustrator {
 	final static int CLEF_WIDTH = 38;
 	
 	final static int CHORD_SPACING = 45;
-
+	
 	final static int NOTE_WIDTH = SYSTEM_LINE_SPACING;
 	final static int NOTE_HEIGHT = SYSTEM_LINE_SPACING;
-
+	
 	final static int STEM_LENGTH = 30;
-
+	
 	final static int MEASURE_WIDTH = 100;
 	final static int LEDGER_WIDTH = (int) (SYSTEM_LINE_SPACING * 1.5);
 	
@@ -58,21 +58,21 @@ public class ScoreIllustrator {
 	final static int NOTE_IMG_OFFSET = 15;
 	
 	final static int OFFSET_Y = 25;
-
+	
 	Image _imgQuarter, _imgHalf, _imgWhole, _imgQuarterRest, _imgHalfRest, _imgEighthRest, _imgSixteenthRest,
 			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp,
 			_imgClefG, _imgClefF, _imgClefC,
-			_imgQuarterNote, _imgHalfNote, _imgWholeNote;
-
+			_imgQuarterNote, _imgHalfNote, _imgWholeNote, _imgQuarterNoteS, _imgHalfNoteS, _imgWholeNoteS;
+	
 	// map each system to its y coordinate
 	List<Integer> _systemPositions;
 	Map<Staff, Integer> _staffPositions;
+	
 	// staff to position > measure index
 	List<TreeMap<Integer, Integer>> _measurePositions;
 	// staff to measure > multinote position > timestamp value of this mnote
 	List<Map<Integer, TreeMap<Integer, Rational>>> _mNotePositions;
-	Map<MultiNote, Clef> _mNoteClefs;
-
+	
 	public ScoreIllustrator() {
 		// load images
 		try {
@@ -94,6 +94,10 @@ public class ScoreIllustrator {
 			_imgQuarterNote= ImageIO.read(new File("images/score/score_quarter_note.png"));
 			_imgHalfNote	= ImageIO.read(new File("images/score/score_half_note.png"));
 			_imgWholeNote	= ImageIO.read(new File("images/score/score_whole_note.png"));
+			
+			_imgQuarterNoteS= ImageIO.read(new File("images/score/score_quarter_note_selected.png"));
+			_imgHalfNoteS	= ImageIO.read(new File("images/score/score_half_note_selected.png"));
+			_imgWholeNoteS	= ImageIO.read(new File("images/score/score_whole_note_selected.png"));
 		}
 		catch (IOException e) {
 			System.out.println("Error while loading musical images: " + e);
@@ -138,7 +142,9 @@ public class ScoreIllustrator {
 		Map<Staff, Clef> currClefs = new HashMap<Staff, Clef>();
 		Map<Staff, KeySignature> currKeySigs 	= new HashMap<Staff, KeySignature>();
 		Map<Staff, TimeSignature> currTimeSigs 	= new HashMap<Staff, TimeSignature>();
+		
 		Map<Staff, List<MultiNote>> stemGroups = new HashMap<Staff, List<MultiNote>>();
+		Map<MultiNote, Point> stemNotePositions = new HashMap<MultiNote, Point>();
 
 		// list of measures in each staff
 		List<ListIterator<Measure>> measureLists = new ArrayList<ListIterator<Measure>>();
@@ -146,6 +152,7 @@ public class ScoreIllustrator {
 		Map<Staff, Integer> staffX = new HashMap<Staff, Integer>();
 		Map<Voice, Integer> voiceX = new HashMap<Voice, Integer>();
 		int finalVoiceX = 0;
+		int chordX = LEFT_MARGIN;
 
 		boolean startDrawing = true;
 
@@ -350,15 +357,19 @@ public class ScoreIllustrator {
 					measureMNotes.put(noteX, currTime);
 
 				}
-				else if (currDur instanceof ChordSymbol && (currChord == null || !currDur.equals(currChord))) {
+				else if (currDur instanceof ChordSymbol) {
+					// only get from first staff
 					//---------------------CHORD SYMBOL----------------------
 					ChordSymbol cSymbol = (ChordSymbol) currDur;
-
-					int chordX = nextX;
-					int chordY = nextY + 5 * SYSTEM_LINE_SPACING + (numStaffs - 1) * STAFF_SPACING + CHORD_SPACING;
-					drawChordSymbol(g, cSymbol, chordX, chordY);
-
+					
+					if (currChord == null || !currDur.equals(currChord)) {
+						int chordY = nextY + 5 * SYSTEM_LINE_SPACING + (numStaffs - 1) * STAFF_SPACING + CHORD_SPACING;
+						drawChordSymbol(g, cSymbol, chordX + staffX.get(currStaff), chordY);
+					}
+					
 					currChord = cSymbol;
+					Rational dur = cSymbol.getDuration();
+					chordX += (int) (((double) dur.getNumerator()) / dur.getDenominator() * MEASURE_WIDTH) / numStaffs;
 				}
 				else if (currDur instanceof KeySignature && (currKeySig == null || !currDur.equals(currKeySig))) {
 					//-----------------------KEY SIG-----------------------
@@ -372,13 +383,13 @@ public class ScoreIllustrator {
 							int accidY = (3 * a + 1) % 7 - currClef.getCenterLine();
 							switch (currClef.getClefName()) {
 								case GCLEF:
-									accidY += - 4;
+									accidY += -3;
 									break;
 								case FCLEF:
-									accidY += - 2;
+									accidY += 3;
 									break;
 								case CCLEF:
-									accidY += - 3;
+									accidY += 0;
 									break;
 							}
 							drawAccidental(g, Accidental.SHARP, nextX + KEYSIG_WIDTH * a, nextY + accidY * SYSTEM_LINE_SPACING / 2);
@@ -390,13 +401,13 @@ public class ScoreIllustrator {
 							int accidY = -(3 + 3 * a) % 7 - currClef.getCenterLine();
 							switch (currClef.getClefName()) {
 								case GCLEF:
-									accidY += 2;
+									accidY += 5;
 									break;
 								case FCLEF:
-									accidY += 8;
+									accidY += 11;
 									break;
 								case CCLEF:
-									accidY += 5;
+									accidY += 8;
 									break;
 							}
 							drawAccidental(g, Accidental.FLAT, nextX + KEYSIG_WIDTH * a, nextY + accidY * SYSTEM_LINE_SPACING / 2);
@@ -434,6 +445,7 @@ public class ScoreIllustrator {
 			
 			//-----------------------FINISH MEASURE-----------------------
 			measureX = 0;
+			chordX = 0;
 			
 			// draw barline
 			Staff stff = _staffPositions.keySet().iterator().next();
@@ -696,19 +708,19 @@ public class ScoreIllustrator {
 			case 0:
 				// whole note
 				//dynamicDrawNoteHead(g, xc, yc, true, selected);
-				g.drawImage(_imgWholeNote, xc, yc, null);
+				g.drawImage(selected ? _imgWholeNoteS : _imgWholeNote, xc, yc, null);
 				break;
-
+				
 			case 1:
 				// half note
 				//dynamicDrawNoteHead(g, xc, yc, true, selected);
-				g.drawImage(_imgHalfNote, xc, yc, null);
+				g.drawImage(selected ? _imgHalfNoteS :_imgHalfNote, xc, yc, null);
 				break;
-
+				
 			case 2:
 				// quarter note
 				//dynamicDrawNoteHead(g, xc, yc, false, selected);
-				g.drawImage(_imgQuarterNote, xc, yc, null);
+				g.drawImage(selected ? _imgQuarterNoteS :_imgQuarterNote, xc, yc, null);
 				break;
 			default:
 				
@@ -717,7 +729,7 @@ public class ScoreIllustrator {
 		else {
 			// eighth or smaller
 			//dynamicDrawNoteHead(g, xc, yc, false, selected);
-			g.drawImage(_imgQuarterNote, xc, yc, null);
+			g.drawImage(selected ? _imgQuarterNoteS :_imgQuarterNote, xc, yc, null);
 		}
 	}
 
