@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.List;
+
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Color;
@@ -12,11 +14,14 @@ import music.ChordType;
 import music.ScaleDegree;
 import music.Accidental;
 
+import util.*;
+
 public class ChordGrid extends Drawable {
 	
 	final static int CELL_SIZE = 30;
 	
 	ChordSymbol[][] _symbols;
+	List<Node<ChordSymbol>> _chords;
 	
 	public ChordGrid() {
 		_width = CELL_SIZE * 8;
@@ -58,9 +63,31 @@ public class ChordGrid extends Drawable {
 		
 		for (int row = 0; row < _symbols.length; row++) {
 			for (int col = 0; col < _symbols[row].length; col++) {
+				
+				if (isSuggested(_symbols[row][col]))
+					g.setColor(new Color(0x00CC00));
+				else 
+					g.setColor(new Color(0xBB0000));
+				
 				drawChordSymbol(g, _symbols[row][col], _x + col * CELL_SIZE, _y + row * CELL_SIZE);
 			}
 		}
+	}
+	
+	public void setSuggested(List<Node<ChordSymbol>> lst) {
+		_chords = lst;
+	}
+	
+	private boolean isSuggested(ChordSymbol c) {
+		if (_chords == null)
+			return false;
+		
+		for (Node<ChordSymbol> n : _chords) {
+			if (n.getValue().equals(c))
+				return true;
+		}
+		
+		return false;
 	}
 	
 	public void drawChordSymbol(Graphics g, ChordSymbol symb, int xc, int yc) {
@@ -78,6 +105,9 @@ public class ChordGrid extends Drawable {
 	public ChordSymbol getChordSymbolAt(MouseEvent p) {
 		int col = (p.getX() - _x) / CELL_SIZE;
 		int row = (p.getY() - _y) / CELL_SIZE;
+		
+		if (p.getX() - _x < 0 || p.getY() - _y < 0 || row > _symbols.length || col > _symbols[row].length)
+			return null;
 		
 		return _symbols[row][col];
 	}

@@ -277,6 +277,11 @@ public class LogicManager implements Printable {
 		
 		return true;
 	}
+	
+	private boolean interpretGenerateInstrGenVoices(GenerateInstructionGenVoices genInstrGenVoices) {
+		
+		return true;
+	}
 
 	private boolean interpretEditInstr(EditInstruction editInstr) {
 		EditType editType = editInstr.getElemType();
@@ -419,6 +424,8 @@ public class LogicManager implements Printable {
 		Rational offset = iterAndOffset.getOffset();
 
 		MultiNote multiNote;
+		Clef clef;
+		List<Pitch> pitches;
 
 		// set the iterator in the editor
 		_editor.setMultiNoteIter(iter);
@@ -451,6 +458,44 @@ public class LogicManager implements Printable {
 				MultiNote removed = _editor.removeMultiNote();
 				multiNote = new MultiNote(removed.getDuration());
 				_editor.insertMultiNote(multiNote);
+				return true;
+			case TRANSPOSE_UP:
+				//TODO: TRANSPOSE IS BUGGY, DIFFERENT FUNCTION MUST BE PUT INTO
+				// EDITOR FOR THIS TO WORK
+				clef = (Clef) getElementAt(measureOffset, measure.getClefs());
+				multiNote = iter.next();
+				pitches = multiNote.getPitches();
+				for (int i = 0; i < pitches.size(); i++) {
+					Pitch pitch = pitches.get(i);
+					int lineNumber = calcLineNumber(clef, pitch);
+					EditInstruction removePitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
+							EditInstructionType.REMOVE,
+							EditType.PITCH);
+					editPitch(removePitchInstr);		
+					lineNumber++;
+					EditInstruction insertPitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
+							EditInstructionType.INSERT,
+							EditType.PITCH);
+					editPitch(insertPitchInstr);	
+				}
+				return true;
+			case TRANSPOSE_DOWN:
+				clef = (Clef) getElementAt(measureOffset, measure.getClefs());
+				multiNote = iter.next();
+				pitches = multiNote.getPitches();
+				for (int i = 0; i < pitches.size(); i++) {
+					Pitch pitch = pitches.get(i);
+					int lineNumber = calcLineNumber(clef, pitch);
+					EditInstruction removePitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
+							EditInstructionType.REMOVE,
+							EditType.PITCH);
+					editPitch(removePitchInstr);		
+					lineNumber--;
+					EditInstruction insertPitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
+							EditInstructionType.INSERT,
+							EditType.PITCH);
+					editPitch(insertPitchInstr);	
+				}
 				return true;
 			default:
 				System.out.println("Instruction of unrecognized EditInstructionType");
@@ -606,6 +651,12 @@ public class LogicManager implements Printable {
 		int octave = (clef.getCenterValue() + lineNum - clefLine) / 7;
 		Pitch pitch = new Pitch(pitchLetter.getNoteLetter(), octave, pitchLetter.getAccidental());
 		return pitch;
+	}
+	
+	public int calcLineNumber(Clef c, Pitch pitch) {
+		int centerValue = c.getCenterValue();
+		int pitchValue = pitch.getNoteLetter().intValue() + pitch.getOctave() * 7;
+		return pitchValue - centerValue + c.getCenterLine();
 	}
 
 	// Given a start, an end, and the spacing between indices, returns all indices pointing

@@ -61,7 +61,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	Set<InstructionIndex> _selected;
 	
 	Piece _piece;
-	Map<InstructionIndex, List<Node<ChordSymbol>>> _suggestions;
+	List<InstructionIndex> _indices;
+	List<List<Node<ChordSymbol>>> _suggestions;
 	Image _imgBackground;
 	
 	//------------------end state information------------------
@@ -154,7 +155,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			handleScoreMousePressed(listIndex);
 			
 			_chordGrid.setX((int) evtPoint.getX());
-			_chordGrid.setY((int) evtPoint.getY());
+			_chordGrid.setY((int) evtPoint.getY() + 20);
 	   }
 	   else {
 		   // clicked on a toolbar, start drag?
@@ -177,6 +178,14 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				/*Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.CHORD_SYMBOL, new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR));
 				instr.addInstruction(editInstr);*/
 				_insertChord = index;
+				
+				if (_indices != null) {
+					int ind = _indices.indexOf(index);
+					
+					if (ind != -1)
+						_chordGrid.setSuggested(_suggestions.get(ind));
+				}
+				
 				return;
 			}
 			else {
@@ -360,7 +369,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	public void interpretInstrBlock(InstructionBlock instrBlock) {
 		List<Instruction> listInstr = instrBlock.getInstructions();
-		System.out.println("START INTERPRETING");
+		
 		for (Instruction instr : listInstr) {
 			interpretInstr(instr);
 		}
@@ -368,9 +377,11 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	public void interpretInstr(Instruction instr) {
 		if (instr instanceof GUIInstructionChordData) {
+			GUIInstructionChordData GUIInstr = (GUIInstructionChordData) instr;
 			// make unspecified ChordSymbol
 			// store data in score window
-			
+			_indices = GUIInstr.getIndices();
+			_suggestions = GUIInstr.getChords();
 		}
 	}
 	
@@ -434,7 +445,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 					break;
 					
 				case VOICES:
-					genInstr = new GenerateInstructionAnalyzeChords(pieceStart, pieceEnd, new Rational(1, 4));
+					genInstr = new GenerateInstructionVoices(pieceStart, pieceEnd, new Rational(1, 4), 4);
 					break;
 					
 				default:
