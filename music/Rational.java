@@ -70,8 +70,22 @@ public class Rational {
 		return new Rational(numerator, denominator);
 	}
 	
+	 // return a * b
+    public Rational multiply(Rational b) {
+        return new Rational(this.getNumerator() * b.getNumerator(), this.getDenominator() * b.getDenominator());
+    }
+	
 	// return a / b
 	public Rational divide(Rational b) {
+		return this.multiply(b.reciprocal());
+	}
+	
+	public Rational reciprocal() {
+		return new Rational(_denom, _numer);
+	}
+	
+	// return a % b
+	public Rational modulo(Rational b) {
 		return null;
 	}
 	
