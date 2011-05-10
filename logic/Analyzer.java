@@ -756,8 +756,10 @@ public class Analyzer extends Thread {
 		return matchingProgressionsGraph;
 	}
 
-	//Helper function for createPossibleProgressionsGraph that implements recursion to add the edges that complete the chord progression graph
-	//Returns true if the currentNode successfully leads to a complete chord progression
+	/*
+	 * Helper function for createPossibleProgressionsGraph that implements recursion to add the edges that complete the chord progression graph
+	 * Returns true if the currentNode successfully leads to a complete chord progression
+	 */
 	private boolean createPossibleProgressionsGraphHelper(Node<ChordSymbol> currentNode,
 								List<List<Node<ChordSymbol>>> matchingNodesList, int nextNodesListIdx, Graph<ChordSymbol> progressionsGraph, boolean onlyOptimalPaths) {
 
@@ -855,6 +857,69 @@ public class Analyzer extends Thread {
 		return isValid;
 	}
 
+	//Takes a Graph and an Index, and return all the Nodes at an index number of levels away from the starting Node. 
+	public List<Node<ChordSymbol>> getChordsAtIndex(Graph<ChordSymbol> chordProgressionGraph, int index) {
+		
+		Node<ChordSymbol> startingNode = chordProgressionGraph.getStartingNode();
+		List<Node<ChordSymbol>> returnNodes = null;
+		List<Node<ChordSymbol>> firstNodes = new ArrayList<Node<ChordSymbol>>();
+		
+		if(index < 0 || startingNode == null) { //invalid input
+			
+			return null;
+		}
+			
+		// gets the first level of nodes
+		List<Edge<ChordSymbol>> startingEdges = startingNode.getFollowing();
+		for(Edge<ChordSymbol> edge : startingEdges) {
+			
+			firstNodes.add(edge.getBack());
+		}
+		if(index == 0) { 
+			
+			// return the first level of nodes
+			returnNodes = firstNodes;
+		}
+		else if(index > 0) { //must iterate through the graph to find the wanted Node objects
+			
+			returnNodes = getChordsAtIndexHelper(firstNodes, 1, index);
+		}
+		
+		return returnNodes;
+	}
+	
+	/*
+	 *  Helper function for getChordsAtIndex, takes a List of Node objects, the current index, 
+	 *	and the query index, and returns a List of Nodes that are at the query Index number
+	 *  of levels away from the root Node of the Graph
+	 */
+	private List<Node<ChordSymbol>> getChordsAtIndexHelper(List<Node<ChordSymbol>> currentNodes, int currentIndex, int queryIndex) {
+		
+//		boolean hasNext = false; //boolean to check if the currentNode leads to another level in the Graph
+		List<Node<ChordSymbol>> nextNodes = new ArrayList<Node<ChordSymbol>>();
+		
+		for(Node<ChordSymbol> currentNode : currentNodes) {
+			
+			// gets the next level of nodes
+			List<Edge<ChordSymbol>> startingEdges = currentNode.getFollowing();
+			for(Edge<ChordSymbol> edge : startingEdges) {
+				
+				Node<ChordSymbol> nextNode = edge.getBack();
+				if(!nextNodes.contains(nextNode)) {
+					
+					// only add to the List nextNodes when nextNodes does not already contain the Node
+					nextNodes.add(nextNode);
+				}
+			}
+		}
+		
+		if(currentIndex < queryIndex) {
+			
+			nextNodes = getChordsAtIndexHelper(nextNodes, currentIndex + 1, queryIndex);
+		}
+		
+		return nextNodes;
+	}
 	
 	//removes the Node toRemove from the Graph and removes the relevant Edges,
 	//if the node that is removed is the only node that one of its previous nodes lead to, then that previous node is removed as well

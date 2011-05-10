@@ -94,6 +94,16 @@ public class unitTest{
                 Graph<ChordSymbol> possibleProgressionsGraph = analyzer.createPossibleProgressionsGraph(allPossibleChords, onlyOptimalProgressions);
                 System.out.println("Possible chord progressions: ");
                 printGraph(possibleProgressionsGraph);
+                
+                //testing getChordsAtIndex()
+                int index = 2;
+                List<Node<ChordSymbol>> NodesAtIndex = analyzer.getChordsAtIndex(possibleProgressionsGraph, index);
+                System.out.println("Chords at index " + index + " are:");
+                for(Node<ChordSymbol> node : NodesAtIndex) {
+                	
+                	ChordSymbol chordsym = node.getValue();
+                	System.out.println(chordsym.getSymbolText() + chordsym.getTopInversionText() + chordsym.getBotInversionText());
+                }
         }
         
         //Function that prints the all the possible traversals from the starting node of printGraph
