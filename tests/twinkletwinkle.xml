@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<piece>
+  <staffs>
+    <staff>
+      <measures>
+        <measure>
+          <timeSignatures>
+            <timeSignature duration="1/1" numerator="4" denominator="4"/>
+          </timeSignatures>
+          <keySignatures>
+            <keySignature duration="1/1" accidentals="0" isMajor="true"/>
+          </keySignatures>
+          <clefs>
+            <clef duration="1/1" type="GCLEF" center_line="-2"/>
+          </clefs>
+          <chordSymbols>
+            <chordSymbol duration="1/1" scaleDegreeNumber="0" scaleDegreeAccidental="NATURAL" chordType="BLANK"/>
+          </chordSymbols>
+          <voices>
+            <voice>
+              <multinotes>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="C" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="C" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="G" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="G" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+              </multinotes>
+            </voice>
+          </voices>
+        </measure>
+        <measure>
+          <timeSignatures>
+            <timeSignature duration="1/1" numerator="4" denominator="4"/>
+          </timeSignatures>
+          <keySignatures>
+            <keySignature duration="1/1" accidentals="0" isMajor="true"/>
+          </keySignatures>
+          <clefs>
+            <clef duration="1/1" type="GCLEF" center_line="-2"/>
+          </clefs>
+          <chordSymbols>
+            <chordSymbol duration="1/1" scaleDegreeNumber="0" scaleDegreeAccidental="NATURAL" chordType="BLANK"/>
+          </chordSymbols>
+          <voices>
+            <voice>
+              <multinotes>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="A" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="A" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/2">
+                  <pitches>
+                    <pitch octave="4" key="G" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+              </multinotes>
+            </voice>
+          </voices>
+        </measure>
+        <measure>
+          <timeSignatures>
+            <timeSignature duration="1/1" numerator="4" denominator="4"/>
+          </timeSignatures>
+          <keySignatures>
+            <keySignature duration="1/1" accidentals="0" isMajor="true"/>
+          </keySignatures>
+          <clefs>
+            <clef duration="1/1" type="GCLEF" center_line="-2"/>
+          </clefs>
+          <chordSymbols>
+            <chordSymbol duration="1/1" scaleDegreeNumber="0" scaleDegreeAccidental="NATURAL" chordType="BLANK"/>
+          </chordSymbols>
+          <voices>
+            <voice>
+              <multinotes>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="F" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="F" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="E" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="E" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+              </multinotes>
+            </voice>
+          </voices>
+        </measure>
+        <measure>
+          <timeSignatures>
+            <timeSignature duration="1/1" numerator="4" denominator="4"/>
+          </timeSignatures>
+          <keySignatures>
+            <keySignature duration="1/1" accidentals="0" isMajor="true"/>
+          </keySignatures>
+          <clefs>
+            <clef duration="1/1" type="GCLEF" center_line="-2"/>
+          </clefs>
+          <chordSymbols>
+            <chordSymbol duration="1/1" scaleDegreeNumber="0" scaleDegreeAccidental="NATURAL" chordType="BLANK"/>
+          </chordSymbols>
+          <voices>
+            <voice>
+              <multinotes>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="D" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/4">
+                  <pitches>
+                    <pitch octave="4" key="D" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/2">
+                  <pitches>
+                    <pitch octave="4" key="C" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+              </multinotes>
+            </voice>
+          </voices>
+        </measure>
+      </measures>
+    </staff>
+    <staff>
+      <measures>
+        <measure>
+          <timeSignatures>
+            <timeSignature duration="1/1" numerator="4" denominator="4"/>
+          </timeSignatures>
+          <keySignatures>
+            <keySignature duration="1/1" accidentals="0" isMajor="true"/>
+          </keySignatures>
+          <clefs>
+            <clef duration="1/1" type="FCLEF" center_line="2"/>
+          </clefs>
+          <chordSymbols>
+            <chordSymbol duration="1/1" scaleDegreeNumber="0" scaleDegreeAccidental="NATURAL" chordType="BLANK"/>
+          </chordSymbols>
+          <voices>
+            <voice>
+              <multinotes>
+                <multinote duration="1/1">
+                  <pitches/>
+                </multinote>
+              </multinotes>
+            </voice>
+          </voices>
+        </measure>
+        <measure>
+          <timeSignatures>
+            <timeSignature duration="1/1" numerator="4" denominator="4"/>
+          </timeSignatures>
+          <keySignatures>
+            <keySignature duration="1/1" accidentals="0" isMajor="true"/>
+          </keySignatures>
+          <clefs>
+            <clef duration="1/1" type="FCLEF" center_line="2"/>
+          </clefs>
+          <chordSymbols>
+            <chordSymbol duration="1/1" scaleDegreeNumber="0" scaleDegreeAccidental="NATURAL" chordType="BLANK"/>
+          </chordSymbols>
+          <voices>
+            <voice>
+              <multinotes>
+                <multinote duration="1/1">
+                  <pitches/>
+                </multinote>
+              </multinotes>
+            </voice>
+          </voices>
+        </measure>
+        <measure>
+          <timeSignatures>
+            <timeSignature duration="1/1" numerator="4" denominator="4"/>
+          </timeSignatures>
+          <keySignatures>
+            <keySignature duration="1/1" accidentals="0" isMajor="true"/>
+          </keySignatures>
+          <clefs>
+            <clef duration="1/1" type="FCLEF" center_line="2"/>
+          </clefs>
+          <chordSymbols>
+            <chordSymbol duration="1/1" scaleDegreeNumber="0" scaleDegreeAccidental="NATURAL" chordType="BLANK"/>
+          </chordSymbols>
+          <voices>
+            <voice>
+              <multinotes>
+                <multinote duration="1/1">
+                  <pitches/>
+                </multinote>
+              </multinotes>
+            </voice>
+          </voices>
+        </measure>
+        <measure>
+          <timeSignatures>
+            <timeSignature duration="1/1" numerator="4" denominator="4"/>
+          </timeSignatures>
+          <keySignatures>
+            <keySignature duration="1/1" accidentals="0" isMajor="true"/>
+          </keySignatures>
+          <clefs>
+            <clef duration="1/1" type="FCLEF" center_line="2"/>
+          </clefs>
+          <chordSymbols>
+            <chordSymbol duration="1/1" scaleDegreeNumber="0" scaleDegreeAccidental="NATURAL" chordType="BLANK"/>
+          </chordSymbols>
+          <voices>
+            <voice>
+              <multinotes>
+                <multinote duration="1/1">
+                  <pitches/>
+                </multinote>
+              </multinotes>
+            </voice>
+          </voices>
+        </measure>
+      </measures>
+    </staff>
+  </staffs>
+</piece>
