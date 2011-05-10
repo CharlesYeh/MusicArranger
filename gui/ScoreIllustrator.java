@@ -3,6 +3,7 @@ package gui;
 import arranger.ArrangerConstants;
 import music.*;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -223,7 +224,14 @@ public class ScoreIllustrator {
 			// TODO: GO ONTO NEXT LINE################################################
 			//int measureWidth = 100 * currTimeSig.getNumerator() / currTimeSig.getDenominator();
 			// if extending into the margin, make a new line
+			Iterator<TimeSignature> iterTimeSig = currTimeSigs.values().iterator();
 			Integer measureX = staffX.values().iterator().next();
+			
+			if (iterTimeSig.hasNext()) {
+				TimeSignature firstTimeSig = iterTimeSig.next();
+				measureX += MEASURE_WIDTH * firstTimeSig.getNumerator() / firstTimeSig.getDenominator();
+			}
+			
 			if (measureX > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN || startDrawing) {
 				// draw system lines
 				if (!startDrawing){
@@ -277,7 +285,7 @@ public class ScoreIllustrator {
 					System.out.println("There was an empty list of class: " + timestamp.getAssocClass());
 					System.exit(1);
 				}
-
+				
 				Rational currTime = null;
 				Timestep currDur = null;
 				if (currList.hasNext()) {
@@ -427,17 +435,11 @@ public class ScoreIllustrator {
 			
 			for (Staff stf : _staffPositions.keySet()) {
 				int pos = _staffPositions.get(stf);
-
-				Measure m = stf.getMeasures().get(0);
 				
 				int stfX = staffX.get(stf) + finalVoiceX;
-				measureX = stfX;
-
-				/*int startY = systemY + pos * STAFF_SPACING;
-				int endY = systemY + pos * STAFF_SPACING + 4 * SYSTEM_LINE_SPACING;*/
-				
-				//g.drawLine(stfX, startY, stfX, endY);
 				staffX.put(stf, stfX + 15);
+				
+				measureX = stfX;
 			}
 			
 			int startY = systemY;
@@ -559,10 +561,11 @@ public class ScoreIllustrator {
 
 	private void drawChordSymbol(Graphics g, ChordSymbol symb, int xc, int yc) {
 		g.setFont(new Font("Cambria", 0, 24));
-
 		g.drawString(symb.getSymbolText(), xc - 10, yc);
-		g.drawString(symb.getTopInversionText(), xc + 10, yc);
-		g.drawString(symb.getBotInversionText(), xc + 10, yc + 10);
+		
+		g.setFont(new Font("Cambria", 0, 12));
+		g.drawString(symb.getTopInversionText(), xc + 5, yc - 10);
+		g.drawString(symb.getBotInversionText(), xc + 5, yc + 2);
 	}
 	
 	private void drawRest(Graphics g, int numerValue, int denomValue, int xc, int yc) {

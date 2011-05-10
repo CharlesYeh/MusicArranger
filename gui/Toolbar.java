@@ -52,7 +52,7 @@
          _x = (int) (Math.random() * 300);
          _y = 20;
          _width = 100;
-         _height = 30;
+         _height = 35;
       
          _snapDrag = false;
          _drag = false;
@@ -113,12 +113,12 @@
       
          _orientation = or;
          if (_orientation == Orientation.HORIZONTAL) {
-            _width = length;
-            _height = 30;
+            _width = length + 3;
+            _height = 33;
          }
          else {
-            _width = 30;
-            _height = length;
+            _width = 33;
+            _height = length + 3;
          }
       
          _buffer = new BufferedImage(_width, _height, BufferedImage.TYPE_INT_ARGB);

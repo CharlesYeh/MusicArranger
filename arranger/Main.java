@@ -203,7 +203,7 @@ public class Main extends JFrame implements InstructionListener {
 		if (instr.isEmpty())
 			return;
 		
-		Instruction firstInstr = instr.getInstructions().iterator().next()
+		Instruction firstInstr = instr.getInstructions().iterator().next();
 		if (firstInstr instanceof GUIInstruction) {
 			// logic manager to GUI
 			_mainPanel.interpretInstrBlock(instr);
