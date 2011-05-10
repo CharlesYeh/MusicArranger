@@ -520,7 +520,7 @@ public class ScoreIllustrator {
 				//stemX -= NOTE_WIDTH / 2;
 				
 				if (denomValue < 3)
-					drawStem(g, stemX, nextY, minOffset, maxOffset);
+					drawStem(g, stemX - dir * SYSTEM_LINE_SPACING / 2, nextY, minOffset, maxOffset);
 			}
 			
 			int adjust = dir * SYSTEM_LINE_SPACING / 2;
@@ -550,11 +550,11 @@ public class ScoreIllustrator {
 				}
 				
 				prevPitch = p;
-				drawPitch(g, numerValue, denomValue, noteX + adjust, noteY, selected);
+				drawPitch(g, numerValue, denomValue, noteX + adjust - dir * SYSTEM_LINE_SPACING / 2, noteY, selected);
 				
 				// draw accidental if not in key
 				if (!currKeySig.hasPitch(p))
-					drawAccidental(g, p.getAccidental(), noteX + adjust - 10, noteY);
+					drawAccidental(g, p.getAccidental(), noteX + adjust - 10 - dir * SYSTEM_LINE_SPACING / 2, noteY);
 			}
 		}
 	}

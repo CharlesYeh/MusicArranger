@@ -23,6 +23,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 
 import instructions.*;
 import javax.swing.event.EventListenerList;
@@ -31,7 +33,8 @@ import java.awt.Component;
 import arranger.ArrangerConstants;
 import music.*;
 
-public class MainPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
+public class MainPanel extends JPanel implements MouseListener, MouseMotionListener,
+														MouseWheelListener, ComponentListener, KeyListener {
 	
 	static final long serialVersionUID = 0;
 	boolean _disabled;
@@ -292,6 +295,12 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void componentHidden(ComponentEvent e) {}
 	public void componentMoved(ComponentEvent e) {}
 	public void componentShown(ComponentEvent e) {}
+	
+	public void keyTyped(KeyEvent e) {}
+	public void keyPressed(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {
+		System.out.println(e.getKeyCode());
+	}
 	
 	public void interpretInstrBlock(InstructionBlock instrBlock) {
 		List<Instruction> listInstr = instrBlock.getInstructions();
