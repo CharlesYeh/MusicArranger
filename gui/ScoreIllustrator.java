@@ -372,13 +372,13 @@ public class ScoreIllustrator {
 							int accidY = (3 * a + 1) % 7 - currClef.getCenterLine();
 							switch (currClef.getClefName()) {
 								case GCLEF:
-									accidY += - 4;
+									accidY += -3;
 									break;
 								case FCLEF:
-									accidY += - 2;
+									accidY += 3;
 									break;
 								case CCLEF:
-									accidY += - 3;
+									accidY += 0;
 									break;
 							}
 							drawAccidental(g, Accidental.SHARP, nextX + KEYSIG_WIDTH * a, nextY + accidY * SYSTEM_LINE_SPACING / 2);
@@ -390,13 +390,13 @@ public class ScoreIllustrator {
 							int accidY = -(3 + 3 * a) % 7 - currClef.getCenterLine();
 							switch (currClef.getClefName()) {
 								case GCLEF:
-									accidY += 2;
+									accidY += 5;
 									break;
 								case FCLEF:
-									accidY += 8;
+									accidY += 11;
 									break;
 								case CCLEF:
-									accidY += 5;
+									accidY += 8;
 									break;
 							}
 							drawAccidental(g, Accidental.FLAT, nextX + KEYSIG_WIDTH * a, nextY + accidY * SYSTEM_LINE_SPACING / 2);

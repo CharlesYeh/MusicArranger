@@ -216,7 +216,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 			_mainPanel.updateScore();
 		}
 	}
-
+	
 	public static void main(String[] args){
 		new Main();
 	}
