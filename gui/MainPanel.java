@@ -349,14 +349,15 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		List<Instruction> listInstr = instrBlock.getInstructions();
 		System.out.println("START INTERPRETING");
 		for (Instruction instr : listInstr) {
-			System.out.println(instr);
 			interpretInstr(instr);
 		}
 	}
 	
 	public void interpretInstr(Instruction instr) {
 		if (instr instanceof GUIInstructionChordData) {
-			// score data in score window
+			// make unspecified ChordSymbol
+			// store data in score window
+			
 		}
 	}
 	
