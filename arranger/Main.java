@@ -200,7 +200,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 	public void keyReleased(KeyEvent e) {
 		_mainPanel.keyReleased(e);
 	}
-
+	
 	public void receiveInstruction(InstructionBlock instr) {
 		if (instr.isEmpty())
 			return;

@@ -3,6 +3,7 @@ package gui;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Color;
+import java.awt.event.MouseEvent;
 
 import music.ChordSymbol;
 import music.ChordType;
@@ -32,13 +33,13 @@ public class ChordGrid extends Drawable {
 		g.setColor(Color.WHITE);
 		g.fillRect(_x, _y, _width, _height);
 		
-		g.setColor(Color.BLACK);
+		g.setColor(Color.RED);
 		g.drawRect(_x, _y, _width, _height);
 	}
 	
-	public ChordSymbol getChordSymbolAt(Point p) {
-		int col = ((int) p.getX() - _x) / CELL_SIZE;
-		int row = ((int) p.getY() - _y) / CELL_SIZE;
+	public ChordSymbol getChordSymbolAt(MouseEvent p) {
+		int col = (p.getX() - _x) / CELL_SIZE;
+		int row = (p.getY() - _y) / CELL_SIZE;
 		
 		return null;
 	}

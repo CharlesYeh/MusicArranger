@@ -7,12 +7,7 @@ import java.awt.Color;
 import java.awt.Point;
 
 // data struct
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.ListIterator;
+import java.util.*;
 
 // for events
 import java.awt.Image;
@@ -31,6 +26,7 @@ import java.awt.Component;
 
 import arranger.ArrangerConstants;
 import music.*;
+import util.*;
 
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener,
 														MouseWheelListener, ComponentListener {
@@ -45,7 +41,6 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	Toolbar _modeToolbar, _noteToolbar, _playToolbar;
 	
 	ChordGrid _chordGrid;
-	
 	ScoreWindow _scoreWindow;
 	
 	EventListenerList _listeners = new EventListenerList();
@@ -55,16 +50,17 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	EditDuration _currDuration = EditDuration.QUARTER;
 	
 	Accidental _currAccidental	= null;	// is the accidental modifier set?
-	boolean _insertChord 	= false;		// in the middle of choosing a chord symbol
+	InstructionIndex _insertChord = null;		// in the middle of choosing a chord symbol if != null
 	boolean _currRest 		= false;		// whether each click inserts rests
 	
 	// currently selected
 	Set<InstructionIndex> _selected;
 	
 	Piece _piece;
+	Map<InstructionIndex, List<Node<ChordSymbol>>> _suggestions;
 	
 	//------------------end state information------------------
-
+	
 	public MainPanel(Piece piece) {
 		_piece = piece;
 		
@@ -105,13 +101,13 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	}
 
 	public void paint(Graphics g) {
-	   super.paint(g);
+		super.paint(g);
 		
-		if (_insertChord)
+		_scoreWindow.drawSelf(g);
+		
+		if (_insertChord != null)
 			_chordGrid.drawSelf(g);
-
-	   _scoreWindow.drawSelf(g);
-
+		
 	   ListIterator<Toolbar> iter = _toolbars.listIterator(_toolbars.size());
 	   while (iter.hasPrevious()) {
 			Drawable drawer = iter.previous();
@@ -143,11 +139,17 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		   // clicked on score window
 			List<InstructionIndex> listIndex = _scoreWindow.mousePressed(evtPoint);
 			handleScoreMousePressed(listIndex);
+			
+			_chordGrid.setX((int) evtPoint.getX());
+			_chordGrid.setY((int) evtPoint.getY());
 	   }
 	   else {
 		   // clicked on a toolbar, start drag?
 			_activeToolbar.mousePressed(evtPoint);
 	   }
+		
+		// in case chord grid pops up
+		repaint();
 	}
 	
 	private void handleScoreMousePressed(List<InstructionIndex> listIndex) {
@@ -156,11 +158,13 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		InstructionBlock instr = new InstructionBlock(this);
 		for (InstructionIndex index : listIndex) {
+			
 			if (index.getIsChord()) {
-				System.out.println("START INSERTING CHORD at: " + index.getMeasureOffset());
 				// insert/replace chord symbol
-				Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.CHORD_SYMBOL, new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR));
-				instr.addInstruction(editInstr);
+				/*Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.CHORD_SYMBOL, new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR));
+				instr.addInstruction(editInstr);*/
+				_insertChord = index;
+				return;
 			}
 			else {
 				// insert/replace multinote or pitch
@@ -203,26 +207,35 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		_activeToolbar = null;
 		Toolbar tbar = mouseEventToolbar(evtPoint);
 		
-		if (_insertChord) {
-			// insert chord is mouse was released within box
-			return;
-		}
-		
-		if (tbar == null) {
-			// release on scorewindow
-			_scoreWindow.mouseReleased(evtPoint);
+		if (_insertChord != null) {
+			ChordSymbol newSymbol = _chordGrid.getChordSymbolAt(e);
+			if (newSymbol != null) {
+				// insert chord if mouse was released within box
+				Instruction editInstr = new EditInstruction(_insertChord, EditInstructionType.REPLACE, EditType.CHORD_SYMBOL, newSymbol);
+				InstructionBlock instr = new InstructionBlock(this, editInstr);
+				
+				sendInstruction(instr);
+			}
+			
+			_insertChord = null;
 		}
 		else {
-			// clicked on a toolbar
-			Instruction ins = tbar.mouseReleased(evtPoint);
-			repaint();
-			
-			if (ins == null)
-				return;
-			
-			sendInstruction(new InstructionBlock(this, ins));
+			if (tbar == null) {
+				// release on scorewindow
+				_scoreWindow.mouseReleased(evtPoint);
+			}
+			else {
+				// clicked on a toolbar
+				Instruction ins = tbar.mouseReleased(evtPoint);
+				repaint();
+				
+				if (ins == null)
+					return;
+				
+				sendInstruction(new InstructionBlock(this, ins));
+			}
 		}
-
+		
 	   repaint();
 	}
 
@@ -232,7 +245,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		Point evtPoint = getEventPoint(e);
 		
-		if (_insertChord) {
+		if (_insertChord != null) {
 			// inserting chord
 			
 		}
@@ -302,7 +315,6 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void keyTyped(KeyEvent e) {}
 	public void keyPressed(KeyEvent e) {}
 	public void keyReleased(KeyEvent e) {
-		System.out.println(e);
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_DELETE:
 			InstructionBlock instrBlock = new InstructionBlock(this);
@@ -340,7 +352,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public synchronized void removeInstructionListener(InstructionListener listener) {
 		_listeners.remove(InstructionListener.class, listener);
 	}
-
+	
 	// call this method whenever you want to notify
 	//the event listeners of the particular event
 	private synchronized void sendInstruction(InstructionBlock instrBlock) {
@@ -382,21 +394,27 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				// translate to generation instruction
 				GenerateInstructionType genType = (GenerateInstructionType) modeInstr.getValue();
 				
+				InstructionIndex pieceStart	= new InstructionIndex(0, new Rational(0, 1));
+				InstructionIndex pieceEnd		= new InstructionIndex(_piece.getNumMeasures(), new Rational(1, 1));
+				
+				Instruction genInstr = null;
+				
 				switch (genType) {
 				case CHORDS:
-					InstructionIndex pieceStart	= new InstructionIndex(0, new Rational(0, 1));
-					InstructionIndex pieceEnd		= new InstructionIndex(_piece.getNumMeasures(), new Rational(0, 1));
-					
-					Instruction genInstr = new GenerateInstructionAnalyzeChords(pieceStart, pieceEnd, new Rational(1, 4));
-					InstructionBlock genBlock = new InstructionBlock(this, genInstr);
-					
-					sendInstruction(genBlock);
+					genInstr = new GenerateInstructionAnalyzeChords(pieceStart, pieceEnd, new Rational(1, 4));
 					break;
 					
 				case VOICES:
-					
+					genInstr = new GenerateInstructionAnalyzeChords(pieceStart, pieceEnd, new Rational(1, 4));
 					break;
+					
+				default:
+					System.out.println("UNRECOGNIZED SUB ENUM UNDER MODE GENERATE");
 				}
+				
+				InstructionBlock genBlock = new InstructionBlock(this, genInstr);
+				
+				sendInstruction(genBlock);
 				break;
 			}
 			

@@ -55,12 +55,14 @@ public class ScoreIllustrator {
 	final static int CLEF_IMG_OFFSET = 50;
 	final static int ACCID_IMG_OFFSET = 15;
 	final static int REST_IMG_OFFSET = 15;
+	final static int NOTE_IMG_OFFSET = 15;
 	
 	final static int OFFSET_Y = 25;
 
 	Image _imgQuarter, _imgHalf, _imgWhole, _imgQuarterRest, _imgHalfRest, _imgEighthRest, _imgSixteenthRest,
 			_imgDoubleFlat, _imgFlat, _imgNatural, _imgSharp, _imgDoubleSharp,
-			_imgClefG, _imgClefF, _imgClefC;
+			_imgClefG, _imgClefF, _imgClefC,
+			_imgQuarterNote, _imgHalfNote, _imgWholeNote;
 
 	// map each system to its y coordinate
 	List<Integer> _systemPositions;
@@ -88,6 +90,10 @@ public class ScoreIllustrator {
 			_imgClefG		= ImageIO.read(new File("images/score/score_clef_g.png"));
 			_imgClefF		= ImageIO.read(new File("images/score/score_clef_f.png"));
 			_imgClefC		= ImageIO.read(new File("images/score/score_clef_c.png"));
+			
+			_imgQuarterNote= ImageIO.read(new File("images/score/score_quarter_note.png"));
+			_imgHalfNote	= ImageIO.read(new File("images/score/score_half_note.png"));
+			_imgWholeNote	= ImageIO.read(new File("images/score/score_whole_note.png"));
 		}
 		catch (IOException e) {
 			System.out.println("Error while loading musical images: " + e);
@@ -111,7 +117,7 @@ public class ScoreIllustrator {
 		// add first system to mNotePositions
 		Map<Integer, TreeMap<Integer, Rational>> firstSys = new HashMap<Integer, TreeMap<Integer, Rational>>();
 		_mNotePositions.add(firstSys);
-
+		
 		// the staff each object is in
 		Map<ListIterator<Measure>, Staff> measureStaffs = new HashMap<ListIterator<Measure>, Staff>();
 		Map<ListIterator<? extends Timestep>, Staff> timestepStaff = new HashMap<ListIterator<? extends Timestep>, Staff>();
@@ -599,10 +605,7 @@ public class ScoreIllustrator {
 		}
 		else if (stemGroup.size() == 1) {
 			// draw single stem
-
-
-
-
+			
 			stemGroup.clear();
 			return;
 		}
@@ -685,21 +688,27 @@ public class ScoreIllustrator {
 	 */
 	private void drawBaseNoteHead(Graphics g, int denomValue, int xc, int yc, boolean selected) {
 		
+		xc -= NOTE_IMG_OFFSET;
+		yc -= NOTE_IMG_OFFSET;
+		
 		if (denomValue < 3) {
 			switch (denomValue) {
 			case 0:
 				// whole note
-				dynamicDrawNoteHead(g, xc, yc, true, selected);
+				//dynamicDrawNoteHead(g, xc, yc, true, selected);
+				g.drawImage(_imgWholeNote, xc, yc, null);
 				break;
 
 			case 1:
 				// half note
-				dynamicDrawNoteHead(g, xc, yc, true, selected);
+				//dynamicDrawNoteHead(g, xc, yc, true, selected);
+				g.drawImage(_imgHalfNote, xc, yc, null);
 				break;
 
 			case 2:
 				// quarter note
-				dynamicDrawNoteHead(g, xc, yc, false, selected);
+				//dynamicDrawNoteHead(g, xc, yc, false, selected);
+				g.drawImage(_imgQuarterNote, xc, yc, null);
 				break;
 			default:
 				
@@ -707,7 +716,8 @@ public class ScoreIllustrator {
 		}
 		else {
 			// eighth or smaller
-			dynamicDrawNoteHead(g, xc, yc, false, selected);
+			//dynamicDrawNoteHead(g, xc, yc, false, selected);
+			g.drawImage(_imgQuarterNote, xc, yc, null);
 		}
 	}
 
@@ -790,7 +800,7 @@ public class ScoreIllustrator {
 		int pitchValue = pitch.getNoteLetter().intValue() + pitch.getOctave() * 7;
 		return pitchValue - centerValue + c.getCenterLine();
 	}
-
+	
 	public int getLineOffset(Clef c, int line) {
 		// - 4 since
 		return -(line - 4) * SYSTEM_LINE_SPACING / 2;
@@ -860,7 +870,6 @@ public class ScoreIllustrator {
 		System.out.println("Measure: " + indexMeasure);
 		System.out.println("Line: " + indexLine);
 		System.out.println("----------------------");*/
-		// current voice being edited
 
 		Map<Integer, TreeMap<Integer, Rational>> measureMNotes = _mNotePositions.get(indexSystem);
 		TreeMap<Integer, Rational> multiNotePositions = measureMNotes.get(indexMeasure);
