@@ -73,15 +73,6 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemNew.setToolTipText("New song");
 		menuItemNew.addActionListener(
 			new ActionListener() {
-				private List<Clef> clefList = new ArrayList<Clef>();
-				
-				{
-					// TODO: THIS IS STILL ALL CONSTANTS
-					Clef trebleClef = new Clef(ClefName.GCLEF, -2);
-					Clef bassClef = new Clef(ClefName.FCLEF, 2);
-					clefList.add(trebleClef);
-					clefList.add(bassClef);
-				}
 				
 				public void actionPerformed(ActionEvent event) {
 					// prompt for new song data
@@ -166,9 +157,9 @@ public class Main extends JFrame implements InstructionListener {
 		file.add(menuItemPrint);
 		file.add(menuItemExit);
 		//----------------EDIT----------------
-		JMenu edit = new JMenu("Edit");
+		/*JMenu edit = new JMenu("Edit");
 		edit.setMnemonic(KeyEvent.VK_E);
-
+		
 		JMenuItem menuItemUndo = new JMenuItem("Undo");
 		menuItemUndo.setMnemonic(KeyEvent.VK_U);
 		menuItemUndo.setToolTipText("Undo last action");
@@ -193,9 +184,9 @@ public class Main extends JFrame implements InstructionListener {
 
 		edit.add(menuItemUndo);
 		edit.add(menuItemRedo);
-
+		*/
 		menuBar.add(file);
-		menuBar.add(edit);
+		//menuBar.add(edit);
 		setJMenuBar(menuBar);
 	}
 

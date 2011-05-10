@@ -299,12 +299,26 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void keyTyped(KeyEvent e) {}
 	public void keyPressed(KeyEvent e) {}
 	public void keyReleased(KeyEvent e) {
-		System.out.println(e.getKeyCode());
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_DELETE:
+			InstructionBlock instrBlock = new InstructionBlock(this);
+			
+			for (InstructionIndex index : _selected) {
+				Instruction editInstr = new EditInstruction(index, EditInstructionType.CLEAR, EditType.MULTINOTE);
+				instrBlock.addInstruction(editInstr);
+			}
+			
+			sendInstruction(instrBlock);
+			break;
+			
+		}
 	}
 	
 	public void interpretInstrBlock(InstructionBlock instrBlock) {
 		List<Instruction> listInstr = instrBlock.getInstructions();
+		System.out.println("START INTERPRETING");
 		for (Instruction instr : listInstr) {
+			System.out.println(instr);
 			interpretInstr(instr);
 		}
 	}
