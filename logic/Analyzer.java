@@ -69,6 +69,7 @@ public class Analyzer extends Thread {
 		/*=====NOTE: to improve efficiency of finding optimal paths, 
 		 * the path finder is build in a way that requires more optimal edges to be added before less optimal ones=====*/
 		///Adding edges for chordI
+		_chordPreferencesGraph.addEdge(chordI, chordI, 		1);
 		_chordPreferencesGraph.addEdge(chordI, chordii, 	1);
 		_chordPreferencesGraph.addEdge(chordI, chordiii, 	1);
 		_chordPreferencesGraph.addEdge(chordI, chordIV, 	1);
@@ -84,6 +85,7 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordI, chordGer6, 	2);
 
 		//Adding edges for chordii
+		_chordPreferencesGraph.addEdge(chordii, chordii, 	1);
 		_chordPreferencesGraph.addEdge(chordii, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordii, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordii, chordviio,	2);
@@ -94,6 +96,7 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordii, chordGer6,	3);
 		
 		//Adding edges for chordii7
+		_chordPreferencesGraph.addEdge(chordii7, chordii7, 	1);
 		_chordPreferencesGraph.addEdge(chordii7, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordii7, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordii7, chordviio,	2);
@@ -104,10 +107,12 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordii7, chordGer6,	3);
 
 		//Adding edges for chordIII
+		_chordPreferencesGraph.addEdge(chordiii, chordiii, 	1);
 		_chordPreferencesGraph.addEdge(chordiii, chordvi, 	1);
 		_chordPreferencesGraph.addEdge(chordiii, chordIV, 	1);
 
 		//Adding edges for chordIV
+		_chordPreferencesGraph.addEdge(chordIV, chordIV, 	1);
 		_chordPreferencesGraph.addEdge(chordIV, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordIV, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordIV, chordii, 	1);
@@ -121,19 +126,23 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordIV, chordGer6,	2);
 
 		//Adding edges for chordV
+		_chordPreferencesGraph.addEdge(chordV, chordV, 		1);
 		_chordPreferencesGraph.addEdge(chordV, chordI, 		1); //Authentic cadence
 		_chordPreferencesGraph.addEdge(chordV, chordvi, 	2); //Deceptive cadence
 		
 		//Adding edges for chordV7
+		_chordPreferencesGraph.addEdge(chordV7, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordV7, chordI, 	1); //Authentic cadence
 		_chordPreferencesGraph.addEdge(chordV7, chordvi, 	2); //Deceptive cadence
 
 		//Adding edges for chordvi
+		_chordPreferencesGraph.addEdge(chordvi, chordvi, 	1);
 		_chordPreferencesGraph.addEdge(chordvi, chordii, 	1);
 		_chordPreferencesGraph.addEdge(chordvi, chordii7, 	1);
 		_chordPreferencesGraph.addEdge(chordvi, chordIV, 	1);
 
 		//Adding edges for chordviio
+		_chordPreferencesGraph.addEdge(chordviio, chordviio,1);
 		_chordPreferencesGraph.addEdge(chordviio, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordviio, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordviio, chordI, 	1); //Authentic cadence
@@ -144,6 +153,7 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordviio, chordGer6,2);
 		
 		//Adding edges for chordviiho7
+		_chordPreferencesGraph.addEdge(chordviiho7, chordviiho7,1);
 		_chordPreferencesGraph.addEdge(chordviiho7, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordviiho7, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordviiho7, chordI, 	1); //Authentic cadence
@@ -154,18 +164,22 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordviiho7, chordGer6,	2);
 		
 		//Adding edges for chordN
+		_chordPreferencesGraph.addEdge(chordN, chordN, 		1);
 		_chordPreferencesGraph.addEdge(chordN, chordV, 		1);
 		_chordPreferencesGraph.addEdge(chordN, chordV7, 	1);
 		
 		//Adding edges for chordIt6
+		_chordPreferencesGraph.addEdge(chordIt6, chordIt6, 	1);
 		_chordPreferencesGraph.addEdge(chordIt6, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordIt6, chordV7, 	1);
 		
 		//Adding edges for chordFr6
+		_chordPreferencesGraph.addEdge(chordFr6, chordFr6, 	1);
 		_chordPreferencesGraph.addEdge(chordFr6, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordFr6, chordV7, 	1);
 		
 		//Adding edges for chordGer6
+		_chordPreferencesGraph.addEdge(chordGer6, chordGer6,1);
 		_chordPreferencesGraph.addEdge(chordGer6, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordGer6, chordV7, 	1);
 
@@ -207,6 +221,7 @@ public class Analyzer extends Thread {
 		/*=====NOTE: to improve efficiency of finding optimal paths, 
 		 * the path finder is build in a way that requires more optimal edges to be added before less optimal ones=====*/
 		//Adding edges for chordi
+		_chordPreferencesGraph.addEdge(chordi, chordi, 		1);
 		_chordPreferencesGraph.addEdge(chordi, chordiio, 	1);
 		_chordPreferencesGraph.addEdge(chordi, chordiiho7, 	1);
 		_chordPreferencesGraph.addEdge(chordi, chordIII, 	1);
@@ -222,6 +237,7 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordi, chordGer6, 	2);
 
 		//Adding edges for chordiio
+		_chordPreferencesGraph.addEdge(chordiio, chordiio, 	1);
 		_chordPreferencesGraph.addEdge(chordiio, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordiio, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordiio, chordviio,	2);
@@ -232,6 +248,7 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordiio, chordGer6,	3);
 		
 		//Adding edges for chordiio7
+		_chordPreferencesGraph.addEdge(chordiiho7, chordiiho7, 		1);
 		_chordPreferencesGraph.addEdge(chordiiho7, chordV, 		1);
 		_chordPreferencesGraph.addEdge(chordiiho7, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordiiho7, chordviio,	2);
@@ -242,10 +259,12 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordiiho7, chordGer6,	3);
 
 		//Adding edges for chordIII
+		_chordPreferencesGraph.addEdge(chordIII, chordIII, 	1);
 		_chordPreferencesGraph.addEdge(chordIII, chordVI, 	1);
 		_chordPreferencesGraph.addEdge(chordIII, chordiv, 	1);
 
 		//Adding edges for chordiv
+		_chordPreferencesGraph.addEdge(chordiv, chordiv, 	1);
 		_chordPreferencesGraph.addEdge(chordiv, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordiv, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordiv, chordiio, 	1);
@@ -259,18 +278,22 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordiv, chordGer6,	2);
 
 		//Adding edges for chordV
+		_chordPreferencesGraph.addEdge(chordV, chordV, 		1);
 		_chordPreferencesGraph.addEdge(chordV, chordi, 		1); //Authentic cadence
 		_chordPreferencesGraph.addEdge(chordV, chordVI, 	2); //Deceptive cadence
 		
 		//Adding edges for chordV7
+		_chordPreferencesGraph.addEdge(chordV7, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordV7, chordi, 	1); //Authentic cadence
 		_chordPreferencesGraph.addEdge(chordV7, chordVI, 	2); //Deceptive cadence
 
 		//Adding edges for chordVI
+		_chordPreferencesGraph.addEdge(chordVI, chordVI, 	1);
 		_chordPreferencesGraph.addEdge(chordVI, chordiio, 	1);
 		_chordPreferencesGraph.addEdge(chordVI, chordi, 	1);
 
 		//Adding edges for chordviio
+		_chordPreferencesGraph.addEdge(chordviio, chordviio, 	1);
 		_chordPreferencesGraph.addEdge(chordviio, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordviio, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordviio, chordi, 	1); //Authentic cadence
@@ -280,6 +303,7 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordviio, chordGer6,2);
 		
 		//Adding edges for chordviio7
+		_chordPreferencesGraph.addEdge(chordviio7, chordviio7, 		1);
 		_chordPreferencesGraph.addEdge(chordviio7, chordV, 		1);
 		_chordPreferencesGraph.addEdge(chordviio7, chordV7, 	1);
 		_chordPreferencesGraph.addEdge(chordviio7, chordi, 		1); //Authentic cadence
@@ -289,18 +313,22 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordviio7, chordGer6,	2);
 		
 		//Adding edges for chordN
+		_chordPreferencesGraph.addEdge(chordN, chordN, 	1);
 		_chordPreferencesGraph.addEdge(chordN, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordN, chordV7, 	1);
 		
 		//Adding edges for chordIt6
+		_chordPreferencesGraph.addEdge(chordIt6, chordIt6, 	1);
 		_chordPreferencesGraph.addEdge(chordIt6, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordIt6, chordV7, 	1);
 		
 		//Adding edges for chordFr6
+		_chordPreferencesGraph.addEdge(chordFr6, chordFr6, 	1);
 		_chordPreferencesGraph.addEdge(chordFr6, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordFr6, chordV7, 	1);
 		
 		//Adding edges for chordGer6
+		_chordPreferencesGraph.addEdge(chordGer6, chordGer6, 	1);
 		_chordPreferencesGraph.addEdge(chordGer6, chordV, 	1);
 		_chordPreferencesGraph.addEdge(chordGer6, chordV7, 	1);
 
