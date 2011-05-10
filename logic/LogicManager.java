@@ -2,6 +2,7 @@ package logic;
 
 import music.*;
 import instructions.*;
+import util.*;
 
 import javax.swing.event.EventListenerList;
 
@@ -240,7 +241,6 @@ public class LogicManager implements Printable {
 	}
 	
 	private boolean interpretGenerateInstrAnalyzeChords(GenerateInstructionAnalyzeChords genInstrAnalyzeChords) {
-		// TODO: ONLY ANALYZES BASED ON ONE VOICE, CURRENTLY
 		
 		InstructionIndex startIndex = genInstrAnalyzeChords.getStartIndex();
 		InstructionIndex endIndex = genInstrAnalyzeChords.getEndIndex();
@@ -253,7 +253,13 @@ public class LogicManager implements Printable {
 		// ACCOUNT FOR CHANGING KEYSIGS EITHER
 		KeySignature keySig = _piece.getStaffs().get(0).getMeasures().get(startIndex.getMeasureNumber()).getKeySignatures().get(0);
 		
-		Graph<ChordSymbol> chordGraph = _analyzer.calculateAnalysisGraph(melodyLine, keySig);
+		List<List<Node<ChordSymbol>>> chordProgressions = _analyzer.calculateAnalysisIndices(melodyLine, keySig);
+		
+		GUIInstructionChordData guiInst = new GUIInstructionChordData(indices, chordProgressions);
+		InstructionBlock instrBlock = new InstructionBlock(this);
+		instrBlock.addInstruction(guiInst);
+		
+		this.sendInstruction(instrBlock);
 		
 		return true;
 	}
