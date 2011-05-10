@@ -9,10 +9,13 @@ import util.*;
  * represent the chords that the analyzer has listed as possibilities at that point.
  */
 public class GUIInstructionChordData extends GUIInstruction {
-	List<InstructionIndex> indices;
-	List<List<Node<ChordSymbol>>> chords;
+	Map<InstructionIndex, List<Node<ChordSymbol>>> _indexChords;
 	
 	public GUIInstructionChordData() {
 		super();
+	}
+	
+	public Map<InstructionIndex, List<Node<ChordSymbol>>> getIndexChords() {
+		return _indexChords;
 	}
 }
