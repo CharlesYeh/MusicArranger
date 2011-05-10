@@ -23,6 +23,10 @@ import java.io.File;
 import java.io.IOException;
 
 public class ScoreWindow extends Drawable {
+	
+	final static int SHADOW_IMG_WIDTH = 100;
+	final static int SHADOW_IMG_HIDE = 40;
+	
 	Image _buffer;
 	Graphics _bufferGraphics;
 
@@ -33,6 +37,8 @@ public class ScoreWindow extends Drawable {
 	PageSlider _slider;
 	boolean _sliding;
 	int dragY;
+	
+	Image _imgShadowLeft, _imgShadowRight;
 
 	// measure positions within each system
 
@@ -47,7 +53,16 @@ public class ScoreWindow extends Drawable {
 
 		_slider = new PageSlider();
 		_sliding = false;
-
+		
+		// for page shadow
+		try {
+			_imgShadowLeft = ImageIO.read(new File("images/gui/left_shadow.png"));
+			_imgShadowRight = ImageIO.read(new File("images/gui/right_shadow.png"));
+		}
+		catch (IOException e) {
+			System.out.println("Error while loading icon for button: " + e);
+		}
+		
 		updateScore(null);
 	}
 
@@ -66,6 +81,10 @@ public class ScoreWindow extends Drawable {
 		int offsetY = (int) (_slider.getSlidePercent() * scrollHeight);
 		
 		int offsetX = (ArrangerConstants.WINDOW_WIDTH - ArrangerConstants.PAGE_WIDTH) / 2;
+		
+		// score sheet drop shadow
+		g.drawImage(_imgShadowLeft, offsetX - SHADOW_IMG_WIDTH + SHADOW_IMG_HIDE, 0, null);
+		g.drawImage(_imgShadowRight, offsetX + ArrangerConstants.PAGE_WIDTH - SHADOW_IMG_HIDE, 0, null);
 		
 		g.drawImage(_buffer, offsetX, -offsetY, null);
 		
