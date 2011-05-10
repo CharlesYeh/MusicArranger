@@ -357,16 +357,19 @@ public class ScoreIllustrator {
 					measureMNotes.put(noteX, currTime);
 
 				}
-				else if (currDur instanceof ChordSymbol && (currChord == null || !currDur.equals(currChord))) {
+				else if (currDur instanceof ChordSymbol) {
+					// only get from first staff
 					//---------------------CHORD SYMBOL----------------------
 					ChordSymbol cSymbol = (ChordSymbol) currDur;
 					
-					int chordY = nextY + 5 * SYSTEM_LINE_SPACING + (numStaffs - 1) * STAFF_SPACING + CHORD_SPACING;
-					drawChordSymbol(g, cSymbol, chordX + staffX.get(currStaff), chordY);
+					if (currChord == null || !currDur.equals(currChord)) {
+						int chordY = nextY + 5 * SYSTEM_LINE_SPACING + (numStaffs - 1) * STAFF_SPACING + CHORD_SPACING;
+						drawChordSymbol(g, cSymbol, chordX + staffX.get(currStaff), chordY);
+					}
 					
 					currChord = cSymbol;
 					Rational dur = cSymbol.getDuration();
-					chordX += (int) (((double) dur.getNumerator()) / dur.getDenominator() * MEASURE_WIDTH);
+					chordX += (int) (((double) dur.getNumerator()) / dur.getDenominator() * MEASURE_WIDTH) / numStaffs;
 				}
 				else if (currDur instanceof KeySignature && (currKeySig == null || !currDur.equals(currKeySig))) {
 					//-----------------------KEY SIG-----------------------
