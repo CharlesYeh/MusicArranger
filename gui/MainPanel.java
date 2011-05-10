@@ -180,7 +180,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			}
 		}
 		
-		sendInstruction(instr);
+		if (!instr.isEmpty())
+			sendInstruction(instr);
 	}
 	
    /* Handle a mouse release on a toolbar or the score window
@@ -292,7 +293,14 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void componentHidden(ComponentEvent e) {}
 	public void componentMoved(ComponentEvent e) {}
 	public void componentShown(ComponentEvent e) {}
-
+	
+	public void interpretInstrBlock(InstructionBlock instrBlock) {
+		List<Instruction> listInstr = instrBlock.getInstructions();
+		for (Instruction instr : listInstr) {
+			
+		}
+	}
+	
 	public synchronized void addInstructionListener(InstructionListener listener)  {
 		_listeners.add(InstructionListener.class, listener);
 	}

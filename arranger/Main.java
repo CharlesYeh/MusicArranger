@@ -41,6 +41,7 @@ public class Main extends JFrame implements InstructionListener {
 		super("Music Arranger");
 		_piece = new tests.LongMelodyPiece();
 		_logicManager = new LogicManager(_piece);
+		_logicManager.addInstructionListener(this);
 		_editor = _logicManager.getEditor();
 		
 		ArrangerConstants.WINDOW_WIDTH = 1000;
@@ -199,8 +200,19 @@ public class Main extends JFrame implements InstructionListener {
 	}
 
 	public void receiveInstruction(InstructionBlock instr) {
-		_logicManager.interpretInstrBlock(instr);
-		_mainPanel.updateScore();
+		if (instr.isEmpty())
+			return;
+		
+		Instruction firstInstr = instr.getInstructions().iterator().next()
+		if (firstInstr instanceof GUIInstruction) {
+			// logic manager to GUI
+			_mainPanel.interpretInstrBlock(instr);
+		}
+		else {
+			// GUI to logic manager
+			_logicManager.interpretInstrBlock(instr);
+			_mainPanel.updateScore();
+		}
 	}
 
 	public static void main(String[] args){

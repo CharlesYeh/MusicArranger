@@ -3,6 +3,8 @@ package logic;
 import music.*;
 import instructions.*;
 
+import javax.swing.event.EventListenerList;
+
 import java.util.*;
 import java.awt.print.*;
 import java.awt.Graphics;
@@ -26,7 +28,9 @@ public class LogicManager implements Printable {
 	Analyzer _analyzer;
 
 	MidiAPI _api;
-
+	
+	EventListenerList _listeners = new EventListenerList();
+	
 	Image _toPrint;
 
 	public LogicManager(Piece piece) {
@@ -639,5 +643,27 @@ public class LogicManager implements Printable {
 		}
 		
 		return output;
+	}
+	
+	public synchronized void addInstructionListener(InstructionListener listener)  {
+		_listeners.add(InstructionListener.class, listener);
+	}
+
+	public synchronized void removeInstructionListener(InstructionListener listener) {
+		_listeners.remove(InstructionListener.class, listener);
+	}
+
+	// call this method whenever you want to notify
+	//the event listeners of the particular event
+	private synchronized void sendInstruction(InstructionBlock instrBlock) {
+		// broadcast instruction
+	   if (instrBlock == null || instrBlock.isEmpty())
+			return;
+
+	   InstructionListener[] listeners = _listeners.getListeners(InstructionListener.class);
+
+	   for (int i = 0; i < listeners.length; i++) {
+			listeners[i].receiveInstruction(instrBlock);
+	   }
 	}
 }
