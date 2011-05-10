@@ -49,7 +49,7 @@ public class LongMelodyPiece extends Piece {
 		TimeSignature timesig1 = new TimeSignature(new Rational(4, 4), 4, 4);
 
 		// key signatures
-		KeySignature keysig1 = new KeySignature(new Rational(4, 4), -5, true);
+		KeySignature keysig1 = new KeySignature(new Rational(4, 4), 2, true);
 
 		// chord symbols
 		ChordSymbol chordsymbol1 = new ChordSymbol(new Rational(2, 4), new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR);

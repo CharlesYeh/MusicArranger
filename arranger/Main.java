@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -94,8 +95,11 @@ public class Main extends JFrame implements InstructionListener {
 					newFileDialog.pack();
 					newFileDialog.setVisible(true);
 					
-					System.out.println(newFileDialog.getNumMeasures());
-					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionNew(clefList, newFileDialog.getNumMeasures(), 4, 4, newFileDialog.getNumAccidentals(), true));
+					if (!newFileDialog.success())
+						return;
+					
+					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionNew(newFileDialog.getClefs(), newFileDialog.getNumMeasures(),
+																		newFileDialog.getTimeNumer(), newFileDialog.getTimeDenom(), newFileDialog.getNumAccidentals(), newFileDialog.getIsMajor()));
 					
 					receiveInstruction(myInstr);
 				}
@@ -107,15 +111,13 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemOpen.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
-					String path = JOptionPane.showInputDialog("Open from what path?");
+					JFileChooser chooser = new JFileChooser();
 					
-					// error checking
-					if (path == null && path.length() == 0) {
-						System.out.println("Open path cannot be empty");
+					int returnVal = chooser.showOpenDialog(frame);
+					if(returnVal == JFileChooser.APPROVE_OPTION) {
+						InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.OPEN, chooser.getSelectedFile().getName()));
+						receiveInstruction(myInstr);
 					}
-					
-					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.OPEN, path));
-					receiveInstruction(myInstr);
 				}
 			});
 		

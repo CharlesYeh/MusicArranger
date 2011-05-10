@@ -172,6 +172,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				
 				if (!_currRest) {
 					// insert pitches
+					System.out.println(_currAccidental);
 					index.setAccidental(_currAccidental);
 					Instruction editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
 					instr.addInstruction(editInstr);
@@ -323,13 +324,13 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				EditModifier currModifier = (EditModifier) modeInstr.getValue();
 				switch (currModifier) {
 				case FLAT:
-					_currAccidental = (_currAccidental == null) ? Accidental.FLAT : null;
+					_currAccidental = (_currAccidental == Accidental.FLAT) ? null : Accidental.FLAT;
 					break;
 				case SHARP:
-					_currAccidental = (_currAccidental == null) ? Accidental.SHARP : null;
+					_currAccidental = (_currAccidental == Accidental.SHARP) ? null : Accidental.SHARP;
 					break;
 				case NATURAL:
-					_currAccidental = (_currAccidental == null) ? Accidental.NATURAL : null;
+					_currAccidental = (_currAccidental == Accidental.NATURAL) ? null : Accidental.NATURAL;
 					break;
 				case REST:
 					_currRest = !_currRest;
