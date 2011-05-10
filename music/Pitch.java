@@ -101,4 +101,33 @@ public class Pitch {
 		if(newOctave < 12 && newOctave >= 0)
 			_octave = newOctave;
 	}
+	
+	// Returns -1, 0, 1 for p is lower than, equal to, or higher than this pitch.
+	public int compareTo(Pitch p) {
+		
+		if(this.equals(p)){
+			
+			return 0;
+		}
+		else {
+			if(_octave < p.getOctave()) {
+				
+				return -1;
+			}
+			else if(_octave > p.getOctave()){
+				return 1;
+			}
+			else {
+				int thisPitch = _noteLetter.pitchValue() + _accidental.intValue();
+				int pPitch = p.getNoteLetter().pitchValue() + p.getAccidental().intValue();
+				
+				if(thisPitch < pPitch) {
+					return -1;
+				}
+				else {
+					return 1;
+				}
+			}
+		}
+	}
 }

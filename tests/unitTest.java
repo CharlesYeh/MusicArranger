@@ -29,8 +29,9 @@ public class unitTest{
                 List<List<Pitch>> melody = new ArrayList<List<Pitch>>();
                 
                 ArrayList<Pitch> melodyInstance1 = new ArrayList<Pitch>();
-//                melodyInstance1.add(C);
                 melodyInstance1.add(C);
+                melodyInstance1.add(E);
+//                melodyInstance1.add(C);
                 melody.add(melodyInstance1);
                 
                 ArrayList<Pitch> melodyInstance2 = new ArrayList<Pitch>();
@@ -123,7 +124,7 @@ public class unitTest{
                 ChordSymbol harmonizeChord = chordvi;
                 KeySignature chosenKeySig = CMajor;
                 List<Pitch> chosenMelodyInstance = melodyInstance1;
-                List<Pitch> harmonizedMelody = new Analyzer3().harmonizeMelodyInstance(chosenMelodyInstance, harmonizeChord, chosenKeySig);
+                List<Pitch> harmonizedMelody = new Analyzer().harmonizeMelodyInstance(chosenMelodyInstance, harmonizeChord, chosenKeySig);
                 System.out.println("harmonizing:");
                 for(Pitch pitch : chosenMelodyInstance) {
                 	System.out.println(pitch);
@@ -133,6 +134,8 @@ public class unitTest{
                 	
                 	System.out.println(pitch);
                 }
+                
+                System.out.println(C.compareTo(A));
         }
         
         //Function that prints the all the possible traversals from the starting node of printGraph

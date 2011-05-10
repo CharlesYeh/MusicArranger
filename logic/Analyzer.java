@@ -1027,6 +1027,22 @@ public class Analyzer extends Thread {
 			remainingPitchesToEnter--;
 		}
 		
+//		List<Pitch> sortedList = new ArrayList<Pitch>();
+		
+		for(int i = 0; i < returnList.size(); i++) {
+			for(int j = 0; j < returnList.size() - 1; j++){
+				
+				if(returnList.get(j).compareTo(returnList.get(j + 1)) < 0) {
+					Pitch temp = returnList.get(j);
+//					returnList.get(j) = returnList.get(j + 1);
+//					returnList.get(j + 1) = temp;
+					returnList.remove(j);
+					returnList.add(j + 1, temp);
+				}
+			}
+//			sortedList.add(HighestPitch);
+//			returnList.remove(HighestPitch);
+		}
 		return returnList;
 	}
 
