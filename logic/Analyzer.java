@@ -161,6 +161,7 @@ public class Analyzer extends Thread {
 		_chordPreferencesGraph.addEdge(chordvi, chordvi, 	1);
 		_chordPreferencesGraph.addEdge(chordvi, chordii, 	1);
 		_chordPreferencesGraph.addEdge(chordvi, chordii7, 	1);
+		_chordPreferencesGraph.addEdge(chordvi, chordiii, 	1);
 		_chordPreferencesGraph.addEdge(chordvi, chordIV, 	1);
 
 		//Adding edges for chordviio
