@@ -445,7 +445,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 					break;
 					
 				case VOICES:
-					genInstr = new GenerateInstructionAnalyzeChords(pieceStart, pieceEnd, new Rational(1, 4));
+					genInstr = new GenerateInstructionVoices(pieceStart, pieceEnd, new Rational(1, 4), 4);
 					break;
 					
 				default:
