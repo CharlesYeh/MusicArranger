@@ -174,7 +174,7 @@ public class Interval {
 			}
 			break;
 		default:
-			throw new RuntimeException("Interval does not exist");
+			throw new RuntimeException("Interval does not exist " + _size);
 		}
 		
 		return numHalfSteps;
