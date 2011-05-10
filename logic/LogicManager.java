@@ -775,8 +775,8 @@ public class LogicManager implements Printable {
 			Measure measure = _piece.getStaffs().get(0).getMeasures().get(measureNumber);
 			
 			ChordSymbol chord = (ChordSymbol) getElementAt(measureOffset, measure.getChordSymbols());
-			
-			output.add(chord);
+			if(chord.getChordType()!=ChordType.BLANK)
+				output.add(chord);
 		}
 		
 		return output;
