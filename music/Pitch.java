@@ -95,4 +95,10 @@ public class Pitch {
 		
 		return new Interval(accidentalNum, letterDif + 1);
 	}
+
+	public void setOctave(int newOctave) {
+		
+		if(newOctave < 12 && newOctave >= 0)
+			_octave = newOctave;
+	}
 }
