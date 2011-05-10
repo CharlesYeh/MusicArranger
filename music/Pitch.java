@@ -33,6 +33,10 @@ public class Pitch {
 		return _octave;
 	}
 	
+	public int getLineNumber() {
+		return _noteLetter.intValue() + _octave * 7;
+	}
+	
 	public Accidental getAccidental() {
 		return _accidental;
 	}

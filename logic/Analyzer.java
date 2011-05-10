@@ -926,6 +926,8 @@ public class Analyzer extends Thread {
 		}
 	}
 	
+	
+	
 	public void generateChords() {
 		
 	}

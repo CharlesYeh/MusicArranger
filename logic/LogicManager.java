@@ -58,7 +58,7 @@ public class LogicManager implements Printable {
 			// instructions return true if they succeed, false if they do not (cancelling the
 			// instruction block)
 			if (!interpretInstr(instr)) {
-				break;
+				return;
 			}
 		}
 	}

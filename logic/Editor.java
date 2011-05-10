@@ -355,7 +355,20 @@ public class Editor{
 		return this;
 	}
 	public Editor insertPitch(Pitch pitch) {
-		_pitchIter.add(pitch);
+		if (_pitchIter.hasNext()) {
+			Pitch next = _pitchIter.next();
+			if (next.getLineNumber() > pitch.getLineNumber()) {
+				// if the inserted pitch is lower, keep iterating
+				insertPitch(pitch);
+			}
+			else {
+				_pitchIter.previous();
+				_pitchIter.add(pitch);
+			}
+		}
+		else {
+			_pitchIter.add(pitch);
+		}
 		return this;
 	}
 	public Editor removePitch() {
