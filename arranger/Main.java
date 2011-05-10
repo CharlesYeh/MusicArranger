@@ -47,7 +47,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 		_logicManager.addInstructionListener(this);
 		_editor = _logicManager.getEditor();
 		
-		ArrangerConstants.WINDOW_WIDTH = 1000;
+		ArrangerConstants.WINDOW_WIDTH = 1100;
 		ArrangerConstants.WINDOW_HEIGHT = 700;
 		
 		_mainPanel = new MainPanel(_piece);

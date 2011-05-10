@@ -10,6 +10,10 @@ import java.awt.Point;
 import java.util.*;
 
 // for events
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -58,19 +62,27 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	Piece _piece;
 	Map<InstructionIndex, List<Node<ChordSymbol>>> _suggestions;
+	Image _imgBackground;
 	
 	//------------------end state information------------------
 	
 	public MainPanel(Piece piece) {
 		_piece = piece;
 		
+		try {
+			_imgBackground = ImageIO.read(new File("images/gui/background.jpg"));
+		}
+		catch (IOException e) {
+			System.out.println("Error while loading icon for button: " + e);
+		}
+		
 		Toolbar.init("images/gui/toolbarHorizontal.png", "images/gui/toolbarVertical.png");
 		ToolbarButton.init("images/gui/button.png", "images/gui/button_over.png");
-
+		
 	   _toolbars = new LinkedList<Toolbar>();
-
+		
 	   DockController dockControl = new DockController();
-
+		
 		// add left hand side toolbar with buttons for input modes
 	   _modeToolbar = new ModeToolbar(dockControl);
 	   _noteToolbar = new NoteToolbar(dockControl);
@@ -91,7 +103,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	   addMouseWheelListener(this);
 	   addComponentListener(this);
 		
-	   setBackground(Color.WHITE);
+	   //setBackground(Color.WHITE);
 		
 	   repaint();
 	}
@@ -103,6 +115,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void paint(Graphics g) {
 		super.paint(g);
 		
+		g.drawImage(_imgBackground, 0, 0, null);
 		_scoreWindow.drawSelf(g);
 		
 		if (_insertChord != null)
