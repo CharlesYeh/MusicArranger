@@ -551,7 +551,7 @@ public class ScoreIllustrator {
 				drawPitch(g, numerValue, denomValue, noteX + adjust, noteY, selected);
 				
 				// draw accidental if not in key
-				if (!currKeySig.belongsToKey(p))
+				if (!currKeySig.hasPitch(p))
 					drawAccidental(g, p.getAccidental(), noteX + adjust - 5, noteY);
 			}
 		}
