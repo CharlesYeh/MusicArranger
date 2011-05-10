@@ -21,7 +21,7 @@ public class NewPiece extends Piece {
 		TimeSignature timesig1 = new TimeSignature(new Rational(4, 4), 4, 4);
 
 		// key signatures
-		KeySignature keysig1 = new KeySignature(new Rational(4, 4), 2, true);
+		KeySignature keysig1 = new KeySignature(new Rational(4, 4), 0, true);
 
 		// staffs
 		Staff stafftreble = new Staff();
