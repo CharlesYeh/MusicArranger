@@ -249,14 +249,28 @@ public class LogicManager implements Printable {
 		List<InstructionIndex> indices = generateInstructionIndices(spacing, startIndex, endIndex);
 		List<List<Pitch>> melodyLine = getMelodyLine(indices, spacing);
 		
+		//###
+		for (List<Pitch> pitches : melodyLine) {
+			System.out.println(pitches);
+		}
+		
 		// TODO: VERY MESSY, NEED A PROPER WAY TO GET KEY SIGNATURES FROM THE PIECE, DOESNT
 		// ACCOUNT FOR CHANGING KEYSIGS EITHER
 		KeySignature keySig = _piece.getStaffs().get(0).getMeasures().get(startIndex.getMeasureNumber()).getKeySignatures().get(0);
+		
 		
 		List<List<Node<ChordSymbol>>> chordProgressions = _analyzer.calculateAnalysisIndices(melodyLine, keySig);
 		
 		GUIInstructionChordData guiInst = new GUIInstructionChordData(indices, chordProgressions);
 		InstructionBlock instrBlock = new InstructionBlock(this);
+
+		for (List<Node<ChordSymbol>> chordProgression : chordProgressions) {
+			for (Node<ChordSymbol> node : chordProgression) {
+				System.out.println(node.getValue());
+			}
+			System.out.println("---");
+		}
+		
 		instrBlock.addInstruction(guiInst);
 		
 		this.sendInstruction(instrBlock);
@@ -415,10 +429,10 @@ public class LogicManager implements Printable {
 			case INSERT:
 				multiNote = (MultiNote) editInstr.getElement();
 				_editor.insertMultiNote(multiNote);
-				break;
+				return true;
 			case REMOVE:
 				_editor.removeMultiNote();
-				break;
+				return true;
 			case REPLACE:
 				// check if replacement note runs over end of measure
 				Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
@@ -432,7 +446,12 @@ public class LogicManager implements Printable {
 				else {
 					_editor.replaceMultiNote(multiNote);
 				}
-				break;
+				return true;
+			case CLEAR:
+				MultiNote removed = _editor.removeMultiNote();
+				multiNote = new MultiNote(removed.getDuration());
+				_editor.insertMultiNote(multiNote);
+				return true;
 			default:
 				System.out.println("Instruction of unrecognized EditInstructionType");
 		}
@@ -548,18 +567,18 @@ public class LogicManager implements Printable {
 		IteratorAndOffset iterAndOff = calcIterAndOffset(list, start);
 		ListIterator<? extends Timestep> iterator = iterAndOff.iter;
 		Rational offset = iterAndOff.offset;
-		Rational timeLeft = finish.minus(start).minus(offset);
+		Rational timeLeft = finish.minus(start).plus(offset);
 		List<Timestep> output = new ArrayList<Timestep>();
 
 		Timestep firstElem = iterator.next();
 		output.add(firstElem);
-		timeLeft.minus(firstElem.getDuration());
+		timeLeft = timeLeft.minus(firstElem.getDuration());
 		
 		while (timeLeft.getNumerator() > 0) {
 			Timestep nextElem = iterator.next();
 			output.add(nextElem);
 			
-			timeLeft.minus(nextElem.getDuration());
+			timeLeft = timeLeft.minus(nextElem.getDuration());
 		}
 		
 		return output;
@@ -645,7 +664,7 @@ public class LogicManager implements Printable {
 					}
 				}
 			}
-		
+			output.add(pitchList);
 		}
 		
 		return output;
