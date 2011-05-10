@@ -44,7 +44,7 @@ public class unitTest{
                 ArrayList<Pitch> melodyInstance4 = new ArrayList<Pitch>();
                 melodyInstance4.add(C);
                 melodyInstance4.add(E);
-//                melodyInstance4.add(B);
+                melodyInstance4.add(G);
                 melody.add(melodyInstance4);
                 
                 List<List<ChordSymbol>> allPossibleChords = analyzer.analyzeMelody(melody, CMajor);
@@ -99,16 +99,24 @@ public class unitTest{
                 int index = 2;
                 List<Node<ChordSymbol>> NodesAtIndex = analyzer.getChordsAtIndex(possibleProgressionsGraph, index);
                 System.out.println("Chords at index " + index + " are:");
-                for(Node<ChordSymbol> node : NodesAtIndex) {
-                	
-                	ChordSymbol chordsym = node.getValue();
-                	System.out.println(printChordSymbol(chordsym));
+                if(NodesAtIndex != null) {
+                	for(Node<ChordSymbol> node : NodesAtIndex) {
+	                	ChordSymbol chordsym = node.getValue();
+	                	System.out.println(printChordSymbol(chordsym));
+	                }
                 }
                 
                 //testing setChordsAtIndex()
                 ChordSymbol chordI = new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR); 
-                System.out.println("After setting index " + index + " to chord " + printChordSymbol(chordI));
-                printGraph(analyzer.setChordsAtIndex(chordI, possibleProgressionsGraph, index));
+                ChordSymbol chordiii = new ChordSymbol(new ScaleDegree(3, Accidental.NATURAL), ChordType.MINOR);
+                ChordSymbol chordV7 = new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJORMINOR7);
+                
+                ChordSymbol toTest = chordV7;
+                System.out.println("After setting index " + index + " to chord " + printChordSymbol(toTest));
+                printGraph(analyzer.setChordsAtIndex(toTest, possibleProgressionsGraph, index));
+                
+//                System.out.println("Possible chord progressions: ");
+//                printGraph(possibleProgressionsGraph);
         }
         
         //Function that prints the all the possible traversals from the starting node of printGraph
