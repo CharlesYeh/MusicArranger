@@ -27,6 +27,29 @@ public class Graph<T> {
 			
 			_startingNode = new Node<T>(node.getValue());
 		}
+//		if(edgeExists(_startingNode, node)) {// If the starting Node already connects to a node with the same value as the given Node
+//			
+//			for(Edge<T> edge : _startingNode.getFollowing()) {
+//				
+//				Node<T> levelOneNode = edge.getBack();
+//				if(levelOneNode.getValue().equals(node.getValue())) { // levelOneNode has the same value as the given node 
+//					
+//					// add the node's following edges to levelOneNode, ignoring nodes that lead to the same value
+//					for(Edge<T> tempEdge : node.getFollowing()) {
+//						
+//						if(!edgeExists(levelOneNode, tempEdge.getBack()))
+//							levelOneNode.addFollowingEdge(new Edge(levelOneNode, tempEdge.getBack(), weight));;
+//					}
+//					
+//					node = levelOneNode;
+//					break;
+//				}
+//			}
+//		}
+//		else {
+//			
+//			addEdge(_startingNode, node, weight);
+//		}
 		addEdge(_startingNode, node, weight);
 	}
 

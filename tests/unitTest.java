@@ -89,7 +89,7 @@ public class unitTest{
                 }
                 System.out.println("");
                 
-                boolean onlyOptimalProgressions = true;
+                boolean onlyOptimalProgressions = false;
                 System.out.println("Only get optimal progressions: " + onlyOptimalProgressions);
                 Graph<ChordSymbol> possibleProgressionsGraph = analyzer.createPossibleProgressionsGraph(allPossibleChords, onlyOptimalProgressions);
                 System.out.println("Possible chord progressions: ");

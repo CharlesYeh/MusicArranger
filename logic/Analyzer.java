@@ -983,8 +983,9 @@ public class Analyzer extends Thread {
 	public Graph<ChordSymbol> buildGraphFromNode(Node<ChordSymbol> determinedNode) {
 		
 		Graph<ChordSymbol> newGraph = new Graph<ChordSymbol>();
-		addFollowingEdges(newGraph, determinedNode);
-		addPrecedingEdges(newGraph, determinedNode);
+		Node<ChordSymbol> newCurrentNode = new Node<ChordSymbol>(determinedNode.getValue());
+		addFollowingEdges(newGraph, determinedNode, determinedNode.getFollowing());
+		addPrecedingEdges(newGraph, determinedNode, determinedNode.getPreceding());
 		return newGraph;
 	}
 	
@@ -992,14 +993,18 @@ public class Analyzer extends Thread {
 	 * Adds the Edges that follow the given Node to the given Graph
 	 * 
 	 */
-	private void addFollowingEdges(Graph<ChordSymbol> newGraph, Node<ChordSymbol> currentNode) {
+	private void addFollowingEdges(Graph<ChordSymbol> newGraph, Node<ChordSymbol> currentNode, List<Edge<ChordSymbol>> followingEdges) {
 		
-		for(Edge<ChordSymbol> edge : currentNode.getFollowing()) {
+		for(Edge<ChordSymbol> edge : followingEdges) {
 			
 			Node<ChordSymbol> nextNode = edge.getBack();
-			newGraph.addEdge(currentNode, nextNode, edge.getWeight());
+			
+			// create new Nodes for the new Graph
+			Node<ChordSymbol> newNextNode = new Node<ChordSymbol>(nextNode.getValue());
+			
+			newGraph.addEdge(currentNode, newNextNode, edge.getWeight());
 			// continue adding the edges following the next Nodes
-			addFollowingEdges(newGraph, nextNode);
+			addFollowingEdges(newGraph, newNextNode, nextNode.getFollowing());
 		}
 	}
 	
@@ -1007,26 +1012,65 @@ public class Analyzer extends Thread {
 	 * Adds the Edges that precede the given Node to the given Graph, and links the frontMost Node to the startingNode of the Graph
 	 * 
 	 */
-	private void addPrecedingEdges(Graph<ChordSymbol> newGraph, Node<ChordSymbol> currentNode) {
+	private void addPrecedingEdges(Graph<ChordSymbol> newGraph, Node<ChordSymbol> currentNode, List<Edge<ChordSymbol>> precedingEdges) {
 		
-		List<Edge<ChordSymbol>> precedingNodes = currentNode.getPreceding();
-		for(int i = 0; i < precedingNodes.size(); i++) {
+		for(int i = 0; i < precedingEdges.size(); i++) {
 			
-			Edge<ChordSymbol> edge = precedingNodes.get(i);
+			Edge<ChordSymbol> edge = precedingEdges.get(i);
 			Node<ChordSymbol> previousNode = edge.getFront();
+			
+			// create new Nodes for the new Graph
+			Node<ChordSymbol> newPrevNode = new Node<ChordSymbol>(previousNode.getValue());
 			if(previousNode.getPreceding().isEmpty()) {// This node should be a starting Node
 				
 				// add this node to the starting Nodes of the Graph
 				newGraph.addStartingNode(currentNode, edge.getWeight());
+				
 			}
 			else { // This node is not a starting Node
 				
-				newGraph.addEdge(previousNode, currentNode, edge.getWeight());
-				// continue adding the edges preceding the previous Nodes
-				addPrecedingEdges(newGraph, previousNode);
+				// check if there is already a level one node that links to currentNode's value
+				boolean startingNodeLinksToCurrent = false;
+				
+				Node<ChordSymbol> twoStepsPrecedingNode = previousNode.getPreceding().get(0).getFront();
+				if(twoStepsPrecedingNode.getPreceding().isEmpty()) { // check if the previous chord is a level one node
+					
+					Node<ChordSymbol> startingNode = newGraph.getStartingNode();
+					if(startingNode != null) {
+						for(Edge<ChordSymbol> levelOneEdge : startingNode.getFollowing()) {
+							
+							Node<ChordSymbol> levelOneNode = levelOneEdge.getBack();
+							if(levelOneNode.getValue().equals(previousNode.getValue())) {
+								
+								newGraph.addEdge(levelOneNode, currentNode, edge.getWeight());
+								startingNodeLinksToCurrent = true;
+//								addPrecedingEdges(newGraph, levelOneNode, previousNode.getPreceding());
+//								break;
+							}
+						}
+					}
+				}
+				if(!startingNodeLinksToCurrent) {
+					newGraph.addEdge(newPrevNode, currentNode, edge.getWeight());
+					// continue adding the edges preceding the previous Nodes
+					addPrecedingEdges(newGraph, newPrevNode, previousNode.getPreceding());
+				}
+				
 			}
 		}
 	}
+	
+//	/*
+//	 * Returns a clone of a Node
+//	 * 
+//	 */
+//	private Node<ChordSymbol> cloneNode(Node<ChordSymbol> toClone) {
+//		
+//		Node<ChordSymbol> newNode = new Node<ChordSymbol>(toClone.getValue());
+//		ArrayList<Edge<ChordSymbol>> preceding = (ArrayList<Edge<ChordSymbol>>) (toClone.getPreceding()).clone();
+//		ArrayList<Edge<ChordSymbol>> following = (ArrayList<Edge<ChordSymbol>>) toClone.getFollowing();
+//		
+//	}
 	
 	//removes the Node toRemove from the Graph and removes the relevant Edges,
 	//if the node that is removed is the only node that one of its previous nodes lead to, then that previous node is removed as well
