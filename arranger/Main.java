@@ -39,13 +39,7 @@ public class Main extends JFrame implements InstructionListener {
 
 	public Main(){
 		super("Music Arranger");
-		
-		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
-		// ######################################################
 		_piece = new tests.LongMelodyPiece();
-		
-		
-		//#$#$#$#$#$#$#$#$#$#$#$#$#$##$#$# EVAN TEST #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 		_logicManager = new LogicManager(_piece);
 		_editor = _logicManager.getEditor();
 		
