@@ -328,14 +328,14 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			
 		case KeyEvent.VK_UP:
 			for (InstructionIndex index : _selected) {
-				Instruction editInstr = new EditInstruction(index, EditInstructionType.TRANSPOSE, EditType.MULTINOTE);
+				Instruction editInstr = new EditInstruction(index, EditInstructionType.TRANSPOSE_UP, EditType.MULTINOTE);
 				instrBlock.addInstruction(editInstr);
 			}
 			break;
 			
 		case KeyEvent.VK_DOWN:
 			for (InstructionIndex index : _selected) {
-				Instruction editInstr = new EditInstruction(index, EditInstructionType.TRANSPOSE, EditType.MULTINOTE);
+				Instruction editInstr = new EditInstruction(index, EditInstructionType.TRANSPOSE_DOWN, EditType.MULTINOTE);
 				instrBlock.addInstruction(editInstr);
 			}
 			break;
