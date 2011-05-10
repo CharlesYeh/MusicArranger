@@ -93,7 +93,7 @@ public class ScoreIllustrator {
 		}
 	}
 
-	public void drawPiece(Graphics g, Piece piece) {
+	public void drawPiece(Graphics g, Piece piece, Set<InstructionIndex> selectedNotes) {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, ArrangerConstants.PAGE_WIDTH, ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT);
 
@@ -318,8 +318,11 @@ public class ScoreIllustrator {
 
 					int noteX = nextX;
 					int noteY = nextY;
-
-					drawMultiNote(g, stemGroups.get(currStaff), currClef, currKeySig, mnote, noteX, noteY);
+					
+					// see if this multinote is selected
+					InstructionIndex mnoteIndex = new InstructionIndex(_staffPositions.get(currStaff), measureCount, 0, currTime);
+					drawMultiNote(g, stemGroups.get(currStaff), currClef, currKeySig, mnote, noteX, noteY, selectedNotes != null && selectedNotes.contains(mnoteIndex));
+					
 					Rational dur = mnote.getDuration();
 					
 					// nextX should increase proportional to note length
@@ -458,7 +461,7 @@ public class ScoreIllustrator {
 	/* Draws all pitches within the multinote
 	 *
 	 */
-	private void drawMultiNote(Graphics g, List<MultiNote> stemGroup, Clef currClef, KeySignature currKeySig, MultiNote mn, int nextX, int nextY) {
+	private void drawMultiNote(Graphics g, List<MultiNote> stemGroup, Clef currClef, KeySignature currKeySig, MultiNote mn, int nextX, int nextY, boolean selected) {
 		Rational dur = mn.getDuration();
 
 		int numer = dur.getNumerator();
@@ -466,9 +469,7 @@ public class ScoreIllustrator {
 
 		int numerValue = (int) (Math.log(numer) / LOG_2);
 		int denomValue = (int) (Math.log(denom) / LOG_2);
-
-		int minLine = 0, maxLine = 0;
-
+		
 		List<Pitch> pitches = mn.getPitches();
 		if (pitches.size() == 0) {
 			// draw rest
@@ -476,12 +477,13 @@ public class ScoreIllustrator {
 			
 			// render previous group
 			renderStemGroup(stemGroup, currClef);
-
+			
 			// don't render stem
 			return;
 		}
 		else {
 			// determine stem direction
+			int minLine, maxLine;
 			minLine = maxLine = getLineNumber(currClef, pitches.get(0));
 
 			for (Pitch p : pitches) {
@@ -489,7 +491,42 @@ public class ScoreIllustrator {
 				int line = getLineNumber(currClef, p);
 				minLine = Math.min(minLine, line);
 				maxLine = Math.max(maxLine, line);
-
+			}
+			
+			int dir = 1;
+			// draw stem or add to stem group
+			if (denomValue >= 3) {
+				stemGroup.add(mn);
+			}
+			else {
+				// render previous group
+				renderStemGroup(stemGroup, currClef);
+			}
+			
+			if (denomValue != 0) {
+				// don't draw stem for whole notes
+				int minOffset = getLineOffset(currClef, minLine);
+				int maxOffset = getLineOffset(currClef, maxLine);
+				int stemX = nextX;
+				
+				dir = (minLine + maxLine <= 0) ? -1 : 1;
+				// stem information
+				if (dir == -1)
+					maxOffset += dir * STEM_LENGTH;
+				else
+					minOffset += dir * STEM_LENGTH;
+				//stemX -= NOTE_WIDTH / 2;
+				
+				if (denomValue < 3)
+					drawStem(g, stemX, nextY, minOffset, maxOffset);
+			}
+			
+			int adjust = dir * SYSTEM_LINE_SPACING / 2;
+			
+			Pitch prevPitch = null;
+			for (Pitch p : pitches) {
+				int line = getLineNumber(currClef, p);
+				
 				int noteX = nextX;
 				int noteY = getLineOffset(currClef, line) + nextY;
 				
@@ -501,37 +538,22 @@ public class ScoreIllustrator {
 					}
 				}
 				
-				drawPitch(g, numerValue, denomValue, noteX, noteY);
-			}
-		}
-
-		// draw stem or add to stem group
-		if (denomValue >= 3) {
-			stemGroup.add(mn);
-		}
-		else {
-			if (denomValue != 0) {
-				// don't draw stem for whole notes
-				int minOffset = getLineOffset(currClef, minLine);
-				int maxOffset = getLineOffset(currClef, maxLine);
-
-				int stemX = nextX;
-				if (minLine + maxLine <= 0) {
-					// upwards stem
-					maxOffset -= STEM_LENGTH;
-					stemX += NOTE_WIDTH / 2;
+				if (prevPitch != null && Math.abs(line - getLineNumber(currClef, prevPitch)) == 1) {
+					// if adjacent, alternate side
+					adjust = -adjust;
 				}
 				else {
-					// downwards stem
-					minOffset += STEM_LENGTH;
-					stemX -= NOTE_WIDTH / 2;
+					// if not adjacent, switch to correct side;
+					adjust = dir * SYSTEM_LINE_SPACING / 2;
 				}
-
-				drawStem(g, stemX, nextY, minOffset, maxOffset);
+				
+				prevPitch = p;
+				drawPitch(g, numerValue, denomValue, noteX + adjust, noteY, selected);
+				
+				// draw accidental if not in key
+				if (!currKeySig.belongsToKey(p))
+					drawAccidental(g, p.getAccidental(), noteX + adjust - 5, noteY);
 			}
-
-			// render previous group
-			renderStemGroup(stemGroup, currClef);
 		}
 	}
 
@@ -542,7 +564,7 @@ public class ScoreIllustrator {
 		g.drawString(symb.getTopInversionText(), xc + 10, yc);
 		g.drawString(symb.getBotInversionText(), xc + 10, yc + 10);
 	}
-
+	
 	private void drawRest(Graphics g, int numerValue, int denomValue, int xc, int yc) {
 		xc -= REST_IMG_OFFSET;
 		yc -= REST_IMG_OFFSET - SYSTEM_LINE_SPACING * 2;
@@ -634,18 +656,18 @@ public class ScoreIllustrator {
 		stemGroup.clear();
 	}
 
-	private void drawPitch(Graphics g, int numerValue, int denomValue, int xc, int yc) {
+	private void drawPitch(Graphics g, int numerValue, int denomValue, int xc, int yc, boolean selected) {
 		// draw circle on the correct line
 		//g.drawImage(_imgQuarter, xc, yc, null);
-
+		
 		if (numerValue == 0) {
 			// note is a base note (eighth, quarter, half, etc)
-			drawBaseNoteHead(g, denomValue, xc, yc);
+			drawBaseNoteHead(g, denomValue, xc, yc, selected);
 		}
 		else {
 			// note is a base note + dots
 			int base = numerValue - numerValue / 2;
-			drawBaseNoteHead(g, base, xc, yc);
+			drawBaseNoteHead(g, base, xc, yc, selected);
 
 			// draw dots
 			int dots = numerValue - 3;
@@ -658,47 +680,52 @@ public class ScoreIllustrator {
 	/*	Draws the note head for a base value (numerator is 1)
 	 *
 	 */
-	private void drawBaseNoteHead(Graphics g, int denomValue, int xc, int yc) {
-
+	private void drawBaseNoteHead(Graphics g, int denomValue, int xc, int yc, boolean selected) {
+		
 		if (denomValue < 3) {
 			switch (denomValue) {
 			case 0:
 				// whole note
-				dynamicDrawNoteHead(g, xc, yc, true);
+				dynamicDrawNoteHead(g, xc, yc, true, selected);
 				break;
 
 			case 1:
 				// half note
-				dynamicDrawNoteHead(g, xc, yc, true);
+				dynamicDrawNoteHead(g, xc, yc, true, selected);
 				break;
 
 			case 2:
 				// quarter note
-				dynamicDrawNoteHead(g, xc, yc, false);
+				dynamicDrawNoteHead(g, xc, yc, false, selected);
 				break;
 			default:
-
+				
 			}
 		}
 		else {
 			// eighth or smaller
-			dynamicDrawNoteHead(g, xc, yc, false);
+			dynamicDrawNoteHead(g, xc, yc, false, selected);
 		}
 	}
 
-	private void dynamicDrawNoteHead(Graphics g, int xc, int yc, boolean whiteFill) {
+	private void dynamicDrawNoteHead(Graphics g, int xc, int yc, boolean whiteFill, boolean selected) {
 		int sx = xc - NOTE_WIDTH / 2;
 		int sy = yc - NOTE_HEIGHT / 2;
-
+		
 		if (whiteFill)
 			g.setColor(Color.WHITE);
-
+		else
+			g.setColor(selected ? Color.RED : Color.BLACK);
+		
 		g.fillOval(sx, sy, NOTE_WIDTH, NOTE_HEIGHT);
-
+		
 		if (whiteFill){
-			g.setColor(Color.BLACK);
+			// draw colored outline
+			g.setColor(selected ? Color.RED : Color.BLACK);
 			g.drawOval(sx, sy, NOTE_WIDTH, NOTE_HEIGHT);
 		}
+		
+		g.setColor(Color.BLACK);
 	}
 
 	private void drawSystem(Graphics g, int yc) {

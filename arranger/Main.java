@@ -147,7 +147,7 @@ public class Main extends JFrame implements InstructionListener {
 					receiveInstruction(myInstr);
 				}
 			});
-
+		
 		JMenuItem menuItemExit = new JMenuItem("Exit");
 		menuItemExit.setMnemonic(KeyEvent.VK_X);
 		menuItemExit.setToolTipText("Exit application");

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.PriorityQueue;
@@ -47,16 +48,16 @@ public class ScoreWindow extends Drawable {
 		_slider = new PageSlider();
 		_sliding = false;
 
-		updateScore();
+		updateScore(null);
 	}
 
 	public Image getScoreImage() {
 		return _buffer;
 	}
 
-	public void updateScore() {
+	public void updateScore(Set<InstructionIndex> selectedNotes) {
 		// buffer self-image
-		_illustrator.drawPiece(_bufferGraphics, _piece);
+		_illustrator.drawPiece(_bufferGraphics, _piece, selectedNotes);
 	}
 
 	public void drawSelf(Graphics g) {
