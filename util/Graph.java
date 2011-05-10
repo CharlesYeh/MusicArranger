@@ -19,9 +19,13 @@ public class Graph<T> {
 		_nodes = new ArrayList<Node<T>>();
 		
 	}
+	
+	public void setStartingNode(Node<T> node) {
+		_startingNode = node;
+	}
 
 	//Adds a Node to the Graph
-	public void addStartingNode(Node<T> node, int weight) {
+	public void addToStartingNode(Node<T> node, int weight) {
 
 		if(_startingNode == null) {
 			
@@ -100,6 +104,17 @@ public class Graph<T> {
 				}
 			}
 		}
+	}
+	
+	public void removeNode(Node<T> node) {
+		for (Edge<T> edge : node.getFollowing()) {
+			this.removeEdge(edge);
+		}
+		for (Edge<T> edge : node.getPreceding()) {
+			this.removeEdge(edge);
+		}
+		
+		_nodes.remove(node);
 	}
 
 	//returns true if there is already an edge that links the Node front with the same value of back, else return false
