@@ -163,13 +163,13 @@ public class MidiAPI{
 	}
 
 	public void multiNoteOn(MultiNote mn){
-//		System.out.println("note is turned on: "+mn.toString());
+//		System.out.println("note is turned on: ");
 		multiNoteEvent(mn, ShortMessage.NOTE_ON);
 
 	}
 
 	public void multiNoteOff(MultiNote mn){
-//		System.out.println("note is turned off: "+mn.toString());
+//		System.out.println("note is turned off: ");
 		multiNoteEvent(mn, ShortMessage.NOTE_OFF);
 	}
 
@@ -190,6 +190,7 @@ public class MidiAPI{
 				//tests.MidiAPITest.printPitch(p);
 
 				// 0 means execute immediately
+//				System.out.println(p.toString());
 				_receiver.send(noteMessage, 0);
 			}
 		} catch (Exception e){
