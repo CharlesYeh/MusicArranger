@@ -105,7 +105,8 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemOpen.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
-					JFileChooser chooser = new JFileChooser();
+					String wd = System.getProperty("user.dir");
+					JFileChooser chooser = new JFileChooser(wd);
 					
 					int returnVal = chooser.showOpenDialog(frame);
 					if(returnVal == JFileChooser.APPROVE_OPTION) {
@@ -123,7 +124,8 @@ public class Main extends JFrame implements InstructionListener {
 		menuItemSave.addActionListener(
 				new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						JFileChooser chooser = new JFileChooser();
+						String wd = System.getProperty("user.dir");
+						JFileChooser chooser = new JFileChooser(wd);
 						
 						int returnVal = chooser.showSaveDialog(frame);
 						if(returnVal == JFileChooser.APPROVE_OPTION) {
