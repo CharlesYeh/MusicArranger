@@ -776,8 +776,8 @@ public class Analyzer extends Thread {
 		
 		Graph<ChordSymbol> newGraph = new Graph<ChordSymbol>();
 		Node<ChordSymbol> newCurrentNode = new Node<ChordSymbol>(determinedNode.getValue());
-		addFollowingEdges(newGraph, determinedNode, determinedNode.getFollowing());
-		addPrecedingEdges(newGraph, determinedNode, determinedNode.getPreceding());
+		addFollowingEdges(newGraph, newCurrentNode, determinedNode.getFollowing());
+		addPrecedingEdges(newGraph, newCurrentNode, determinedNode.getPreceding());
 		return newGraph;
 	}
 	

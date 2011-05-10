@@ -843,7 +843,7 @@ public class ScoreIllustrator {
 		if (indexStaff >= _staffPositions.size()) {
 			// clicked on a chord symbol
 			isChord = true;
-			indexStaff = _staffPositions.size() - 1;
+			indexStaff = 0;
 		}
 		
 		// actually represents the line/spaces

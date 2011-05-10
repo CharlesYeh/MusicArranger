@@ -137,4 +137,8 @@ public class InstructionIndex {
 	public int hashCode() {
 		return _staffNumber + _voiceNumber + _measureNumber;
 	}
+	
+	public String toString() {
+		return _staffNumber + " " + _measureNumber + " " + _voiceNumber + " " + _measureOffset;
+	}
 }
