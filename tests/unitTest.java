@@ -30,9 +30,9 @@ public class unitTest{
                 List<List<Pitch>> melody = new ArrayList<List<Pitch>>();
                 
                 ArrayList<Pitch> melodyInstance1 = new ArrayList<Pitch>();
-                melodyInstance1.add(C5);
-//                melodyInstance1.add(E);
-//                melodyInstance1.add(C);
+                melodyInstance1.add(A);
+                melodyInstance1.add(C);
+                melodyInstance1.add(A);
                 melody.add(melodyInstance1);
                 
                 ArrayList<Pitch> melodyInstance2 = new ArrayList<Pitch>();
