@@ -652,6 +652,7 @@ public class Analyzer extends Thread {
 	}
 	
 	public void deleteBranches(Graph<ChordSymbol> graph, Node<ChordSymbol> node) {
+
 //		List<Edge<ChordSymbol>> followEdges = node.getFollowing();
 //		List<Edge<ChordSymbol>> precEdges = node.getPreceding();
 //		List<Node<ChordSymbol>> adjacencies = new ArrayList<Node<ChordSymbol>>();

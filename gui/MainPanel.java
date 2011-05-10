@@ -24,6 +24,8 @@ import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JOptionPane;
+
 import instructions.*;
 import javax.swing.event.EventListenerList;
 import java.awt.Component;
@@ -370,6 +372,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void interpretInstrBlock(InstructionBlock instrBlock) {
 		List<Instruction> listInstr = instrBlock.getInstructions();
 		
+		JOptionPane.showMessageDialog(this, "Chord generation complete. Click below staffs to view possible chord options.");
+		
 		for (Instruction instr : listInstr) {
 			interpretInstr(instr);
 		}
@@ -466,7 +470,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			return;
 
 	   InstructionListener[] listeners = _listeners.getListeners(InstructionListener.class);
-
+		
 	   for (int i = 0; i < listeners.length; i++) {
 			listeners[i].receiveInstruction(instrBlock);
 	   }

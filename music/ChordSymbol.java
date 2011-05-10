@@ -55,6 +55,7 @@ public class ChordSymbol extends Timestep {
 			case GERAUG6:
 				return "Ger";
 			case UNSPECIFIED:
+			case BLANK:
 				return "*";
 		}
 

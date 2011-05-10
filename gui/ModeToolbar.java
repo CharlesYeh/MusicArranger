@@ -38,9 +38,9 @@ public class ModeToolbar extends Toolbar {
 		genChords.setInstruction(new ModeInstruction(ModeInstructionType.GENERATE, GenerateInstructionType.CHORDS));
 		genVoices.setInstruction(new ModeInstruction(ModeInstructionType.GENERATE, GenerateInstructionType.VOICES));
 
-		_buttons = Arrays.asList(modeNote, modeSelection, /*modeZoom, */genChords, genVoices);
-		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(0, 1)));
-		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(2, 3)));
+		_buttons = Arrays.asList(modeNote, /*modeSelection,*/ /*modeZoom, */genChords, genVoices);
+		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(0)));
+		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(1, 2)));
 		
 		modeNote.setPressed(true);
 	}
