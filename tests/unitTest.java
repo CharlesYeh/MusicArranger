@@ -24,28 +24,29 @@ public class unitTest{
                 Pitch Gs = MidiAPITest.createPitchFromMidiPitch(68);
                 Pitch A = MidiAPITest.createPitchFromMidiPitch(69);
                 Pitch B = MidiAPITest.createPitchFromMidiPitch(71);
+                Pitch C5 = MidiAPITest.createPitchFromMidiPitch(72);
                 
                 Analyzer analyzer = new Analyzer();
                 List<List<Pitch>> melody = new ArrayList<List<Pitch>>();
                 
                 ArrayList<Pitch> melodyInstance1 = new ArrayList<Pitch>();
-                melodyInstance1.add(C);
-                melodyInstance1.add(E);
+                melodyInstance1.add(C5);
+//                melodyInstance1.add(E);
 //                melodyInstance1.add(C);
                 melody.add(melodyInstance1);
                 
                 ArrayList<Pitch> melodyInstance2 = new ArrayList<Pitch>();
-                melodyInstance2.add(F);
+                melodyInstance2.add(B);
                 melody.add(melodyInstance2);
                 
                 ArrayList<Pitch> melodyInstance3 = new ArrayList<Pitch>();
-                melodyInstance3.add(G);
+                melodyInstance3.add(A);
 //                melodyInstance3.add(D);
                 melody.add(melodyInstance3);
                 
                 ArrayList<Pitch> melodyInstance4 = new ArrayList<Pitch>();
-                melodyInstance4.add(C);
-                melodyInstance4.add(E);
+//                melodyInstance4.add(C);
+//                melodyInstance4.add(E);
                 melodyInstance4.add(G);
                 melody.add(melodyInstance4);
                 

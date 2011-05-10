@@ -42,7 +42,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 
 	public Main(){
 		super("Music Arranger");
-		_piece = new tests.NewPiece();
+		_piece = new tests.LongMelodyPiece();
 		
 		//_piece = new tests.LongMelodyPiece();
 		_logicManager = new LogicManager(_piece);
