@@ -227,14 +227,15 @@ public class LogicManager implements Printable {
 	private boolean interpretGenerateInstr(GenerateInstruction genInstr) {
 		GenerateInstructionType genType = genInstr.getType();
 
-		switch (genType) {
-		case CHORDS:
+		if (genInstr instanceof GenerateInstructionAnalyzeChords) {
 			GenerateInstructionAnalyzeChords genInstrAnalyzeChords = 
 				(GenerateInstructionAnalyzeChords) genInstr;
 			return interpretGenerateInstrAnalyzeChords(genInstrAnalyzeChords);
-		case VOICES:
-
-			break;
+		}
+		else if (genInstr instanceof GenerateInstructionVoices) {
+			GenerateInstructionVoices genInstrVoices = 
+				(GenerateInstructionVoices) genInstr;
+			return interpretGenerateInstrVoices(genInstrVoices);
 		}
 		
 		return true;
@@ -249,11 +250,6 @@ public class LogicManager implements Printable {
 		List<InstructionIndex> indices = generateInstructionIndices(spacing, startIndex, endIndex);
 		List<List<Pitch>> melodyLine = getMelodyLine(indices, spacing);
 		
-		//###
-		for (List<Pitch> pitches : melodyLine) {
-			System.out.println(pitches);
-		}
-		
 		// TODO: VERY MESSY, NEED A PROPER WAY TO GET KEY SIGNATURES FROM THE PIECE, DOESNT
 		// ACCOUNT FOR CHANGING KEYSIGS EITHER
 		KeySignature keySig = _piece.getStaffs().get(0).getMeasures().get(startIndex.getMeasureNumber()).getKeySignatures().get(0);
@@ -266,9 +262,7 @@ public class LogicManager implements Printable {
 
 		for (List<Node<ChordSymbol>> chordProgression : chordProgressions) {
 			for (Node<ChordSymbol> node : chordProgression) {
-				System.out.println(node.getValue());
 			}
-			System.out.println("---");
 		}
 		
 		instrBlock.addInstruction(guiInst);
@@ -278,7 +272,58 @@ public class LogicManager implements Printable {
 		return true;
 	}
 	
-	private boolean interpretGenerateInstrGenVoices(GenerateInstructionGenVoices genInstrGenVoices) {
+	private boolean interpretGenerateInstrVoices(GenerateInstructionVoices genInstrVoices) {
+		System.out.println("Test");
+		
+		InstructionIndex startIndex = genInstrVoices.getStartIndex();
+		InstructionIndex endIndex = genInstrVoices.getEndIndex();
+		Rational spacing = genInstrVoices.getSpacing();
+		int numVoices = genInstrVoices.getNumVoices();
+		// TODO: numVoices is totally not considered yet!  Hard-coded as 4.
+		
+		List<InstructionIndex> indices = generateInstructionIndices(spacing, startIndex, endIndex);
+		List<ChordSymbol> chords = getChordsAtIndices(indices);
+		List<List<Pitch>> melody = getMelodyLine(indices, spacing);
+		
+		// TODO: VERY MESSY, NEED A PROPER WAY TO GET KEY SIGNATURES FROM THE PIECE, DOESNT
+		// ACCOUNT FOR CHANGING KEYSIGS EITHER
+		KeySignature keySig = _piece.getStaffs().get(0).getMeasures().get(startIndex.getMeasureNumber()).getKeySignatures().get(0);
+		
+		List<List<Pitch>> harmonies = new ArrayList<List<Pitch>>();
+		for (int i = 0; i < chords.size(); i++) {
+			harmonies.add(_analyzer.harmonizeMelodyInstance(melody.get(i), 
+					chords.get(i), keySig));
+		}
+		
+		for (int harmonyNum = 0; harmonyNum < harmonies.size(); harmonyNum++) {
+			List<Pitch> harmony = harmonies.get(harmonyNum);
+			InstructionBlock instrBlock = new InstructionBlock(this);
+			InstructionIndex associatedIndex = indices.get(harmonyNum);
+			InstructionIndex topStaffIndex = new InstructionIndex(0,
+					associatedIndex.getMeasureNumber(),
+					0,
+					associatedIndex.getMeasureOffset());
+			MultiNote topMultiNote = new MultiNote(spacing);
+			topMultiNote.getPitches().add(harmony.get(0));
+			topMultiNote.getPitches().add(harmony.get(1));
+			
+			EditInstruction insertTopMulti = new EditInstruction(topStaffIndex,
+					EditInstructionType.REPLACE, EditType.MULTINOTE, topMultiNote);
+			InstructionIndex botStaffIndex = new InstructionIndex(1,
+					associatedIndex.getMeasureNumber(),
+					0,
+					associatedIndex.getMeasureOffset());
+			MultiNote botMultiNote = new MultiNote(spacing);
+			botMultiNote.getPitches().add(harmony.get(2));
+			botMultiNote.getPitches().add(harmony.get(3));
+			
+			EditInstruction insertBotMulti = new EditInstruction(botStaffIndex,
+					EditInstructionType.REPLACE, EditType.MULTINOTE, botMultiNote);
+			instrBlock.addInstruction(insertTopMulti);
+			instrBlock.addInstruction(insertBotMulti);
+			
+			this.interpretInstrBlock(instrBlock);
+		}
 		
 		return true;
 	}
@@ -716,6 +761,22 @@ public class LogicManager implements Printable {
 				}
 			}
 			output.add(pitchList);
+		}
+		
+		return output;
+	}
+	
+	public List<ChordSymbol> getChordsAtIndices(List<InstructionIndex> indices) {
+		List<ChordSymbol> output = new ArrayList<ChordSymbol>();
+		
+		for (InstructionIndex index : indices) {	
+			int measureNumber = index.getMeasureNumber();
+			Rational measureOffset = index.getMeasureOffset();
+			Measure measure = _piece.getStaffs().get(0).getMeasures().get(measureNumber);
+			
+			ChordSymbol chord = (ChordSymbol) getElementAt(measureOffset, measure.getChordSymbols());
+			
+			output.add(chord);
 		}
 		
 		return output;
