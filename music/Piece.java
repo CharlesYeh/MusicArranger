@@ -21,4 +21,8 @@ public class Piece {
 		return _staffs;
 	}
 	
+	public int getNumMeasures() {
+		return _staffs.get(0).getMeasures().size();
+	}
+	
 }

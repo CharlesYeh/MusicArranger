@@ -61,11 +61,15 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	// currently selected
 	Set<InstructionIndex> _selected;
 	
+	Piece _piece;
+	
 	//------------------end state information------------------
 
 	public MainPanel(Piece piece) {
-	   Toolbar.init("images/gui/toolbarHorizontal.png", "images/gui/toolbarVertical.png");
-	   ToolbarButton.init("images/gui/button.png", "images/gui/button_over.png");
+		_piece = piece;
+		
+		Toolbar.init("images/gui/toolbarHorizontal.png", "images/gui/toolbarVertical.png");
+		ToolbarButton.init("images/gui/button.png", "images/gui/button_over.png");
 
 	   _toolbars = new LinkedList<Toolbar>();
 
@@ -373,7 +377,29 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 					break;
 				}
 				break;
+				
+			case GENERATE:
+				// translate to generation instruction
+				GenerateInstructionType genType = (GenerateInstructionType) modeInstr.getValue();
+				
+				switch (genType) {
+				case CHORDS:
+					InstructionIndex pieceStart	= new InstructionIndex(0, new Rational(0, 1));
+					InstructionIndex pieceEnd		= new InstructionIndex(_piece.getNumMeasures(), new Rational(0, 1));
+					
+					Instruction genInstr = new GenerateInstructionAnalyzeChords(pieceStart, pieceEnd, new Rational(1, 4));
+					InstructionBlock genBlock = new InstructionBlock(this, genInstr);
+					
+					sendInstruction(genBlock);
+					break;
+					
+				case VOICES:
+					
+					break;
+				}
+				break;
 			}
+			
 			return;
 		}
 

@@ -8,7 +8,7 @@ public class GenerateInstructionAnalyzeChords extends GenerateInstruction {
 	Rational _spacing;
 	
 	public GenerateInstructionAnalyzeChords(InstructionIndex start, InstructionIndex end,
-			Rational spacing, InstructionIndex voice) {
+			Rational spacing) {
 		
 		super(GenerateInstructionType.CHORDS);
 		
