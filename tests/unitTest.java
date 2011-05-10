@@ -102,8 +102,13 @@ public class unitTest{
                 for(Node<ChordSymbol> node : NodesAtIndex) {
                 	
                 	ChordSymbol chordsym = node.getValue();
-                	System.out.println(chordsym.getSymbolText() + chordsym.getTopInversionText() + chordsym.getBotInversionText());
+                	System.out.println(printChordSymbol(chordsym));
                 }
+                
+                //testing setChordsAtIndex()
+                ChordSymbol chordI = new ChordSymbol(new ScaleDegree(1, Accidental.NATURAL), ChordType.MAJOR); 
+                System.out.println("After setting index " + index + " to chord " + printChordSymbol(chordI));
+                printGraph(analyzer.setChordsAtIndex(chordI, possibleProgressionsGraph, index));
         }
         
         //Function that prints the all the possible traversals from the starting node of printGraph
@@ -134,7 +139,7 @@ public class unitTest{
         		//Graph is thoroughly traversed, print List toPrint;
         		for(ChordSymbol chordsym : toPrint) {
         			
-        			System.out.print(chordsym.getSymbolText() + chordsym.getTopInversionText() + chordsym.getBotInversionText() + " - ");
+        			System.out.print(printChordSymbol(chordsym) + " - ");
         		}
         		System.out.println("");
         	}
@@ -152,6 +157,12 @@ public class unitTest{
     				printGraphHelper(nextNode, toPrintClone);
         		}
         	}
+        }
+        
+        // returns a String for printing some necessary information of a ChordSymbol object
+        public static String printChordSymbol(ChordSymbol chordsym) {
+        	
+        	return (chordsym.getSymbolText() + chordsym.getTopInversionText() + chordsym.getBotInversionText());
         }
         
         

@@ -894,6 +894,7 @@ public class Analyzer extends Thread {
 		return returnNodes;
 	}
 	
+	
 	/*
 	 *  Helper function for getChordsAtIndex, takes a List of Node objects, the current index, 
 	 *	and the query index, and returns a List of Nodes that are at the query Index number
@@ -925,6 +926,94 @@ public class Analyzer extends Thread {
 		}
 		
 		return nextNodes;
+	}
+
+	/* 
+	 * Takes a Graph and truncates it such that only the specified ChordSymbol is represented at the index number of levels from the starting Node
+	 * 
+	 */
+	public Graph<ChordSymbol> setChordsAtIndex(ChordSymbol targetChord, Graph<ChordSymbol> progressionsGraph, int index) {
+		
+		Graph<ChordSymbol> returnGraph = new Graph<ChordSymbol>();
+		// get the chords that are present at the specific index in the Graph
+		List<Node<ChordSymbol>> chordsAtIndex = getChordsAtIndex(progressionsGraph, index);
+		
+		if(!chordsAtIndex.isEmpty()) {
+			
+			// boolean to determine whether the chordsAtIndex contain the wanted chordSymbol
+			boolean hasChordSymbol = false;
+			Node<ChordSymbol> determinedNode = null;
+			for(Node<ChordSymbol> node : chordsAtIndex) {
+				
+				if(node.getValue().equals(targetChord)) {
+					
+					hasChordSymbol = true;
+					determinedNode = node;
+					break;
+				}
+			}
+			
+			if(hasChordSymbol) {
+				
+				// returns a Graph that has all the edges that link to determinedNode
+				returnGraph = buildGraphFromNode(determinedNode);
+			}
+		}
+		
+		// returns empty Graph if the progressionsGraph does not contain any nodes at the specified index
+		return returnGraph;
+	}
+	
+	/*
+	 * Takes a Node and returns a Graph that contains all the edges that link to Node
+	 * 
+	 */
+	public Graph<ChordSymbol> buildGraphFromNode(Node<ChordSymbol> determinedNode) {
+		
+		Graph<ChordSymbol> newGraph = new Graph<ChordSymbol>();
+		addFollowingEdges(newGraph, determinedNode);
+		addPrecedingEdges(newGraph, determinedNode);
+		return newGraph;
+	}
+	
+	/*
+	 * Adds the Edges that follow the given Node to the given Graph
+	 * 
+	 */
+	private void addFollowingEdges(Graph<ChordSymbol> newGraph, Node<ChordSymbol> currentNode) {
+		
+		for(Edge<ChordSymbol> edge : currentNode.getFollowing()) {
+			
+			Node<ChordSymbol> nextNode = edge.getBack();
+			newGraph.addEdge(currentNode, nextNode, edge.getWeight());
+			// continue adding the edges following the next Nodes
+			addFollowingEdges(newGraph, nextNode);
+		}
+	}
+	
+	/*
+	 * Adds the Edges that precede the given Node to the given Graph, and links the frontMost Node to the startingNode of the Graph
+	 * 
+	 */
+	private void addPrecedingEdges(Graph<ChordSymbol> newGraph, Node<ChordSymbol> currentNode) {
+		
+		List<Edge<ChordSymbol>> precedingNodes = currentNode.getPreceding();
+		for(int i = 0; i < precedingNodes.size(); i++) {
+			
+			Edge<ChordSymbol> edge = precedingNodes.get(i);
+			Node<ChordSymbol> previousNode = edge.getFront();
+			if(previousNode.getPreceding().isEmpty()) {// This node should be a starting Node
+				
+				// add this node to the starting Nodes of the Graph
+				newGraph.addStartingNode(currentNode, edge.getWeight());
+			}
+			else { // This node is not a starting Node
+				
+				newGraph.addEdge(previousNode, currentNode, edge.getWeight());
+				// continue adding the edges preceding the previous Nodes
+				addPrecedingEdges(newGraph, previousNode);
+			}
+		}
 	}
 	
 	//removes the Node toRemove from the Graph and removes the relevant Edges,
