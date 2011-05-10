@@ -11,5 +11,8 @@ public enum ModeInstructionType {
 	MODIFIER,
 	
 	// change selection
-	SELECTION
+	SELECTION,
+	
+	// send complete generate instruction
+	GENERATE
 }

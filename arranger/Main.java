@@ -24,10 +24,13 @@ import music.Piece;
 import instructions.*;
 import gui.NewFileDialog;
 
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
+
 /*
  * Main handles delegations of tasks between
  */
-public class Main extends JFrame implements InstructionListener {
+public class Main extends JFrame implements InstructionListener, KeyListener {
 
 	MidiAPI _api;
 	MainPanel _mainPanel;
@@ -45,7 +48,7 @@ public class Main extends JFrame implements InstructionListener {
 		_editor = _logicManager.getEditor();
 		
 		ArrangerConstants.WINDOW_WIDTH = 1000;
-		ArrangerConstants.WINDOW_HEIGHT = 800;
+		ArrangerConstants.WINDOW_HEIGHT = 700;
 		
 		_mainPanel = new MainPanel(_piece);
 		_mainPanel.addInstructionListener(this);
@@ -56,6 +59,8 @@ public class Main extends JFrame implements InstructionListener {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(ArrangerConstants.WINDOW_WIDTH, ArrangerConstants.WINDOW_HEIGHT);
 		this.setVisible(true);
+		
+		addKeyListener(this);
 	}
 
 	public void addMenuBar(){
@@ -188,6 +193,12 @@ public class Main extends JFrame implements InstructionListener {
 		menuBar.add(file);
 		//menuBar.add(edit);
 		setJMenuBar(menuBar);
+	}
+	
+	public void keyTyped(KeyEvent e) {}
+	public void keyPressed(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {
+		_mainPanel.keyReleased(e);
 	}
 
 	public void receiveInstruction(InstructionBlock instr) {

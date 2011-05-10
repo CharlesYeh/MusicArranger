@@ -23,7 +23,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 
 import instructions.*;
@@ -34,7 +33,7 @@ import arranger.ArrangerConstants;
 import music.*;
 
 public class MainPanel extends JPanel implements MouseListener, MouseMotionListener,
-														MouseWheelListener, ComponentListener, KeyListener {
+														MouseWheelListener, ComponentListener {
 	
 	static final long serialVersionUID = 0;
 	boolean _disabled;
@@ -299,6 +298,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	public void keyTyped(KeyEvent e) {}
 	public void keyPressed(KeyEvent e) {}
 	public void keyReleased(KeyEvent e) {
+		System.out.println(e);
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_DELETE:
 			InstructionBlock instrBlock = new InstructionBlock(this);
@@ -343,7 +343,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 
 		// intercept GUI instructions (check first instruction)
 		Instruction instr = instrBlock.getInstructions().get(0);
-
+		
 		if (instr instanceof ModeInstruction) {
 			ModeInstruction modeInstr = (ModeInstruction) instr;
 			
