@@ -273,7 +273,6 @@ public class LogicManager implements Printable {
 	}
 	
 	private boolean interpretGenerateInstrVoices(GenerateInstructionVoices genInstrVoices) {
-		System.out.println("Test");
 		
 		InstructionIndex startIndex = genInstrVoices.getStartIndex();
 		InstructionIndex endIndex = genInstrVoices.getEndIndex();

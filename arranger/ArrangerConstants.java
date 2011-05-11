@@ -10,6 +10,6 @@ public class ArrangerConstants {
 	final public static int PAGE_HEIGHT = 11*72;
 	
 	// for playback
-	public static int TEMPO = 50;
+	public static int TEMPO = 100;
 	public static int WHOLE_NOTES_PER_MINUTE = TEMPO / 4;
 }
