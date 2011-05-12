@@ -955,19 +955,21 @@ public class Analyzer extends Thread {
 		int numberOfChordTones = chordTones.size();
 		int numberOfChordTonesPresent = melodyInstance.size(); 
 		int[] chordToneCheckList = new int[numberOfChordTones]; // Each element represents a chord tone. 0 means that chord tone is not present, 1 means it is.
-		int lowestExistingNoteOctave = 12; //lowest Octave of the notes that already exist
-		Pitch lowestPitch = null;
+		int lowestGivenNoteOctave = 12; //lowest Octave of the notes that already exist
+		Pitch lowestGivenPitch = null;
+		Pitch insertedRoot = null;
+		Pitch insertedThird = null;
 		List<Pitch> returnList = new ArrayList<Pitch>();
 		if(!melodyInstance.isEmpty()) {
-			lowestPitch = melodyInstance.get(0);
+			lowestGivenPitch = melodyInstance.get(0);
 //			return returnList;
 		} else {
-			lowestPitch = chordTones.get(chordTones.size() - 1);
-			lowestPitch.setOctave(4);
-			lowestExistingNoteOctave = lowestPitch.getOctave();
+			lowestGivenPitch = chordTones.get(chordTones.size() - 1);
+			lowestGivenPitch.setOctave(4);
+			lowestGivenNoteOctave = lowestGivenPitch.getOctave();
 		}
 		
-		
+		Pitch bass = lowestGivenPitch;
 		
 		
 		// Find out which chord tones are already present within the Melody
@@ -979,75 +981,76 @@ public class Analyzer extends Thread {
 				if(melodyPitch.getNoteLetter() == chordPitch.getNoteLetter() && melodyPitch.getAccidental() == chordPitch.getAccidental()) {
 					// The melody contains this chord pitch, but maybe in a different Octave
 					
-					chordToneCheckList[i] = 1;
+					chordToneCheckList[i] ++;
 					break;
 				}
 			}
 		}
 		
 		for(Pitch melodyPitch : melodyInstance) { // find lowest octave and 
-			if(melodyPitch.getOctave() < lowestExistingNoteOctave) {
+			if(melodyPitch.getOctave() < lowestGivenNoteOctave) {
 				
-				lowestExistingNoteOctave = melodyPitch.getOctave();
+				lowestGivenNoteOctave = melodyPitch.getOctave();
 			}
-			if(melodyPitch.compareTo(lowestPitch) < 0) {
+			if(melodyPitch.compareTo(lowestGivenPitch) < 0) {
 				
-				lowestPitch = melodyPitch;
+				lowestGivenPitch = melodyPitch;
 			}
 			returnList.add(melodyPitch);
 		}
 		
 //		int absoluteLowestOctave = lowestExistingNoteOctave;
 		int remainingPitchesToEnter = 4 - numberOfChordTonesPresent;
-		Pitch presentRoot = null;
+		
 		while(remainingPitchesToEnter > 0) {
 			
 			if(chordToneCheckList[0] == 0) { //root of chord is not present yet, so add root
 				
 				Pitch root = chordTones.get(0);
 				// set octave of root to be the lowest melody note
-				root.setOctave(lowestExistingNoteOctave); 
-				while(root.compareTo(lowestPitch) > 0) {
+				root.setOctave(lowestGivenNoteOctave); 
+				while(root.compareTo(lowestGivenPitch) > 0) {
 					root.setOctave(root.getOctave() -1 );
 				}
-				chordToneCheckList[0] = 1;
+				chordToneCheckList[0] ++;
 				returnList.add(root);
-				presentRoot = root;
+				insertedRoot = root;
 			}
 			else if(chordToneCheckList[1] == 0) { //3rd of chord is missing, add 3rd
 				
 				Pitch third = chordTones.get(1);
 				// set octave of root to be 1 below the lowest melody note
-				third.setOctave(lowestExistingNoteOctave);  
-				while(third.compareTo(lowestPitch) > 0) {
+				third.setOctave(lowestGivenNoteOctave);  
+				while(third.compareTo(lowestGivenPitch) > 0) {
 					third.setOctave(third.getOctave() -1 );
 				}
-				chordToneCheckList[1] = 1;
+				chordToneCheckList[1] ++;
 				returnList.add(third);
+				insertedThird = third;
 			}
 			else if(chordToneCheckList.length > 3 && chordToneCheckList[3] == 0) { //7th of chord is missing, add 7th
 				
 				Pitch seventh = chordTones.get(3);
 				// set octave of root to be 1 below the lowest melody note
-				seventh.setOctave(lowestExistingNoteOctave); 
-				while(seventh.compareTo(lowestPitch) > 0) {
+				seventh.setOctave(lowestGivenNoteOctave); 
+				while(seventh.compareTo(lowestGivenPitch) > 0) {
 					seventh.setOctave(seventh.getOctave() -1 );
 				}
-				chordToneCheckList[3] = 1;
+				chordToneCheckList[3] ++;
 				returnList.add(seventh);
 			}
 			else if(chordToneCheckList[2] == 0) { // enter 5th
 				
 				Pitch fifth = chordTones.get(2);
 				// set octave of root to be 1 below the lowest melody note
-				fifth.setOctave(lowestExistingNoteOctave); 
-				while(fifth.compareTo(lowestPitch) > 0) {
-					fifth.setOctave(fifth.getOctave() -1 );
+				fifth.setOctave(lowestGivenNoteOctave); 
+				while(fifth.compareTo(lowestGivenPitch) > 0) {
+					fifth.setOctave(fifth.getOctave() - 1);
 				}
-				chordToneCheckList[2] = 1;
+				chordToneCheckList[2] ++;
 				returnList.add(fifth);
 			}
-			else { // all chord tones already exist, repeat octave
+			else { // all chord tones already exist, repeat root or third
 				
 				Pitch root = chordTones.get(0).copy();
 				Pitch third = chordTones.get(1).copy();
@@ -1057,23 +1060,44 @@ public class Analyzer extends Thread {
 //				}
 //				else {
 				
-				third.setOctave(lowestExistingNoteOctave-1);
-				root.setOctave(lowestExistingNoteOctave-1);
+				third.setOctave(lowestGivenNoteOctave-1);
+				root.setOctave(lowestGivenNoteOctave-1);
 				 
-				while(root.compareTo(lowestPitch) > 0) {
+				while(root.compareTo(lowestGivenPitch) > 0) {
 					root.setOctave(root.getOctave() - 1);
 				}
-				while(third.compareTo(lowestPitch) > 0) {
+				while(third.compareTo(lowestGivenPitch) > 0) {
 					third.setOctave(third.getOctave() - 1);
 				}
-				if(third.compareTo(root) > 0) {
-					chordToneCheckList[1] = 1;
+				if(third.compareTo(bass) > 0 && !(insertedThird != null && third.equals(insertedThird))) { // If the third is higher than the bass, and a the existing third is not the same as the one to be entered
+					
+					chordToneCheckList[1] ++;
 					returnList.add(third);
 					
 				} else {
-					chordToneCheckList[0] = 1;
-					returnList.add(root);
+					// If the bass note is the root, insert a third as the root
+					if(bass.equalsName(root)) {
+						
+						while(third.compareTo(bass) > 0) {
+							third.setOctave(third.getOctave() - 1);
+						}
+						chordToneCheckList[1] ++;
+						returnList.add(third);
+					}
+					else { // otherwise make the bass the root
+						
+						while(root.compareTo(bass) > 0) {
+							root.setOctave(third.getOctave() - 1);
+						}
+						chordToneCheckList[0] ++;
+						returnList.add(root);
+					}
 				}
+			}
+			
+			Pitch lastAdded = returnList.get(returnList.size() - 1); // get the last note entered
+			if(lastAdded.compareTo(bass) < 0) { // if last note entered is lower than the bass, update the bass note
+				bass = lastAdded;
 			}
 			
 			remainingPitchesToEnter--;
