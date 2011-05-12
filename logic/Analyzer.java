@@ -956,9 +956,18 @@ public class Analyzer extends Thread {
 		int numberOfChordTonesPresent = melodyInstance.size(); 
 		int[] chordToneCheckList = new int[numberOfChordTones]; // Each element represents a chord tone. 0 means that chord tone is not present, 1 means it is.
 		int lowestExistingNoteOctave = 12; //lowest Octave of the notes that already exist
-		Pitch lowestPitch = melodyInstance.get(0);
-		
+		Pitch lowestPitch = null;
 		List<Pitch> returnList = new ArrayList<Pitch>();
+		if(!melodyInstance.isEmpty()) {
+			lowestPitch = melodyInstance.get(0);
+//			return returnList;
+		} else {
+			lowestPitch = chordTones.get(chordTones.size() - 1);
+			lowestPitch.setOctave(4);
+			lowestExistingNoteOctave = lowestPitch.getOctave();
+		}
+		
+		
 		
 		
 		// Find out which chord tones are already present within the Melody
