@@ -28,9 +28,9 @@ public class MidiPlayer extends Thread {
 		_isPlaying = true;
 
 		for(int measureNumber = 0; measureNumber < _staffList.get(0).getMeasures().size(); measureNumber ++){
-
-			System.out.println("+++++This is measure " + measureNumber + "+++++++");
-
+			
+			//System.out.println("-------------------This is measure " + measureNumber + "-------------------");
+			
 			// initiate the _starts treemap with the iterators to the lists of multinotes (that represent voices)
 			_starts = new TreeMap<Timestamp, ListIterator<MultiNote>>();
 			_ends = new TreeMap<Timestamp, MultiNote>();
@@ -48,50 +48,58 @@ public class MidiPlayer extends Thread {
 					_starts.put(timestampKey, listIter);
 				}
 			}
-
-
+			
+			
 			while (!_starts.isEmpty() || !_ends.isEmpty()) {
-
-
-				System.out.println("======New iteration======");
+				
+				//System.out.println("======New iteration======");
 
 				// find whether start or end is next with timestamps (firstKey())
 				Timestamp startTime = _starts.isEmpty() ? null : _starts.firstKey();
 
 				/*if(startTime != null)
-					System.out.println("startTime is : " + startTime.getDuration().toString());
+					System.out.println("startTime is : " + startTime.getDuration());
 				else
 					System.out.println("startTime is null");*/
 
 				Timestamp endTime = _ends.isEmpty() ? null : _ends.firstKey();
 
 				/*if(endTime != null)
-					System.out.println("endTime is : " + endTime.getDuration().toString());
+					System.out.println("endTime is : " + endTime.getDuration());
 				else
 					System.out.println("endTime is null");*/
 				
 				// if start is empty, default to ends list
-				boolean nextIsStart = !_starts.isEmpty();
+				boolean nextIsEnd = !_ends.isEmpty();
 				//System.out.println(nextIsStart);
 
-				// if starts isn't empty, make sure ends isn't empty, and compare end time
-				if (nextIsStart && !_ends.isEmpty() && startTime.compareTo(endTime) >= 0) {
-					// ending a note is next
-					nextIsStart = false;
+				// if starts isn't empty, make sure ends isn't empty, and compare start time
+				if (nextIsEnd && !_starts.isEmpty() && endTime.compareTime(startTime) > 0) {
+					// starting a note is next
+					nextIsEnd = false;
 				}
 
-				Rational currentTime = nextIsStart ? startTime.getDuration().clone() : endTime.getDuration().clone();
+				Rational currentTime = nextIsEnd ? endTime.getDuration().clone() : startTime.getDuration().clone();
 
-				if (nextIsStart) {
+				if (nextIsEnd) {
+					// stop playing a multinote
+					//System.out.println("endTime is " + endTime);
+
+					//System.out.println("Turning note OFF at : " + endTime.getDuration().getNumerator() + "/" + endTime.getDuration().getDenominator());
+					MultiNote mn = _ends.get(endTime);
+					_midi.multiNoteOff(mn);
+					_ends.remove(endTime);
+				}
+				else {
 					ListIterator<MultiNote> itr = _starts.get(startTime);
-
+					
 					// this note has started
 					_starts.remove(startTime);
 					if(itr.hasNext()) {
 						// play multinote
 						MultiNote mn = itr.next();
 
-//						System.out.println("Turning note ON at : " + startTime.getDuration().getNumerator() + "/" + startTime.getDuration().getDenominator());
+						//System.out.println("Turning note ON at : " + startTime.getDuration().getNumerator() + "/" + startTime.getDuration().getDenominator());
 						_midi.multiNoteOn(mn);
 
 						// get next timestamp
@@ -105,15 +113,6 @@ public class MidiPlayer extends Thread {
 							_starts.put(startTime, itr);
 						_ends.put(tempTimestamp, mn);
 					}
-				}
-				else {
-					// stop playing a multinote
-					//System.out.println("endTime is " + endTime);
-
-					//System.out.println("Turning note OFF at : " + endTime.getDuration().getNumerator() + "/" + endTime.getDuration().getDenominator());
-					MultiNote mn = _ends.get(endTime);
-					_midi.multiNoteOff(mn);
-					_ends.remove(endTime);
 				}
 
 				// get sleep duration

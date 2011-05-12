@@ -273,7 +273,6 @@ public class LogicManager implements Printable {
 	}
 	
 	private boolean interpretGenerateInstrVoices(GenerateInstructionVoices genInstrVoices) {
-		System.out.println("Test");
 		
 		InstructionIndex startIndex = genInstrVoices.getStartIndex();
 		InstructionIndex endIndex = genInstrVoices.getEndIndex();
@@ -291,8 +290,12 @@ public class LogicManager implements Printable {
 		
 		List<List<Pitch>> harmonies = new ArrayList<List<Pitch>>();
 		for (int i = 0; i < chords.size(); i++) {
+			ChordSymbol chord = chords.get(i);
+			if (chord.getScaleDegree().getDegreeNumber() == 0) {
+				break;
+			}
 			harmonies.add(_analyzer.harmonizeMelodyInstance(melody.get(i), 
-					chords.get(i), keySig));
+					chord, keySig));
 		}
 		
 		for (int harmonyNum = 0; harmonyNum < harmonies.size(); harmonyNum++) {

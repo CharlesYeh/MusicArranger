@@ -73,6 +73,8 @@ public class NewFileDialog extends JDialog implements PropertyChangeListener {
 			_comboClefs.add(b);
 		}
 		
+		_comboClefs.get(1).setSelectedIndex(1);
+		
 		_txtMeasureNum = new JTextField();
 		_txtMeasureNum.setText("30");
 		

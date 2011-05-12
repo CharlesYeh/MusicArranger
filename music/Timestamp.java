@@ -32,7 +32,7 @@ public class Timestamp extends Timestep implements Comparable {
 	public int compareTo(Object obj) {
 		Timestamp dur = (Timestamp) obj;
 
-		int diff = getDuration().compareTo(dur.getDuration());
+		int diff = compareTime(dur);
 		if (diff == 0) {
 			if (_assocType != null) {
 				// not a multinote
@@ -55,6 +55,10 @@ public class Timestamp extends Timestep implements Comparable {
 		}
 
 		return diff;
+	}
+	
+	public int compareTime(Timestamp t) {
+		return getDuration().compareTo(t.getDuration());
 	}
 	
 	int getWeight() {
