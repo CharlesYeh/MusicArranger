@@ -26,6 +26,8 @@ public class ModeToolbar extends Toolbar {
 		// add mode buttons (note, selection, zoom)
 		ToolbarButton modeNote = new ToolbarButton("images/btns/note_quarter.png", true);
 		ToolbarButton modeSelection = new ToolbarButton("images/btns/mode_chord.png", true);
+		ToolbarButton modeClef = new ToolbarButton("images/btns/mode_clef.png", true);
+		ToolbarButton modeTime = new ToolbarButton("images/btns/mode_time.png", true);
 		//ToolbarButton modeZoom = new ToolbarButton("images/btns/mode_zoom.png");
 		
 		ToolbarButton genChords = new ToolbarButton("images/btns/gen_chords.png", false);
@@ -33,14 +35,16 @@ public class ModeToolbar extends Toolbar {
 
 		modeNote.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.NOTE));
 		modeSelection.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.SELECTION));
+		modeClef.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.CLEF));
+		modeTime.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.TIME));
 		//modeZoom.setInstruction(new ModeInstruction(ModeInstructionType.MODE, EditMode.ZOOM));
 		
 		genChords.setInstruction(new ModeInstruction(ModeInstructionType.GENERATE, GenerateInstructionType.CHORDS));
 		genVoices.setInstruction(new ModeInstruction(ModeInstructionType.GENERATE, GenerateInstructionType.VOICES));
 
-		_buttons = Arrays.asList(modeNote, /*modeSelection,*/ /*modeZoom, */genChords, genVoices);
-		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(0)));
-		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(1, 2)));
+		_buttons = Arrays.asList(modeNote, /*modeSelection,*/ /*modeZoom, */modeClef, modeTime, genChords, genVoices);
+		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(0, 1, 2)));
+		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(3, 4)));
 		
 		modeNote.setPressed(true);
 	}

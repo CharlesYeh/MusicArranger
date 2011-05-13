@@ -53,6 +53,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	//--------------------state information--------------------
 	EditMode _currMode		= EditMode.NOTE;
+	EditType _currType		= EditType.MULTINOTE;
 	EditDuration _currDuration = EditDuration.QUARTER;
 	
 	Accidental _currAccidental	= null;	// is the accidental modifier set?
@@ -197,14 +198,38 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 					
 				}
 				else {
+					Instruction editInstr = null;
+					switch (_currType) {
+					case MULTINOTE:
+						editInstr = new EditInstruction(index, EditInstructionType.REPLACE, _currType, new MultiNote(_currDuration.getDuration()));
+						break;
+					case CLEF:
+						// prompt for center line and clef name
+						//_clefDialog;
+						/*_clefDialog.setLocationRelativeTo(frame);
+						_clefDialog.pack();
+						_clefDialog.setVisible(true);*/
+						
+						/*if (!_clefDialog.success())
+							return;*/
+						
+						editInstr = new EditInstruction(index, EditInstructionType.REPLACE, _currType, new Clef(ClefName.GCLEF, 1));
+						break;
+					case TIME_SIGNATURE:
+						editInstr = new EditInstruction(index, EditInstructionType.REPLACE, _currType, new MultiNote(_currDuration.getDuration()));
+						break;
+					default:
+						System.out.println("Edit type unrecognized");
+						break;
+					}
+					
 					// replace this note
-					Instruction editInstr = new EditInstruction(index, EditInstructionType.REPLACE, EditType.MULTINOTE, new MultiNote(_currDuration.getDuration()));
 					instr.addInstruction(editInstr);
 					
 					_selected = new HashSet<InstructionIndex>(listIndex);
 				}
 				
-				if (!_currRest) {
+				if (!_currRest && _currType == EditType.MULTINOTE) {
 					// insert pitches
 					index.setAccidental(_currAccidental);
 					Instruction editInstr = new EditInstruction(index, EditInstructionType.INSERT, EditType.PITCH);
@@ -345,28 +370,90 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_DELETE:
 			for (InstructionIndex index : _selected) {
-				Instruction editInstr = new EditInstruction(index, EditInstructionType.CLEAR, EditType.MULTINOTE);
+				Instruction editInstr = new EditInstruction(index, EditInstructionType.CLEAR, _currType);
 				instrBlock.addInstruction(editInstr);
 			}
 			break;
 			
 		case KeyEvent.VK_UP:
 			for (InstructionIndex index : _selected) {
-				Instruction editInstr = new EditInstruction(index, EditInstructionType.TRANSPOSE_UP, EditType.MULTINOTE);
+				Instruction editInstr = new EditInstruction(index, EditInstructionType.TRANSPOSE_UP, _currType);
 				instrBlock.addInstruction(editInstr);
 			}
 			break;
 			
 		case KeyEvent.VK_DOWN:
 			for (InstructionIndex index : _selected) {
-				Instruction editInstr = new EditInstruction(index, EditInstructionType.TRANSPOSE_DOWN, EditType.MULTINOTE);
+				Instruction editInstr = new EditInstruction(index, EditInstructionType.TRANSPOSE_DOWN, _currType);
 				instrBlock.addInstruction(editInstr);
 			}
+			break;
+			
+			// hotkeys for mode toolbar
+		case KeyEvent.VK_1:
+			instrBlock.addInstruction(_modeToolbar.getInstruction(0));
+			_modeToolbar.setPressed(0, true);
+			break;
+		case KeyEvent.VK_2:
+			instrBlock.addInstruction(_modeToolbar.getInstruction(1));
+			_modeToolbar.setPressed(1, true);
+			break;
+		case KeyEvent.VK_3:
+			instrBlock.addInstruction(_modeToolbar.getInstruction(2));
+			_modeToolbar.setPressed(2, true);
+			break;
+		case KeyEvent.VK_4:
+			instrBlock.addInstruction(_modeToolbar.getInstruction(3));
+			_modeToolbar.setPressed(3, true);
+			break;
+		case KeyEvent.VK_5:
+			instrBlock.addInstruction(_modeToolbar.getInstruction(4));
+			_modeToolbar.setPressed(4, true);
+			break;
+			
+			// hotkey for modifier toolbar
+		case KeyEvent.VK_Q:
+			instrBlock.addInstruction(_noteToolbar.getInstruction(0));
+			_noteToolbar.setPressed(0, true);
+			break;
+		case KeyEvent.VK_W:
+			instrBlock.addInstruction(_noteToolbar.getInstruction(1));
+			_noteToolbar.setPressed(1, true);
+			break;
+		case KeyEvent.VK_E:
+			instrBlock.addInstruction(_noteToolbar.getInstruction(2));
+			_noteToolbar.setPressed(2, true);
+			break;
+		case KeyEvent.VK_R:
+			instrBlock.addInstruction(_noteToolbar.getInstruction(3));
+			_noteToolbar.setPressed(3, true);
+			break;
+		case KeyEvent.VK_T:
+			instrBlock.addInstruction(_noteToolbar.getInstruction(4));
+			_noteToolbar.setPressed(4, true);
+			break;
+		case KeyEvent.VK_Y:
+			instrBlock.addInstruction(_noteToolbar.getInstruction(5));
+			_noteToolbar.setPressed(5, true);
+			break;
+		case KeyEvent.VK_U:
+			instrBlock.addInstruction(_noteToolbar.getInstruction(6));
+			_noteToolbar.setPressed(6, true);
+			break;
+		case KeyEvent.VK_I:
+			instrBlock.addInstruction(_noteToolbar.getInstruction(7));
+			_noteToolbar.setPressed(7, true);
+			break;
+		case KeyEvent.VK_O:
+			instrBlock.addInstruction(_noteToolbar.getInstruction(8));
+			_noteToolbar.setPressed(8, true);
 			break;
 		}
 		
 		if (!instrBlock.isEmpty())
 			sendInstruction(instrBlock);
+		
+		repaint();
 	}
 	
 	public void interpretInstrBlock(InstructionBlock instrBlock) {
@@ -410,8 +497,20 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			switch (modeInstr.getType()) {
 			case MODE:
 				_currMode = (EditMode) modeInstr.getValue();
+				switch (_currMode) {
+				case CLEF:
+					_currType = EditType.CLEF;
+					break;
+				case TIME:
+					_currType = EditType.TIME_SIGNATURE;
+					break;
+				default:
+					_currType = EditType.MULTINOTE;
+					break;
+				}
+				
 				break;
-
+				
 			case DURATION:
 				_currDuration = (EditDuration) modeInstr.getValue();
 				break;

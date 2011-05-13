@@ -449,6 +449,40 @@ public class LogicManager implements Printable {
 	}
 
 	private boolean editClef(EditInstruction editInstr) {
+		
+		InstructionIndex index = editInstr.getIndex();
+
+		int staffNumber = index.getStaffNumber();
+		int measureNumber = index.getMeasureNumber();
+		
+		Rational measureOffset = index.getMeasureOffset();
+		Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
+		List<Clef> clefList = measure.getClefs();
+
+		// calculate iterator and offset
+		IteratorAndOffset iterAndOffset = calcIterAndOffset(clefList, measureOffset);
+		ListIterator<Clef> iter = (ListIterator<Clef>) iterAndOffset.getIter();
+		Rational offset = iterAndOffset.getOffset();
+
+		Clef clef = (Clef) editInstr.getElement();
+		int lineNumber = clef.getCenterLine();
+
+		// set the iterator in the editor
+		_editor.setClefIter(iter);
+
+		EditInstructionType instrType = editInstr.getType();
+		switch (instrType) {
+			// offset SHOULD be 0 for insertion and removal functions
+			case REPLACE:
+				// check if replacement note runs over end of measure
+				Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
+				Rational remainingSpace = measureLength.minus(measureOffset);
+				
+				// add clef to take up the rest of the measure
+				Clef newClef = new Clef(remainingSpace, clef.getClefName(), lineNumber);
+				_editor.replaceClef(newClef);
+				return true;
+		}
 		return true;
 	}
 

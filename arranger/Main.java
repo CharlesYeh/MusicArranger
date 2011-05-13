@@ -1,6 +1,7 @@
 package arranger;
 
 import gui.MainPanel;
+import gui.dialogs.NewFileDialog;
 
 import java.util.*;
 
@@ -22,7 +23,6 @@ import music.Clef;
 import music.ClefName;
 import music.Piece;
 import instructions.*;
-import gui.NewFileDialog;
 
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
@@ -39,6 +39,9 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 	LogicManager _logicManager;
 
 	Piece _piece;
+	
+	//dialogs
+	NewFileDialog _newFileDialog;
 
 	public Main(){
 		super("Music Arranger");
@@ -71,10 +74,12 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 		//----------------FILE----------------
 		JMenu file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
-
+		
+		final JFrame frame = this;
+		_newFileDialog = new NewFileDialog(frame);
+		
 		// new file
 		//Instruction instrNew = new FileInstruction();
-		final JFrame frame = this;
 		JMenuItem menuItemNew = new JMenuItem("New");
 		menuItemNew.setMnemonic(KeyEvent.VK_N);
 		menuItemNew.setToolTipText("New song");
@@ -83,16 +88,17 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 				
 				public void actionPerformed(ActionEvent event) {
 					// prompt for new song data
-					NewFileDialog newFileDialog = new NewFileDialog(frame);
-					newFileDialog.setLocationRelativeTo(frame);
-					newFileDialog.pack();
-					newFileDialog.setVisible(true);
+					//_newFileDialog.setLocationRelativeTo();
+					_newFileDialog.pack();
+					_newFileDialog.setVisible(true);
 					
-					if (!newFileDialog.success())
+					if (!_newFileDialog.success())
 						return;
 					
-					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionNew(newFileDialog.getClefs(), newFileDialog.getNumMeasures(),
-																		newFileDialog.getTimeNumer(), newFileDialog.getTimeDenom(), newFileDialog.getNumAccidentals(), newFileDialog.getIsMajor()));
+					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionNew(_newFileDialog.getClefs(),
+																					_newFileDialog.getNumMeasures(), _newFileDialog.getTimeNumer(),
+																					_newFileDialog.getTimeDenom(), _newFileDialog.getNumAccidentals(),
+																					_newFileDialog.getIsMajor()));
 					
 					receiveInstruction(myInstr);
 				}
@@ -135,7 +141,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 						}
 					}
 				});
-
+		
 		JMenuItem menuItemPrint = new JMenuItem("Print");
 		menuItemPrint.setMnemonic(KeyEvent.VK_P);
 		menuItemPrint.setToolTipText("Print song");

@@ -91,6 +91,14 @@
 			drawBuffer();
 		}
 		
+		public Instruction getInstruction(int index) {
+			if (index < 0 || index >= _buttons.size())
+				return null;
+			
+			ToolbarButton btn = _buttons.get(index);
+			return btn.getInstruction();
+		}
+		
 		private void refreshPresses(Set<Integer> group, int btn) {
 			if (group == null)
 				return;
