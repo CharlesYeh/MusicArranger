@@ -88,7 +88,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 				
 				public void actionPerformed(ActionEvent event) {
 					// prompt for new song data
-					//_newFileDialog.setLocationRelativeTo();
+					//_newFilerDialog.setLocationRelativeTo();
 					_newFileDialog.refreshSuccess();
 					_newFileDialog.pack();
 					_newFileDialog.setVisible(true);

@@ -190,7 +190,10 @@ public class NewFileDialog extends JDialog implements PropertyChangeListener {
 	
 	public int getTimeDenom() {
 		try {
-			return Integer.parseInt(_timeSigDenom.getText());
+			int numerValue = Integer.parseInt(_timeSigDenom.getText());
+			numerValue = (int) Math.pow(2, Math.round(Math.log(numerValue) / Math.log(2)));
+			
+			return numerValue;
 		}
 		catch (Exception e) {
 			return DEFAULT_TIMESIG;

@@ -1,5 +1,5 @@
 package gui;
 
 public enum EditMode {
-	NOTE, SELECTION, ZOOM, CLEF, TIME
+	NOTE, SELECTION, ZOOM, CLEF, TIME, KEY
 }

@@ -167,31 +167,7 @@ public class LogicManager implements Printable {
 
 			// loop through measures
 			for (int msrnm = 0; msrnm < numMeasures; msrnm++) {
-				Measure measure = new Measure();
-				_editor.insertMeasure(measure);
-
-				// Instantiate key signature, time signature
-				Rational duration = new Rational(timeSigNumer, timeSigDenom);
-				TimeSignature timeSig = new TimeSignature(duration, timeSigNumer, timeSigDenom);
-				KeySignature keySig = new KeySignature(duration, accidentals, isMajor);
-				_editor.insertKeySig(keySig);
-				_editor.insertTimeSig(timeSig);
-
-				// Instantiate clef
-				ClefName clefName = clefs.get(stfnm).getClefName();
-				int centerLine = clefs.get(stfnm).getCenterLine();
-				Clef clef = new Clef(duration, clefName, centerLine);
-				_editor.insertClef(clef);
-
-				// Instantiate single voice with a rest;
-				Voice voice = new Voice();
-				MultiNote rest = new MultiNote(duration);
-				_editor.insertVoice(voice);
-				_editor.insertMultiNote(rest);
-
-				// Add blank placeholder chordsymbols
-				ChordSymbol chordSymbol = new ChordSymbol(duration, new ScaleDegree(0, Accidental.NATURAL), ChordType.BLANK);
-				_editor.insertChordSymbol(chordSymbol);
+				insertMeasure(timeSigNumer, timeSigDenom, accidentals, isMajor, clefs.get(stfnm));
 			}
 		}
 
@@ -199,6 +175,35 @@ public class LogicManager implements Printable {
 		
 		return true;
 	}
+	private void insertMeasure(int timeSigNumer, int timeSigDenom, int accidentals, boolean isMajor, Clef currClef) {
+		Measure measure = new Measure();
+		_editor.insertMeasure(measure);
+
+		// Instantiate key signature, time signature
+		Rational duration = new Rational(timeSigNumer, timeSigDenom);
+		TimeSignature timeSig = new TimeSignature(duration, timeSigNumer, timeSigDenom);
+		KeySignature keySig = new KeySignature(duration, accidentals, isMajor);
+		
+		_editor.insertKeySig(keySig);
+		_editor.insertTimeSig(timeSig);
+
+		// Instantiate clef
+		ClefName clefName = currClef.getClefName();
+		int centerLine = currClef.getCenterLine();
+		Clef clef = new Clef(duration, clefName, centerLine);
+		_editor.insertClef(clef);
+
+		// Instantiate single voice with a rest;
+		Voice voice = new Voice();
+		MultiNote rest = new MultiNote(duration);
+		_editor.insertVoice(voice);
+		_editor.insertMultiNote(rest);
+
+		// Add blank placeholder chordsymbols
+		ChordSymbol chordSymbol = new ChordSymbol(duration, new ScaleDegree(0, Accidental.NATURAL), ChordType.BLANK);
+		_editor.insertChordSymbol(chordSymbol);
+	}
+	
 	private boolean interpretFileInstrIO(FileInstructionIO fileInstrIO) {
 		FileInstructionType fileInstrType = fileInstrIO.getType();
 		String fileName = fileInstrIO.getFileName();
@@ -400,9 +405,9 @@ public class LogicManager implements Printable {
 			IteratorAndOffset iterAndOffset = calcIterAndOffset(chordSymbolList, measureOffset);
 			ListIterator<ChordSymbol> iter = (ListIterator<ChordSymbol>) iterAndOffset.getIter();
 			Rational offset = iterAndOffset.getOffset();
-	
+			
 			ChordSymbol chordSymbol;
-	
+			
 			// set the iterator in the editor
 			_editor.setChordSymbolIter(iter);
 	
@@ -441,59 +446,51 @@ public class LogicManager implements Printable {
 	}
 
 	private boolean editKeySignature(EditInstruction editInstr) {
+		InstructionIndex index = editInstr.getIndex();
+		
+		// find insertion data
+		int staffNumber = index.getStaffNumber();
+		int measureNumber = index.getMeasureNumber();
+		
+		Rational measureOffset = new Rational(0, 1);
+		Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
+		
+		Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
+		
+		// to be inserted
+		KeySignature refKeySig = (KeySignature) editInstr.getElement();
+		KeySignature newKeySig = new KeySignature(measureLength, refKeySig.getAccidentalNumber(), refKeySig.getIsMajor());
+		
+		List<KeySignature> keySigs = measure.getKeySignatures();
+		ListIterator<KeySignature> iter = keySigs.listIterator();
+		
+		// complete action
+		_editor.setKeySignatureIter(iter);
+		_editor.replaceKeySig(newKeySig);
+		
 		return true;
 	}
 
 	private boolean editTimeSignature(EditInstruction editInstr) {
 		InstructionIndex index = editInstr.getIndex();
-
+		
+		TimeSignature newTimeSig = (TimeSignature) editInstr.getElement();
+		
 		for (Staff staff : _piece.getStaffs()) {
 				
 			int measureNumber = index.getMeasureNumber();
 			Rational measureOffset = index.getMeasureOffset();
 			Measure measure = staff.getMeasures().get(measureNumber);
-			ListIterator<TimeSignature> iter = measure.getTimeSignatures().listIterator();
+			
+			List<TimeSignature> timeSigs = measure.getTimeSignatures();
+			ListIterator<TimeSignature> iter = timeSigs.listIterator();
 			
 			_editor.setTimeSignatureIter(iter);
-			_editor.replaceTimeSig((TimeSignature) editInstr.getElement());
-			//List<ChordSymbol> chordSymbolList = measure.getChordSymbols();
-			/*
-			// calculate iterator and offset
-			IteratorAndOffset iterAndOffset = calcIterAndOffset(chordSymbolList, measureOffset);
-			ListIterator<ChordSymbol> iter = (ListIterator<ChordSymbol>) iterAndOffset.getIter();
-			Rational offset = iterAndOffset.getOffset();
-	
-			ChordSymbol chordSymbol;
-	
-			// set the iterator in the editor
-			_editor.setChordSymbolIter(iter);
-	
-			EditInstructionType instrType = editInstr.getType();
-			switch (instrType) {
-			// offset SHOULD be 0 for insertion and removal functions
-				case INSERT:
-					chordSymbol = (ChordSymbol) editInstr.getElement();
-					_editor.insertChordSymbol(chordSymbol);
-					break;
-				case REMOVE:
-					_editor.removeChordSymbol();
-					break;
-				case REPLACE:
-					// check if replacement note runs over end of measure
-					Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
-					chordSymbol = (ChordSymbol) editInstr.getElement();
-					if (measureOffset.compareTo(measureLength) > 0) {
-						// Error, measureOffset is longer than the actual measure
-						return false;
-					}
-					else {
-						_editor.replaceChordSymbol(chordSymbol, offset);
-					}
-					break;
-				default:
-					System.out.println("Instruction of unrecognized EditInstructionType");
-					return false;
-			}*/
+			_editor.replaceTimeSig(newTimeSig);
+			
+			// remove excess notes
+			Rational toRemove = timeSigs.get(0).getDuration().minus(newTimeSig.getDuration());
+			
 		}
 		return true;
 	}
@@ -505,10 +502,11 @@ public class LogicManager implements Printable {
 		int staffNumber = index.getStaffNumber();
 		int measureNumber = index.getMeasureNumber();
 		
-		Rational measureOffset = index.getMeasureOffset();
+		//Rational measureOffset = index.getMeasureOffset();
+		Rational measureOffset = new Rational(0, 1);
 		Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
 		List<Clef> clefList = measure.getClefs();
-
+		
 		// calculate iterator and offset
 		IteratorAndOffset iterAndOffset = calcIterAndOffset(clefList, measureOffset);
 		ListIterator<Clef> iter = (ListIterator<Clef>) iterAndOffset.getIter();

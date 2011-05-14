@@ -5,6 +5,7 @@ import java.beans.*;
 import javax.swing.JOptionPane;
 import javax.swing.JDialog;
 import javax.swing.JTextField;
+import javax.swing.JComboBox;
 
 import java.awt.Frame;
 import java.awt.event.ActionListener;
@@ -22,8 +23,8 @@ public class KeySignatureDialog extends JDialog implements PropertyChangeListene
 	
 	private JOptionPane _optionPane;
 	
-	JTextField _timeSigNumer;
-	JTextField _timeSigDenom;
+	JComboBox _isMajor;
+	JTextField _txtAccidentals;
 	
 	boolean _success;
 	
@@ -34,10 +35,12 @@ public class KeySignatureDialog extends JDialog implements PropertyChangeListene
 		Object[] options = {"Create", "Cancel"};
 		
 		// objects in dialog
-		_timeSigNumer = new JTextField();
-		_timeSigDenom = new JTextField();
+		String[] qualities = {"Major", "Minor"};
+		_isMajor = new JComboBox(qualities);
 		
-		Object[] startArray = {"Time Signature Numerator:", _timeSigNumer, "Time Signature Denominator: ", _timeSigDenom};
+		_txtAccidentals = new JTextField();
+		
+		Object[] startArray = {"Accidentals:", _txtAccidentals, "Key Signature Quality: ", _isMajor};
 		
 		_optionPane = new JOptionPane(startArray, JOptionPane.DEFAULT_OPTION,
 												JOptionPane.YES_NO_OPTION,
@@ -68,21 +71,16 @@ public class KeySignatureDialog extends JDialog implements PropertyChangeListene
 		setVisible(false);
 	}
 	
-	public int getTimeNumer() {
-		try {
-			return Integer.parseInt(_timeSigNumer.getText());
-		}
-		catch (Exception e) {
-			return DEFAULT_TIMESIG;
-		}
+	public boolean getIsMajor() {
+		return _isMajor.getSelectedItem().equals("Major");
 	}
 	
-	public int getTimeDenom() {
+	public int getNumAccidentals() {
 		try {
-			return Integer.parseInt(_timeSigDenom.getText());
+			return Integer.parseInt(_txtAccidentals.getText());
 		}
 		catch (Exception e) {
-			return DEFAULT_TIMESIG;
+			return 0;
 		}
 	}
 	

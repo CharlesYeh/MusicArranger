@@ -206,13 +206,14 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				// insert/replace multinote or pitch
 				if (_selected.contains(index)) {
 					// don't replace this note
-					
+					System.out.println(_selected);
 				}
 				else {
 					Instruction editInstr = null;
 					switch (_currType) {
 					case MULTINOTE:
 						editInstr = new EditInstruction(index, EditInstructionType.REPLACE, _currType, new MultiNote(_currDuration.getDuration()));
+						_selected = new HashSet<InstructionIndex>(listIndex);
 						break;
 					case CLEF:
 						// prompt for center line and clef name
@@ -234,6 +235,15 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 						
 						editInstr = new EditInstruction(index, EditInstructionType.REPLACE, _currType, new TimeSignature(_timeSigDialog.getTimeNumer(), _timeSigDialog.getTimeDenom()));
 						break;
+					case KEY_SIGNATURE:
+						_keySigDialog.refreshSuccess();
+						_keySigDialog.setVisible(true);
+						
+						if (!_keySigDialog.success())
+							return;
+						
+						editInstr = new EditInstruction(index, EditInstructionType.REPLACE, _currType, new KeySignature(_keySigDialog.getNumAccidentals(), _keySigDialog.getIsMajor()));
+						break;
 					default:
 						System.out.println("Edit type unrecognized");
 						break;
@@ -241,8 +251,6 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 					
 					// replace this note
 					instr.addInstruction(editInstr);
-					
-					_selected = new HashSet<InstructionIndex>(listIndex);
 				}
 				
 				if (!_currRest && _currType == EditType.MULTINOTE) {
@@ -389,6 +397,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				Instruction editInstr = new EditInstruction(index, EditInstructionType.CLEAR, _currType);
 				instrBlock.addInstruction(editInstr);
 			}
+			
 			break;
 			
 		case KeyEvent.VK_UP:
@@ -425,6 +434,10 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		case KeyEvent.VK_5:
 			instrBlock.addInstruction(_modeToolbar.getInstruction(4));
 			_modeToolbar.setPressed(4, true);
+			break;
+		case KeyEvent.VK_6:
+			instrBlock.addInstruction(_modeToolbar.getInstruction(4));
+			_modeToolbar.setPressed(5, true);
 			break;
 			
 			// hotkey for modifier toolbar
@@ -519,6 +532,9 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 					break;
 				case TIME:
 					_currType = EditType.TIME_SIGNATURE;
+					break;
+				case KEY:
+					_currType = EditType.KEY_SIGNATURE;
 					break;
 				default:
 					_currType = EditType.MULTINOTE;

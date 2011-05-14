@@ -124,7 +124,7 @@ public class Editor{
 		return this;
 	}
 	
-// TIME SIGS
+// TIME SIGS (use measure methods instead?)
 	public Editor setTimeSignatureIter(ListIterator<TimeSignature> iter) {
 		_timeSigIter = iter;
 		return this;

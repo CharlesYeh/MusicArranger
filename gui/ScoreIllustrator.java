@@ -526,7 +526,9 @@ public class ScoreIllustrator {
 		List<Pitch> pitches = mn.getPitches();
 		if (pitches.size() == 0) {
 			// draw rest
-			drawRest(g, numerValue, denomValue, nextX, nextY);
+			drawRest(g, numerValue, denomValue - numerValue, nextX, nextY);
+			
+			drawDots(g, numerValue, nextX + 10, nextY + 23);
 			
 			// render previous group
 			renderStemGroup(stemGroup, currClef);
@@ -722,15 +724,21 @@ public class ScoreIllustrator {
 			// note is a base note + dots
 			int base = numerValue - numerValue / 2;
 			drawBaseNoteHead(g, base, xc, yc, selected);
-
+			
 			// draw dots
-			int dots = numerValue - 3;
-
+			drawDots(g, numerValue, xc + 10, yc);
 		}
 	}
-
+	
 	//-----------------------actual drawing methods-----------------------
-
+	
+	private void drawDots(Graphics g, int dots, int xc, int yc) {
+		for (int i = 0; i < dots; i++) {
+			g.setColor(Color.BLACK);
+			g.fillOval(xc + i * 5, yc, 4, 4);
+		}
+	}
+	
 	/*	Draws the note head for a base value (numerator is 1)
 	 *
 	 */
