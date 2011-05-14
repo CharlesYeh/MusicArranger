@@ -55,7 +55,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 		ArrangerConstants.WINDOW_WIDTH = 1100;
 		ArrangerConstants.WINDOW_HEIGHT = 700;
 		
-		_mainPanel = new MainPanel(_piece);
+		_mainPanel = new MainPanel(_piece, this);
 		_mainPanel.addInstructionListener(this);
 		this.add(_mainPanel);
 		
@@ -89,6 +89,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 				public void actionPerformed(ActionEvent event) {
 					// prompt for new song data
 					//_newFileDialog.setLocationRelativeTo();
+					_newFileDialog.refreshSuccess();
 					_newFileDialog.pack();
 					_newFileDialog.setVisible(true);
 					
@@ -116,7 +117,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 					int returnVal = chooser.showOpenDialog(frame);
 					if(returnVal == JFileChooser.APPROVE_OPTION) {
 						InstructionBlock myInstr = new InstructionBlock(this, 
-								new FileInstructionIO(FileInstructionType.OPEN, 
+										new FileInstructionIO(FileInstructionType.OPEN, 
 										chooser.getSelectedFile().getAbsolutePath()));
 						receiveInstruction(myInstr);
 					}

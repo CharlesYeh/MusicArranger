@@ -7,6 +7,12 @@ public class TimeSignature extends Timestep {
 	int _numerator;
 	int _denominator;
 	
+	public TimeSignature(int numerator, int denominator){
+		super(new Rational(numerator, denominator));
+		_numerator = numerator;
+		_denominator = denominator;
+	}
+	
 	public TimeSignature(Rational duration, int numerator, int denominator){
 		super(duration);
 		_numerator = numerator;

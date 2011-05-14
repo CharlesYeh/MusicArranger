@@ -25,6 +25,9 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JOptionPane;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import gui.dialogs.*;
 
 import instructions.*;
 import javax.swing.event.EventListenerList;
@@ -51,6 +54,11 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	EventListenerList _listeners = new EventListenerList();
 	
+	// dialogs
+	ClefDialog _clefDialog;
+	KeySignatureDialog _keySigDialog;
+	TimeSignatureDialog _timeSigDialog;
+	
 	//--------------------state information--------------------
 	EditMode _currMode		= EditMode.NOTE;
 	EditType _currType		= EditType.MULTINOTE;
@@ -70,7 +78,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	
 	//------------------end state information------------------
 	
-	public MainPanel(Piece piece) {
+	public MainPanel(Piece piece, JFrame frame) {
 		_piece = piece;
 		
 		try {
@@ -107,7 +115,10 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	   addMouseWheelListener(this);
 	   addComponentListener(this);
 		
-	   //setBackground(Color.WHITE);
+		// create dialog boxes
+		_clefDialog = new ClefDialog(frame);
+		_timeSigDialog = new TimeSignatureDialog(frame);
+		_keySigDialog = new KeySignatureDialog(frame);
 		
 	   repaint();
 	}
@@ -205,18 +216,23 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 						break;
 					case CLEF:
 						// prompt for center line and clef name
-						//_clefDialog;
-						/*_clefDialog.setLocationRelativeTo(frame);
-						_clefDialog.pack();
-						_clefDialog.setVisible(true);*/
+						//_clefDialog.setLocationRelativeTo(frame);
+						_clefDialog.refreshSuccess();
+						_clefDialog.setVisible(true);
 						
-						/*if (!_clefDialog.success())
-							return;*/
+						if (!_clefDialog.success())
+							return;
 						
-						editInstr = new EditInstruction(index, EditInstructionType.REPLACE, _currType, new Clef(ClefName.GCLEF, 1));
+						editInstr = new EditInstruction(index, EditInstructionType.REPLACE, _currType, _clefDialog.getClef());
 						break;
 					case TIME_SIGNATURE:
-						editInstr = new EditInstruction(index, EditInstructionType.REPLACE, _currType, new MultiNote(_currDuration.getDuration()));
+						_timeSigDialog.refreshSuccess();
+						_timeSigDialog.setVisible(true);
+						
+						if (!_timeSigDialog.success())
+							return;
+						
+						editInstr = new EditInstruction(index, EditInstructionType.REPLACE, _currType, new TimeSignature(_timeSigDialog.getTimeNumer(), _timeSigDialog.getTimeDenom()));
 						break;
 					default:
 						System.out.println("Edit type unrecognized");

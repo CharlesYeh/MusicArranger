@@ -152,6 +152,11 @@ public class ScoreIllustrator {
 		// current horizontal positions within each staff
 		Map<Staff, Integer> staffX = new HashMap<Staff, Integer>();
 		Map<Voice, Integer> voiceX = new HashMap<Voice, Integer>();
+		
+		// padding of non-note elements (sigs, clefs)
+		boolean lastFree = false;
+		Map<Staff, Integer> freeX = new HashMap<Staff, Integer>();
+		
 		int finalVoiceX = 0;
 		int chordX = LEFT_MARGIN;
 
@@ -160,17 +165,17 @@ public class ScoreIllustrator {
 		//Map<ListIterator<? extends Timestep>, Boolean> nextSystem = new HashMap<ListIterator<? extends Timestep>, Boolean>();
 		int systemY	= TOP_MARGIN;
 		int numStaffs	= piece.getStaffs().size();
-
+		
 		for (Staff staff : piece.getStaffs()) {
 			List<Measure> staffMeasures = staff.getMeasures();
 			ListIterator<Measure> measureIterator = staffMeasures.listIterator();
 
 			measureLists.add(measureIterator);
 			measureStaffs.put(measureIterator, staff);
-
+			
 			_staffPositions.put(staff, _staffPositions.size());
 			staffX.put(staff, LEFT_MARGIN);
-
+			
 			stemGroups.put(staff, new ArrayList<MultiNote>());
 		}
 
@@ -265,6 +270,7 @@ public class ScoreIllustrator {
 				Set<Staff> staffs = staffX.keySet();
 				for (Staff stf : staffs) {
 					staffX.put(stf, LEFT_MARGIN);
+					freeX.put(stf, 0);
 					
 					// redraw clefs and keysigs on each new line
 					currClefs.put(stf, null);
@@ -323,8 +329,19 @@ public class ScoreIllustrator {
 				Clef currClef = currClefs.get(currStaff);
 				KeySignature currKeySig = currKeySigs.get(currStaff);
 				TimeSignature currTimeSig = currTimeSigs.get(currStaff);
-
-				int nextX = staffX.get(currStaff);
+				
+				
+				if (currDur instanceof MultiNote || currDur instanceof ChordSymbol){
+					if (lastFree) {
+						updateStaffSpacing(freeX, staffX, staffX.get(currStaff));
+						lastFree = false;
+					}
+				}
+				else {
+					lastFree = true;
+				}
+				
+				int nextX = staffX.get(currStaff) + freeX.get(currStaff);
 				if (currDur instanceof MultiNote) {
 					nextX += voiceX.get(currVoice);
 				}
@@ -332,7 +349,7 @@ public class ScoreIllustrator {
 					nextX += finalVoiceX;
 				}
 				int nextY = systemY + _staffPositions.get(currStaff) * STAFF_SPACING;
-
+				
 				// draw duration object
 				if (currDur instanceof MultiNote) {
 					//-----------------------MULTINOTE-----------------------
@@ -356,7 +373,6 @@ public class ScoreIllustrator {
 					Map<Integer, TreeMap<Integer, Rational>> systemMeasures = _mNotePositions.get(_mNotePositions.size() - 1);
 					TreeMap<Integer, Rational> measureMNotes = systemMeasures.get(measureCount);
 					measureMNotes.put(noteX, currTime);
-
 				}
 				else if (currDur instanceof ChordSymbol) {
 					// only get from first staff
@@ -414,8 +430,8 @@ public class ScoreIllustrator {
 							drawAccidental(g, Accidental.FLAT, nextX + KEYSIG_WIDTH * a, nextY + accidY * SYSTEM_LINE_SPACING / 2);
 						}
 					}
-					
-					staffX.put(currStaff, nextX + KEYSIG_WIDTH * Math.abs(accids));
+					freeX.put(currStaff, freeX.get(currStaff) + KEYSIG_WIDTH * Math.abs(accids));
+					//staffX.put(currStaff, nextX + KEYSIG_WIDTH * Math.abs(accids));
 					
 					currKeySigs.put(currStaff, keySig);
 				}
@@ -427,17 +443,18 @@ public class ScoreIllustrator {
 					g.setFont(new Font("Arial", 0, 24));
 					g.drawString("" + timeSig.getNumerator(), nextX, (int) (nextY + 1.5 * SYSTEM_LINE_SPACING));
 					g.drawString("" + timeSig.getDenominator(), nextX, (int) (nextY + 3.5 * SYSTEM_LINE_SPACING));
-					staffX.put(currStaff, nextX + TIMESIG_WIDTH);
+					//staffX.put(currStaff, nextX + TIMESIG_WIDTH);
 
+					freeX.put(currStaff, freeX.get(currStaff) + TIMESIG_WIDTH);
 					currTimeSigs.put(currStaff, timeSig);
 				}
 				else if (currDur instanceof Clef && (currClef == null || !currDur.equals(currClef))) {
 					//-------------------------CLEF-------------------------
 					Clef clef = (Clef) currDur;
-
-					drawClef(g, clef, nextX, nextY - (clef.getCenterLine() - 4) * SYSTEM_LINE_SPACING / 2);
-					staffX.put(currStaff, nextX + CLEF_WIDTH);
 					
+					drawClef(g, clef, nextX, nextY - (clef.getCenterLine() - 4) * SYSTEM_LINE_SPACING / 2);
+					
+					freeX.put(currStaff, freeX.get(currStaff) + CLEF_WIDTH);
 					currClefs.put(currStaff, clef);
 				}
 				else {
@@ -476,7 +493,22 @@ public class ScoreIllustrator {
 			//---------------------END FINISH MEASURE---------------------
 		}
 	}
-
+	
+	public void updateStaffSpacing(Map<Staff, Integer> freeX, Map<Staff, Integer> staffX, int nextX) {
+		int max = 0;
+		for (Staff stf : freeX.keySet()) {
+			int n = freeX.get(stf);
+			if (max < n)
+				max = n;
+			
+			freeX.put(stf, 0);
+		}
+		
+		for (Staff stf : staffX.keySet()) {
+			staffX.put(stf, nextX + max);
+		}
+	}
+	
 	//------------------specific drawing calculations------------------
 
 	/* Draws all pitches within the multinote

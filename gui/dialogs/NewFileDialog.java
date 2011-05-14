@@ -108,10 +108,11 @@ public class NewFileDialog extends JDialog implements PropertyChangeListener {
 	}
 	
 	public void propertyChange(PropertyChangeEvent e) {
-		if (!e.getPropertyName().equals("value"))
+		if (!e.getPropertyName().equals("value") || _optionPane.getValue().equals(-1))
 			return;
 		
 		_createFile = _optionPane.getValue().equals("Create");
+		_optionPane.setValue(new Integer(JOptionPane.CLOSED_OPTION));
 		setVisible(false);
 	}
 	
@@ -198,6 +199,10 @@ public class NewFileDialog extends JDialog implements PropertyChangeListener {
 	
 	public boolean getIsMajor() {
 		return _isMajor.getSelectedItem().equals("Major");
+	}
+	
+	public void refreshSuccess() {
+		_createFile = false;
 	}
 	
 	public boolean success() {

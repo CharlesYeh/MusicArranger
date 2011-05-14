@@ -445,6 +445,56 @@ public class LogicManager implements Printable {
 	}
 
 	private boolean editTimeSignature(EditInstruction editInstr) {
+		InstructionIndex index = editInstr.getIndex();
+
+		for (Staff staff : _piece.getStaffs()) {
+				
+			int measureNumber = index.getMeasureNumber();
+			Rational measureOffset = index.getMeasureOffset();
+			Measure measure = staff.getMeasures().get(measureNumber);
+			ListIterator<TimeSignature> iter = measure.getTimeSignatures().listIterator();
+			
+			_editor.setTimeSignatureIter(iter);
+			_editor.replaceTimeSig((TimeSignature) editInstr.getElement());
+			//List<ChordSymbol> chordSymbolList = measure.getChordSymbols();
+			/*
+			// calculate iterator and offset
+			IteratorAndOffset iterAndOffset = calcIterAndOffset(chordSymbolList, measureOffset);
+			ListIterator<ChordSymbol> iter = (ListIterator<ChordSymbol>) iterAndOffset.getIter();
+			Rational offset = iterAndOffset.getOffset();
+	
+			ChordSymbol chordSymbol;
+	
+			// set the iterator in the editor
+			_editor.setChordSymbolIter(iter);
+	
+			EditInstructionType instrType = editInstr.getType();
+			switch (instrType) {
+			// offset SHOULD be 0 for insertion and removal functions
+				case INSERT:
+					chordSymbol = (ChordSymbol) editInstr.getElement();
+					_editor.insertChordSymbol(chordSymbol);
+					break;
+				case REMOVE:
+					_editor.removeChordSymbol();
+					break;
+				case REPLACE:
+					// check if replacement note runs over end of measure
+					Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
+					chordSymbol = (ChordSymbol) editInstr.getElement();
+					if (measureOffset.compareTo(measureLength) > 0) {
+						// Error, measureOffset is longer than the actual measure
+						return false;
+					}
+					else {
+						_editor.replaceChordSymbol(chordSymbol, offset);
+					}
+					break;
+				default:
+					System.out.println("Instruction of unrecognized EditInstructionType");
+					return false;
+			}*/
+		}
 		return true;
 	}
 
