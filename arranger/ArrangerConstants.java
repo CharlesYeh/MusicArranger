@@ -11,7 +11,7 @@ public class ArrangerConstants {
 	public static int SCORE_HEIGHT = 800;
 	
 	// for playback
-	public static int TEMPO = 50;
+	public static int TEMPO = 80;
 	public static int WHOLE_NOTES_PER_MINUTE = TEMPO / 4;
 	
 	public static void setTempo(int t) {
