@@ -39,17 +39,18 @@ public class ScoreWindow extends Drawable {
 	int dragY;
 	
 	Image _imgShadowLeft, _imgShadowRight;
-
+	
+	// keep track of number of measures and staffs. If either changes, redraw twice and recreate buffer
+	int _prevMeasures = 0;
+	int _prevStaffs = 0;
+	
 	// measure positions within each system
 
 	public ScoreWindow(Piece piece) {
 		_piece = piece;
 		_illustrator = new ScoreIllustrator();
 		
-		_buffer = new BufferedImage(ArrangerConstants.PAGE_WIDTH,
-						ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT,
-						BufferedImage.TYPE_INT_ARGB);
-		_bufferGraphics = _buffer.getGraphics();
+		createBuffer();
 
 		_slider = new PageSlider();
 		_sliding = false;
@@ -65,19 +66,35 @@ public class ScoreWindow extends Drawable {
 		
 		updateScore(null);
 	}
-
+	
+	private void createBuffer() {
+		_buffer = new BufferedImage(ArrangerConstants.PAGE_WIDTH,
+						ArrangerConstants.SCORE_HEIGHT,
+						BufferedImage.TYPE_INT_ARGB);
+		_bufferGraphics = _buffer.getGraphics();
+	}
+	
 	public Image getScoreImage() {
 		return _buffer;
 	}
 
 	public void updateScore(Set<InstructionIndex> selectedNotes) {
 		// buffer self-image
+		List<Staff> staffList = _piece.getStaffs();
+		int measures = staffList.get(0).getMeasures().size();
+		int staffs = staffList.size();
+		if (measures != _prevMeasures || staffs != _prevStaffs) {
+			// recalculate piece height and recreate buffer
+			_illustrator.drawPiece(_bufferGraphics, _piece, selectedNotes);
+			createBuffer();
+		}
+		
 		_illustrator.drawPiece(_bufferGraphics, _piece, selectedNotes);
 	}
 
 	public void drawSelf(Graphics g) {
 		// draw with offset from slider
-		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
+		int scrollHeight = Math.max(0, ArrangerConstants.SCORE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT);
 		int offsetY = (int) (_slider.getSlidePercent() * scrollHeight);
 		
 		int offsetX = (ArrangerConstants.WINDOW_WIDTH - ArrangerConstants.PAGE_WIDTH) / 2;
@@ -152,7 +169,7 @@ public class ScoreWindow extends Drawable {
 	}
 
 	public void adjustScorePoint(Point p) {
-		int scrollHeight = ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT;
+		int scrollHeight = Math.max(0, ArrangerConstants.SCORE_HEIGHT - ArrangerConstants.WINDOW_HEIGHT);
 		int offsetX = (ArrangerConstants.WINDOW_WIDTH - ArrangerConstants.PAGE_WIDTH) / 2;
 		
 		p.setLocation(p.getX() - offsetX,

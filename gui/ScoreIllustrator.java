@@ -32,6 +32,7 @@ public class ScoreIllustrator {
 	final static int TOP_MARGIN	= 100;
 	final static int LEFT_MARGIN	= 15;
 	final static int RIGHT_MARGIN	= 15;
+	final static int BOTTOM_MARGIN = 50;
 	
 	final static int SYSTEM_SPACING = 150;
 	final static int STAFF_SPACING = 100;
@@ -40,7 +41,7 @@ public class ScoreIllustrator {
 	
 	final static int TIMESIG_WIDTH = 25;
 	final static int KEYSIG_WIDTH = 7;
-	final static int CLEF_WIDTH = 38;
+	final static int CLEF_WIDTH = 45;
 	
 	final static int CHORD_SPACING = 45;
 	
@@ -104,10 +105,10 @@ public class ScoreIllustrator {
 			System.out.println("Error while loading musical images: " + e);
 		}
 	}
-
+	
 	public void drawPiece(Graphics g, Piece piece, Set<InstructionIndex> selectedNotes) {
 		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, ArrangerConstants.PAGE_WIDTH, ArrangerConstants.PAGES * ArrangerConstants.PAGE_HEIGHT);
+		g.fillRect(0, 0, ArrangerConstants.PAGE_WIDTH, ArrangerConstants.SCORE_HEIGHT);
 
 		// used to draw things from left to right
 		TreeMap<Timestamp, ListIterator<? extends Timestep>> timeline = new TreeMap<Timestamp, ListIterator<? extends Timestep>>();
@@ -260,12 +261,12 @@ public class ScoreIllustrator {
 					systemMeasures.put(measureCount, new TreeMap<Integer, Rational>());
 					_mNotePositions.add(systemMeasures);
 				}
-
+				
 				startDrawing = false;
 
 				// if new line, set left position
 				//nextX = LEFT_MARGIN;
-
+				
 				// reset x for all staffs
 				Set<Staff> staffs = staffX.keySet();
 				for (Staff stf : staffs) {
@@ -492,6 +493,9 @@ public class ScoreIllustrator {
 			measureCount++;
 			//---------------------END FINISH MEASURE---------------------
 		}
+		
+		ArrangerConstants.SCORE_HEIGHT = _systemPositions.get(_systemPositions.size() - 1) + SYSTEM_SPACING + (_staffPositions.size() - 1) * STAFF_SPACING + BOTTOM_MARGIN;
+		System.out.println(ArrangerConstants.SCORE_HEIGHT);
 	}
 	
 	public void updateStaffSpacing(Map<Staff, Integer> freeX, Map<Staff, Integer> staffX, int nextX) {
