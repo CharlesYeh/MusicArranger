@@ -254,9 +254,24 @@ public class LogicManager implements Printable {
 		Rational spacing = genInstrVoices.getSpacing();
 		int numVoices = genInstrVoices.getNumVoices();
 		// TODO: numVoices is totally not considered yet!  Hard-coded as 4.
-		
-		List<InstructionIndex> indices = new ArrayList<InstructionIndex>();
+
 		List<ChordSymbol> chords = new ArrayList<ChordSymbol>();
+		List<InstructionIndex> indices = new ArrayList<InstructionIndex>();
+		
+		int measureCounter = 0;
+		for (Measure measure : _piece.getStaffs().get(0).getMeasures()) {
+			Rational offsetCounter = new Rational();
+			for (ChordSymbol chord : measure.getChordSymbols()) {
+				if (chord.getScaleDegree().getDegreeNumber() != 0) {
+					chords.add(chord);
+					InstructionIndex newIndex = new InstructionIndex(measureCounter, offsetCounter);
+					indices.add(newIndex);
+				}
+				offsetCounter = offsetCounter.plus(chord.getDuration());
+			}
+			measureCounter++;
+		}
+		
 		List<List<Pitch>> melody = getMelodyLine(indices, spacing);
 		
 		// TODO: VERY MESSY, NEED A PROPER WAY TO GET KEY SIGNATURES FROM THE PIECE, DOESNT
@@ -266,9 +281,6 @@ public class LogicManager implements Printable {
 		List<List<Pitch>> harmonies = new ArrayList<List<Pitch>>();
 		for (int i = 0; i < chords.size(); i++) {
 			ChordSymbol chord = chords.get(i);
-			if (chord.getScaleDegree().getDegreeNumber() == 0) {
-				break;
-			}
 			harmonies.add(_analyzer.harmonizeMelodyInstance(melody.get(i), 
 					chord, keySig));
 		}
