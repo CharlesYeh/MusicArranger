@@ -165,7 +165,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 					receiveInstruction(myInstr);
 				}
 			});
-
+		
 		file.add(menuItemNew);
 		file.add(menuItemOpen);
 		file.add(menuItemSave);
