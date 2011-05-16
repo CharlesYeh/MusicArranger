@@ -14,20 +14,32 @@ public class MidiPlayer extends Thread {
 	TreeMap<Timestamp, ListIterator<MultiNote>> _starts;
 	TreeMap<Timestamp, MultiNote> _ends;
 	MidiAPI _midi;
+	int _startingMeasure = 0;
+	Rational _startTimeInMeasure;
 
 	List<Staff> _staffList;
 
 	boolean _isPlaying;
 
+	// constructor for playing a piece from the start
 	public MidiPlayer(MidiAPI midi, Piece piece) {
 		_midi = midi;
 		_staffList = piece.getStaffs();
+		_startTimeInMeasure = new Rational(0,4);
 	}
 
+	// constructor for playing a piece from a specific time of the piece
+	public MidiPlayer(MidiAPI midi, Piece piece, int startingMeasure, Rational startTimeInMeasure) {
+		_midi = midi;
+		_staffList = piece.getStaffs();
+		_startingMeasure = startingMeasure;
+		_startTimeInMeasure = startTimeInMeasure;
+	}
+	
 	public void run() {
 		_isPlaying = true;
 
-		for(int measureNumber = 0; measureNumber < _staffList.get(0).getMeasures().size(); measureNumber ++){
+		for(int measureNumber = _startingMeasure; measureNumber < _staffList.get(0).getMeasures().size(); measureNumber ++){
 			
 			//System.out.println("-------------------This is measure " + measureNumber + "-------------------");
 			
@@ -52,6 +64,7 @@ public class MidiPlayer extends Thread {
 			
 			while (!_starts.isEmpty() || !_ends.isEmpty()) {
 				
+				boolean doNotPlayYet = false;
 				//System.out.println("======New iteration======");
 
 				// find whether start or end is next with timestamps (firstKey())
@@ -87,7 +100,12 @@ public class MidiPlayer extends Thread {
 
 					//System.out.println("Turning note OFF at : " + endTime.getDuration().getNumerator() + "/" + endTime.getDuration().getDenominator());
 					MultiNote mn = _ends.get(endTime);
-					_midi.multiNoteOff(mn);
+					if(!(measureNumber == _startingMeasure && endTime.getDuration().compareTo(_startTimeInMeasure) < 0)) { // if the current note to be stopped comes after the starting note
+						_midi.multiNoteOff(mn);
+					}
+					else {
+						doNotPlayYet = true;
+					}
 					_ends.remove(endTime);
 				}
 				else {
@@ -99,8 +117,13 @@ public class MidiPlayer extends Thread {
 						// play multinote
 						MultiNote mn = itr.next();
 
-						//System.out.println("Turning note ON at : " + startTime.getDuration().getNumerator() + "/" + startTime.getDuration().getDenominator());
-						_midi.multiNoteOn(mn);
+						if(!(measureNumber == _startingMeasure && startTime.getDuration().compareTo(_startTimeInMeasure) < 0)) { // if the current note to be played comes after the starting note
+							//System.out.println("Turning note ON at : " + startTime.getDuration().getNumerator() + "/" + startTime.getDuration().getDenominator());
+							_midi.multiNoteOn(mn);
+						}
+						else {
+							doNotPlayYet = true;
+						}
 
 						// get next timestamp
 
@@ -146,23 +169,25 @@ public class MidiPlayer extends Thread {
 					}
 				}
 
-				int sleepMilli = 60 * 1000 * sleepDuration.getNumerator() / ArrangerConstants.WHOLE_NOTES_PER_MINUTE / sleepDuration.getDenominator();
+				int sleepMilli = 60 * 1000 * sleepDuration.getNumerator() / _midi.getWholeNotesPerMinute() / sleepDuration.getDenominator();
 				/*System.out.println("currentTime is :" + currentTime);
 				System.out.println("sleepMilli is: " + sleepMilli);*/
 
-				try {
-					Thread.sleep(sleepMilli);
-				}
-				catch (InterruptedException ie){
-					//stop playing all the notes when the playback is stopped
-					while(!_ends.isEmpty()){
-
-							Timestamp ts = _ends.firstKey();
-							MultiNote mn = _ends.get(ts);
-							_ends.remove(ts);
-							_midi.multiNoteOff(mn);
+				if(!doNotPlayYet) {
+					try {
+						Thread.sleep(sleepMilli);
 					}
-					return;
+					catch (InterruptedException ie){
+						//stop playing all the notes when the playback is stopped
+						while(!_ends.isEmpty()){
+	
+								Timestamp ts = _ends.firstKey();
+								MultiNote mn = _ends.get(ts);
+								_ends.remove(ts);
+								_midi.multiNoteOff(mn);
+						}
+						return;
+					}
 				}
 			}
 		}
