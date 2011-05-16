@@ -681,4 +681,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		_noteToolbar.setPressed(8, _currRest);
 	}
+	
+	public void clearSelection() {
+		_selected = new HashSet<InstructionIndex>();
+	}
 }

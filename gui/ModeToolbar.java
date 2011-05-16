@@ -47,7 +47,6 @@ public class ModeToolbar extends Toolbar {
 		_buttons = Arrays.asList(modeNote, /*modeSelection,*/ /*modeZoom, */modeClef, modeTime, modeKey, genChords, genVoices);
 		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(0, 1, 2, 3)));
 		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(4, 5)));
-		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(6)));
 		
 		modeNote.setPressed(true);
 	}

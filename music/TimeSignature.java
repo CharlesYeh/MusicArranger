@@ -31,6 +31,10 @@ public class TimeSignature extends Timestep {
 		return _denominator;
 	}
 	
+	public Rational asRational() {
+		return new Rational(_numerator, _denominator);
+	}
+	
 	public boolean equals(Object o) {
 		TimeSignature timesig = (TimeSignature) o;
 		return _numerator == timesig.getNumerator() && _denominator == timesig.getDenominator();
