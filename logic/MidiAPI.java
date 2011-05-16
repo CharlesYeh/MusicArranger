@@ -1,7 +1,6 @@
 package logic;
 
 import music.*;
-
 import javax.sound.midi.*;
 import java.util.*;
 import java.lang.Object;
@@ -14,6 +13,8 @@ public class MidiAPI{
 	ArrayList<ListIterator<MultiNote>> _voices;
 	Synthesizer _synth;
 	Receiver _receiver;
+	int _startingMeasure = 0;
+	Rational _startTimeInMeasure; 
 	
 	public MidiAPI(){
 		try{
@@ -23,7 +24,7 @@ public class MidiAPI{
 		} catch (Exception e){
 			System.out.println("Error loading synth: " + e);
 		}
-		_mp = new MidiPlayer(this);
+		_startTimeInMeasure = new Rational(0,4);
 	}
 
 	public void stopPlayback() {
@@ -33,11 +34,11 @@ public class MidiAPI{
 		_mp.interrupt();
 	}
 	
+	// Sets the starting time for playback
 	public void setPlaybackStartingTime(int startingMeasure, Rational startTimeInMeasure) {
 		
-		if(_mp != null) {
-			_mp.setStartingTime(startingMeasure, startTimeInMeasure);
-		}
+		_startingMeasure = startingMeasure;
+		_startTimeInMeasure = startTimeInMeasure;
 	}
 
 	public void playPiece(Piece p){
@@ -55,10 +56,7 @@ public class MidiAPI{
 
 					if(ml.get(0)!=null){
 
-						if(_mp.isAlive()) {
-							stopPlayback();
-						}
-						_mp.setPiece(p);
+						_mp = new MidiPlayer(this, p, _startingMeasure, _startTimeInMeasure);
 						_mp.start();
 					}
 				}
@@ -77,8 +75,7 @@ public class MidiAPI{
 
 					Piece p = new Piece();
 					p.getStaffs().add(s);
-					stopPlayback();
-					_mp.setPiece(p);
+					_mp = new MidiPlayer(this, p, _startingMeasure, _startTimeInMeasure);
 					_mp.start();
 				}
 			}
@@ -96,8 +93,7 @@ public class MidiAPI{
 		Piece p = new Piece();
 		p.getStaffs().add(s);
 
-		stopPlayback();
-		_mp.setPiece(p);
+		_mp = new MidiPlayer(this, p, _startingMeasure, _startTimeInMeasure);
 		_mp.start();
 
 	}
@@ -144,8 +140,7 @@ public class MidiAPI{
 		Piece p = new Piece();
 		p.getStaffs().add(s);
 
-		stopPlayback();
-		_mp.setPiece(p);
+		_mp = new MidiPlayer(this, p, _startingMeasure, _startTimeInMeasure);
 		_mp.start();
 	}
 
@@ -167,8 +162,7 @@ public class MidiAPI{
 		Piece p = new Piece();
 		p.getStaffs().add(s);
 		
-		stopPlayback();
-		_mp.setPiece(p);
+		_mp = new MidiPlayer(this, p, _startingMeasure, _startTimeInMeasure);
 		_mp.start();
 	}
 

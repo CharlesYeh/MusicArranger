@@ -16,30 +16,30 @@ public class MidiPlayer extends Thread {
 	MidiAPI _midi;
 	int _startingMeasure = 0;
 	Rational _startTimeInMeasure;
-	boolean isToPlay;
+
 	List<Staff> _staffList;
 
+	boolean _isPlaying;
 
 	// constructor for playing a piece from the start
-	public MidiPlayer(MidiAPI midi) {
+	public MidiPlayer(MidiAPI midi, Piece piece) {
 		_midi = midi;
-		_startTimeInMeasure = new Rational(0,4); // default, start at the first beat
-	}
-	
-	public void setPiece(Piece piece) {
 		_staffList = piece.getStaffs();
+		_startTimeInMeasure = new Rational(0,4);
 	}
 
-	// Sets the start position of play back by setting the Measure number and the time within the measure to start at
-	public void setStartingTime(int startingMeasure, Rational startTimeInMeasure) {
+	// constructor for playing a piece from a specific time of the piece
+	public MidiPlayer(MidiAPI midi, Piece piece, int startingMeasure, Rational startTimeInMeasure) {
+		_midi = midi;
+		_staffList = piece.getStaffs();
 		_startingMeasure = startingMeasure;
 		_startTimeInMeasure = startTimeInMeasure;
 	}
 	
 	public void run() {
+		_isPlaying = true;
 
-		isToPlay = true;
-		for(int measureNumber = _startingMeasure; measureNumber < _staffList.get(0).getMeasures().size() && isToPlay; measureNumber ++){
+		for(int measureNumber = _startingMeasure; measureNumber < _staffList.get(0).getMeasures().size(); measureNumber ++){
 			
 			//System.out.println("-------------------This is measure " + measureNumber + "-------------------");
 			
@@ -186,7 +186,6 @@ public class MidiPlayer extends Thread {
 								_ends.remove(ts);
 								_midi.multiNoteOff(mn);
 						}
-						isToPlay = false;
 						return;
 					}
 				}
