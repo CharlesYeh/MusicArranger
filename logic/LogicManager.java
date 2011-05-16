@@ -124,20 +124,18 @@ public class LogicManager implements Printable {
 	public int print(Graphics g, PageFormat pf, int page) throws PrinterException {
 		//FileInstructionPrint
 		g.drawImage(_toPrint, 0, 0, null);
-
+		
 		return PAGE_EXISTS;
 	}
 	private boolean interpretFileInstrPrint(FileInstructionPrint fileInstrPrint) {
 		//fileInstrPrint
 		_toPrint = fileInstrPrint.getImage();
 		PrinterJob job = PrinterJob.getPrinterJob();
-		PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
-		PageFormat pf = job.pageDialog(aset);
-		job.setPrintable(this, pf);
-		boolean ok = job.printDialog(aset);
+		job.setPrintable(this);
+		boolean ok = job.printDialog();
 		if (ok) {
 			try {
-				job.print(aset);
+				job.print();
 			}
 			catch (PrinterException ex) {
 				System.out.println("Print failed");
