@@ -50,7 +50,7 @@ public class ScoreIllustrator {
 	
 	final static int STEM_LENGTH = 30;
 	
-	final static int MEASURE_WIDTH = 130;
+	final static int MEASURE_WIDTH = 180;
 	final static int LEDGER_WIDTH = (int) (SYSTEM_LINE_SPACING * 1.5);
 	
 	final static int CLEF_IMG_OFFSET = 50;
@@ -678,7 +678,34 @@ public class ScoreIllustrator {
 			
 			MultiNote mn = stemGroup.get(0);
 			
-			//drawStem(g, stemX - dir * SYSTEM_LINE_SPACING / 2, nextY, minOffset, maxOffset);
+			int totalLines = 0;
+			List<Pitch> pitches = mn.getPitches();
+			for (Pitch p : pitches) {
+				totalLines += getLineNumber(currClef, p);
+			}
+			
+			int stemDirection = (totalLines < 0) ? -1 : 1;
+			
+			Point pt = stemMinLines.get(mn);
+			
+			int stemX = (int) (pt.getX() - stemDirection * SYSTEM_LINE_SPACING / 2);
+			int stemY = (int) (pt.getY());
+			int stemEY = stemY + stemDirection * STEM_LENGTH;
+			
+			g.drawLine(stemX, stemY, stemX, stemEY);
+			
+			int diff = -(stemEY - stemY);
+			
+			// swirly
+			g.drawLine(stemX, 		stemEY, 				stemX + 7, stemEY + diff / 4);
+			g.drawLine(stemX + 7, 	stemEY + diff / 4, stemX + 5, stemEY + 3 * diff / 4);
+			
+			// draw extra lines parallel to bar for short durations (16ths etc)
+			int mnoteDenom = (int) (Math.log(mn.getDuration().getDenominator()) / Math.log(2));
+			for (int i = 1; i <= mnoteDenom - 3; i++ ) {
+				g.drawLine(stemX, stemEY - stemDirection * 5 * i, stemX + 7 - i, stemEY - stemDirection * (5 * i + 6));
+			}
+			
 			stemGroup.clear();
 			return;
 		}
@@ -724,32 +751,52 @@ public class ScoreIllustrator {
 			}
 		}
 		
-		int stemLength = 30;
-		
 		int barSX = (int) first.getX();
-		//int barSY = (int) (first.getY() + stemDirection * (stemLength + maxBarOffset));
 		int barEX = (int) last.getX();
-		//int barEY = (int) (last.getY() + stemDirection * (stemLength + maxBarOffset));
 		
-		int barSY = (int) (first.getY() - maxBarOffset + stemDirection * stemLength);
-		int barEY = (int) (last.getY() - maxBarOffset + stemDirection * stemLength);
+		int barSY = (int) (first.getY() - maxBarOffset + stemDirection * STEM_LENGTH);
+		int barEY = (int) (last.getY() - maxBarOffset + stemDirection * STEM_LENGTH);
 		
-		System.out.println("HI");
 		// shift horizontally
 		barSX -= stemDirection * SYSTEM_LINE_SPACING / 2;
 		barEX -= stemDirection * SYSTEM_LINE_SPACING / 2;
 		
 		g.drawLine(barSX, barSY, barEX, barEY);
 		
+		boolean firstNote = true;
+		int prevNX = 0;
+		int prevBarY = 0;
+		int prevDenom = 0;
+		
 		// draw stems and additional bars next to first bar (for 16th, etc)
 		for (MultiNote mn : stemGroup) {
 			Point pt = (stemDirection == -1) ? stemMinLines.get(mn) : stemMaxLines.get(mn);
 			
 			int dx = (int) (pt.getX() - first.getX());
-			int barY = (int) (first.getY() + dx * slope - maxBarOffset + stemDirection * stemLength);
+			int barY = (int) (first.getY() + dx * slope - maxBarOffset + stemDirection * STEM_LENGTH);
 			
 			int nx = (int) pt.getX() - stemDirection * SYSTEM_LINE_SPACING / 2;
 			g.drawLine(nx, (int) pt.getY(), nx, barY);
+			
+			int mnoteDenom = (int) (Math.log(mn.getDuration().getDenominator()) / Math.log(2));
+			
+			if (!firstNote) {
+				
+				// draw extra lines parallel to bar for short durations (16ths etc)
+				for (int i = 1; i <= mnoteDenom - 3; i++ ) {
+					int leftDetail = prevBarY - stemDirection * 5 * i;
+					int rightDetail = barY - stemDirection * 5 * i;
+					
+					int drawNX = (i <= prevDenom - 3) ? prevNX : (prevNX + nx) / 2;
+					g.drawLine(drawNX, leftDetail, nx, rightDetail);
+				}
+			}
+			else
+				firstNote = false;
+			
+			prevNX = nx;
+			prevBarY = barY;
+			prevDenom = mnoteDenom;
 		}
 		
 		stemGroup.clear();
