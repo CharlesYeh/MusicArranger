@@ -604,7 +604,7 @@ public class LogicManager implements Printable {
 					return false;
 				}
 				else {
-					_editor.replaceMultiNote(multiNote);
+					_editor.replaceMultiNote(multiNote, offset);
 				}
 				return true;
 			case CLEAR:
@@ -613,8 +613,6 @@ public class LogicManager implements Printable {
 				_editor.insertMultiNote(multiNote);
 				return true;
 			case TRANSPOSE_UP:
-				//TODO: TRANSPOSE IS BUGGY, DIFFERENT FUNCTION MUST BE PUT INTO
-				// EDITOR FOR THIS TO WORK
 				clef = (Clef) getElementAt(measureOffset, measure.getClefs());
 				keySig = (KeySignature) getElementAt(measureOffset, measure.getKeySignatures());
 				replaced = _editor.removeMultiNote();
