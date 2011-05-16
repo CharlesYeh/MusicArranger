@@ -21,10 +21,18 @@ public class Analyzer extends Thread {
 	InstructionIndex _end;
 	Rational _spacing;
 	
-	List<Pitch> _prevPitches;
+	List<Pitch> _prevPitches = null;
 	
 	public Analyzer() {
 		initMajorKeyGraph();
+	}
+	
+	public void setPrevPitches(List<Pitch> prevPitches) {
+		_prevPitches = prevPitches;
+	}
+	
+	public void resetPrevPitches() {
+		_prevPitches = null;
 	}
 
 	public void addChordSymbols(Piece p) {
@@ -1108,6 +1116,7 @@ public class Analyzer extends Thread {
 		}
 		
 		Collections.sort(returnList);
+		Collections.reverse(returnList);
 //		for(int i = 0; i < returnList.size(); i++) {
 //			for(int j = 0; j < returnList.size() - 1; j++){
 //				
@@ -1125,21 +1134,22 @@ public class Analyzer extends Thread {
 	}
 
 	/* 
-	 * Takes in a list of preceding pitches, a list of pitches that already exist in the melody instance to be harmonized, and a chordsymbol as a target chord to harmonize with,
+	 * Takes in a list of pitches that already exist in the melody instance to be harmonized, and a chordsymbol as a target chord to harmonize with,
 	 * and returns a list of Pitches that are to be added, considering some voice leading pricipals
 	 * 
 	 */
-	public List<Pitch> harmonizeWithVoiceLeading(List<Pitch> precedingPitches, List<Pitch> currentPitches, ChordSymbol chordsym, KeySignature keySig) {
+	public List<Pitch> harmonizeWithVoiceLeading(List<Pitch> currentPitches, ChordSymbol chordsym, KeySignature keySig) {
 		
-		ArrayList<Pitch> previousPitchesNotAccountedFor = new ArrayList<Pitch>();
-		previousPitchesNotAccountedFor.addAll(precedingPitches);
+		List<Pitch> precedingPitches = _prevPitches;
 		
-		if(precedingPitches.isEmpty()) {
+		if(precedingPitches == null || precedingPitches.isEmpty()) {
 			
 			// generate voices without considering voice leading
 			return harmonizeMelodyInstance(currentPitches, chordsym, keySig);
 		}
 		else {
+			ArrayList<Pitch> previousPitchesNotAccountedFor = new ArrayList<Pitch>();
+			previousPitchesNotAccountedFor.addAll(precedingPitches);
 			List<Pitch> chordTones = getChordPitches(chordsym, keySig);
 			Pitch precedingSoprano = null;
 			Pitch precedingBass = null;
@@ -1172,11 +1182,10 @@ public class Analyzer extends Thread {
 				}
 			}
 			
-			Collections.sort(precedingPitches);
-			precedingBass = precedingPitches.get(0);
-			precedingTenor = precedingPitches.get(1);
-			precedingAlto = precedingPitches.get(numVoices - 2);
-			precedingSoprano = precedingPitches.get(numVoices - 1);
+			precedingBass = precedingPitches.get(numVoices - 1);
+			precedingTenor = precedingPitches.get(numVoices - 2);
+			precedingAlto = precedingPitches.get(1);
+			precedingSoprano = precedingPitches.get(0);
 			
 			Collections.sort(currentPitches);
 		
@@ -1185,9 +1194,10 @@ public class Analyzer extends Thread {
 				
 				Pitch currentPitch = currentPitches.get(i);
 				
-				if((currentPitch.compareTo(precedingSoprano) >= 0
-						|| (currentPitch.compareTo(precedingAlto) >= 0 && currentPitch.calcIntervalTo(precedingSoprano).getSize() < 5))
-						&& previousPitchesNotAccountedFor.contains(precedingSoprano)) { // this note is the soprano for the current melody instance
+				if(previousPitchesNotAccountedFor.contains(precedingSoprano) &&
+						(currentPitch.compareTo(precedingSoprano) >= 0
+						|| /*(currentPitch.compareTo(precedingAlto) >= 0 
+								&& */currentPitch.calcIntervalTo(precedingSoprano).getSize() < 5)) { // this note is the soprano for the current melody instance
 					
 //					voiceLeadingCheckList[numVoices - 1] = 1;
 					previousPitchesNotAccountedFor.remove(precedingSoprano);
@@ -1241,7 +1251,6 @@ public class Analyzer extends Thread {
 			// add a Pitch for each of the preceding voices that are not yet present in the current melody instance
 			while(numVoicesToAdd > 0) {
 				
-				//==============================
 				Pitch chordToneToInsert = null;
 //				int chordToneIndex = 0;
 				
@@ -1283,10 +1292,27 @@ public class Analyzer extends Thread {
 				
 				findBestVoice(previousPitchesNotAccountedFor, chordToneToInsert);
 				returnList.add(chordToneToInsert);
-				//===============================
 				numVoicesToAdd --;
 			}
 			Collections.sort(returnList);
+			Collections.reverse(returnList);
+			
+			_prevPitches = returnList;
+			
+			System.out.println("Previous Pitches:");
+            for(Pitch pitch : precedingPitches) {
+              	System.out.println(pitch);
+             }
+            System.out.println("harmonizing:");
+            for(Pitch pitch : currentPitches) {
+            	System.out.println(pitch);
+            }
+            System.out.println("with chord after voice leading: " + chordsym.getSymbolText() + chordsym.getTopInversionText() + " in key: " + keySig.getKeySigPitch());
+            for(Pitch pitch : returnList) {
+            	
+            	System.out.println(pitch);
+            }
+            
 			return returnList;
 		}
 	}
@@ -1313,6 +1339,7 @@ public class Analyzer extends Thread {
 			}
 		}
 		
+		previousPitchesNotAccountedFor.remove(closestPreviousPitch);
 		// set chordToneToInsert to the octave that makes it closest to the chosen Pitch
 		int pitchInterval = chordToneToInsert.computeMidiPitch() - closestPreviousPitch.computeMidiPitch();
 		while(pitchInterval >= 12) {

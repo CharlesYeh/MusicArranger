@@ -281,9 +281,11 @@ public class LogicManager implements Printable {
 		List<List<Pitch>> harmonies = new ArrayList<List<Pitch>>();
 		for (int i = 0; i < chords.size(); i++) {
 			ChordSymbol chord = chords.get(i);
-			harmonies.add(_analyzer.harmonizeMelodyInstance(melody.get(i), 
+			harmonies.add(_analyzer.harmonizeWithVoiceLeading(melody.get(i), 
 					chord, keySig));
 		}
+		// analyzer stores the previous set of pitches. After one analysis is over, this should be reset
+		_analyzer.resetPrevPitches();
 		
 		for (int harmonyNum = 0; harmonyNum < harmonies.size(); harmonyNum++) {
 			List<Pitch> harmony = harmonies.get(harmonyNum);

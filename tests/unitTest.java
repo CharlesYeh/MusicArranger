@@ -125,7 +125,7 @@ public class unitTest{
                 ChordSymbol harmonizeChord = chordvi;
                 KeySignature chosenKeySig = CMajor;
                 List<Pitch> chosenMelodyInstance = melodyInstance2;
-                List<Pitch> harmonizedMelody = new Analyzer().harmonizeMelodyInstance(chosenMelodyInstance, harmonizeChord, chosenKeySig);
+                List<Pitch> harmonizedMelody = analyzer.harmonizeMelodyInstance(chosenMelodyInstance, harmonizeChord, chosenKeySig);
                 System.out.println("harmonizing:");
                 for(Pitch pitch : chosenMelodyInstance) {
                 	System.out.println(pitch);
@@ -139,7 +139,8 @@ public class unitTest{
                 // testing harmonizeWithVoiceLeading
 //              List<Pitch> melodyInstance = new ArrayList<Pitch>();
               List<Pitch> previousPitches = melodyInstance1;
-              List<Pitch> harmonizedMelodyWithVoiceLeading = new Analyzer().harmonizeWithVoiceLeading(previousPitches, chosenMelodyInstance, harmonizeChord, chosenKeySig);
+              analyzer.setPrevPitches(previousPitches);
+              List<Pitch> harmonizedMelodyWithVoiceLeading = analyzer.harmonizeWithVoiceLeading(chosenMelodyInstance, harmonizeChord, chosenKeySig);
               System.out.println("Previous Pitches:");
               for(Pitch pitch : previousPitches) {
                 	System.out.println(pitch);
