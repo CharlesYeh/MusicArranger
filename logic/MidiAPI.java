@@ -8,6 +8,7 @@ import java.lang.Object;
 public class MidiAPI{
 
 	//int _wholeNoteDuration = 1000; //The duration of a whole note
+	int _wholeNotesPerMinute = 15;
 	MidiPlayer _mp;
 	ArrayList<ListIterator<MultiNote>> _voices;
 	Synthesizer _synth;
@@ -85,6 +86,11 @@ public class MidiAPI{
 		_mp = new MidiPlayer(this, p);
 		_mp.start();
 
+	}
+	
+	public void setWholeNotesPerMinute(int setTo) {
+		
+		_wholeNotesPerMinute = setTo;
 	}
 //
 //	private void addPiece(List<ListIterator<MultiNote>> list, Piece p) {
@@ -211,5 +217,9 @@ public class MidiAPI{
 	        msg.setMessage(cmd, 0, note, 100);
 
 	        return (MidiMessage) msg;
+	}
+	
+	public int getWholeNotesPerMinute() {
+		return _wholeNotesPerMinute;
 	}
 }
