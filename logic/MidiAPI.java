@@ -166,17 +166,16 @@ public class MidiAPI{
 		_mp.start();
 	}
 
-	//takes a Pitch object and returns its midiPitch value
-	public int computeMidiPitch(Pitch p){
-		int octaveC = 12 + (12*p.getOctave());
-
-		NoteLetter noteltr = p.getNoteLetter();
-		Accidental accid = p.getAccidental();
-		int midiPitch = octaveC + noteltr.pitchValue() + accid.intValue();
-
-		return midiPitch;
-
-	}
+//	//takes a Pitch object and returns its midiPitch value
+//	public int computeMidiPitch(Pitch p){
+//		int octaveC = 12 + (12*p.getOctave());
+//
+//		NoteLetter noteltr = p.getNoteLetter();
+//		Accidental accid = p.getAccidental();
+//		int midiPitch = octaveC + noteltr.pitchValue() + accid.intValue();
+//
+//		return midiPitch;
+//	}
 
 	public void multiNoteOn(MultiNote mn){
 //		System.out.println("note is turned on: ");
@@ -202,7 +201,7 @@ public class MidiAPI{
 			//navigate to a single note
 			//send the wanted note message
 			for (Pitch p : _pitches) {
-				MidiMessage noteMessage = getMessage(msg, computeMidiPitch(p));
+				MidiMessage noteMessage = getMessage(msg, p.computeMidiPitch());
 				//tests.MidiAPITest.printPitch(p);
 
 				// 0 means execute immediately

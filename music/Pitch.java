@@ -1,6 +1,6 @@
 package music;
 
-public class Pitch {
+public class Pitch implements Comparable{
 	NoteLetter _noteLetter;		// Letter representation of note
 	int _octave;				// Specifies the octave range of a note
 	Accidental _accidental;		// Tells what accidentals are applied to the note
@@ -103,8 +103,9 @@ public class Pitch {
 	}
 	
 	// Returns -1, 0, 1 for p is lower than, equal to, or higher than this pitch.
-	public int compareTo(Pitch p) {
-		
+	@Override
+	public int compareTo(Object o) {
+		Pitch p = (Pitch) o;
 		if(this.equals(p)){
 			
 			return 0;
@@ -130,4 +131,13 @@ public class Pitch {
 			}
 		}
 	}
+	
+	// Returns the midi Pitch value for this pitch
+	public int computeMidiPitch(){
+		int octaveC = 12 + (12*_octave);
+		int midiPitch = octaveC + _noteLetter.pitchValue() + _accidental.intValue();
+
+		return midiPitch;
+	}
+
 }

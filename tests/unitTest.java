@@ -14,7 +14,7 @@ import util.Node;
 public class unitTest{
         public static void main(String args[]) {
         	
-                KeySignature CMajor = new KeySignature(new Rational(4, 4), 0, true);
+            	KeySignature CMajor = new KeySignature(new Rational(4, 4), 0, true);
                 KeySignature DMajor = new KeySignature(new Rational(4, 4), 2, true);
                 Pitch C = MidiAPITest.createPitchFromMidiPitch(60);
                 Pitch D = MidiAPITest.createPitchFromMidiPitch(62);
@@ -32,7 +32,8 @@ public class unitTest{
                 ArrayList<Pitch> melodyInstance1 = new ArrayList<Pitch>();
                 melodyInstance1.add(A);
                 melodyInstance1.add(C);
-                melodyInstance1.add(A);
+                melodyInstance1.add(E);
+                melodyInstance1.add(C5);
                 melody.add(melodyInstance1);
                 
                 ArrayList<Pitch> melodyInstance2 = new ArrayList<Pitch>();
@@ -51,7 +52,6 @@ public class unitTest{
                 melody.add(melodyInstance4);
                 
                 List<List<ChordSymbol>> allPossibleChords = analyzer.analyzeMelody(melody, CMajor);
-                
                 
 //                //testing testing
 //
@@ -115,7 +115,7 @@ public class unitTest{
                 ChordSymbol chordV7 = new ChordSymbol(new ScaleDegree(5, Accidental.NATURAL), ChordType.MAJORMINOR7);
                 ChordSymbol chordvi = new ChordSymbol(new ScaleDegree(6, Accidental.NATURAL), ChordType.MINOR);
                 
-                ChordSymbol toTest = chordiii;
+                ChordSymbol toTest = chordvi;
                 System.out.println("After setting index " + index + " to chord " + printChordSymbol(toTest));
                 printGraph(analyzer.setChordsAtIndex(toTest, possibleProgressionsGraph, index));
                 
@@ -124,7 +124,7 @@ public class unitTest{
 //                List<Pitch> melodyInstance = new ArrayList<Pitch>();
                 ChordSymbol harmonizeChord = chordvi;
                 KeySignature chosenKeySig = CMajor;
-                List<Pitch> chosenMelodyInstance = melodyInstance1;
+                List<Pitch> chosenMelodyInstance = melodyInstance2;
                 List<Pitch> harmonizedMelody = new Analyzer().harmonizeMelodyInstance(chosenMelodyInstance, harmonizeChord, chosenKeySig);
                 System.out.println("harmonizing:");
                 for(Pitch pitch : chosenMelodyInstance) {
@@ -136,7 +136,25 @@ public class unitTest{
                 	System.out.println(pitch);
                 }
                 
-                System.out.println(C.compareTo(A));
+                // testing harmonizeWithVoiceLeading
+//              List<Pitch> melodyInstance = new ArrayList<Pitch>();
+              List<Pitch> previousPitches = melodyInstance1;
+              List<Pitch> harmonizedMelodyWithVoiceLeading = new Analyzer().harmonizeWithVoiceLeading(previousPitches, chosenMelodyInstance, harmonizeChord, chosenKeySig);
+              System.out.println("Previous Pitches:");
+              for(Pitch pitch : previousPitches) {
+                	System.out.println(pitch);
+               }
+              System.out.println("harmonizing:");
+              for(Pitch pitch : chosenMelodyInstance) {
+              	System.out.println(pitch);
+              }
+              System.out.println("with chord after voice leading: " + printChordSymbol(harmonizeChord) + " in key: " + chosenKeySig.getKeySigPitch());
+              for(Pitch pitch : harmonizedMelodyWithVoiceLeading) {
+              	
+              	System.out.println(pitch);
+              }
+                
+                
         }
         
         //Function that prints the all the possible traversals from the starting node of printGraph

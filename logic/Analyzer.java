@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Collections;
 import java.lang.Thread;
 
 public class Analyzer extends Thread {
@@ -954,13 +955,15 @@ public class Analyzer extends Thread {
 		
 		List<Pitch> chordTones = getChordPitches(chordsym, keySig);
 		int numberOfChordTones = chordTones.size();
-		int numberOfChordTonesPresent = melodyInstance.size(); 
+		int numberOfCurrentPitchesPresent = melodyInstance.size(); 
 		int[] chordToneCheckList = new int[numberOfChordTones]; // Each element represents a chord tone. 0 means that chord tone is not present, 1 means it is.
 		int lowestGivenNoteOctave = 12; //lowest Octave of the notes that already exist
 		Pitch lowestGivenPitch = null;
 		Pitch insertedRoot = null;
 		Pitch insertedThird = null;
 		List<Pitch> returnList = new ArrayList<Pitch>();
+		
+		// find out the lowest given pitch
 		if(!melodyInstance.isEmpty()) {
 			lowestGivenPitch = melodyInstance.get(0);
 //			return returnList;
@@ -1001,7 +1004,7 @@ public class Analyzer extends Thread {
 		}
 		
 //		int absoluteLowestOctave = lowestExistingNoteOctave;
-		int remainingPitchesToEnter = 4 - numberOfChordTonesPresent;
+		int remainingPitchesToEnter = 4 - numberOfCurrentPitchesPresent;
 		
 		while(remainingPitchesToEnter > 0) {
 			
@@ -1104,31 +1107,234 @@ public class Analyzer extends Thread {
 			remainingPitchesToEnter--;
 		}
 		
-//		List<Pitch> sortedList = new ArrayList<Pitch>();
-		
-		for(int i = 0; i < returnList.size(); i++) {
-			for(int j = 0; j < returnList.size() - 1; j++){
-				
-				if(returnList.get(j).compareTo(returnList.get(j + 1)) < 0) {
-					Pitch temp = returnList.get(j);
-//					returnList.get(j) = returnList.get(j + 1);
-//					returnList.get(j + 1) = temp;
-					returnList.remove(j);
-					returnList.add(j + 1, temp);
-				}
-			}
-//			sortedList.add(HighestPitch);
-//			returnList.remove(HighestPitch);
-		}
+		Collections.sort(returnList);
+//		for(int i = 0; i < returnList.size(); i++) {
+//			for(int j = 0; j < returnList.size() - 1; j++){
+//				
+//				if(returnList.get(j).compareTo(returnList.get(j + 1)) < 0) {
+//					Pitch temp = returnList.get(j);
+//					returnList.remove(j);
+//					returnList.add(j + 1, temp);
+//				}
+//			}
+//		}
 		
 		_prevPitches = returnList;
 		
-		/*for(Pitch p : returnList) {
-			System.out.println(p);
-		}*/
 		return returnList;
 	}
 
+	/* 
+	 * Takes in a list of preceding pitches, a list of pitches that already exist in the melody instance to be harmonized, and a chordsymbol as a target chord to harmonize with,
+	 * and returns a list of Pitches that are to be added, considering some voice leading pricipals
+	 * 
+	 */
+	public List<Pitch> harmonizeWithVoiceLeading(List<Pitch> precedingPitches, List<Pitch> currentPitches, ChordSymbol chordsym, KeySignature keySig) {
+		
+		ArrayList<Pitch> previousPitchesNotAccountedFor = new ArrayList<Pitch>();
+		previousPitchesNotAccountedFor.addAll(precedingPitches);
+		
+		if(precedingPitches.isEmpty()) {
+			
+			// generate voices without considering voice leading
+			return harmonizeMelodyInstance(currentPitches, chordsym, keySig);
+		}
+		else {
+			List<Pitch> chordTones = getChordPitches(chordsym, keySig);
+			Pitch precedingSoprano = null;
+			Pitch precedingBass = null;
+			Pitch precedingTenor = null;
+			Pitch precedingAlto = null;
+			Pitch CurrentSoprano = null;
+			int numberOfChordTones = chordTones.size();
+			int numberOfCurrentPitchesPresent = currentPitches.size(); 
+			int numVoices = precedingPitches.size();
+			int numVoicesToAdd = numVoices - numberOfCurrentPitchesPresent;
+			
+			int[] voiceLeadingCheckList = new int[numVoices]; // an array of integers, each one representing the state of a Pitch in the previous voice
+			int[] chordToneCheckList = new int[numberOfChordTones]; // Each element represents a chord tone. 0 means that chord tone is not present, 1 means it is.
+			
+			List<Pitch> returnList = new ArrayList<Pitch>();
+			returnList.addAll(currentPitches);
+			
+			// Find out which chord tones are already present within the Melody
+			for(int i = 0; i < chordTones.size(); i++) {
+				
+				Pitch chordPitch = chordTones.get(i);
+				for(Pitch melodyPitch : currentPitches) {
+					
+					if(melodyPitch.getNoteLetter() == chordPitch.getNoteLetter() && melodyPitch.getAccidental() == chordPitch.getAccidental()) {
+						// The melody contains this chord pitch, but maybe in a different Octave
+						
+						chordToneCheckList[i] ++;
+						break;
+					}
+				}
+			}
+			
+			Collections.sort(precedingPitches);
+			precedingBass = precedingPitches.get(0);
+			precedingTenor = precedingPitches.get(1);
+			precedingAlto = precedingPitches.get(numVoices - 2);
+			precedingSoprano = precedingPitches.get(numVoices - 1);
+			
+			Collections.sort(currentPitches);
+		
+			// designate each of the current Pitches to be in the same voice as one of the preceding Pitches
+			for(int i = currentPitches.size() - 1; i >= 0; i--) { // starting from the highest note
+				
+				Pitch currentPitch = currentPitches.get(i);
+				
+				if((currentPitch.compareTo(precedingSoprano) >= 0
+						|| (currentPitch.compareTo(precedingAlto) >= 0 && currentPitch.calcIntervalTo(precedingSoprano).getSize() < 5))
+						&& previousPitchesNotAccountedFor.contains(precedingSoprano)) { // this note is the soprano for the current melody instance
+					
+//					voiceLeadingCheckList[numVoices - 1] = 1;
+					previousPitchesNotAccountedFor.remove(precedingSoprano);
+				}
+				else if((currentPitch.compareTo(precedingBass) <= 0
+						|| (currentPitch.compareTo(precedingTenor) <= 0 && precedingBass.calcIntervalTo(currentPitch).getSize() < 5))
+						&& previousPitchesNotAccountedFor.contains(precedingBass)) { // this note is the bass for the current melody instance
+					
+//					voiceLeadingCheckList[0] = 1;
+					previousPitchesNotAccountedFor.remove(precedingBass);
+				}
+				else { // find the preceding pitch with the closest interval to the current one
+//					int closestPreviousPitchIndex = -1;
+					Pitch closestPreviousPitch = null;
+					int closestInterval = 100;
+					
+					// compare current pitch with all the preceding ones to find the closest one
+					for(Pitch precedingPitch : previousPitchesNotAccountedFor) {
+						
+//						if(voiceLeadingCheckList[j] == 0) {
+							
+//							Pitch precedingPitch = precedingPitches.get(j);
+//							if(closestPreviousPitchIndex == -1) {
+						if(closestPreviousPitch == null) {
+//								closestPreviousPitchIndex = j;
+							closestPreviousPitch = precedingPitch;
+							closestInterval = Math.abs(currentPitch.computeMidiPitch() - precedingPitch.computeMidiPitch());
+						}
+						else {
+							int newInterval = Math.abs(currentPitch.computeMidiPitch() - precedingPitch.computeMidiPitch());
+							if(newInterval < closestInterval) { // this previous Pitch is closer to the current Pitch
+								
+//									closestPreviousPitchIndex = j;
+								closestPreviousPitch = precedingPitch;
+								closestInterval = newInterval;
+							}
+						}
+//						}
+					}
+					
+//					if(closestPreviousPitchIndex != -1) {
+					if(closestPreviousPitch != null) {
+						// 
+//						voiceLeadingCheckList[closestPreviousPitchIndex] = 1;	
+						previousPitchesNotAccountedFor.remove(closestPreviousPitch);
+					}
+				}
+				
+			}
+			
+			// add a Pitch for each of the preceding voices that are not yet present in the current melody instance
+			while(numVoicesToAdd > 0) {
+				
+				//==============================
+				Pitch chordToneToInsert = null;
+//				int chordToneIndex = 0;
+				
+				if(chordToneCheckList[0] == 0) { //root of chord is not present yet, so add root
+					
+					chordToneToInsert = chordTones.get(0);
+					chordToneCheckList[0] ++;
+				}
+				else if(chordToneCheckList[1] == 0) { //3rd of chord is missing, add 3rd
+					
+					chordToneToInsert = chordTones.get(1);
+					chordToneCheckList[1] ++;
+				}
+				else if(chordToneCheckList.length > 3 && chordToneCheckList[3] == 0) { //7th of chord is missing, add 7th
+					
+					chordToneToInsert = chordTones.get(3);
+					chordToneCheckList[3] ++;
+				}
+				else if(chordToneCheckList[2] == 0) { // enter 5th
+					
+					chordToneToInsert = chordTones.get(2);
+					chordToneCheckList[2] ++;
+				}
+				else { // all chord tones already exist, repeat root or third, depending on which one is closer to the preceding Pitch that is not accounted for
+					
+					Pitch root = chordTones.get(0).copy();
+					Pitch third = chordTones.get(1).copy();
+					Pitch precedingPitch = previousPitchesNotAccountedFor.get(0);
+					
+					int rootIntervalFromPrec = Math.abs(root.computeMidiPitch() - precedingPitch.computeMidiPitch()) % 12 ;
+					if(rootIntervalFromPrec > 6)
+						rootIntervalFromPrec -= 12;
+					int thirdIntervalFromPrec = Math.abs(third.computeMidiPitch() - precedingPitch.computeMidiPitch()) % 12 ;
+					if(rootIntervalFromPrec > 6)
+						rootIntervalFromPrec -= 12;
+					
+					chordToneToInsert = rootIntervalFromPrec < rootIntervalFromPrec ? root : third;
+				}
+				
+				findBestVoice(previousPitchesNotAccountedFor, chordToneToInsert);
+				returnList.add(chordToneToInsert);
+				//===============================
+				numVoicesToAdd --;
+			}
+			Collections.sort(returnList);
+			return returnList;
+		}
+	}
+	
+	/* 
+	 * Takes a list of previous pitches and a current pitch, finds the pitch among the previous pitches that the current Pitch is closest to (ignoring octave numbers)
+ 	 * removes that closest previous pitch from the notAccountedFor list, and modifies the current Pitch to the octave that makes it closest to the selected previous note
+ 	 * 
+ 	 */
+	public void findBestVoice(List<Pitch> previousPitchesNotAccountedFor, Pitch chordToneToInsert) {
+		
+		Pitch closestPreviousPitch = previousPitchesNotAccountedFor.get(0);
+		int smallestInterval = 100;
+		
+		// go through the preceding Pitches and find one that is closest to the chordToneToInsert
+		for(Pitch precedingPitch : previousPitchesNotAccountedFor) {
+			
+			int newInterval = (Math.abs(chordToneToInsert.computeMidiPitch() - precedingPitch.computeMidiPitch())) % 12;
+			if(newInterval < smallestInterval) { // this previous Pitch is closer to the current Pitch
+				
+//					closestPreviousPitchIndex = j;
+				closestPreviousPitch = precedingPitch;
+				smallestInterval = newInterval;
+			}
+		}
+		
+		// set chordToneToInsert to the octave that makes it closest to the chosen Pitch
+		int pitchInterval = chordToneToInsert.computeMidiPitch() - closestPreviousPitch.computeMidiPitch();
+		while(pitchInterval >= 12) {
+			
+			chordToneToInsert.setOctave(chordToneToInsert.getOctave() - 1);
+			pitchInterval -= 12;
+		}
+		while(pitchInterval <= -12) {
+			
+			chordToneToInsert.setOctave(chordToneToInsert.getOctave() + 1);
+			pitchInterval += 12;
+		}
+		
+		if(pitchInterval > 6) {
+			chordToneToInsert.setOctave(chordToneToInsert.getOctave() - 1);
+		}
+		else if(pitchInterval < -6) {
+			chordToneToInsert.setOctave(chordToneToInsert.getOctave() + 1);
+		}
+		
+//		return chordToneToInsert;
+	}
 	
 	public void generateVoices() {
 		
