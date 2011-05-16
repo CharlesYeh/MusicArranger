@@ -1,6 +1,7 @@
 package logic;
 
 import music.*;
+
 import javax.sound.midi.*;
 import java.util.*;
 import java.lang.Object;
@@ -30,6 +31,13 @@ public class MidiAPI{
 			return;
 		
 		_mp.interrupt();
+	}
+	
+	public void setPlaybackStartingTime(int startingMeasure, Rational startTimeInMeasure) {
+		
+		if(_mp != null) {
+			_mp.setStartingTime(startingMeasure, startTimeInMeasure);
+		}
 	}
 
 	public void playPiece(Piece p){
