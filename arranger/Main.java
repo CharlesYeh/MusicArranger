@@ -17,7 +17,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import logic.LogicManager;
-import logic.MidiAPI;
 import logic.Editor;
 import music.Clef;
 import music.ClefName;
@@ -32,7 +31,6 @@ import java.awt.event.KeyEvent;
  */
 public class Main extends JFrame implements InstructionListener, KeyListener {
 
-	MidiAPI _api;
 	MainPanel _mainPanel;
 
 	Editor _editor;
@@ -82,7 +80,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 		//Instruction instrNew = new FileInstruction();
 		JMenuItem menuItemNew = new JMenuItem("New");
 		menuItemNew.setMnemonic(KeyEvent.VK_N);
-		menuItemNew.setToolTipText("New song");
+		menuItemNew.setToolTipText("New piece");
 		menuItemNew.addActionListener(
 			new ActionListener() {
 				
@@ -100,6 +98,9 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 																					_newFileDialog.getNumMeasures(), _newFileDialog.getTimeNumer(),
 																					_newFileDialog.getTimeDenom(), _newFileDialog.getNumAccidentals(),
 																					_newFileDialog.getIsMajor()));
+					
+					//clear selection in main panel
+					_mainPanel.clearSelection();
 					
 					receiveInstruction(myInstr);
 				}

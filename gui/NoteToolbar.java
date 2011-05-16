@@ -56,6 +56,7 @@ public class NoteToolbar extends Toolbar {
 		
 		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(0, 1, 2, 3, 4)));
 		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(5, 6, 7)));
+		_buttonGroups.add(new HashSet<Integer>(Arrays.asList(8)));
 		
 		// set initialized state
 		noteQuar.setPressed(true);

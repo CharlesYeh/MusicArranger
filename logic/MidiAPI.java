@@ -5,11 +5,10 @@ import music.*;
 import javax.sound.midi.*;
 import java.util.*;
 import java.lang.Object;
+import java.lang.IllegalThreadStateException;
 
 public class MidiAPI{
-
-	//int _wholeNoteDuration = 1000; //The duration of a whole note
-	int _wholeNotesPerMinute = 15;
+	
 	MidiPlayer _mp;
 	ArrayList<ListIterator<MultiNote>> _voices;
 	Synthesizer _synth;
@@ -39,11 +38,9 @@ public class MidiAPI{
 			_mp.setStartingTime(startingMeasure, startTimeInMeasure);
 		}
 	}
-
+	
 	public void playPiece(Piece p){
-//		_voices = new ArrayList<ListIterator<MultiNote>>();
-//		addPiece(_voices, p);
-
+		
 		List<Staff> staffList = p.getStaffs();
 		if(staffList != null){
 
@@ -51,14 +48,14 @@ public class MidiAPI{
 			if(s != null){
 
 				List<Measure> ml = s.getMeasures();
-				if(ml != null){
-
-					if(ml.get(0)!=null){
-
-						if(_mp.isAlive()) {
-							stopPlayback();
-						}
-						_mp.setPiece(p);
+				if(ml != null && ml.get(0) != null) {
+					
+					_mp.setPiece(p);
+					if(_mp.isAlive()) {
+						//restartPlayback();
+						_mp.start();
+					}
+					else {
 						_mp.start();
 					}
 				}
@@ -102,10 +99,6 @@ public class MidiAPI{
 
 	}
 	
-	public void setWholeNotesPerMinute(int setTo) {
-		
-		_wholeNotesPerMinute = setTo;
-	}
 //
 //	private void addPiece(List<ListIterator<MultiNote>> list, Piece p) {
 //		for (Staff s : p.getStaffs()) {
@@ -233,9 +226,5 @@ public class MidiAPI{
 	        msg.setMessage(cmd, 0, note, 100);
 
 	        return (MidiMessage) msg;
-	}
-	
-	public int getWholeNotesPerMinute() {
-		return _wholeNotesPerMinute;
 	}
 }

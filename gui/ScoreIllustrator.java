@@ -355,13 +355,19 @@ public class ScoreIllustrator {
 				if (currDur instanceof MultiNote) {
 					//-----------------------MULTINOTE-----------------------
 					MultiNote mnote = (MultiNote) currDur;
-
+					
 					int noteX = nextX;
 					int noteY = nextY;
 					
-					// see if this multinote is selected
-					InstructionIndex mnoteIndex = new InstructionIndex(_staffPositions.get(currStaff), measureCount, 0, currTime);
-					drawMultiNote(g, stemGroups.get(currStaff), currClef, currKeySig, mnote, noteX, noteY, selectedNotes != null && selectedNotes.contains(mnoteIndex));
+					// check for whole rest
+					if (mnote.getPitches().size() == 0 && currDur.getDuration().equals(currTimeSig.asRational())) {
+						drawWholeRest(g, noteX, noteY);
+					}
+					else {
+						// see if this multinote is selected
+						InstructionIndex mnoteIndex = new InstructionIndex(_staffPositions.get(currStaff), measureCount, 0, currTime);
+						drawMultiNote(g, stemGroups.get(currStaff), currClef, currKeySig, mnote, noteX, noteY, selectedNotes != null && selectedNotes.contains(mnoteIndex));
+					}
 					
 					Rational dur = mnote.getDuration();
 					
@@ -647,6 +653,13 @@ public class ScoreIllustrator {
 			break;
 		}
 	}
+	
+	private void drawWholeRest(Graphics g, int xc, int yc) {
+		xc -= REST_IMG_OFFSET;
+		yc -= REST_IMG_OFFSET - SYSTEM_LINE_SPACING * 2;
+		
+		g.drawImage(_imgWholeRest, xc, yc, null);
+	}
 
 	private void drawStem(Graphics g, int xc, int yc, int minOffset, int maxOffset) {
 		g.drawLine(xc, yc + minOffset, xc, yc + maxOffset);
@@ -806,7 +819,7 @@ public class ScoreIllustrator {
 			g.drawLine(LEFT_MARGIN, yp, ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN, yp);
 		}
 	}
-
+	
 	private void drawClef(Graphics g, Clef c, int xc, int yc) {
 		switch (c.getClefName()) {
 		case GCLEF:
@@ -864,7 +877,7 @@ public class ScoreIllustrator {
 		// - 4 since
 		return -(line - 4) * SYSTEM_LINE_SPACING / 2;
 	}
-
+	
 	public InstructionIndex getEventIndex(Point e) {
 		// check x bounds
 		if (e.getX() < LEFT_MARGIN || e.getX() > ArrangerConstants.PAGE_WIDTH - RIGHT_MARGIN)
