@@ -1150,12 +1150,14 @@ public class Analyzer extends Thread {
 		else {
 			ArrayList<Pitch> previousPitchesNotAccountedFor = new ArrayList<Pitch>();
 			previousPitchesNotAccountedFor.addAll(precedingPitches);
+			
 			List<Pitch> chordTones = getChordPitches(chordsym, keySig);
 			Pitch precedingSoprano = null;
 			Pitch precedingBass = null;
 			Pitch precedingTenor = null;
 			Pitch precedingAlto = null;
-			Pitch CurrentSoprano = null;
+			Pitch currentSoprano = null;
+			Pitch currentBass = null;
 			int numberOfChordTones = chordTones.size();
 			int numberOfCurrentPitchesPresent = currentPitches.size(); 
 			int numVoices = precedingPitches.size();
@@ -1196,11 +1198,12 @@ public class Analyzer extends Thread {
 				
 				if(previousPitchesNotAccountedFor.contains(precedingSoprano) &&
 						(currentPitch.compareTo(precedingSoprano) >= 0
-						|| /*(currentPitch.compareTo(precedingAlto) >= 0 
-								&& */currentPitch.calcIntervalTo(precedingSoprano).getSize() < 5)) { // this note is the soprano for the current melody instance
+						|| (currentPitch.compareTo(precedingAlto) >= 0 
+								&& currentPitch.calcIntervalTo(precedingSoprano).getSize() < 5))) { // this note is the soprano for the current melody instance
 					
 //					voiceLeadingCheckList[numVoices - 1] = 1;
 					previousPitchesNotAccountedFor.remove(precedingSoprano);
+					currentSoprano = currentPitch;
 				}
 				else if((currentPitch.compareTo(precedingBass) <= 0
 						|| (currentPitch.compareTo(precedingTenor) <= 0 && precedingBass.calcIntervalTo(currentPitch).getSize() < 5))
@@ -1208,6 +1211,7 @@ public class Analyzer extends Thread {
 					
 //					voiceLeadingCheckList[0] = 1;
 					previousPitchesNotAccountedFor.remove(precedingBass);
+					currentBass = currentPitch;
 				}
 				else { // find the preceding pitch with the closest interval to the current one
 //					int closestPreviousPitchIndex = -1;
@@ -1290,7 +1294,13 @@ public class Analyzer extends Thread {
 					chordToneToInsert = rootIntervalFromPrec < rootIntervalFromPrec ? root : third;
 				}
 				
-				findBestVoice(previousPitchesNotAccountedFor, chordToneToInsert);
+				int maxPitch = currentSoprano != null ? currentSoprano.computeMidiPitch() : 127;
+				int minPitch = currentBass != null ? currentBass.computeMidiPitch() : 0;
+				findBestVoice(previousPitchesNotAccountedFor, chordToneToInsert, maxPitch, minPitch);
+				
+				if(currentSoprano == null) {
+					currentSoprano = chordToneToInsert;
+				}
 				returnList.add(chordToneToInsert);
 				numVoicesToAdd --;
 			}
@@ -1318,11 +1328,11 @@ public class Analyzer extends Thread {
 	}
 	
 	/* 
-	 * Takes a list of previous pitches and a current pitch, finds the pitch among the previous pitches that the current Pitch is closest to (ignoring octave numbers)
+	 * Takes a list of previous pitches, a current pitch, and highest and lowest possible pitch values, finds the pitch among the previous pitches that the current Pitch is closest to (ignoring octave numbers)
  	 * removes that closest previous pitch from the notAccountedFor list, and modifies the current Pitch to the octave that makes it closest to the selected previous note
  	 * 
  	 */
-	public void findBestVoice(List<Pitch> previousPitchesNotAccountedFor, Pitch chordToneToInsert) {
+	public void findBestVoice(List<Pitch> previousPitchesNotAccountedFor, Pitch chordToneToInsert, int maxPitch, int minPitch) {
 		
 		Pitch closestPreviousPitch = previousPitchesNotAccountedFor.get(0);
 		int smallestInterval = 100;
@@ -1330,7 +1340,21 @@ public class Analyzer extends Thread {
 		// go through the preceding Pitches and find one that is closest to the chordToneToInsert
 		for(Pitch precedingPitch : previousPitchesNotAccountedFor) {
 			
-			int newInterval = (Math.abs(chordToneToInsert.computeMidiPitch() - precedingPitch.computeMidiPitch())) % 12;
+			// calculate the interval between chordToneToInsert and precedingPitch, and find the minimum one between 
+			int posNegInterval = (chordToneToInsert.computeMidiPitch() - precedingPitch.computeMidiPitch()) % 12;
+			int newIntervalAbove = posNegInterval >= 0 ? posNegInterval : posNegInterval + 12;
+			int newIntervalBelow = posNegInterval <= 0 ? -posNegInterval : posNegInterval - 12;
+			int newInterval;
+			
+			if(newIntervalAbove < newIntervalBelow
+					&& (precedingPitch.computeMidiPitch() + newIntervalAbove < maxPitch)) { // check to see if this interval would make the pitch exceed the maximum pitch value
+					
+				newInterval = newIntervalAbove;
+			}
+			else {
+				
+				newInterval = newIntervalBelow;
+			}
 			if(newInterval < smallestInterval) { // this previous Pitch is closer to the current Pitch
 				
 //					closestPreviousPitchIndex = j;
@@ -1353,10 +1377,10 @@ public class Analyzer extends Thread {
 			pitchInterval += 12;
 		}
 		
-		if(pitchInterval > 6) {
+		if((pitchInterval > 6 && (chordToneToInsert.computeMidiPitch() - 12) > minPitch) || chordToneToInsert.computeMidiPitch() >= maxPitch) {
 			chordToneToInsert.setOctave(chordToneToInsert.getOctave() - 1);
 		}
-		else if(pitchInterval < -6) {
+		else if((pitchInterval < -6 && (chordToneToInsert.computeMidiPitch() + 12) < maxPitch) || chordToneToInsert.computeMidiPitch() <= minPitch) {
 			chordToneToInsert.setOctave(chordToneToInsert.getOctave() + 1);
 		}
 		

@@ -13,7 +13,7 @@ import util.Node;
 
 public class unitTest{
         public static void main(String args[]) {
-        	
+        	System.out.println(-3 % 12);
             	KeySignature CMajor = new KeySignature(new Rational(4, 4), 0, true);
                 KeySignature DMajor = new KeySignature(new Rational(4, 4), 2, true);
                 Pitch C = MidiAPITest.createPitchFromMidiPitch(60);
