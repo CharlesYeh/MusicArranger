@@ -229,12 +229,22 @@
                     <pitch octave="4" key="E" accidental="NATURAL"/>
                   </pitches>
                 </multinote>
-                <multinote duration="1/8">
+                <multinote duration="1/16">
                   <pitches>
                     <pitch octave="5" key="C" accidental="SHARP"/>
                   </pitches>
                 </multinote>
-                <multinote duration="1/8">
+                <multinote duration="1/16">
+                  <pitches>
+                    <pitch octave="5" key="D" accidental="NATURAL"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/16">
+                  <pitches>
+                    <pitch octave="5" key="C" accidental="SHARP"/>
+                  </pitches>
+                </multinote>
+                <multinote duration="1/16">
                   <pitches>
                     <pitch octave="4" key="A" accidental="NATURAL"/>
                   </pitches>
