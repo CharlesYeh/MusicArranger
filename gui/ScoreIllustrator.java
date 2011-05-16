@@ -50,7 +50,7 @@ public class ScoreIllustrator {
 	
 	final static int STEM_LENGTH = 30;
 	
-	final static int MEASURE_WIDTH = 100;
+	final static int MEASURE_WIDTH = 130;
 	final static int LEDGER_WIDTH = (int) (SYSTEM_LINE_SPACING * 1.5);
 	
 	final static int CLEF_IMG_OFFSET = 50;
@@ -484,6 +484,8 @@ public class ScoreIllustrator {
 				staffX.put(stf, stfX + 15);
 				
 				measureX = stfX;
+				
+				renderStemGroup(g, stemGroups.get(stf), stemMinLines, stemMaxLines, currClefs.get(stf));
 			}
 			
 			int startY = systemY;
@@ -537,11 +539,10 @@ public class ScoreIllustrator {
 		if (pitches.size() == 0) {
 			// draw rest
 			drawRest(g, numerValue, denomValue - numerValue, nextX, nextY);
-			
 			drawDots(g, numerValue, nextX + 10, nextY + 23);
 			
 			// render previous group
-			renderStemGroup(stemGroup, currClef);
+			renderStemGroup(g, stemGroup, stemMinLines, stemMaxLines, currClef);
 			
 			// don't render stem
 			return;
@@ -580,12 +581,12 @@ public class ScoreIllustrator {
 			// draw stem or add to stem group
 			if (denomValue >= 3) {
 				stemGroup.add(mn);
-				stemMinLines.put(mn, new Point(nextX, getLineOffset(currClef, nextY + minOffset)));
-				stemMaxLines.put(mn, new Point(nextX, getLineOffset(currClef, nextY + maxOffset)));
+				stemMinLines.put(mn, new Point(nextX, nextY + getLineOffset(currClef, minLine)));
+				stemMaxLines.put(mn, new Point(nextX, nextY + getLineOffset(currClef, maxLine)));
 			}
 			else {
 				// render previous group
-				renderStemGroup(stemGroup, currClef);
+				renderStemGroup(g, stemGroup, stemMinLines, stemMaxLines, currClef);
 			}
 			
 			int adjust = dir * SYSTEM_LINE_SPACING / 2;
@@ -668,66 +669,89 @@ public class ScoreIllustrator {
 		g.drawLine(xc, yc + minOffset, xc, yc + maxOffset);
 	}
 
-	private void renderStemGroup(List<MultiNote> stemGroup, Clef currClef) {
+	private void renderStemGroup(Graphics g, List<MultiNote> stemGroup, Map<MultiNote, Point> stemMinLines, Map<MultiNote, Point> stemMaxLines, Clef currClef) {
 		if (stemGroup.size() == 0) {
 			return;
 		}
 		else if (stemGroup.size() == 1) {
 			// draw single stem
 			
+			MultiNote mn = stemGroup.get(0);
+			
+			//drawStem(g, stemX - dir * SYSTEM_LINE_SPACING / 2, nextY, minOffset, maxOffset);
 			stemGroup.clear();
 			return;
 		}
-		/*
+		
 		Rational totalDuration = new Rational(0, 1);
 		int totalLines = 0;
-
+		
 		for (int i = stemGroup.size() - 1; i >= 0; i--) {
 			MultiNote mnote = stemGroup.get(i);
-
+			
 			// calc average (above center = stems downward, below center = stems upward)
 			List<Pitch> pitches = mnote.getPitches();
 			for (Pitch p : pitches) {
 				totalLines += getLineNumber(currClef, p);
 			}
-
-			// calc total duration
-			totalDuration = totalDuration.plus(mnote.getDuration());
 		}
 
 		// -1 = upwards, 1 = downwards
-		int stemDirection = (totalLines >= 0) ? -1 : 1;
+		int stemDirection = (totalLines < 0) ? -1 : 1;
 
-		// calc slope of stem bar (last - first) / totalDuration
-		MultiNote first = stemGroup.get(0);
-		MultiNote last = stemGroup.get(stemGroup.size() - 1);
-
+		// calc slope of stem bar (last - first) / width
+		MultiNote firstMN = stemGroup.get(0);
+		MultiNote lastMN = stemGroup.get(stemGroup.size() - 1);
+		
+		Point first = (stemDirection == -1) ? stemMinLines.get(firstMN) : stemMaxLines.get(firstMN);
+		Point last = (stemDirection == -1) ? stemMinLines.get(lastMN) : stemMaxLines.get(lastMN);
+		
 		double slope = (last.getY() - first.getY()) / (last.getX() - first.getX());
 		double maxBarOffset = 0;
-
+		
 		// also calc how much to offset the bar vertically
 		for (MultiNote mn : stemGroup) {
-			int dx = mn.getX() - first.getX();
-			int expectedY = first.getY() + dx * slope;
-			maxBarOffset = Math.max(maxBarOffset, expectedY);
-
-			int stemX = mn.getX();
-			//g.drawLine(stemX, mn.getY(), );
+			Point pt = (stemDirection == -1) ? stemMinLines.get(mn) : stemMaxLines.get(mn);
+			
+			int dx = (int) (pt.getX() - first.getX());
+			int expectedY = (int) (first.getY() + dx * slope);
+			
+			if (stemDirection == -1) {
+				maxBarOffset = Math.max(maxBarOffset, expectedY - pt.getY());
+			}
+			else {
+				maxBarOffset = Math.min(maxBarOffset, expectedY - pt.getY());
+			}
 		}
-
+		
+		int stemLength = 30;
+		
+		int barSX = (int) first.getX();
+		//int barSY = (int) (first.getY() + stemDirection * (stemLength + maxBarOffset));
+		int barEX = (int) last.getX();
+		//int barEY = (int) (last.getY() + stemDirection * (stemLength + maxBarOffset));
+		
+		int barSY = (int) (first.getY() - maxBarOffset + stemDirection * stemLength);
+		int barEY = (int) (last.getY() - maxBarOffset + stemDirection * stemLength);
+		
+		System.out.println("HI");
+		// shift horizontally
+		barSX -= stemDirection * SYSTEM_LINE_SPACING / 2;
+		barEX -= stemDirection * SYSTEM_LINE_SPACING / 2;
+		
+		g.drawLine(barSX, barSY, barEX, barEY);
+		
 		// draw stems and additional bars next to first bar (for 16th, etc)
 		for (MultiNote mn : stemGroup) {
-
+			Point pt = (stemDirection == -1) ? stemMinLines.get(mn) : stemMaxLines.get(mn);
+			
+			int dx = (int) (pt.getX() - first.getX());
+			int barY = (int) (first.getY() + dx * slope - maxBarOffset + stemDirection * stemLength);
+			
+			int nx = (int) pt.getX() - stemDirection * SYSTEM_LINE_SPACING / 2;
+			g.drawLine(nx, (int) pt.getY(), nx, barY);
 		}
-
-		int barSX = first.getX();
-		int barSY = first.getY() + stemDirection * (stemLength + maxBarOffset);
-		int barEX = last.getX();
-		int barEY = last.getX() + stemDirection * (stemLength + maxBarOffset);
-		g.drawLine(barSX, barSY, barEX, barEY);
-		*/
 		
-		//stemGroup = new ArrayList<MultiNote>();
 		stemGroup.clear();
 	}
 
