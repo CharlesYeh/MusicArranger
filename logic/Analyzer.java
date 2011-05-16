@@ -20,6 +20,8 @@ public class Analyzer extends Thread {
 	InstructionIndex _end;
 	Rational _spacing;
 	
+	List<Pitch> _prevPitches;
+	
 	public Analyzer() {
 		initMajorKeyGraph();
 	}
@@ -1118,6 +1120,8 @@ public class Analyzer extends Thread {
 //			sortedList.add(HighestPitch);
 //			returnList.remove(HighestPitch);
 		}
+		
+		_prevPitches = returnList;
 		
 		/*for(Pitch p : returnList) {
 			System.out.println(p);
