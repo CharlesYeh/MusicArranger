@@ -18,4 +18,8 @@ public class ArrangerConstants {
 		TEMPO = t;
 		WHOLE_NOTES_PER_MINUTE = TEMPO / 4;
 	}
+	
+	public static void setScoreHeight(int h) {
+		SCORE_HEIGHT = Math.max(h, WINDOW_HEIGHT);
+	}
 }

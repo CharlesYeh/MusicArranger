@@ -206,7 +206,6 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				// insert/replace multinote or pitch
 				if (_selected.contains(index)) {
 					// don't replace this note
-					System.out.println(_selected);
 				}
 				else {
 					Instruction editInstr = null;

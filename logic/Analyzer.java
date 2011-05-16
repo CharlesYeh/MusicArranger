@@ -20,6 +20,8 @@ public class Analyzer extends Thread {
 	InstructionIndex _end;
 	Rational _spacing;
 	
+	List<Pitch> _prevPitches;
+	
 	public Analyzer() {
 		initMajorKeyGraph();
 	}
@@ -787,7 +789,6 @@ public class Analyzer extends Thread {
 	
 	/*
 	 * Adds the Edges that follow the given Node to the given Graph
-	 * 
 	 */
 	private void addFollowingEdges(Graph<ChordSymbol> newGraph, Node<ChordSymbol> currentNode, List<Edge<ChordSymbol>> followingEdges) {
 		
@@ -1120,9 +1121,11 @@ public class Analyzer extends Thread {
 //			returnList.remove(HighestPitch);
 		}
 		
-		for(Pitch p : returnList) {
+		_prevPitches = returnList;
+		
+		/*for(Pitch p : returnList) {
 			System.out.println(p);
-		}
+		}*/
 		return returnList;
 	}
 

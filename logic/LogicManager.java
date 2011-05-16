@@ -124,25 +124,24 @@ public class LogicManager implements Printable {
 	public int print(Graphics g, PageFormat pf, int page) throws PrinterException {
 		//FileInstructionPrint
 		g.drawImage(_toPrint, 0, 0, null);
-
+		
 		return PAGE_EXISTS;
 	}
 	private boolean interpretFileInstrPrint(FileInstructionPrint fileInstrPrint) {
 		//fileInstrPrint
 		_toPrint = fileInstrPrint.getImage();
 		PrinterJob job = PrinterJob.getPrinterJob();
-		PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
-		PageFormat pf = job.pageDialog(aset);
-		job.setPrintable(this, pf);
-		boolean ok = job.printDialog(aset);
+		job.setPrintable(this);
+		boolean ok = job.printDialog();
 		if (ok) {
 			try {
-				job.print(aset);
+				job.print();
 			}
 			catch (PrinterException ex) {
 				System.out.println("Print failed");
 			}
 		}
+		
 		// TODO: LEARN HOW PRINT WORKS
 		return true;
 
@@ -164,7 +163,7 @@ public class LogicManager implements Printable {
 		for (int stfnm = 0; stfnm < numStaffs; stfnm++) {
 			Staff staff = new Staff();
 			_editor.insertStaff(staff);
-
+			
 			// loop through measures
 			for (int msrnm = 0; msrnm < numMeasures; msrnm++) {
 				insertMeasure(timeSigNumer, timeSigDenom, accidentals, isMajor, clefs.get(stfnm));
@@ -178,7 +177,7 @@ public class LogicManager implements Printable {
 	private void insertMeasure(int timeSigNumer, int timeSigDenom, int accidentals, boolean isMajor, Clef currClef) {
 		Measure measure = new Measure();
 		_editor.insertMeasure(measure);
-
+		
 		// Instantiate key signature, time signature
 		Rational duration = new Rational(timeSigNumer, timeSigDenom);
 		TimeSignature timeSig = new TimeSignature(duration, timeSigNumer, timeSigDenom);
@@ -186,7 +185,7 @@ public class LogicManager implements Printable {
 		
 		_editor.insertKeySig(keySig);
 		_editor.insertTimeSig(timeSig);
-
+		
 		// Instantiate clef
 		ClefName clefName = currClef.getClefName();
 		int centerLine = currClef.getCenterLine();
@@ -440,8 +439,30 @@ public class LogicManager implements Printable {
 		}
 		return true;
 	}
-
+	
 	private boolean editMeasure(EditInstruction editInstr) {
+		// append measures to the end of the piece
+		
+		for (Staff stf : _piece.getStaffs()) {
+			List<Measure> currMeasures = stf.getMeasures();
+			ListIterator<Measure> measureIter = currMeasures.listIterator(currMeasures.size());
+			_editor.setMeasureIter(measureIter);
+			
+			Measure currMeasure = currMeasures.get(currMeasures.size() - 1);
+			KeySignature lastKeySig = currMeasure.getKeySignatures().get(0);
+			Clef lastClef = currMeasure.getClefs().get(0);
+			
+			TimeSignature lastTimeSig = currMeasure.getTimeSignatures().get(0);
+			
+			int timeSigNumer = lastTimeSig.getNumerator();
+			int timeSigDenom = lastTimeSig.getDenominator();
+			
+			int accidentals = lastKeySig.getAccidentalNumber();
+			boolean isMajor = lastKeySig.getIsMajor();
+			
+			insertMeasure(timeSigNumer, timeSigDenom, accidentals, isMajor, lastClef);
+		}
+		
 		return true;
 	}
 
@@ -553,8 +574,10 @@ public class LogicManager implements Printable {
 		ListIterator<MultiNote> iter = (ListIterator<MultiNote>) iterAndOffset.getIter();
 		Rational offset = iterAndOffset.getOffset();
 
+		MultiNote replaced;
 		MultiNote multiNote;
 		Clef clef;
+		KeySignature keySig;
 		List<Pitch> pitches;
 
 		// set the iterator in the editor
@@ -593,39 +616,33 @@ public class LogicManager implements Printable {
 				//TODO: TRANSPOSE IS BUGGY, DIFFERENT FUNCTION MUST BE PUT INTO
 				// EDITOR FOR THIS TO WORK
 				clef = (Clef) getElementAt(measureOffset, measure.getClefs());
-				multiNote = iter.next();
-				pitches = multiNote.getPitches();
-				for (int i = 0; i < pitches.size(); i++) {
-					Pitch pitch = pitches.get(i);
+				keySig = (KeySignature) getElementAt(measureOffset, measure.getKeySignatures());
+				replaced = _editor.removeMultiNote();
+				pitches = replaced.getPitches();
+				multiNote = new MultiNote(replaced.getDuration());
+				_editor.setPitchIter(multiNote.getPitches().listIterator());
+				for (Pitch pitch : pitches) {
 					int lineNumber = calcLineNumber(clef, pitch);
-					EditInstruction removePitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
-							EditInstructionType.REMOVE,
-							EditType.PITCH);
-					editPitch(removePitchInstr);		
 					lineNumber++;
-					EditInstruction insertPitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
-							EditInstructionType.INSERT,
-							EditType.PITCH);
-					editPitch(insertPitchInstr);	
+					Pitch newPitch = calcPitch(lineNumber, clef, keySig);
+					_editor.insertPitch(newPitch);
 				}
+				_editor.insertMultiNote(multiNote);
 				return true;
 			case TRANSPOSE_DOWN:
 				clef = (Clef) getElementAt(measureOffset, measure.getClefs());
-				multiNote = iter.next();
-				pitches = multiNote.getPitches();
-				for (int i = 0; i < pitches.size(); i++) {
-					Pitch pitch = pitches.get(i);
+				keySig = (KeySignature) getElementAt(measureOffset, measure.getKeySignatures());
+				replaced = _editor.removeMultiNote();
+				pitches = replaced.getPitches();
+				multiNote = new MultiNote(replaced.getDuration());
+				_editor.setPitchIter(multiNote.getPitches().listIterator());
+				for (Pitch pitch : pitches) {
 					int lineNumber = calcLineNumber(clef, pitch);
-					EditInstruction removePitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
-							EditInstructionType.REMOVE,
-							EditType.PITCH);
-					editPitch(removePitchInstr);		
 					lineNumber--;
-					EditInstruction insertPitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
-							EditInstructionType.INSERT,
-							EditType.PITCH);
-					editPitch(insertPitchInstr);	
+					Pitch newPitch = calcPitch(lineNumber, clef, keySig);
+					_editor.insertPitch(newPitch);
 				}
+				_editor.insertMultiNote(multiNote);
 				return true;
 			default:
 				System.out.println("Instruction of unrecognized EditInstructionType");

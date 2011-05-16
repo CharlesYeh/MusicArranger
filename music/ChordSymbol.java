@@ -58,27 +58,37 @@ public class ChordSymbol extends Timestep {
 			case BLANK:
 				return "*";
 		}
-
+		
+		String chordName = "";
 		switch (_scaleDegree.getDegreeNumber()) {
 			case 1:
-				return "I";
+				chordName = "I";
+				break;
 			case 2:
-				return "ii";
+				chordName = "II";
+				break;
 			case 3:
-				return "iii";
+				chordName = "III";
+				break;
 			case 4:
-				return "IV";
+				chordName = "IV";
+				break;
 			case 5:
-				return "V";
+				chordName = "V";
+				break;
 			case 6:
-				return "vi";
+				chordName = "VI";
+				break;
 			case 7:
-				return "vii";
-	//		case 8:
-	//			return "I";
+				chordName = "VII";
+				break;
 		}
-
-		return "";
+		
+		if (_chordType == ChordType.MINOR) {
+			chordName = chordName.toLowerCase();
+		}
+		
+		return chordName;
 	}
 
 	public String getTopInversionText() {
