@@ -174,35 +174,6 @@ public class LogicManager implements Printable {
 		
 		return true;
 	}
-	private void insertMeasure(int timeSigNumer, int timeSigDenom, int accidentals, boolean isMajor, Clef currClef) {
-		Measure measure = new Measure();
-		_editor.insertMeasure(measure);
-		
-		// Instantiate key signature, time signature
-		Rational duration = new Rational(timeSigNumer, timeSigDenom);
-		TimeSignature timeSig = new TimeSignature(duration, timeSigNumer, timeSigDenom);
-		KeySignature keySig = new KeySignature(duration, accidentals, isMajor);
-		
-		_editor.insertKeySig(keySig);
-		_editor.insertTimeSig(timeSig);
-		
-		// Instantiate clef
-		ClefName clefName = currClef.getClefName();
-		int centerLine = currClef.getCenterLine();
-		Clef clef = new Clef(duration, clefName, centerLine);
-		_editor.insertClef(clef);
-
-		// Instantiate single voice with a rest;
-		Voice voice = new Voice();
-		MultiNote rest = new MultiNote(duration);
-		_editor.insertVoice(voice);
-		_editor.insertMultiNote(rest);
-
-		// Add blank placeholder chordsymbols
-		ChordSymbol chordSymbol = new ChordSymbol(duration, new ScaleDegree(0, Accidental.NATURAL), ChordType.BLANK);
-		_editor.insertChordSymbol(chordSymbol);
-	}
-	
 	private boolean interpretFileInstrIO(FileInstructionIO fileInstrIO) {
 		FileInstructionType fileInstrType = fileInstrIO.getType();
 		String fileName = fileInstrIO.getFileName();
@@ -234,18 +205,18 @@ public class LogicManager implements Printable {
 		if (genInstr instanceof GenerateInstructionAnalyzeChords) {
 			GenerateInstructionAnalyzeChords genInstrAnalyzeChords = 
 				(GenerateInstructionAnalyzeChords) genInstr;
-			return interpretGenerateInstrAnalyzeChords(genInstrAnalyzeChords);
+			return generateAnalyzeChords(genInstrAnalyzeChords);
 		}
 		else if (genInstr instanceof GenerateInstructionVoices) {
 			GenerateInstructionVoices genInstrVoices = 
 				(GenerateInstructionVoices) genInstr;
-			return interpretGenerateInstrVoices(genInstrVoices);
+			return generateVoices(genInstrVoices);
 		}
 		
 		return true;
 	}
 	
-	private boolean interpretGenerateInstrAnalyzeChords(GenerateInstructionAnalyzeChords genInstrAnalyzeChords) {
+	private boolean generateAnalyzeChords(GenerateInstructionAnalyzeChords genInstrAnalyzeChords) {
 		
 		InstructionIndex startIndex = genInstrAnalyzeChords.getStartIndex();
 		InstructionIndex endIndex = genInstrAnalyzeChords.getEndIndex();
@@ -276,7 +247,7 @@ public class LogicManager implements Printable {
 		return true;
 	}
 	
-	private boolean interpretGenerateInstrVoices(GenerateInstructionVoices genInstrVoices) {
+	private boolean generateVoices(GenerateInstructionVoices genInstrVoices) {
 		
 		InstructionIndex startIndex = genInstrVoices.getStartIndex();
 		InstructionIndex endIndex = genInstrVoices.getEndIndex();
@@ -284,8 +255,8 @@ public class LogicManager implements Printable {
 		int numVoices = genInstrVoices.getNumVoices();
 		// TODO: numVoices is totally not considered yet!  Hard-coded as 4.
 		
-		List<InstructionIndex> indices = generateInstructionIndices(spacing, startIndex, endIndex);
-		List<ChordSymbol> chords = getChordsAtIndices(indices);
+		List<InstructionIndex> indices = new ArrayList<InstructionIndex>();
+		List<ChordSymbol> chords = new ArrayList<ChordSymbol>();
 		List<List<Pitch>> melody = getMelodyLine(indices, spacing);
 		
 		// TODO: VERY MESSY, NEED A PROPER WAY TO GET KEY SIGNATURES FROM THE PIECE, DOESNT
@@ -466,6 +437,35 @@ public class LogicManager implements Printable {
 		return true;
 	}
 
+	private void insertMeasure(int timeSigNumer, int timeSigDenom, int accidentals, boolean isMajor, Clef currClef) {
+		Measure measure = new Measure();
+		_editor.insertMeasure(measure);
+		
+		// Instantiate key signature, time signature
+		Rational duration = new Rational(timeSigNumer, timeSigDenom);
+		TimeSignature timeSig = new TimeSignature(duration, timeSigNumer, timeSigDenom);
+		KeySignature keySig = new KeySignature(duration, accidentals, isMajor);
+		
+		_editor.insertKeySig(keySig);
+		_editor.insertTimeSig(timeSig);
+		
+		// Instantiate clef
+		ClefName clefName = currClef.getClefName();
+		int centerLine = currClef.getCenterLine();
+		Clef clef = new Clef(duration, clefName, centerLine);
+		_editor.insertClef(clef);
+	
+		// Instantiate single voice with a rest;
+		Voice voice = new Voice();
+		MultiNote rest = new MultiNote(duration);
+		_editor.insertVoice(voice);
+		_editor.insertMultiNote(rest);
+	
+		// Add blank placeholder chordsymbols
+		ChordSymbol chordSymbol = new ChordSymbol(duration, new ScaleDegree(0, Accidental.NATURAL), ChordType.BLANK);
+		_editor.insertChordSymbol(chordSymbol);
+	}
+
 	private boolean editKeySignature(EditInstruction editInstr) {
 		InstructionIndex index = editInstr.getIndex();
 		
@@ -530,6 +530,28 @@ public class LogicManager implements Printable {
 						
 						_editor.setTimeSignatureIter(iter);
 						_editor.replaceTimeSig(newTimeSig);
+						
+						// Update duration of KeySignatures and Clefs
+						measure.getKeySignatures().get(0).setDuration(measureLength);
+						measure.getClefs().get(0).setDuration(measureLength);
+						
+						// remove excess ChordSymbols
+						IteratorAndOffset chordsIterAndOffset = calcIterAndOffset(measure.getChordSymbols(), measureLength);
+						ListIterator<ChordSymbol> chordsIter = (ListIterator<ChordSymbol>) chordsIterAndOffset.iter;
+						Rational chordsOffset = chordsIterAndOffset.offset;
+						_editor.setChordSymbolIter(chordsIter);
+						while (chordsIter.hasNext()) {
+							_editor.removeChordSymbol();
+						}
+						if (chordsIter.hasPrevious()) {
+							ChordSymbol preceding = chordsIter.previous();
+							chordsIter.next();
+							preceding.setDuration(preceding.getDuration().plus(chordsOffset));
+						}
+						else {
+							_editor.insertChordSymbol(new ChordSymbol(chordsOffset, new ScaleDegree(0), ChordType.BLANK));
+						}
+						
 						
 						// remove excess notes
 						for (Voice voice : measure.getVoices()) {
