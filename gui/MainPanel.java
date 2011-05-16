@@ -535,17 +535,33 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				case KEY:
 					_currType = EditType.KEY_SIGNATURE;
 					break;
-				default:
+				case NOTE:
 					_currType = EditType.MULTINOTE;
 					break;
+				}
+				
+				if (_currType != EditType.MULTINOTE) {
+					// deselect all buttons on the modifier toolbar
+					_noteToolbar.deselectAll();
+				}
+				else {
+					selectModButtons();
 				}
 				
 				break;
 				
 			case DURATION:
 				_currDuration = (EditDuration) modeInstr.getValue();
+				
+				if (_currType != EditType.MULTINOTE) {
+					// change mode to note tool
+					_currType = EditType.MULTINOTE;
+					_modeToolbar.setPressed(0, true);
+					
+					selectModButtons();
+				}
 				break;
-
+				
 			case MODIFIER:
 				EditModifier currModifier = (EditModifier) modeInstr.getValue();
 				switch (currModifier) {
@@ -561,6 +577,30 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				case REST:
 					_currRest = !_currRest;
 					break;
+				}
+				
+				if (_currType != EditType.MULTINOTE) {
+					// change mode to note tool
+					_currType = EditType.MULTINOTE;
+					_modeToolbar.setPressed(0, true);
+					
+					selectModButtons();
+					
+					//undo toggles
+					switch (currModifier) {
+					case FLAT:
+						_noteToolbar.setPressed(5, true);
+						break;
+					case NATURAL:
+						_noteToolbar.setPressed(6, true);
+						break;
+					case SHARP:
+						_noteToolbar.setPressed(7, true);
+						break;
+					case REST:
+						_noteToolbar.setPressed(8, true);
+						break;
+					}
 				}
 				break;
 				
@@ -604,5 +644,41 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	   for (int i = 0; i < listeners.length; i++) {
 			listeners[i].receiveInstruction(instrBlock);
 	   }
+	}
+	
+	private void selectModButtons() {
+		switch (_currDuration) {
+		case QUARTER:
+			_noteToolbar.setPressed(0, true);
+			break;
+		case HALF:
+			_noteToolbar.setPressed(1, true);
+			break;
+		case WHOLE:
+			_noteToolbar.setPressed(2, true);
+			break;
+		case EIGHTH:
+			_noteToolbar.setPressed(3, true);
+			break;
+		case SIXTEENTH:
+			_noteToolbar.setPressed(4, true);
+			break;
+		}
+		
+		if (_currAccidental != null) {
+			switch (_currAccidental) {
+			case FLAT:
+				_noteToolbar.setPressed(5, true);
+				break;
+			case NATURAL:
+				_noteToolbar.setPressed(6, true);
+				break;
+			case SHARP:
+				_noteToolbar.setPressed(7, true);
+				break;
+			}
+		}
+		
+		_noteToolbar.setPressed(8, _currRest);
 	}
 }

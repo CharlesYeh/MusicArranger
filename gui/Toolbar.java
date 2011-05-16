@@ -99,6 +99,14 @@
 			return btn.getInstruction();
 		}
 		
+		public void deselectAll() {
+			for (Set<Integer> group : _buttonGroups) {
+				refreshPresses(group, -1);
+			}
+			
+			drawBuffer();
+		}
+		
 		private void refreshPresses(Set<Integer> group, int btn) {
 			if (group == null)
 				return;
