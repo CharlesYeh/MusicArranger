@@ -16,10 +16,9 @@ public class MidiPlayer extends Thread {
 	MidiAPI _midi;
 	int _startingMeasure = 0;
 	Rational _startTimeInMeasure;
-
+	boolean isToPlay;
 	List<Staff> _staffList;
 
-	boolean _isPlaying;
 
 	// constructor for playing a piece from the start
 	public MidiPlayer(MidiAPI midi) {
@@ -38,9 +37,9 @@ public class MidiPlayer extends Thread {
 	}
 	
 	public void run() {
-		_isPlaying = true;
 
-		for(int measureNumber = _startingMeasure; measureNumber < _staffList.get(0).getMeasures().size(); measureNumber ++){
+		isToPlay = true;
+		for(int measureNumber = _startingMeasure; measureNumber < _staffList.get(0).getMeasures().size() && isToPlay; measureNumber ++){
 			
 			//System.out.println("-------------------This is measure " + measureNumber + "-------------------");
 			
@@ -187,6 +186,7 @@ public class MidiPlayer extends Thread {
 								_ends.remove(ts);
 								_midi.multiNoteOff(mn);
 						}
+						isToPlay = false;
 						return;
 					}
 				}
