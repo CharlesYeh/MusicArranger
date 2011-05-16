@@ -22,16 +22,17 @@ public class MidiPlayer extends Thread {
 	boolean _isPlaying;
 
 	// constructor for playing a piece from the start
-	public MidiPlayer(MidiAPI midi, Piece piece) {
+	public MidiPlayer(MidiAPI midi) {
 		_midi = midi;
+		_startTimeInMeasure = new Rational(0,4); // default, start at the first beat
+	}
+	
+	public void setPiece(Piece piece) {
 		_staffList = piece.getStaffs();
-		_startTimeInMeasure = new Rational(0,4);
 	}
 
-	// constructor for playing a piece from a specific time of the piece
-	public MidiPlayer(MidiAPI midi, Piece piece, int startingMeasure, Rational startTimeInMeasure) {
-		_midi = midi;
-		_staffList = piece.getStaffs();
+	// Sets the start position of play back by setting the Measure number and the time within the measure to start at
+	public void setStartingTime(int startingMeasure, Rational startTimeInMeasure) {
 		_startingMeasure = startingMeasure;
 		_startTimeInMeasure = startTimeInMeasure;
 	}
@@ -169,7 +170,7 @@ public class MidiPlayer extends Thread {
 					}
 				}
 
-				int sleepMilli = 60 * 1000 * sleepDuration.getNumerator() / _midi.getWholeNotesPerMinute() / sleepDuration.getDenominator();
+				int sleepMilli = 60 * 1000 * sleepDuration.getNumerator() / ArrangerConstants.WHOLE_NOTES_PER_MINUTE / sleepDuration.getDenominator();
 				/*System.out.println("currentTime is :" + currentTime);
 				System.out.println("sleepMilli is: " + sleepMilli);*/
 

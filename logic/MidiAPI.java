@@ -1,6 +1,7 @@
 package logic;
 
 import music.*;
+
 import javax.sound.midi.*;
 import java.util.*;
 import java.lang.Object;
@@ -22,6 +23,7 @@ public class MidiAPI{
 		} catch (Exception e){
 			System.out.println("Error loading synth: " + e);
 		}
+		_mp = new MidiPlayer(this);
 	}
 
 	public void stopPlayback() {
@@ -29,6 +31,13 @@ public class MidiAPI{
 			return;
 		
 		_mp.interrupt();
+	}
+	
+	public void setPlaybackStartingTime(int startingMeasure, Rational startTimeInMeasure) {
+		
+		if(_mp != null) {
+			_mp.setStartingTime(startingMeasure, startTimeInMeasure);
+		}
 	}
 
 	public void playPiece(Piece p){
@@ -46,7 +55,10 @@ public class MidiAPI{
 
 					if(ml.get(0)!=null){
 
-						_mp = new MidiPlayer(this, p);
+						if(_mp.isAlive()) {
+							stopPlayback();
+						}
+						_mp.setPiece(p);
 						_mp.start();
 					}
 				}
@@ -65,7 +77,8 @@ public class MidiAPI{
 
 					Piece p = new Piece();
 					p.getStaffs().add(s);
-					_mp = new MidiPlayer(this, p);
+					stopPlayback();
+					_mp.setPiece(p);
 					_mp.start();
 				}
 			}
@@ -83,7 +96,8 @@ public class MidiAPI{
 		Piece p = new Piece();
 		p.getStaffs().add(s);
 
-		_mp = new MidiPlayer(this, p);
+		stopPlayback();
+		_mp.setPiece(p);
 		_mp.start();
 
 	}
@@ -130,7 +144,8 @@ public class MidiAPI{
 		Piece p = new Piece();
 		p.getStaffs().add(s);
 
-		_mp = new MidiPlayer(this, p);
+		stopPlayback();
+		_mp.setPiece(p);
 		_mp.start();
 	}
 
@@ -152,7 +167,8 @@ public class MidiAPI{
 		Piece p = new Piece();
 		p.getStaffs().add(s);
 		
-		_mp = new MidiPlayer(this, p);
+		stopPlayback();
+		_mp.setPiece(p);
 		_mp.start();
 	}
 
