@@ -787,7 +787,6 @@ public class Analyzer extends Thread {
 	
 	/*
 	 * Adds the Edges that follow the given Node to the given Graph
-	 * 
 	 */
 	private void addFollowingEdges(Graph<ChordSymbol> newGraph, Node<ChordSymbol> currentNode, List<Edge<ChordSymbol>> followingEdges) {
 		

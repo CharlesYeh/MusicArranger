@@ -576,8 +576,10 @@ public class LogicManager implements Printable {
 		ListIterator<MultiNote> iter = (ListIterator<MultiNote>) iterAndOffset.getIter();
 		Rational offset = iterAndOffset.getOffset();
 
+		MultiNote replaced;
 		MultiNote multiNote;
 		Clef clef;
+		KeySignature keySig;
 		List<Pitch> pitches;
 
 		// set the iterator in the editor
@@ -616,39 +618,33 @@ public class LogicManager implements Printable {
 				//TODO: TRANSPOSE IS BUGGY, DIFFERENT FUNCTION MUST BE PUT INTO
 				// EDITOR FOR THIS TO WORK
 				clef = (Clef) getElementAt(measureOffset, measure.getClefs());
-				multiNote = iter.next();
-				pitches = multiNote.getPitches();
-				for (int i = 0; i < pitches.size(); i++) {
-					Pitch pitch = pitches.get(i);
+				keySig = (KeySignature) getElementAt(measureOffset, measure.getKeySignatures());
+				replaced = _editor.removeMultiNote();
+				pitches = replaced.getPitches();
+				multiNote = new MultiNote(replaced.getDuration());
+				_editor.setPitchIter(multiNote.getPitches().listIterator());
+				for (Pitch pitch : pitches) {
 					int lineNumber = calcLineNumber(clef, pitch);
-					EditInstruction removePitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
-							EditInstructionType.REMOVE,
-							EditType.PITCH);
-					editPitch(removePitchInstr);		
 					lineNumber++;
-					EditInstruction insertPitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
-							EditInstructionType.INSERT,
-							EditType.PITCH);
-					editPitch(insertPitchInstr);	
+					Pitch newPitch = calcPitch(lineNumber, clef, keySig);
+					_editor.insertPitch(newPitch);
 				}
+				_editor.insertMultiNote(multiNote);
 				return true;
 			case TRANSPOSE_DOWN:
 				clef = (Clef) getElementAt(measureOffset, measure.getClefs());
-				multiNote = iter.next();
-				pitches = multiNote.getPitches();
-				for (int i = 0; i < pitches.size(); i++) {
-					Pitch pitch = pitches.get(i);
+				keySig = (KeySignature) getElementAt(measureOffset, measure.getKeySignatures());
+				replaced = _editor.removeMultiNote();
+				pitches = replaced.getPitches();
+				multiNote = new MultiNote(replaced.getDuration());
+				_editor.setPitchIter(multiNote.getPitches().listIterator());
+				for (Pitch pitch : pitches) {
 					int lineNumber = calcLineNumber(clef, pitch);
-					EditInstruction removePitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
-							EditInstructionType.REMOVE,
-							EditType.PITCH);
-					editPitch(removePitchInstr);		
 					lineNumber--;
-					EditInstruction insertPitchInstr = new EditInstruction(new InstructionIndex(staffNumber, measureNumber, voiceNumber, measureOffset, lineNumber), 
-							EditInstructionType.INSERT,
-							EditType.PITCH);
-					editPitch(insertPitchInstr);	
+					Pitch newPitch = calcPitch(lineNumber, clef, keySig);
+					_editor.insertPitch(newPitch);
 				}
+				_editor.insertMultiNote(multiNote);
 				return true;
 			default:
 				System.out.println("Instruction of unrecognized EditInstructionType");
