@@ -435,7 +435,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			_modeToolbar.setPressed(4, true);
 			break;
 		case KeyEvent.VK_6:
-			instrBlock.addInstruction(_modeToolbar.getInstruction(4));
+			instrBlock.addInstruction(_modeToolbar.getInstruction(5));
 			_modeToolbar.setPressed(5, true);
 			break;
 			

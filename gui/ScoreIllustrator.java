@@ -146,7 +146,8 @@ public class ScoreIllustrator {
 		Map<Staff, TimeSignature> currTimeSigs 	= new HashMap<Staff, TimeSignature>();
 		
 		Map<Staff, List<MultiNote>> stemGroups = new HashMap<Staff, List<MultiNote>>();
-		Map<MultiNote, Point> stemNotePositions = new HashMap<MultiNote, Point>();
+		Map<MultiNote, Point> stemMinLines = new HashMap<MultiNote, Point>();
+		Map<MultiNote, Point> stemMaxLines = new HashMap<MultiNote, Point>();
 
 		// list of measures in each staff
 		List<ListIterator<Measure>> measureLists = new ArrayList<ListIterator<Measure>>();
@@ -296,7 +297,6 @@ public class ScoreIllustrator {
 				_measurePositions.add(new TreeMap<Integer, Integer>());
 			}
 			//---------------------END NEW SYSTEM---------------------
-
 			
 			while (timeline.size() > 0) {
 				Timestamp timestamp = timeline.firstKey();
@@ -366,7 +366,7 @@ public class ScoreIllustrator {
 					else {
 						// see if this multinote is selected
 						InstructionIndex mnoteIndex = new InstructionIndex(_staffPositions.get(currStaff), measureCount, 0, currTime);
-						drawMultiNote(g, stemGroups.get(currStaff), currClef, currKeySig, mnote, noteX, noteY, selectedNotes != null && selectedNotes.contains(mnoteIndex));
+						drawMultiNote(g, stemGroups.get(currStaff), stemMinLines, stemMaxLines, currClef, currKeySig, mnote, noteX, noteY, selectedNotes != null && selectedNotes.contains(mnoteIndex));
 					}
 					
 					Rational dur = mnote.getDuration();
@@ -386,7 +386,8 @@ public class ScoreIllustrator {
 					//---------------------CHORD SYMBOL----------------------
 					ChordSymbol cSymbol = (ChordSymbol) currDur;
 					
-					if (currChord == null || !currDur.equals(currChord)) {
+					//if (currChord == null || !currDur.equals(currChord)) {
+					if (_staffPositions.get(currStaff) == 0) {
 						int chordY = nextY + 5 * SYSTEM_LINE_SPACING + (numStaffs - 1) * STAFF_SPACING + CHORD_SPACING;
 						drawChordSymbol(g, cSymbol, chordX + staffX.get(currStaff), chordY);
 					}
@@ -523,7 +524,7 @@ public class ScoreIllustrator {
 	/* Draws all pitches within the multinote
 	 *
 	 */
-	private void drawMultiNote(Graphics g, List<MultiNote> stemGroup, Clef currClef, KeySignature currKeySig, MultiNote mn, int nextX, int nextY, boolean selected) {
+	private void drawMultiNote(Graphics g, List<MultiNote> stemGroup, Map<MultiNote, Point> stemMinLines, Map<MultiNote, Point> stemMaxLines, Clef currClef, KeySignature currKeySig, MultiNote mn, int nextX, int nextY, boolean selected) {
 		Rational dur = mn.getDuration();
 
 		int numer = dur.getNumerator();
@@ -558,19 +559,11 @@ public class ScoreIllustrator {
 			}
 			
 			int dir = 1;
-			// draw stem or add to stem group
-			if (denomValue >= 3) {
-				stemGroup.add(mn);
-			}
-			else {
-				// render previous group
-				renderStemGroup(stemGroup, currClef);
-			}
 			
+			int minOffset = getLineOffset(currClef, minLine);
+			int maxOffset = getLineOffset(currClef, maxLine);
 			if (denomValue != 0) {
 				// don't draw stem for whole notes
-				int minOffset = getLineOffset(currClef, minLine);
-				int maxOffset = getLineOffset(currClef, maxLine);
 				int stemX = nextX;
 				
 				dir = (minLine + maxLine <= 0) ? -1 : 1;
@@ -579,10 +572,20 @@ public class ScoreIllustrator {
 					maxOffset += dir * STEM_LENGTH;
 				else
 					minOffset += dir * STEM_LENGTH;
-				//stemX -= NOTE_WIDTH / 2;
 				
 				if (denomValue < 3)
 					drawStem(g, stemX - dir * SYSTEM_LINE_SPACING / 2, nextY, minOffset, maxOffset);
+			}
+			
+			// draw stem or add to stem group
+			if (denomValue >= 3) {
+				stemGroup.add(mn);
+				stemMinLines.put(mn, new Point(nextX, getLineOffset(currClef, nextY + minOffset)));
+				stemMaxLines.put(mn, new Point(nextX, getLineOffset(currClef, nextY + maxOffset)));
+			}
+			else {
+				// render previous group
+				renderStemGroup(stemGroup, currClef);
 			}
 			
 			int adjust = dir * SYSTEM_LINE_SPACING / 2;
