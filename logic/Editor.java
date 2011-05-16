@@ -296,8 +296,15 @@ public class Editor{
 	}
 	
 	// Replaces a MultiNote and fills in rests/overwrites notes as necessary.
-	public void replaceMultiNote(MultiNote replacement) {
+	public void replaceMultiNote(MultiNote replacement, Rational offset) {
 		MultiNote replaced = this.removeMultiNote();
+
+		if (offset.getNumerator() > 0) {
+			this.insertMultiNote(new MultiNote(offset));
+			replaced = new MultiNote(replaced.getDuration().minus(offset));
+		}
+		
+		
 		if (replacement.getDuration().compareTo(replaced.getDuration()) == 1) {
 			// If the replacement is longer
 			// Replace current note and overwrite following notes
