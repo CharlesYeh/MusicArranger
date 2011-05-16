@@ -171,36 +171,46 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 		file.add(menuItemPrint);
 		file.add(menuItemExit);
 		//----------------EDIT----------------
-		/*JMenu edit = new JMenu("Edit");
+		JMenu edit = new JMenu("Edit");
 		edit.setMnemonic(KeyEvent.VK_E);
 		
-		JMenuItem menuItemUndo = new JMenuItem("Undo");
-		menuItemUndo.setMnemonic(KeyEvent.VK_U);
-		menuItemUndo.setToolTipText("Undo last action");
+		JMenuItem menuItemUndo = new JMenuItem("Set Tempo");
+		menuItemUndo.setMnemonic(KeyEvent.VK_T);
+		menuItemUndo.setToolTipText("Set the play tempo");
 		menuItemUndo.addActionListener(
 			new ActionListener() {
-				InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.EXIT, ""));
 				public void actionPerformed(ActionEvent event) {
-					receiveInstruction(myInstr);
+					String value = JOptionPane.showInputDialog(frame, "Enter tempo:", ArrangerConstants.TEMPO);
+					
+					int newTempo = 0;
+					try {
+						newTempo = Integer.parseInt(value);
+					}
+					catch (Exception e) {
+						newTempo = 100;
+					}
+					
+					ArrangerConstants.setTempo(newTempo);
 				}
 			});
 
-		JMenuItem menuItemRedo = new JMenuItem("Redo");
-		menuItemRedo.setMnemonic(KeyEvent.VK_R);
-		menuItemRedo.setToolTipText("Redo last action");
+		JMenuItem menuItemRedo = new JMenuItem("Append Measure");
+		menuItemRedo.setMnemonic(KeyEvent.VK_M);
+		menuItemRedo.setToolTipText("Append a measure to the piece");
 		menuItemRedo.addActionListener(
 			new ActionListener() {
-				InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionIO(FileInstructionType.EXIT, ""));
+				InstructionBlock myInstr = new InstructionBlock(this, new EditInstruction(null, EditInstructionType.INSERT, EditType.MEASURE));
+				
 				public void actionPerformed(ActionEvent event) {
 					receiveInstruction(myInstr);
 				}
 			});
-
+		
 		edit.add(menuItemUndo);
 		edit.add(menuItemRedo);
-		*/
+		
 		menuBar.add(file);
-		//menuBar.add(edit);
+		menuBar.add(edit);
 		setJMenuBar(menuBar);
 	}
 	

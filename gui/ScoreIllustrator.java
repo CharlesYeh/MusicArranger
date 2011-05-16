@@ -494,8 +494,7 @@ public class ScoreIllustrator {
 			//---------------------END FINISH MEASURE---------------------
 		}
 		
-		ArrangerConstants.SCORE_HEIGHT = _systemPositions.get(_systemPositions.size() - 1) + SYSTEM_SPACING + (_staffPositions.size() - 1) * STAFF_SPACING + BOTTOM_MARGIN;
-		System.out.println(ArrangerConstants.SCORE_HEIGHT);
+		ArrangerConstants.setScoreHeight(_systemPositions.get(_systemPositions.size() - 1) + SYSTEM_SPACING + (_staffPositions.size() - 1) * STAFF_SPACING + BOTTOM_MARGIN);
 	}
 	
 	public void updateStaffSpacing(Map<Staff, Integer> freeX, Map<Staff, Integer> staffX, int nextX) {

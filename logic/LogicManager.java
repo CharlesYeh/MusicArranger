@@ -143,6 +143,7 @@ public class LogicManager implements Printable {
 				System.out.println("Print failed");
 			}
 		}
+		
 		// TODO: LEARN HOW PRINT WORKS
 		return true;
 
@@ -164,7 +165,7 @@ public class LogicManager implements Printable {
 		for (int stfnm = 0; stfnm < numStaffs; stfnm++) {
 			Staff staff = new Staff();
 			_editor.insertStaff(staff);
-
+			
 			// loop through measures
 			for (int msrnm = 0; msrnm < numMeasures; msrnm++) {
 				insertMeasure(timeSigNumer, timeSigDenom, accidentals, isMajor, clefs.get(stfnm));
@@ -178,7 +179,7 @@ public class LogicManager implements Printable {
 	private void insertMeasure(int timeSigNumer, int timeSigDenom, int accidentals, boolean isMajor, Clef currClef) {
 		Measure measure = new Measure();
 		_editor.insertMeasure(measure);
-
+		
 		// Instantiate key signature, time signature
 		Rational duration = new Rational(timeSigNumer, timeSigDenom);
 		TimeSignature timeSig = new TimeSignature(duration, timeSigNumer, timeSigDenom);
@@ -186,7 +187,7 @@ public class LogicManager implements Printable {
 		
 		_editor.insertKeySig(keySig);
 		_editor.insertTimeSig(timeSig);
-
+		
 		// Instantiate clef
 		ClefName clefName = currClef.getClefName();
 		int centerLine = currClef.getCenterLine();
@@ -440,8 +441,30 @@ public class LogicManager implements Printable {
 		}
 		return true;
 	}
-
+	
 	private boolean editMeasure(EditInstruction editInstr) {
+		// append measures to the end of the piece
+		
+		for (Staff stf : _piece.getStaffs()) {
+			List<Measure> currMeasures = stf.getMeasures();
+			ListIterator<Measure> measureIter = currMeasures.listIterator(currMeasures.size());
+			_editor.setMeasureIter(measureIter);
+			
+			Measure currMeasure = currMeasures.get(currMeasures.size() - 1);
+			KeySignature lastKeySig = currMeasure.getKeySignatures().get(0);
+			Clef lastClef = currMeasure.getClefs().get(0);
+			
+			TimeSignature lastTimeSig = currMeasure.getTimeSignatures().get(0);
+			
+			int timeSigNumer = lastTimeSig.getNumerator();
+			int timeSigDenom = lastTimeSig.getDenominator();
+			
+			int accidentals = lastKeySig.getAccidentalNumber();
+			boolean isMajor = lastKeySig.getIsMajor();
+			
+			insertMeasure(timeSigNumer, timeSigDenom, accidentals, isMajor, lastClef);
+		}
+		
 		return true;
 	}
 

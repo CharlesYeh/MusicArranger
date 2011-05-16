@@ -1120,9 +1120,9 @@ public class Analyzer extends Thread {
 //			returnList.remove(HighestPitch);
 		}
 		
-		for(Pitch p : returnList) {
+		/*for(Pitch p : returnList) {
 			System.out.println(p);
-		}
+		}*/
 		return returnList;
 	}
 
