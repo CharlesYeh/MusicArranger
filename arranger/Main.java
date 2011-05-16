@@ -194,7 +194,7 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 					ArrangerConstants.setTempo(newTempo);
 				}
 			});
-
+		
 		JMenuItem menuItemRedo = new JMenuItem("Append Measure");
 		menuItemRedo.setMnemonic(KeyEvent.VK_M);
 		menuItemRedo.setToolTipText("Append a measure to the piece");

@@ -551,7 +551,7 @@ public class ScoreIllustrator {
 			// determine stem direction
 			int minLine, maxLine;
 			minLine = maxLine = getLineNumber(currClef, pitches.get(0));
-
+			
 			for (Pitch p : pitches) {
 				// add 4 since the third line is "number 0"
 				int line = getLineNumber(currClef, p);
@@ -686,15 +686,16 @@ public class ScoreIllustrator {
 			
 			int stemDirection = (totalLines < 0) ? -1 : 1;
 			
-			Point pt = stemMinLines.get(mn);
+			Point pts = (stemDirection == -1) ? stemMinLines.get(mn) : stemMaxLines.get(mn);
+			Point pte = (stemDirection == -1) ? stemMaxLines.get(mn) : stemMinLines.get(mn);
 			
-			int stemX = (int) (pt.getX() - stemDirection * SYSTEM_LINE_SPACING / 2);
-			int stemY = (int) (pt.getY());
-			int stemEY = stemY + stemDirection * STEM_LENGTH;
+			int stemX = (int) (pts.getX() - stemDirection * SYSTEM_LINE_SPACING / 2);
+			int stemY = (int) (pts.getY());
+			int stemEY = (int) pte.getY() + stemDirection * STEM_LENGTH;
 			
 			g.drawLine(stemX, stemY, stemX, stemEY);
 			
-			int diff = -(stemEY - stemY);
+			int diff = -stemDirection * 30;
 			
 			// swirly
 			g.drawLine(stemX, 		stemEY, 				stemX + 7, stemEY + diff / 4);
@@ -730,15 +731,15 @@ public class ScoreIllustrator {
 		MultiNote firstMN = stemGroup.get(0);
 		MultiNote lastMN = stemGroup.get(stemGroup.size() - 1);
 		
-		Point first = (stemDirection == -1) ? stemMinLines.get(firstMN) : stemMaxLines.get(firstMN);
-		Point last = (stemDirection == -1) ? stemMinLines.get(lastMN) : stemMaxLines.get(lastMN);
+		Point first = (stemDirection == -1) ? stemMaxLines.get(firstMN) : stemMinLines.get(firstMN);
+		Point last = (stemDirection == -1) ? stemMaxLines.get(lastMN) : stemMinLines.get(lastMN);
 		
 		double slope = (last.getY() - first.getY()) / (last.getX() - first.getX());
 		double maxBarOffset = 0;
 		
 		// also calc how much to offset the bar vertically
 		for (MultiNote mn : stemGroup) {
-			Point pt = (stemDirection == -1) ? stemMinLines.get(mn) : stemMaxLines.get(mn);
+			Point pt = (stemDirection == -1) ? stemMaxLines.get(mn) : stemMinLines.get(mn);
 			
 			int dx = (int) (pt.getX() - first.getX());
 			int expectedY = (int) (first.getY() + dx * slope);
