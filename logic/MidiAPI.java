@@ -1,18 +1,20 @@
 package logic;
 
 import music.*;
-
 import javax.sound.midi.*;
 import java.util.*;
 import java.lang.Object;
-import java.lang.IllegalThreadStateException;
 
 public class MidiAPI{
-	
+
+	//int _wholeNoteDuration = 1000; //The duration of a whole note
+	int _wholeNotesPerMinute = 15;
 	MidiPlayer _mp;
 	ArrayList<ListIterator<MultiNote>> _voices;
 	Synthesizer _synth;
 	Receiver _receiver;
+	int _startingMeasure = 0;
+	Rational _startTimeInMeasure; 
 	
 	public MidiAPI(){
 		try{
@@ -22,7 +24,7 @@ public class MidiAPI{
 		} catch (Exception e){
 			System.out.println("Error loading synth: " + e);
 		}
-		_mp = new MidiPlayer(this);
+		_startTimeInMeasure = new Rational(0,4);
 	}
 
 	public void stopPlayback() {
@@ -32,15 +34,17 @@ public class MidiAPI{
 		_mp.interrupt();
 	}
 	
+	// Sets the starting time for playback
 	public void setPlaybackStartingTime(int startingMeasure, Rational startTimeInMeasure) {
 		
-		if(_mp != null) {
-			_mp.setStartingTime(startingMeasure, startTimeInMeasure);
-		}
+		_startingMeasure = startingMeasure;
+		_startTimeInMeasure = startTimeInMeasure;
 	}
-	
+
 	public void playPiece(Piece p){
-		
+//		_voices = new ArrayList<ListIterator<MultiNote>>();
+//		addPiece(_voices, p);
+
 		List<Staff> staffList = p.getStaffs();
 		if(staffList != null){
 
@@ -48,14 +52,11 @@ public class MidiAPI{
 			if(s != null){
 
 				List<Measure> ml = s.getMeasures();
-				if(ml != null && ml.get(0) != null) {
-					
-					_mp.setPiece(p);
-					if(_mp.isAlive()) {
-						//restartPlayback();
-						_mp.start();
-					}
-					else {
+				if(ml != null){
+
+					if(ml.get(0)!=null){
+
+						_mp = new MidiPlayer(this, p, _startingMeasure, _startTimeInMeasure);
 						_mp.start();
 					}
 				}
@@ -74,8 +75,7 @@ public class MidiAPI{
 
 					Piece p = new Piece();
 					p.getStaffs().add(s);
-					stopPlayback();
-					_mp.setPiece(p);
+					_mp = new MidiPlayer(this, p, _startingMeasure, _startTimeInMeasure);
 					_mp.start();
 				}
 			}
@@ -93,12 +93,15 @@ public class MidiAPI{
 		Piece p = new Piece();
 		p.getStaffs().add(s);
 
-		stopPlayback();
-		_mp.setPiece(p);
+		_mp = new MidiPlayer(this, p, _startingMeasure, _startTimeInMeasure);
 		_mp.start();
 
 	}
 	
+	public void setWholeNotesPerMinute(int setTo) {
+		
+		_wholeNotesPerMinute = setTo;
+	}
 //
 //	private void addPiece(List<ListIterator<MultiNote>> list, Piece p) {
 //		for (Staff s : p.getStaffs()) {
@@ -137,8 +140,7 @@ public class MidiAPI{
 		Piece p = new Piece();
 		p.getStaffs().add(s);
 
-		stopPlayback();
-		_mp.setPiece(p);
+		_mp = new MidiPlayer(this, p, _startingMeasure, _startTimeInMeasure);
 		_mp.start();
 	}
 
@@ -160,8 +162,7 @@ public class MidiAPI{
 		Piece p = new Piece();
 		p.getStaffs().add(s);
 		
-		stopPlayback();
-		_mp.setPiece(p);
+		_mp = new MidiPlayer(this, p, _startingMeasure, _startTimeInMeasure);
 		_mp.start();
 	}
 
@@ -226,5 +227,9 @@ public class MidiAPI{
 	        msg.setMessage(cmd, 0, note, 100);
 
 	        return (MidiMessage) msg;
+	}
+	
+	public int getWholeNotesPerMinute() {
+		return _wholeNotesPerMinute;
 	}
 }

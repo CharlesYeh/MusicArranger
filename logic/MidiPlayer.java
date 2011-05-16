@@ -16,26 +16,29 @@ public class MidiPlayer extends Thread {
 	MidiAPI _midi;
 	int _startingMeasure = 0;
 	Rational _startTimeInMeasure;
+
 	List<Staff> _staffList;
 
+	boolean _isPlaying;
 
 	// constructor for playing a piece from the start
-	public MidiPlayer(MidiAPI midi) {
+	public MidiPlayer(MidiAPI midi, Piece piece) {
 		_midi = midi;
-		_startTimeInMeasure = new Rational(0,4); // default, start at the first beat
-	}
-	
-	public void setPiece(Piece piece) {
 		_staffList = piece.getStaffs();
+		_startTimeInMeasure = new Rational(0,4);
 	}
 
-	// Sets the start position of play back by setting the Measure number and the time within the measure to start at
-	public void setStartingTime(int startingMeasure, Rational startTimeInMeasure) {
+	// constructor for playing a piece from a specific time of the piece
+	public MidiPlayer(MidiAPI midi, Piece piece, int startingMeasure, Rational startTimeInMeasure) {
+		_midi = midi;
+		_staffList = piece.getStaffs();
 		_startingMeasure = startingMeasure;
 		_startTimeInMeasure = startTimeInMeasure;
 	}
 	
 	public void run() {
+		_isPlaying = true;
+
 		for(int measureNumber = _startingMeasure; measureNumber < _staffList.get(0).getMeasures().size(); measureNumber ++){
 			
 			//System.out.println("-------------------This is measure " + measureNumber + "-------------------");
@@ -48,15 +51,16 @@ public class MidiPlayer extends Thread {
 			Measure currentMeasure;
 
 			for(Staff currentStaff: _staffList){
-				
+
 				currentMeasure = currentStaff.getMeasures().get(measureNumber);
 				for(Voice currentVoice: currentMeasure.getVoices()){
-					
+
 					listIter = currentVoice.getMultiNotes().listIterator();
 					Timestamp timestampKey = new Timestamp();
 					_starts.put(timestampKey, listIter);
 				}
 			}
+			
 			
 			while (!_starts.isEmpty() || !_ends.isEmpty()) {
 				
@@ -65,11 +69,22 @@ public class MidiPlayer extends Thread {
 
 				// find whether start or end is next with timestamps (firstKey())
 				Timestamp startTime = _starts.isEmpty() ? null : _starts.firstKey();
-				
+
+				/*if(startTime != null)
+					System.out.println("startTime is : " + startTime.getDuration());
+				else
+					System.out.println("startTime is null");*/
+
 				Timestamp endTime = _ends.isEmpty() ? null : _ends.firstKey();
-								
+
+				/*if(endTime != null)
+					System.out.println("endTime is : " + endTime.getDuration());
+				else
+					System.out.println("endTime is null");*/
+				
 				// if start is empty, default to ends list
 				boolean nextIsEnd = !_ends.isEmpty();
+				//System.out.println(nextIsStart);
 
 				// if starts isn't empty, make sure ends isn't empty, and compare start time
 				if (nextIsEnd && !_starts.isEmpty() && endTime.compareTime(startTime) > 0) {
@@ -78,7 +93,7 @@ public class MidiPlayer extends Thread {
 				}
 
 				Rational currentTime = nextIsEnd ? endTime.getDuration().clone() : startTime.getDuration().clone();
-				
+
 				if (nextIsEnd) {
 					// stop playing a multinote
 					//System.out.println("endTime is " + endTime);
@@ -153,31 +168,31 @@ public class MidiPlayer extends Thread {
 						//System.out.println("case 3: sleepDuration is: " + sleepDuration);
 					}
 				}
-				
+
 				int sleepMilli = 60 * 1000 * sleepDuration.getNumerator() / ArrangerConstants.WHOLE_NOTES_PER_MINUTE / sleepDuration.getDenominator();
-				
-				// don't sleep if iterating to start point
+				/*System.out.println("currentTime is :" + currentTime);
+				System.out.println("sleepMilli is: " + sleepMilli);*/
+
 				if(!doNotPlayYet) {
 					try {
 						Thread.sleep(sleepMilli);
 					}
 					catch (InterruptedException ie){
-						// stop playing all the notes when the playback is stopped
+						//stop playing all the notes when the playback is stopped
 						while(!_ends.isEmpty()){
-							
-							Timestamp ts = _ends.firstKey();
-							MultiNote mn = _ends.get(ts);
-							_ends.remove(ts);
-							_midi.multiNoteOff(mn);
+	
+								Timestamp ts = _ends.firstKey();
+								MultiNote mn = _ends.get(ts);
+								_ends.remove(ts);
+								_midi.multiNoteOff(mn);
 						}
-						
 						return;
 					}
 				}
 			}
 		}
 	}
-	
+
 //	public void stopPlayback() {
 //		_isPlaying = false;
 //	}

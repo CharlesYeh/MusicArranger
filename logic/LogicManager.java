@@ -472,8 +472,8 @@ public class LogicManager implements Printable {
 		// find insertion data
 		int staffNumber = index.getStaffNumber();
 		int measureNumber = index.getMeasureNumber();
-		
-		Rational measureOffset = new Rational(0, 1);
+
+		Rational measureOffset = index.getMeasureOffset();
 		Measure measure = _piece.getStaffs().get(staffNumber).getMeasures().get(measureNumber);
 		
 		Rational measureLength = measure.getTimeSignatures().get(0).getMeasureDuration();
@@ -495,23 +495,65 @@ public class LogicManager implements Printable {
 	private boolean editTimeSignature(EditInstruction editInstr) {
 		InstructionIndex index = editInstr.getIndex();
 		
-		TimeSignature newTimeSig = (TimeSignature) editInstr.getElement();
-		
 		for (Staff staff : _piece.getStaffs()) {
 				
 			int measureNumber = index.getMeasureNumber();
 			Rational measureOffset = index.getMeasureOffset();
 			Measure measure = staff.getMeasures().get(measureNumber);
+			Rational measureLength;
 			
 			List<TimeSignature> timeSigs = measure.getTimeSignatures();
 			ListIterator<TimeSignature> iter = timeSigs.listIterator();
+			TimeSignature newTimeSig;
+			TimeSignature oldTimeSig;
 			
-			_editor.setTimeSignatureIter(iter);
-			_editor.replaceTimeSig(newTimeSig);
+			EditInstructionType instrType = editInstr.getType();
 			
-			// remove excess notes
-			Rational toRemove = timeSigs.get(0).getDuration().minus(newTimeSig.getDuration());
-			
+			switch (instrType) {
+				case INSERT:
+					break;
+				case REMOVE:
+					break;
+				case REPLACE:
+					newTimeSig = (TimeSignature) editInstr.getElement();
+					oldTimeSig = measure.getTimeSignatures().get(0);
+					measureLength = newTimeSig.getMeasureDuration();
+					newTimeSig.setDuration(measureLength);
+					
+					while (measureNumber < staff.getMeasures().size()) {
+						measure = staff.getMeasures().get(measureNumber);
+						timeSigs = measure.getTimeSignatures();
+						iter = timeSigs.listIterator();
+						if (!oldTimeSig.equals(measure.getTimeSignatures().get(0))) {
+							break;
+						}
+						
+						_editor.setTimeSignatureIter(iter);
+						_editor.replaceTimeSig(newTimeSig);
+						
+						// remove excess notes
+						for (Voice voice : measure.getVoices()) {
+							IteratorAndOffset noteIterAndOffset = calcIterAndOffset(voice.getMultiNotes(), measureLength);
+							ListIterator<MultiNote> noteIter = (ListIterator<MultiNote>) noteIterAndOffset.iter;
+							Rational noteOffset = noteIterAndOffset.offset;
+							
+							_editor.setMultiNoteIter(noteIter);
+							while (noteIter.hasNext()) {
+								_editor.removeMultiNote();
+							}
+							if (noteOffset.getNumerator() > 0) {
+								_editor.insertMultiNote(new MultiNote(noteOffset));
+							}
+						}
+						
+						measureNumber++;
+					}
+					
+					break;
+				default:
+					System.out.println("Instruction of unrecognized EditInstructionType");
+					return false;
+			}
 		}
 		return true;
 	}
