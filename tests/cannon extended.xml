@@ -264,8 +264,7 @@
             <clef duration="1/1" type="GCLEF" center_line="-2"/>
           </clefs>
           <chordSymbols>
-            <chordSymbol duration="1/4" scaleDegreeNumber="6" scaleDegreeAccidental="NATURAL" chordType="MINOR"/>
-            <chordSymbol duration="1/4" scaleDegreeNumber="6" scaleDegreeAccidental="NATURAL" chordType="MINOR"/>
+            <chordSymbol duration="1/2" scaleDegreeNumber="6" scaleDegreeAccidental="NATURAL" chordType="MINOR"/>
             <chordSymbol duration="1/2" scaleDegreeNumber="3" scaleDegreeAccidental="NATURAL" chordType="MINOR"/>
           </chordSymbols>
           <voices>
@@ -714,8 +713,7 @@
             <clef duration="1/1" type="FCLEF" center_line="2"/>
           </clefs>
           <chordSymbols>
-            <chordSymbol duration="1/4" scaleDegreeNumber="6" scaleDegreeAccidental="NATURAL" chordType="MINOR"/>
-            <chordSymbol duration="1/4" scaleDegreeNumber="6" scaleDegreeAccidental="NATURAL" chordType="MINOR"/>
+            <chordSymbol duration="1/2" scaleDegreeNumber="6" scaleDegreeAccidental="NATURAL" chordType="MINOR"/>
             <chordSymbol duration="1/2" scaleDegreeNumber="3" scaleDegreeAccidental="NATURAL" chordType="MINOR"/>
           </chordSymbols>
           <voices>
