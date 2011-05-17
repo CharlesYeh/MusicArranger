@@ -16,7 +16,7 @@ public class GUIInstructionChordData extends GUIInstruction {
 		super();
 		
 		if (listIndex.size() != listChords.size()) {
-			System.out.println("Error, arrays in GUIInstructionChordData to not have the same dimension");
+			System.out.println("Error, arrays in GUIInstructionChordData do not have the same dimension");
 			return;
 		}
 		

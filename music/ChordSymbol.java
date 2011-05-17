@@ -84,7 +84,7 @@ public class ChordSymbol extends Timestep {
 				break;
 		}
 		
-		if (_chordType == ChordType.MINOR) {
+		if (_chordType == ChordType.MINOR || _chordType == ChordType.DIMIN) {
 			chordName = chordName.toLowerCase();
 		}
 		

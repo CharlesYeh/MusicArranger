@@ -74,6 +74,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	Piece _piece;
 	List<InstructionIndex> _indices;
 	List<List<Node<ChordSymbol>>> _suggestions;
+	List<Node<ChordSymbol>> _chosenChords;
 	Image _imgBackground;
 	
 	//------------------end state information------------------
@@ -183,7 +184,7 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 	private void handleScoreMousePressed(List<InstructionIndex> listIndex) {
 		if (listIndex == null)
 			   return;
-		
+			
 		InstructionBlock instr = new InstructionBlock(this);
 		for (InstructionIndex index : listIndex) {
 			
@@ -196,8 +197,43 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 				if (_indices != null) {
 					int ind = _indices.indexOf(index);
 					
-					if (ind != -1)
-						_chordGrid.setSuggested(_suggestions.get(ind));
+					if (ind != -1) {
+						
+						Node<ChordSymbol> prevChord = null;
+						Node<ChordSymbol> nextChord = null;
+						
+						List<Node<ChordSymbol>> filteredSugg = new ArrayList<Node<ChordSymbol>>();
+						List<Node<ChordSymbol>> listSugg = _suggestions.get(ind);
+						
+						for (Node<ChordSymbol> n : listSugg) {
+							
+							// search backwards for last chosen chord
+							for (int i = ind - 1; i >= 0; i--) {
+								Node<ChordSymbol> chosen = _chosenChords.get(i);
+								if (chosen != null) {
+									prevChord = chosen;
+									break;
+								}
+							}
+							
+							// search forwards for next chosen chord
+							for (int i = ind + 1; i < _chosenChords.size(); i++) {
+								Node<ChordSymbol> chosen = _chosenChords.get(i);
+								if (chosen != null) {
+									nextChord = chosen;
+									break;
+								}
+							}
+							
+							// check surrounding chords
+							if ((prevChord == null || n.canComeFrom(prevChord)) &&
+									(nextChord == null || n.canLeadTo(nextChord))) {
+								filteredSugg.add(n);
+							}
+						}
+						
+						_chordGrid.setSuggested(filteredSugg);
+					}
 				}
 				
 				return;
@@ -281,12 +317,21 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 		
 		if (_insertChord != null) {
 			ChordSymbol newSymbol = _chordGrid.getChordSymbolAt(e);
+			
 			if (newSymbol != null) {
 				// insert chord if mouse was released within box
 				Instruction editInstr = new EditInstruction(_insertChord, EditInstructionType.REPLACE, EditType.CHORD_SYMBOL, newSymbol);
 				InstructionBlock instr = new InstructionBlock(this, editInstr);
 				
 				sendInstruction(instr);
+			}
+			
+			if (_indices != null && newSymbol != null) {
+				int index = _indices.indexOf(_insertChord);
+				
+				if (index != -1) {
+					_chosenChords.set(index, new Node<ChordSymbol>(newSymbol));
+				}
 			}
 			
 			_insertChord = null;
@@ -501,6 +546,10 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			// store data in score window
 			_indices = GUIInstr.getIndices();
 			_suggestions = GUIInstr.getChords();
+			_chosenChords = new ArrayList<Node<ChordSymbol>>();
+			for (int i = 0; i < _suggestions.size(); i++) {
+				_chosenChords.add(null);
+			}
 		}
 	}
 	

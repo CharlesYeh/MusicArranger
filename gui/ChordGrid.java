@@ -7,6 +7,10 @@ import java.awt.Point;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 
+import java.io.File;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+
 import java.awt.Font;
 
 import music.ChordSymbol;
@@ -23,7 +27,19 @@ public class ChordGrid extends Drawable {
 	ChordSymbol[][] _symbols;
 	List<Node<ChordSymbol>> _chords;
 	
+	BufferedImage _imgChordGrid;
+	final static String IMG_CHORDGRID = "images/gui/chordgrid.png";
+	
 	public ChordGrid() {
+		
+		try{
+			_imgChordGrid = ImageIO.read(new File(IMG_CHORDGRID));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
 		_width = CELL_SIZE * 8;
 		_height = CELL_SIZE * 4;
 		
@@ -55,11 +71,14 @@ public class ChordGrid extends Drawable {
 	}
 	
 	public void drawSelf(Graphics g) {
+		/*
 		g.setColor(Color.WHITE);
 		g.fillRect(_x, _y, _width, _height);
 		
 		g.setColor(Color.BLACK);
 		g.drawRect(_x, _y, _width, _height);
+		*/
+		g.drawImage(_imgChordGrid, _x, _y, null);
 		
 		for (int row = 0; row < _symbols.length; row++) {
 			for (int col = 0; col < _symbols[row].length; col++) {
@@ -106,7 +125,7 @@ public class ChordGrid extends Drawable {
 		int col = (p.getX() - _x) / CELL_SIZE;
 		int row = (p.getY() - _y) / CELL_SIZE;
 		
-		if (p.getX() - _x < 0 || p.getY() - _y < 0 || row > _symbols.length || col > _symbols[row].length)
+		if (p.getX() - _x < 0 || p.getY() - _y < 0 || row >= _symbols.length || col > _symbols[row].length)
 			return null;
 		
 		return _symbols[row][col];
