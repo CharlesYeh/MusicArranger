@@ -994,7 +994,7 @@ public class ScoreIllustrator {
 		int staffX = (int) e.getX();
 		
 		// if clicked past all the systems, return null
-		if (staffFromTop >= _measurePositions.size())
+		if (staffFromTop >= _measurePositions.size() && !isChord)
 			return null;
 		
 		Map<Integer, Integer> staffMeasures = _measurePositions.get(staffFromTop);

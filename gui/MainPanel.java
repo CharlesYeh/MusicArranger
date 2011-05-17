@@ -168,8 +168,8 @@ public class MainPanel extends JPanel implements MouseListener, MouseMotionListe
 			List<InstructionIndex> listIndex = _scoreWindow.mousePressed(evtPoint);
 			handleScoreMousePressed(listIndex);
 			
-			_chordGrid.setX((int) evtPoint.getX());
-			_chordGrid.setY((int) evtPoint.getY() + 20);
+			_chordGrid.setX(e.getX());
+			_chordGrid.setY(e.getY() + 20);
 	   }
 	   else {
 		   // clicked on a toolbar, start drag?

@@ -1,5 +1,6 @@
 package logic;
 
+import arranger.ArrangerConstants;
 import music.*;
 import instructions.*;
 import util.*;
@@ -9,7 +10,9 @@ import javax.swing.event.EventListenerList;
 import java.util.*;
 import java.awt.print.*;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
 import javax.print.attribute.*;
 
 import util.Graph;
@@ -123,15 +126,34 @@ public class LogicManager implements Printable {
 
 	public int print(Graphics g, PageFormat pf, int page) throws PrinterException {
 		//FileInstructionPrint
-		g.drawImage(_toPrint, 0, 0, null);
+		//g.drawImage(_toPrint, 0, 0, null);
+		final int DPI = 72;
 		
-		return PAGE_EXISTS;
+		double scalar = pf.getWidth() / _toPrint.getWidth(null);
+		
+		int scaledHeight = (int) (scalar * _toPrint.getHeight(null));
+		int totalPages = scaledHeight / ((int) pf.getHeight());
+		
+		if (page <= totalPages) {
+			AffineTransform transf = new AffineTransform();
+			
+			transf.scale(scalar, scalar);
+			transf.translate(0, -page * pf.getHeight() / scalar);
+			
+			((Graphics2D) g).drawImage(_toPrint, transf, null);
+			return PAGE_EXISTS;
+		}
+		else {
+			return NO_SUCH_PAGE;
+		}
 	}
 	private boolean interpretFileInstrPrint(FileInstructionPrint fileInstrPrint) {
 		//fileInstrPrint
 		_toPrint = fileInstrPrint.getImage();
+		
 		PrinterJob job = PrinterJob.getPrinterJob();
 		job.setPrintable(this);
+		
 		boolean ok = job.printDialog();
 		if (ok) {
 			try {

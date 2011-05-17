@@ -149,8 +149,8 @@ public class Main extends JFrame implements InstructionListener, KeyListener {
 		menuItemPrint.setToolTipText("Print song");
 		menuItemPrint.addActionListener(
 			new ActionListener() {
-				InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionPrint(_mainPanel.getScoreImage()));
 				public void actionPerformed(ActionEvent event) {
+					InstructionBlock myInstr = new InstructionBlock(this, new FileInstructionPrint(_mainPanel.getScoreImage()));
 					receiveInstruction(myInstr);
 				}
 			});
